@@ -105,7 +105,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
-                        <a href="#" class="nav-link" id="level2item">
+                        <a href="{{ route('admin.location.index') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
                             <p>Locations</p>
                         </a>
