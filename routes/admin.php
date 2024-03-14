@@ -9,6 +9,8 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubCateoryController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LocationController;
+;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard',[ProfileController::class,'dashboard'])->name('dashboard');
@@ -31,5 +33,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::middleware(['check-permission'])->group(function(){
         Route::resource('user',UserController::class);
         Route::resource('role',RoleController::class);
+        Route::resource('location',LocationController::class);
+        Route::post('location/change-status', [LocationController::class, 'changeStatus'])->name('location.change-status');
     });
 });
