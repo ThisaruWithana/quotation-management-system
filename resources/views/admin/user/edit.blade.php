@@ -13,7 +13,8 @@
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="form-group">
-                            <label for="name" class="form-label">Name:*</label>
+                            <label for="name" class="form-label">Name</label>
+                            <span class="required"> * </span>
                             <input type="text" class="form-control" name="name" required
                                 value="{{ $user->name }}">
                             @error('name')
@@ -23,7 +24,8 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="form-group">
-                            <label for="Email" class="form-label">Email:*</label>
+                            <label for="Email" class="form-label">Email</label>
+                            <span class="required"> * </span>
                             <input type="email" class="form-control" name="email" required
                                 value="{{ $user->email }}">
                             @error('email')
@@ -33,7 +35,8 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="form-group">
-                            <label for="role" class="form-label">Role:*</label>
+                            <label for="role" class="form-label">Role</label>
+                            <span class="required"> * </span>
                             <select name="role" id="role" class="form-control" required>
                                 <option value="" selected disabled>selecte the role</option>
                                 @foreach ($roles as $role)

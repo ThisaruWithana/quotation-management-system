@@ -18,7 +18,7 @@
         @role('admin')
             
             <li class="nav-item">
-                <a href="{{ route('admin.product.index') }}"
+                <a href="{{ route('admin.supplier.index') }}"
                     class="nav-link {{ Route::is('admin.supplier.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-cart-plus"></i>
                     <p>Suppliers</p>
