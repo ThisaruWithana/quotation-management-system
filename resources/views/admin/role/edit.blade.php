@@ -27,6 +27,7 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label for="name" class="form-label">Role Name</label>
+                                        <span class="required"> * </span>
                                         <input type="text" class="form-control" name="name" id="name"
                                             required="" value="{{ $data->name }}">
                                             @error('name')
@@ -38,7 +39,8 @@
 
                                 <div class="col-lg-12">
                                     <div class="form-group">
-                                        <label for="permission" class="form-label">Permissions:*</label>
+                                        <label for="permission" class="form-label">Permissions</label>
+                                        <span class="required"> * </span>
                                         <select name="permission[]" id="permission" class="form-control"  required multiple data-mdb-filter="true">
                                             <option value="" selected disabled>Selecte permissions</option>
                                             @foreach ($permissions as $permission)

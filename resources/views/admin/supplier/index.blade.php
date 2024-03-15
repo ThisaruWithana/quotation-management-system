@@ -1,10 +1,10 @@
 <x-admin>
-    @section('title')  {{ 'Product Locations' }} @endsection
+    @section('title')  {{ $title }} @endsection
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Product Locations</h3>
+            <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.location.create') }}" class="btn btn-sm btn-primary">Add</a>
+                <a href="{{ route('admin.supplier.create') }}" class="btn btn-sm btn-primary">Add</a>
             </div>
         </div>
         <div class="card-body">
@@ -12,8 +12,13 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Created</th>
+                        <th>Contact Person</th>
+                        <th>Address</th>
+                        <th>Telephone</th>
+                        <th>Email</th>
                         <th>Status</th>
+                        <th>Created By</th>
+                        <th>Created At</th>
                         <th>Action</th>
                         <th></th>
                     </tr>
@@ -23,7 +28,10 @@
                 @foreach ($data as $value)
                         <tr>
                             <td>{{ $value->name }}</td>
-                            <td>{{ $value->created_at }}</td>
+                            <td>{{ $value->contact_person }}</td>
+                            <td>{{ $value->address }} {{ $value->postal_code }}</td>
+                            <td>{{ $value->tel }}</td>
+                            <td>{{ $value->email }}</td>
                             <td>
                                 @if($value->status == 1)
                                 <span class="badge badge-success">Active</span>
@@ -31,8 +39,10 @@
                                 <span class="badge badge-warning">Deactive</span>
                                 @endif
                             </td>
+                            <td>{{ $value->created_user->name }}</td>
+                            <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                             <td>
-                                <a href="{{ route('admin.location.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('admin.supplier.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
                             </td>
@@ -64,7 +74,7 @@
                     "responsive": true,
                 });
             });
-
+            
         function changeStatus(id, status) {
 
             cuteAlert({
@@ -76,7 +86,7 @@
                 }).then((e)=>{
                 if ( e == ("confirm")){
                         $.ajax({
-                            url: "{{ url('admin/location/change-status') }}",
+                            url: "{{ url('admin/supplier/change-status') }}",
                             type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
@@ -126,7 +136,7 @@
                 } else {
                 }
             });
-            }
+        }
         </script>
     @endsection
 </x-admin>

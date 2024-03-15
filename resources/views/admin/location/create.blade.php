@@ -24,8 +24,9 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="name" class="form-label">Location Name</label>
+                                            <span class="required"> * </span>
                                             <input type="text" class="form-control" name="name" id="name"
-                                                required="" value="{{ $data->name }}">
+                                                required="" value="{{ $data->name }}" autocomplete="off">
                                                 @error('name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -36,8 +37,9 @@
                                     <div class="col-lg-12">
                                         <div class="form-group">
                                             <label for="name" class="form-label">Location Name</label>
+                                            <span class="required"> * </span>
                                             <input type="text" class="form-control" name="name" id="name"
-                                                required="" value="{{ old('name') }}">
+                                                required="" value="{{ old('name') }}" autocomplete="off">
                                                 @error('name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror

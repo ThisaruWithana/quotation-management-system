@@ -10,7 +10,7 @@ class LocationController extends Controller
 {
     public function index()
     {
-        $data = Location::orderBy('id','DESC')->where('status', 1)->get();
+        $data = Location::orderBy('id','DESC')->get();
         return view('admin.location.index', compact('data'));
     }
 
@@ -72,9 +72,6 @@ class LocationController extends Controller
 
     public function changeStatus(Request $request)
     {
-        // Role::where('id',decrypt($id))->delete();
-        // return redirect()->route('admin.role.index')->with('error','Role deleted successfully.');
-
         $status = $request->input('status');
         $id = $request->input('id');
 

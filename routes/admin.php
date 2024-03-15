@@ -11,6 +11,7 @@ use App\Http\Controllers\SubCateoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\VatController;
+use App\Http\Controllers\SupplierController;
 ;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
@@ -38,4 +39,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('location/change-status', [LocationController::class, 'changeStatus'])->name('location.change-status');
     });
     Route::resource('vat',VatController::class);
+    Route::resource('supplier',SupplierController::class);
+    Route::post('supplier/change-status', [SupplierController::class, 'changeStatus'])->name('supplier.change-status');
 });

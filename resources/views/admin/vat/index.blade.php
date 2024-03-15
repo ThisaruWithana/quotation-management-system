@@ -26,9 +26,9 @@
                             <td>{{ $value->value }}</td>
                             <td>
                                 @if($value->status == 1)
-                                <span class="label label-success">Active</span>
+                                <span class="badge badge-success">Active</span>
                                 @else 
-                                <span class="label label-danger">Deactive</span>
+                                <span class="badge badge-warning">Deactive</span>
                                 @endif
                             </td>
                             <td>{{ $value->created_user->name }}</td>
@@ -50,59 +50,6 @@
                     "responsive": true,
                 });
             });
-
-            
-        function changeStatus(id, status) {
-
-            $.ajax({
-                url: "{{ url('admin/location/change-status') }}",
-                type: 'POST',
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    "id": id,
-                    "status": status
-                },
-                success: function (data) {
-                    var result = JSON.parse(data);
-                    if (result == 1) {
-                        toastr.success(
-                            'Success',
-                            'Successfully Updated !',
-                            {
-                                timeOut: 1500,
-                                fadeOut: 1500,
-                                onHidden: function () {
-                                    window.location.reload();
-                                }
-                            });
-                    } else {
-                        toastr.error(
-                            'Error',
-                            'Something Went Wrong!',
-                            {
-                                timeOut: 1500,
-                                fadeOut: 1500,
-                                onHidden: function () {
-                                    window.location.reload();
-                                }
-                            }
-                        );
-                    }
-                }, error: function (data) {
-                        toastr.error(
-                            'Error',
-                            'Something Went Wrong!',
-                            {
-                                timeOut: 1500,
-                                fadeOut: 1500,
-                                onHidden: function () {
-                                    window.location.reload();
-                                }
-                            }
-                        );
-                }
-            });
-        }
         </script>
     @endsection
 </x-admin>
