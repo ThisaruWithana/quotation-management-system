@@ -1,19 +1,22 @@
 <x-admin>
-    @section('title')  {{ 'Product Locations' }} @endsection
+    @section('title')  {{ $title }} @endsection
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Product Locations</h3>
+            <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.location.create') }}" class="btn btn-sm btn-primary">Add</a>
+                <a href="{{ route('admin.department.sub.create') }}" class="btn btn-sm btn-primary">Add</a>
+                <a href="{{ route('admin.department.index') }}" class="btn btn-sm btn-warning">Departments</a>
             </div>
         </div>
         <div class="card-body">
             <table class="table table-striped" id="dataTable">
                 <thead>
                     <tr>
-                        <th>Name</th>
+                        <th>Sub Department</th>
+                        <th>Department</th>
                         <th>Created By</th>
                         <th>Created At</th>
+                        <th>Last Updated</th>
                         <th>Status</th>
                         <th>Action</th>
                         <th></th>
@@ -24,8 +27,10 @@
                 @foreach ($data as $value)
                         <tr>
                             <td>{{ $value->name }}</td>
+                            <td>{{ $value->departments->name }}</td>
                             <td>{{ $value->created_user->name }}</td>
                             <td>{{ $value->created_at }}</td>
+                            <td>{{ $value->updated_at }}</td>
                             <td>
                                 @if($value->status == 1)
                                 <span class="badge badge-success">Active</span>
@@ -34,7 +39,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.location.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('admin.department.sub.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
                             </td>

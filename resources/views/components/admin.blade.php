@@ -52,6 +52,7 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
 
     <link rel="stylesheet" href="{{ asset('admin/dist/css/style.css') }}">
+    
     <style>
         .required{
             color:red;

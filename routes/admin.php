@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\VatController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\DepartmentController;
 ;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
@@ -38,7 +39,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::resource('location',LocationController::class);
         Route::post('location/change-status', [LocationController::class, 'changeStatus'])->name('location.change-status');
     });
+
     Route::resource('vat',VatController::class);
     Route::resource('supplier',SupplierController::class);
     Route::post('supplier/change-status', [SupplierController::class, 'changeStatus'])->name('supplier.change-status');
+
+    
+    Route::resource('department',DepartmentController::class);
+    Route::post('department/change-status', [DepartmentController::class, 'changeStatus'])->name('department.change-status');
+    Route::get('department/sub/index', [DepartmentController::class, 'listSubDepartment'])->name('department.sub.index');
+    Route::get('department/sub/create', [DepartmentController::class, 'createSubDepartment'])->name('department.sub.create');
+    Route::post('department/sub/store', [DepartmentController::class, 'storeSubDepartment'])->name('department.sub.store');
+    Route::get('department/sub/edit/{id}', [DepartmentController::class, 'editSubDepartment'])->name('department.sub.edit');
 });

@@ -26,7 +26,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.product.index') }}"
+                <a href="{{ route('admin.department.index') }}"
                     class="nav-link {{ Route::is('admin.department.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-university"></i>
                     <p>Departments</p>
