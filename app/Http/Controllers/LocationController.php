@@ -10,7 +10,7 @@ class LocationController extends Controller
 {
     public function index()
     {
-        $data = Location::orderBy('id','DESC')->get();
+        $data = Location::with('created_user')->orderBy('id','DESC')->get();
         return view('admin.location.index', compact('data'));
     }
 
