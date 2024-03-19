@@ -13,6 +13,7 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Created</th>
+                        <th>Status</th>
                         <th>Action</th>
                         <th></th>
                     </tr>
@@ -25,16 +26,27 @@
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->created_at }}</td>
                             <td>
-                                <a href="{{ route('admin.user.edit', encrypt($user->id)) }}"
-                                    class="btn btn-sm btn-primary">Edit</a>
+                                @if($user->status == 1)
+                                <span class="badge badge-success">Active</span>
+                                @else 
+                                <span class="badge badge-warning">Deactive</span>
+                                @endif
                             </td>
                             <td>
-                                <form action="{{ route('admin.user.destroy', encrypt($user->id)) }}" method="POST"
-                                    onsubmit="return confirm('Are sure want to delete?')">
-                                    @method('DELETE')
-                                    @csrf
-                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                </form>
+                                <a href="{{ route('admin.user.edit',encrypt($user->id)) }}" class="btn btn-sm btn-secondary">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                            </td>
+                            <td>
+                                @if($user->status === 1)
+                                    <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $user->id }}, {{ $user->status }})">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                @else
+                                    <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $user->id }}, {{ $user->status }})">
+                                        <i class="fas fa-check-circle"></i>
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -52,6 +64,69 @@
                     "responsive": true,
                 });
             });
+
+            function changeStatus(id, status) {
+
+            cuteAlert({
+                type: "question",
+                title: "Are you sure",
+                message: "You want to change the status of this item ?",
+                confirmText: "Yes",
+                cancelText: "Cancel"
+                }).then((e)=>{
+                if ( e == ("confirm")){
+                        $.ajax({
+                            url: "{{ url('admin/user/change-status') }}",
+                            type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "id": id,
+                                "status": status
+                            },
+                            success: function (data) {
+                                var result = JSON.parse(data);
+                                if (result == 1) {
+                                    toastr.success(
+                                        'Success',
+                                        'Successfully Updated !',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        });
+                                } else {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    );
+                                }
+                            }, error: function (data) {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    );
+                            }
+                        });
+                } else {
+                }
+            });
+            }
         </script>
     @endsection
 </x-admin>

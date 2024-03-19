@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
+use DB;
+use Auth;
 
 class UserController extends Controller
 {
@@ -59,9 +61,35 @@ class UserController extends Controller
         $user->assignRole($request->role);
         return redirect()->route('admin.user.index')->with('success','User updated successfully.');
     }
-    public function destroy($id)
+    // public function destroy($id)
+    // {
+    //     User::where('id',decrypt($id))->delete();
+    //     return redirect()->back()->with('success','User deleted successfully.');
+    // }
+
+    public function changeStatus(Request $request)
     {
-        User::where('id',decrypt($id))->delete();
-        return redirect()->back()->with('success','User deleted successfully.');
+        $status = $request->input('status');
+        $id = $request->input('id');
+
+        if($status == 1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = User::find($id);
+            $queryStatus->status = $status;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
     }
 }
