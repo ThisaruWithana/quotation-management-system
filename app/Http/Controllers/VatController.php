@@ -59,4 +59,9 @@ class VatController extends Controller
                 return redirect()->back()->withErrors(['error' => $e->getMessage()]);
             } 
     }
+
+    public function barcode()
+    {
+        return view('barcode');
+    }
 }
