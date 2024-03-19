@@ -52,7 +52,7 @@
                         <!-- /.card-body -->
                         <div class="card-footer float-end float-right">
                             <button type="submit" id="submit"
-                                class="btn btn-primary float-end float-right">Submit</button>
+                                class="btn btn-primary float-end float-right">Save</button>
                         </div>
                     </form>
                 </div>

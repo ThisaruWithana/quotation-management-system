@@ -13,7 +13,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\VatController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DepartmentController;
-;
+use App\Http\Controllers\CustomerController;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard',[ProfileController::class,'dashboard'])->name('dashboard');
@@ -41,14 +41,20 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     });
 
     Route::resource('vat',VatController::class);
+
     Route::resource('supplier',SupplierController::class);
     Route::post('supplier/change-status', [SupplierController::class, 'changeStatus'])->name('supplier.change-status');
 
     
     Route::resource('department',DepartmentController::class);
     Route::post('department/change-status', [DepartmentController::class, 'changeStatus'])->name('department.change-status');
+
     Route::get('department/sub/index', [DepartmentController::class, 'listSubDepartment'])->name('department.sub.index');
     Route::get('department/sub/create', [DepartmentController::class, 'createSubDepartment'])->name('department.sub.create');
     Route::post('department/sub/store', [DepartmentController::class, 'storeSubDepartment'])->name('department.sub.store');
     Route::get('department/sub/edit/{id}', [DepartmentController::class, 'editSubDepartment'])->name('department.sub.edit');
+    Route::post('department/sub/change-status', [DepartmentController::class, 'changeStatusSubDepartments'])->name('department.sub.change-status');
+    
+    Route::resource('customer',CustomerController::class);
+    Route::post('customer/change-status', [CustomerController::class, 'changeStatus'])->name('customer.change-status');
 });

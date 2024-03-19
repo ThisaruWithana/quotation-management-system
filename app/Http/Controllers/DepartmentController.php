@@ -178,4 +178,30 @@ class DepartmentController extends Controller
                 return redirect()->back()->withErrors(['error' => $e->getMessage()]);
             } 
     }
+
+    public function changeStatusSubDepartments(Request $request)
+    {
+        $status = $request->input('status');
+        $id = $request->input('id');
+
+        if($status == 1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = SubDepartment::find($id);
+            $queryStatus->status = $status;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
 }
