@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Location;
+use Illuminate\Validation\Rule;
 use DB;
+use Auth;
+
 
 class LocationController extends Controller
 {
@@ -24,32 +27,31 @@ class LocationController extends Controller
     {
             try{
                 DB::beginTransaction();
-            
-                // if($request->id){
-                //     $request->validate([
-                //         'name' => 'required',
-                //     ]);
-                // }else{
-                //     $request->validate([
-                //         'name' => 'required',
-                //     ]);
-                // }
 
-                $request->validate([
-                    'name' => 'required',
-                ]);
+                // Check validation
+                if($request->input('id')){
+                    $request->validate([
+                        'name' => ['required', 'string', 'max:255', Rule::unique('locations')->ignore($request->input('id'))]
+                    ]);
+                }else{
+                    $request->validate([
+                        'name' => 'required', 'string', 'max:255', 'unique:'.Location::class
+                    ]);
+                }
 
-                $query = Location::updateOrCreate(
+                 $query = Location::updateOrCreate(
                     [
-                        'id'=>$request->id
+                        'id'=>$request->input('id')
                     ],[
-                        'name'=>$request->name,
+                        'name'=>$request->input('name'),
+                        'created_by' =>  Auth::user()->id,
+                        'updated_by' => Auth::user()->id
                     ]
                 );
-        
+     
                 DB::commit();
 
-                if($request->id){
+                if($request->input('id')){
                     $msg = 'Location updated successfully.';
                 }else{
                     $msg = 'Location created successfully.';
@@ -75,7 +77,7 @@ class LocationController extends Controller
         $status = $request->input('status');
         $id = $request->input('id');
 
-        if($status = 1){
+        if($status == 1){
             $status = 0;
         }else{
             $status = 1;
