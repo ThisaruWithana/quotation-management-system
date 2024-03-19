@@ -58,11 +58,11 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <button type="submit" class="btn btn-primary btn-sm">{{ __('Save') }}</button>
+            <button type="submit" class="btn btn-primary btn-sm">{{ __('Save') }}</button><br><br>
             @if (session('status') === 'profile-updated')
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ 'Saved' }}
-                    <button type="button" class="btn btn-sm float-end float-right" data-bs-dismiss="alert"
+                    <button type="button" class="btn btn-sm float-end float-right" data-dismiss="alert"
                         aria-label="Close">&times;</button>
                 </div>
             @endif
