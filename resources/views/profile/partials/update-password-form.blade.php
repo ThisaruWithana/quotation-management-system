@@ -32,12 +32,12 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <button class="btn btn-primary btn-sm" type="submit">{{ __('Save') }}</button>
+            <button class="btn btn-primary btn-sm" type="submit">{{ __('Save') }}</button><br><br>
 
             @if (session('status') === 'password-updated')
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ 'Saved' }}
-                <button type="button" class="btn btn-sm float-end float-right" data-bs-dismiss="alert"
+                <button type="button" class="btn btn-sm float-end float-right" data-dismiss="alert"
                     aria-label="Close">&times;</button>
             </div>
             @endif
