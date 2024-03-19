@@ -8,13 +8,13 @@
                     <div class="card-header">
                         <h3 class="card-title">{{ $title }}</h3>
                         <div class="card-tools">
-                            <a href="{{ route('admin.supplier.index') }}"
+                            <a href="{{ route('admin.customer.index') }}"
                                 class="btn btn-sm btn-dark">Back</a>
                         </div>
                     </div>
                     <!-- /.card-header -->
                     <!-- form start -->
-                    <form action="{{ route('admin.supplier.store') }}" method="POST"
+                    <form action="{{ route('admin.customer.store') }}" method="POST"
                         class="needs-validation" novalidate="">
                         @csrf
                         <div class="card-body">
@@ -23,13 +23,13 @@
                                     <input type="hidden" name="id" value="{{ $data->id }}">
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="name" class="form-label">Supplier Name</label>
+                                            <label for="name" class="form-label">Customer Name</label>
                                             <input type="text" class="form-control" name="name" id="name"
                                                 required="" value="{{ $data->name }}" autocomplete="off">
                                                 @error('name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Supplier Name is required.</div>
+                                            <div class="invalid-feedback">Customer Name is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -101,25 +101,38 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="website" class="form-label">Web Address</label>
-                                            <input type="text" class="form-control" name="website" id="website"
-                                                value="{{ $data->website }}" autocomplete="off">
-                                                @error('website')
+                                            <label for="symbol_group" class="form-label">Symbol Group</label>
+                                            <input type="text" class="form-control" name="symbol_group" id="symbol_group"
+                                                value="{{ $data->symbol_group }}" autocomplete="off">
+                                                @error('symbol_group')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="ctype" class="form-label">Customer Type</label>
+                                            <span class="required"> * </span>
+                                            <select name="ctype" id="ctype" class="form-control"  required>
+                                                <option value="Prospective" @if ($data->type == 'Prospective') selected @endif>Prospective</option>
+                                                <option value="Installed" @if ($data->type == 'Installed') selected @endif>Installed</option>
+                                            </select>
+                                            @error('ctype')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 @else
                                     <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="name" class="form-label">Supplier Name</label>
+                                            <label for="name" class="form-label">Customer Name</label>
                                             <span class="required"> * </span>
                                             <input type="text" class="form-control" name="name" id="name"
                                                 required="" value="{{ old('name') }}" autocomplete="off">
                                                 @error('name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Supplier Name is required.</div>
+                                            <div class="invalid-feedback">Customer Name is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -183,7 +196,7 @@
                                         <div class="form-group">
                                             <label for="email" class="form-label">Email</label>
                                             <span class="required"> * </span>
-                                            <input type="text" class="form-control" name="email" id="email"
+                                            <input type="email" class="form-control" name="email" id="email"
                                                 required=""  value="{{ old('email') }}" autocomplete="off">
                                                 @error('email')
                                                     <span class="text-danger">{{ $message }}</span>
@@ -193,12 +206,27 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <label for="website" class="form-label">Web Address</label>
-                                            <input type="text" class="form-control" name="website" id="website"
-                                                value="{{ old('website') }}" autocomplete="off">
-                                                @error('website')
+                                            <label for="symbol_group" class="form-label">Symbol Group</label>
+                                            <span class="required"> * </span>
+                                            <input type="text" class="form-control" name="symbol_group" id="symbol_group"
+                                                value="{{ old('symbol_group') }}" autocomplete="off" required>
+                                                @error('symbol_group')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <label for="ctype" class="form-label">Customer Type</label>
+                                            <span class="required"> * </span>
+                                            <select name="ctype" id="ctype" class="form-control"  required>
+                                                <option value="Prospective">Prospective</option>
+                                                <option value="Installed">Installed</option>
+                                            </select>
+
+                                            @error('ctype')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                 @endif
