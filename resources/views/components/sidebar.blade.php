@@ -34,6 +34,14 @@
             </li>
 
             <li class="nav-item">
+                <a href="{{ route('admin.customer.index') }}"
+                    class="nav-link {{ Route::is('admin.customer.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Customers</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a href="{{ route('admin.product.index') }}"
                     class="nav-link {{ Route::is('admin.product.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-th"></i>
