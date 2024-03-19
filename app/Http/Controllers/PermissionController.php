@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
+use DB;
+use Auth;
 
 class PermissionController extends Controller
 {
@@ -48,5 +50,31 @@ class PermissionController extends Controller
     {
         Permission::where('id',decrypt($id))->delete();
         return redirect()->route('admin.permission.index')->with('error','Permission deleted successfully.');
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $status = $request->input('status');
+        $id = $request->input('id');
+
+        if($status == 1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = Permission::find($id);
+            $queryStatus->status = $status;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
     }
 }

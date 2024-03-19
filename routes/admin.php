@@ -59,4 +59,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('customer/change-status', [CustomerController::class, 'changeStatus'])->name('customer.change-status');
     Route::post('user/change-status', [UserController::class, 'changeStatus'])->name('user.change-status');
     Route::post('role/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
+    Route::post('permission/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
 });

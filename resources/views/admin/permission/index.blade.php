@@ -15,6 +15,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Created</th>
+                        <th>Status</th>
                         <th>Action</th>
                         <th></th>
                     </tr>
@@ -25,20 +26,28 @@
                             <td>{{ $permission->name }}</td>
                             <td>{{ $permission->created_at }}</td>
                             <td>
+                                @if($permission->status == 1)
+                                <span class="badge badge-success">Active</span>
+                                @else 
+                                <span class="badge badge-warning">Deactive</span>
+                                @endif
+                            </td>
+                            <td>
                                 <a href="{{ route('admin.permission.edit', encrypt($permission->id)) }}"
                                     class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
                             </td>
                             <td>
-                                <form action="{{ route('admin.permission.destroy', encrypt($permission->id)) }}"
-                                    method="POST" onclick="confirm('Are you sure')">
-                                    @method('DELETE')
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger">
+                                @if($permission->status === 1)
+                                    <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $permission->id }}, {{ $permission->status }})">
                                         <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
+                                    </a>
+                                @else
+                                    <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $permission->id }}, {{ $permission->status }})">
+                                        <i class="fas fa-check-circle"></i>
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                     @empty
@@ -61,6 +70,69 @@
                     "responsive": true,
                 });
             });
+
+            function changeStatus(id, status) {
+
+                cuteAlert({
+                    type: "question",
+                    title: "Are you sure",
+                    message: "You want to change the status of this item ?",
+                    confirmText: "Yes",
+                    cancelText: "Cancel"
+                    }).then((e)=>{
+                    if ( e == ("confirm")){
+                            $.ajax({
+                                url: "{{ url('admin/permission/change-status') }}",
+                                type: 'POST',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    "id": id,
+                                    "status": status
+                                },
+                                success: function (data) {
+                                    var result = JSON.parse(data);
+                                    if (result == 1) {
+                                        toastr.success(
+                                            'Success',
+                                            'Successfully Updated !',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
+                                            });
+                                    } else {
+                                        toastr.error(
+                                            'Error',
+                                            'Something Went Wrong!',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
+                                            }
+                                        );
+                                    }
+                                }, error: function (data) {
+                                        toastr.error(
+                                            'Error',
+                                            'Something Went Wrong!',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
+                                            }
+                                        );
+                                }
+                            });
+                    } else {
+                    }
+                });
+            }
         </script>
     @endsection
 </x-admin>
