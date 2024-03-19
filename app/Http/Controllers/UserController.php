@@ -61,11 +61,6 @@ class UserController extends Controller
         $user->assignRole($request->role);
         return redirect()->route('admin.user.index')->with('success','User updated successfully.');
     }
-    // public function destroy($id)
-    // {
-    //     User::where('id',decrypt($id))->delete();
-    //     return redirect()->back()->with('success','User deleted successfully.');
-    // }
 
     public function changeStatus(Request $request)
     {

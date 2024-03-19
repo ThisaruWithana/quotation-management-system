@@ -67,65 +67,65 @@
 
             function changeStatus(id, status) {
 
-            cuteAlert({
-                type: "question",
-                title: "Are you sure",
-                message: "You want to change the status of this item ?",
-                confirmText: "Yes",
-                cancelText: "Cancel"
-                }).then((e)=>{
-                if ( e == ("confirm")){
-                        $.ajax({
-                            url: "{{ url('admin/user/change-status') }}",
-                            type: 'POST',
-                            data: {
-                                "_token": "{{ csrf_token() }}",
-                                "id": id,
-                                "status": status
-                            },
-                            success: function (data) {
-                                var result = JSON.parse(data);
-                                if (result == 1) {
-                                    toastr.success(
-                                        'Success',
-                                        'Successfully Updated !',
-                                        {
-                                            timeOut: 1500,
-                                            fadeOut: 1500,
-                                            onHidden: function () {
-                                                window.location.reload();
+                cuteAlert({
+                    type: "question",
+                    title: "Are you sure",
+                    message: "You want to change the status of this item ?",
+                    confirmText: "Yes",
+                    cancelText: "Cancel"
+                    }).then((e)=>{
+                    if ( e == ("confirm")){
+                            $.ajax({
+                                url: "{{ url('admin/user/change-status') }}",
+                                type: 'POST',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    "id": id,
+                                    "status": status
+                                },
+                                success: function (data) {
+                                    var result = JSON.parse(data);
+                                    if (result == 1) {
+                                        toastr.success(
+                                            'Success',
+                                            'Successfully Updated !',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
+                                            });
+                                    } else {
+                                        toastr.error(
+                                            'Error',
+                                            'Something Went Wrong!',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
                                             }
-                                        });
-                                } else {
-                                    toastr.error(
-                                        'Error',
-                                        'Something Went Wrong!',
-                                        {
-                                            timeOut: 1500,
-                                            fadeOut: 1500,
-                                            onHidden: function () {
-                                                window.location.reload();
+                                        );
+                                    }
+                                }, error: function (data) {
+                                        toastr.error(
+                                            'Error',
+                                            'Something Went Wrong!',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
                                             }
-                                        }
-                                    );
+                                        );
                                 }
-                            }, error: function (data) {
-                                    toastr.error(
-                                        'Error',
-                                        'Something Went Wrong!',
-                                        {
-                                            timeOut: 1500,
-                                            fadeOut: 1500,
-                                            onHidden: function () {
-                                                window.location.reload();
-                                            }
-                                        }
-                                    );
-                            }
-                        });
-                } else {
-                }
-            });
+                            });
+                    } else {
+                    }
+                });
             }
         </script>
     @endsection

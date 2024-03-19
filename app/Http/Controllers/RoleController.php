@@ -75,9 +75,29 @@ class RoleController extends Controller
         return view('admin.role.edit',compact('data', 'permissions', 'selectedPermissions'));
     }
 
-    public function destroy($id)
+    public function changeStatus(Request $request)
     {
-        Role::where('id',decrypt($id))->delete();
-        return redirect()->route('admin.role.index')->with('error','Role deleted successfully.');
+        $status = $request->input('status');
+        $id = $request->input('id');
+
+        if($status == 1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = Role::find($id);
+            $queryStatus->status = $status;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
     }
 }
