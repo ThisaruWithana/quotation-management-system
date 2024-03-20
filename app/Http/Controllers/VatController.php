@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\VAT;
+use App\Models\Department;
 use DB;
 use Auth;
 
@@ -64,7 +65,6 @@ class VatController extends Controller
         $id = $request->input('id');
 
         $request->validate([
-            'name' => ['required', 'string'],
             'rate' => ['required', 'string']
         ]); 
 
@@ -75,12 +75,19 @@ class VatController extends Controller
                 'status' => 0,
                 'created_by' => Auth::user()->id
         ]);
-
+        
         $query = VAT::create([
             'name' => $request->input('name'),
             'value' => $request->input('rate'),
             'created_by' =>  Auth::user()->id,
             'updated_by' => Auth::user()->id
+        ]);
+        
+        $update = DB::table('department')
+            ->where('vat_id', $id)
+            ->update([
+                'vat_id' => $query->id,
+                'updated_by' => Auth::user()->id
         ]);
 
         return redirect()->route('admin.vat.index')->with('success','VAT updated successfully.');

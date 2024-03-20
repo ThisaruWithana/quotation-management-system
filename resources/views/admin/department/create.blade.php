@@ -32,33 +32,24 @@
                                             <div class="invalid-feedback">Department Name is required.</div>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-lg-12">
+
+                                    <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="code" class="form-label">Code</label>
-                                            <input type="text" class="form-control" name="code" id="code"
-                                                value="{{ $data->code }}"  autocomplete="off">
-                                                @error('code')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                        </div>
-                                    </div> -->
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="sales_vat" class="form-label">Sales VAT Name</label>
-                                            <input type="text" class="form-control" name="sales_vat" id="sales_vat"
-                                                value="{{ $vat['name'] }}" disabled>
-                                                <input type="hidden" name="vat_id" id="vat_id" value="{{ $vat['id'] }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="sales_vat" class="form-label">Sales VAT Rate (%)</label>
-                                            <input type="text" class="form-control" name="sales_vat" id="sales_vat"
-                                                value="{{ $vat['value'] }}" disabled>
-                                                <input type="hidden" name="vat_id" id="vat_id" value="{{ $vat['id'] }}">
+                                            <label for="sales_vat" class="form-label">Sales VAT</label>
+                                            <span class="required"> * </span>
+                                            <select name="sales_vat" id="sales_vat" class="form-control"  required data-mdb-filter="true">
+                                                @foreach ($sales_vat as $value)
+                                                    <option value="{{ $value->id }}" 
+                                                    {{ $data->vat_id === $value->id ? 'selected' : '' }}>{{ $value->name }} - {{ $value->value }} %</option>
+                                                @endforeach
+                                            </select>
+
+                                            @error('sales_vat')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
-                                    
+
                                 @else
                                     <div class="col-lg-12">
                                         <div class="form-group">
@@ -72,32 +63,23 @@
                                             <div class="invalid-feedback">Department Name is required.</div>
                                         </div>
                                     </div>
-                                    <!-- <div class="col-lg-12">
+
+                                    <div class="col-lg-12">
                                         <div class="form-group">
-                                            <label for="code" class="form-label">Code</label>
-                                            <input type="text" class="form-control" name="code" id="code"
-                                                value="{{ old('code') }}"  autocomplete="off">
-                                                @error('code')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                        </div>
-                                    </div> -->
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="sales_vat" class="form-label">Sales VAT Name</label>
-                                            <input type="text" class="form-control" name="sales_vat" id="sales_vat"
-                                                value="{{ $vat['name'] }}" disabled>
-                                                <input type="hidden" name="vat_id" id="vat_id" value="{{ $vat['id'] }}">
+                                            <label for="sales_vat" class="form-label">Sales VAT</label>
+                                            <span class="required"> * </span>
+                                            <select name="sales_vat" id="sales_vat" class="form-control"  required data-mdb-filter="true">
+                                                @foreach ($sales_vat as $value)
+                                                    <option value="{{ $value->id }}">{{ $value->name }} - {{ $value->value }} %</option>
+                                                @endforeach
+                                            </select>
+
+                                            @error('sales_vat')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="sales_vat" class="form-label">Sales VAT Rate (%)</label>
-                                            <input type="text" class="form-control" name="sales_vat" id="sales_vat"
-                                                value="{{ $vat['value'] }}" disabled>
-                                                <input type="hidden" name="vat_id" id="vat_id" value="{{ $vat['id'] }}">
-                                        </div>
-                                    </div>
+
                                 @endif
                             </div>
                         </div>

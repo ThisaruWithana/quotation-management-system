@@ -26,7 +26,7 @@
                                             <label for="name" class="form-label">VAT Name</label>
                                             <span class="required"> * </span>
                                             <input type="text" class="form-control" name="name" id="name"
-                                                required="" value="{{ $data->name }}" autocomplete="off" disabled>
+                                                required="" value="{{ $data->name }}" autocomplete="off" readonly>
                                                 @error('name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror

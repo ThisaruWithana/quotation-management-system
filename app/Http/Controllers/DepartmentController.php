@@ -24,8 +24,8 @@ class DepartmentController extends Controller
     {
         $title = 'Add New Department';
         $page = 'add';
-        $vat = VAT::where('status',1)->first();
-        return view('admin.department.create', compact('title', 'page', 'vat'));
+        $sales_vat = VAT::where('status',1)->get();
+        return view('admin.department.create', compact('title', 'page', 'sales_vat'));
     }
     
     public function edit($id)
@@ -33,8 +33,8 @@ class DepartmentController extends Controller
         $title = 'Edit Department';
         $page = 'edit';
         $data = Department::where('id',decrypt($id))->first();
-        $vat = VAT::where('status',1)->first();
-        return view('admin.department.create',compact('data', 'title', 'page', 'vat'));
+        $sales_vat = VAT::where('status',1)->get();
+        return view('admin.department.create',compact('data', 'title', 'page', 'sales_vat'));
     }
 
     public function store(Request $request)
@@ -46,11 +46,13 @@ class DepartmentController extends Controller
                 // Check validation
                 if($request->input('id')){
                     $request->validate([
-                        'name' => ['required', 'string', 'max:255', Rule::unique('department')->ignore($id)]
+                        'name' => ['required', 'string', 'max:255', Rule::unique('department')->ignore($id)],
+                        'sales_vat' => 'required'
                     ]);
                 }else{
                     $request->validate([
-                        'name' => 'required', 'string', 'max:255', 'unique:'.Department::class
+                        'name' => 'required', 'string', 'max:255', 'unique:'.Department::class,
+                        'sales_vat' => 'required'
                     ]);
                 }
 
@@ -61,7 +63,7 @@ class DepartmentController extends Controller
                     ],[
                         'name' => $request->input('name'),
                         'code' => $request->input('code'),
-                        'vat_id' => $request->input('vat_id'),
+                        'vat_id' => $request->input('sales_vat'),
                         'created_by' =>  Auth::user()->id,
                         'updated_by' => Auth::user()->id
                     ]
