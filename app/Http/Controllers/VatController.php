@@ -33,14 +33,6 @@ class VatController extends Controller
                     'rate' => 'required',
                 ]);
 
-                // Disable existing VAT values
-                $update = DB::table('vat')
-                ->where('status', 1)
-                ->update([
-                    'status' => 0,
-                    'created_by' => Auth::user()->id
-                ]);
-
                 // Add new VAT value
                 $query = VAT::create([
                     'name' => $request->input('name'),
@@ -58,6 +50,40 @@ class VatController extends Controller
                 DB::rollback();
                 return redirect()->back()->withErrors(['error' => $e->getMessage()]);
             } 
+    }
+
+    public function edit($id)
+    {
+        $title = 'Edit VAT';
+        $data = VAT::where('id',decrypt($id))->first();
+        return view('admin.vat.edit',compact('data', 'title'));
+    }
+
+    public function update(Request $request)
+    {
+        $id = $request->input('id');
+
+        $request->validate([
+            'name' => ['required', 'string'],
+            'rate' => ['required', 'string']
+        ]); 
+
+         // Disable existing VAT values
+        $update = DB::table('vat')
+            ->where('id', $id)
+            ->update([
+                'status' => 0,
+                'created_by' => Auth::user()->id
+        ]);
+
+        $query = VAT::create([
+            'name' => $request->input('name'),
+            'value' => $request->input('rate'),
+            'created_by' =>  Auth::user()->id,
+            'updated_by' => Auth::user()->id
+        ]);
+
+        return redirect()->route('admin.vat.index')->with('success','VAT updated successfully.');
     }
 
     public function barcode()

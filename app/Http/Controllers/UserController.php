@@ -37,7 +37,10 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'mode' => 'light',
             'password' => bcrypt($request->password),
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
         ]);
         $user->assignRole($request->role);
         return redirect()->route('admin.user.index')->with('success','User created successfully.');
@@ -57,6 +60,8 @@ class UserController extends Controller
         $user = User::find($request->id);
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->mode = 'light';
+        $user->updated_by = Auth::user()->id;
         $user->save();
         $user->assignRole($request->role);
         return redirect()->route('admin.user.index')->with('success','User updated successfully.');
@@ -78,6 +83,7 @@ class UserController extends Controller
 
             $queryStatus = User::find($id);
             $queryStatus->status = $status;
+            $queryStatus->updated_by = Auth::user()->id;
             $queryStatus->save();
 
             DB::commit();

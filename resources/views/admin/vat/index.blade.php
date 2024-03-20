@@ -16,6 +16,7 @@
                         <th>Status</th>
                         <th>Created By</th>
                         <th>Created At</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,6 +34,13 @@
                             </td>
                             <td>{{ $value->created_user->name }}</td>
                             <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
+                            <td>
+                                @if($value->status == 1)
+                                    <a href="{{ route('admin.vat.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                        <i class="far fa-edit"></i>
+                                    </a>
+                                @endif
+                            </td>
                         </tr>
                      <?php $i++; ?>
                     @endforeach
