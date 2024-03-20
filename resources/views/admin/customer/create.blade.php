@@ -115,6 +115,7 @@
                                             <span class="required"> * </span>
                                             <select name="ctype" id="ctype" class="form-control"  required>
                                                 <option value="Prospective" @if ($data->type == 'Prospective') selected @endif>Prospective</option>
+                                                <option value="Accepted" @if ($data->type == 'Accepted') selected @endif>Accepted</option>
                                                 <option value="Installed" @if ($data->type == 'Installed') selected @endif>Installed</option>
                                             </select>
                                             @error('ctype')
@@ -221,6 +222,7 @@
                                             <span class="required"> * </span>
                                             <select name="ctype" id="ctype" class="form-control"  required>
                                                 <option value="Prospective">Prospective</option>
+                                                <option value="Accepted">Accepted</option>
                                                 <option value="Installed">Installed</option>
                                             </select>
 

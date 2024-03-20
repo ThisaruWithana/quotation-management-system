@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('mobile', 15)->nullable();
             $table->string('email')->nullable();
             $table->string('symbol_group');
-            $table->enum('type', ['Prospective', 'Installed'])->default('Prospective');
+            $table->enum('type', ['Prospective', 'Accepted', 'Installed'])->default('Prospective');
             $table->tinyInteger('status')->default(1)->comment('1-active,0-deactive');
             $table->integer('created_by');
             $table->integer('updated_by');

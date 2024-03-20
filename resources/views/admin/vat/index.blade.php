@@ -36,10 +36,13 @@
                             <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                             <td>
                                 @if($value->status == 1)
-                                    <a href="{{ route('admin.vat.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                                        <i class="far fa-edit"></i>
-                                    </a>
+                                <span class="badge badge-success">Active</span>
+                                @else 
+                                <span class="badge badge-warning">Deactive</span>
                                 @endif
+                                <a href="{{ route('admin.vat.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                    <i class="far fa-edit"></i>
+                                </a>
                             </td>
                         </tr>
                      <?php $i++; ?>
