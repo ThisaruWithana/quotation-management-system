@@ -6,14 +6,6 @@
                 <p>Dashboard</p>
             </a>
         </li>
-        
-        <li class="nav-item">
-            <a href="{{ route('admin.profile.edit') }}"
-                class="nav-link {{ Route::is('admin.profile.edit') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-id-card"></i>
-                <p>Profile</p>
-            </a>
-        </li>
 
         @role('admin')
             

@@ -19,8 +19,9 @@ class LocationController extends Controller
 
     public function create()
     {
-        $title = 'Create Product Location';
-        return view('admin.location.create', compact('title'));
+        $title = 'Add New Location';
+        $page = 'add';
+        return view('admin.location.create', compact('title', 'page'));
     }
 
     public function store(Request $request)
@@ -67,9 +68,10 @@ class LocationController extends Controller
 
     public function edit($id)
     {
-        $title = 'Edit Product Location';
+        $title = 'Edit Location';
+        $page = 'edit';
         $data = Location::where('id',decrypt($id))->first();
-        return view('admin.location.create',compact('data', 'title'));
+        return view('admin.location.create',compact('data', 'title', 'page'));
     }
 
     public function changeStatus(Request $request)

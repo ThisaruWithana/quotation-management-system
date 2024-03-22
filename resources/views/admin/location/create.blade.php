@@ -1,64 +1,54 @@
 <x-admin>
-    @section('title'){{ $title }} @endsection
-    <section class="content">
-        <!-- Default box -->
-        <div class="d-flex justify-content-center">
-            <div class="col-lg-6">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Create New Product Location</h3>
-                        <div class="card-tools">
-                            <a href="{{ route('admin.location.index') }}"
-                                class="btn btn-sm btn-dark">Back</a>
-                        </div>
-                    </div>
-                    <!-- /.card-header -->
-                    <!-- form start -->
-                    <form action="{{ route('admin.location.store') }}" method="POST"
-                        class="needs-validation" novalidate="">
-                        @csrf
-                        <div class="card-body">
-                            <div class="row">
-                                @if($title === 'Edit Product Location')
-                                    <input type="hidden" name="id" value="{{ $data->id }}">
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label for="name" class="form-label">Location Name</label>
-                                            <span class="required"> * </span>
-                                            <input type="text" class="form-control" name="name" id="name"
-                                                required="" value="{{ $data->name }}" autocomplete="off">
-                                                @error('name')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            <div class="invalid-feedback">Location name field is required.</div>
-                                        </div>
-                                    </div>
-                                @else
-                                    <div class="col-lg-12">
-                                        <div class="form-group">
-                                            <label for="name" class="form-label">Location Name</label>
-                                            <span class="required"> * </span>
-                                            <input type="text" class="form-control" name="name" id="name"
-                                                required="" value="{{ old('name') }}" autocomplete="off">
-                                                @error('name')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            <div class="invalid-feedback">Location name field is required.</div>
-                                        </div>
-                                    </div>
-                                @endif
+   @section('title', 'Product Location')
+   <section class="content">
+      <!-- Default box -->
+      <div class="d-flex justify-content-center">
+         <div class="col-lg-6">
+            <div class="card card-primary">
+               <h5 class="card-header  white-text text-left py-3">
+                  <!-- <strong>{{ $title }}</strong> -->
+                  {{ $title }}
+               </h5>
+               <div class="card-body px-lg-2 pt-0">
+                  <form class="text-center border border-light p-5" action="{{ route('admin.location.store') }}" method="POST">
+                    @csrf
+
+                    @if($page === 'edit')
+                        <div class="col-lg-12">
+                            <input type="hidden" name="id" value="{{ $data->id }}">
+                            <div class="form-group text-left">
+                            <label for="name" class="form-label">Location Name</label>
+                            <span class="required"> * </span>
+                            <input type="text" class="form-control" name="name" id="name" required="" 
+                                value="{{ $data->name }}" autocomplete="off"  placeholder="">
+                            @error('name')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                            <div class="invalid-feedback">Location name field is required.</div>
                             </div>
                         </div>
-                        <!-- /.card-body -->
-                        <div class="card-footer float-end float-right">
-                            <button type="submit" id="submit"
-                                class="btn btn-primary float-end float-right">Save</button>
+                    @else
+                     <div class="col-lg-12">
+                        <div class="form-group text-left">
+                           <label for="name" class="form-label">Location Name</label>
+                           <span class="required"> * </span>
+                           <input type="text" class="form-control" name="name" id="name" required="" 
+                              value="{{ old('name') }}" autocomplete="off"  placeholder="">
+                           @error('name')
+                           <span class="text-danger">{{ $message }}</span>
+                           @enderror
+                           <div class="invalid-feedback">Location name field is required.</div>
                         </div>
-                    </form>
-                </div>
+                     </div>
+                    @endif
+                     <div class="col-lg-4">
+                        <button class="btn btn-primary btn-block" type="submit">Save</button>
+                     </div>
+                  </form>
+               </div>
             </div>
-        </div>
-        <!-- /.card -->
-
-    </section>
+         </div>
+      </div>
+      <!-- /.card -->
+   </section>
 </x-admin>
