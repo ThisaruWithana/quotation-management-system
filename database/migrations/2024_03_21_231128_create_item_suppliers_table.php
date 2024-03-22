@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('barcode', function (Blueprint $table) {
+        Schema::create('item_suppliers', function (Blueprint $table) {
             $table->id();
-            $table->string('product_code');
-            $table->string('barcode')->nullable();
-            $table->string('description')->nullable();
+            $table->integer('item_id');
+            $table->integer('supplier_id');
             $table->tinyInteger('status')->default(1)->comment('1-active,0-deactive');
             $table->integer('created_by');
             $table->integer('updated_by');
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('barcode');
+        Schema::dropIfExists('item_suppliers');
     }
 };

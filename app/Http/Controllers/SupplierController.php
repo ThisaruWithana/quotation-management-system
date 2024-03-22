@@ -45,15 +45,16 @@ class SupplierController extends Controller
                         'contact_person' => 'required',
                         'email' => ['required', 'string', 'email', 'max:255', Rule::unique('supplier')->ignore($id)],
                         'address' => 'required|max:255',
-                        'tel' => 'required|max:15'
+                        // 'tel' => 'required|phone:US,UK'
                     ]);
                 }else{
+         
                     $request->validate([
                         'name' => 'required', 'string', 'max:255',
                         'contact_person' => 'required',
                         'email' => 'required', 'string', 'email', 'max:255', 'unique:'.Supplier::class,
                         'address' => 'required|max:255',
-                        'tel' => 'required|max:15'
+                        // 'tel' => 'required|phone:US,UK'
                     ]);
                 }
 

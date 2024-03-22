@@ -63,6 +63,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('permission/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
     
     Route::resource('item',ItemController::class);
+    Route::post('item/store', [ItemController::class, 'store'])->name('item.store');
 
 
 });

@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->integer('department_id');
-            $table->integer('sub_department_id');
-            $table->integer('vat_id');
-            $table->integer('location_id');
-            $table->string('name');
+            $table->integer('barcode_id');
+            $table->integer('department_id')->nullable();
+            $table->integer('sub_department_id')->nullable();
+            $table->integer('vat_id')->nullable();
+            $table->integer('location_id')->nullable();
+            $table->string('name')->nullable();
             $table->string('description')->nullable();
             $table->enum('margin_type', ['Floating', 'Fixed '])->default('Floating');
             $table->string('item_size')->default('SNG');
@@ -29,8 +30,8 @@ return new class extends Migration
             $table->integer('order_days')->nullable();
             $table->timestamp('last_order_date')->nullable();
             $table->integer('delivery_days')->nullable();
-            $table->double('cost_price');
-            $table->double('retail_price');
+            $table->double('cost_price')->nullable();
+            $table->double('retail_price')->nullable();
             $table->double('margin')->nullable();
             $table->integer('min_stock')->nullable();
             $table->tinyInteger('exclude_from_stock')->default(0)->comment('1-active,0-deactive');
