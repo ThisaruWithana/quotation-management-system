@@ -1,28 +1,24 @@
 <x-admin>
-    @section('title'){{ $title }} @endsection
+@section('title')  {{ 'Departments' }} @endsection
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
             <div class="col-lg-6">
                 <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">{{ $title }}</h3>
-                        <div class="card-tools">
-                            <a href="{{ route('admin.department.index') }}"
-                                class="btn btn-sm btn-dark">Back</a>
-                        </div>
-                    </div>
+               <h5 class="card-header  white-text text-left py-3">
+                  {{ $title }}
+               </h5>
                     <!-- /.card-header -->
                     <!-- form start -->
                     <form action="{{ route('admin.department.store') }}" method="POST"
-                        class="needs-validation" novalidate="">
+                    class="text-center border border-light p-5">
                         @csrf
-                        <div class="card-body">
+               <div class="card-body px-lg-2 pt-0">
                             <div class="row">
                                 @if($page === 'edit')
                                     <input type="hidden" name="id" value="{{ $data->id }}">
                                     <div class="col-lg-12">
-                                        <div class="form-group">
+                                        <div class="form-group text-left">
                                             <label for="name" class="form-label">Department Name</label>
                                             <input type="text" class="form-control" name="name" id="name"
                                                 required="" value="{{ $data->name }}" autocomplete="off">
@@ -34,10 +30,10 @@
                                     </div>
 
                                     <div class="col-lg-12">
-                                        <div class="form-group">
+                                        <div class="form-group text-left">
                                             <label for="sales_vat" class="form-label">Sales VAT</label>
                                             <span class="required"> * </span>
-                                            <select name="sales_vat" id="sales_vat" class="form-control"  required data-mdb-filter="true">
+                                            <select name="sales_vat" id="sales_vat" class="browser-default custom-select mb-4 selectpicker"   required data-mdb-filter="true">
                                                 @foreach ($sales_vat as $value)
                                                     <option value="{{ $value->id }}" 
                                                     {{ $data->vat_id === $value->id ? 'selected' : '' }}>{{ $value->name }} - {{ $value->value }} %</option>
@@ -52,7 +48,7 @@
 
                                 @else
                                     <div class="col-lg-12">
-                                        <div class="form-group">
+                                        <div class="form-group text-left">
                                             <label for="name" class="form-label">Department Name</label>
                                             <span class="required"> * </span>
                                             <input type="text" class="form-control" name="name" id="name"
@@ -65,10 +61,10 @@
                                     </div>
 
                                     <div class="col-lg-12">
-                                        <div class="form-group">
+                                        <div class="form-group text-left">
                                             <label for="sales_vat" class="form-label">Sales VAT</label>
                                             <span class="required"> * </span>
-                                            <select name="sales_vat" id="sales_vat" class="form-control"  required data-mdb-filter="true">
+                                            <select name="sales_vat" id="sales_vat" class="browser-default custom-select mb-4 selectpicker"   required data-mdb-filter="true">
                                                 @foreach ($sales_vat as $value)
                                                     <option value="{{ $value->id }}">{{ $value->name }} - {{ $value->value }} %</option>
                                                 @endforeach
@@ -84,10 +80,9 @@
                             </div>
                         </div>
                         <!-- /.card-body -->
-                        <div class="card-footer float-end">
-                            <button type="submit" id="submit"
-                                class="btn btn-primary float-end float-right">Save</button>
-                        </div>
+                     <div class="col-lg-4">
+                        <button class="btn btn-primary btn-block" type="submit">Save</button>
+                     </div>
                     </form>
                 </div>
             </div>

@@ -1,10 +1,10 @@
 <x-admin>
-    @section('title')  {{ $title }} @endsection
+@section('title')  {{ 'Sub Departments' }} @endsection
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.department.sub.create') }}" class="btn btn-sm btn-primary">Add</a>
+                <a href="{{ route('admin.department.sub.create') }}" class="btn btn-sm btn-primary">Add New</a>
                 <a href="{{ route('admin.department.index') }}" class="btn btn-sm btn-warning">Departments</a>
             </div>
         </div>
@@ -12,14 +12,13 @@
             <table class="table table-striped" id="dataTable">
                 <thead>
                     <tr>
-                        <th>Sub Department</th>
-                        <th>Department</th>
-                        <th>Created By</th>
-                        <th>Created At</th>
-                        <th>Last Updated</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                        <th></th>
+                        <th class="th-sm">Sub Department</th>
+                        <th class="th-sm">Department</th>
+                        <th class="th-sm">Created By</th>
+                        <th class="th-sm">Created At</th>
+                        <th class="th-sm">Last Updated</th>
+                        <th class="th-sm">Status</th>
+                        <th class="th-sm"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,8 +41,6 @@
                                 <a href="{{ route('admin.department.sub.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
-                            </td>
-                            <td>
                                 @if($value->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -69,6 +66,9 @@
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
+              "aoColumnDefs": [
+                { "bSortable": false, "aTargets": [ 6] }, 
+            ]
                 });
             });
 
