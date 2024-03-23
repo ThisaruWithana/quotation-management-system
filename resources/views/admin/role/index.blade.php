@@ -1,21 +1,19 @@
 <x-admin>
-    @section('title')  {{ 'Roles' }} @endsection
+    @section('title')  {{ 'User Roles' }} @endsection
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Roles</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.role.create') }}" class="btn btn-sm btn-primary">Add</a>
+                <a href="{{ route('admin.role.create') }}" class="btn btn-sm btn-primary">Add New</a>
             </div>
         </div>
         <div class="card-body">
-            <table class="table table-striped" id="roleTable">
+            <table class="table table-striped" id="dataTable">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Created At</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                        <th></th>
+                        <th class="th-sm">Name</th>
+                        <th class="th-sm">Created At</th>
+                        <th class="th-sm">Status</th>
+                        <th class="th-sm"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,8 +32,6 @@
                                 <a href="{{ route('admin.role.edit',encrypt($role->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
-                            </td>
-                            <td>
                                 @if($role->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $role->id }}, {{ $role->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -55,11 +51,14 @@
     @section('js')
         <script>
             $(function() {
-                $('#roleTable').DataTable({
+                $('#dataTable').DataTable({
                     "paging": true,
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
+              "aoColumnDefs": [
+                { "bSortable": false, "aTargets": [ 3] }, 
+            ]
                 });
             });
 
