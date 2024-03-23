@@ -23,7 +23,8 @@ class UserController extends Controller
     }
     public function create()
     {
-        return view('admin.user.create');
+        $title = 'Add New User';
+        return view('admin.user.create', compact('title'));
     }
     public function store(Request $request)
     {
@@ -47,8 +48,9 @@ class UserController extends Controller
     }
     public function edit($id)
     {
+        $title = 'Edit User';
         $user = User::where('id',decrypt($id))->first();
-        return view('admin.user.edit',compact('user'));
+        return view('admin.user.edit',compact('user', 'title'));
     }
     public function update(Request $request, User $user)
     {

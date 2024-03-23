@@ -2,26 +2,23 @@
     @section('title', 'Users')
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">User Table</h3>
-            <div class="card-tools"><a href="{{ route('admin.user.create') }}" class="btn btn-sm btn-primary">Add</a></div>
+            <!-- <h3 class="card-title">User Table</h3> -->
+            <div class="card-tools"><a href="{{ route('admin.user.create') }}" class="btn btn-sm btn-primary">Add New</a></div>
         </div>
         <div class="card-body">
-            <table class="table table-striped" id="userTable">
+            <table class="table table-striped" id="dataTable">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Created</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th class="th-sm">Name</th>
+                        <th class="th-sm">Email</th>
+                        <th class="th-sm">Created At</th>
+                        <th class="th-sm">Status</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($data as $user)
                         <tr>
-                            <td>{{ $user->id }}</td>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->created_at }}</td>
@@ -36,8 +33,6 @@
                                 <a href="{{ route('admin.user.edit',encrypt($user->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
-                            </td>
-                            <td>
                                 @if($user->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $user->id }}, {{ $user->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -57,11 +52,14 @@
     @section('js')
         <script>
             $(function() {
-                $('#userTable').DataTable({
+                $('#dataTable').DataTable({
                     "paging": true,
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
+                    "aoColumnDefs": [
+                        { "bSortable": false, "aTargets": [ 4] }, 
+                    ]
                 });
             });
 
