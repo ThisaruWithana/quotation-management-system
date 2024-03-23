@@ -2,7 +2,7 @@
 @section('css')
 @stop
 
-    @section('title'){{ 'Edit Role' }} @endsection
+    @section('title'){{ 'User Roles' }} @endsection
 
     <section class="content">
         <!-- Default box -->

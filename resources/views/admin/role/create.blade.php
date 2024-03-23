@@ -1,5 +1,5 @@
 <x-admin>
-    @section('title'){{ 'Create Role' }} @endsection
+    @section('title'){{ 'User Roles' }} @endsection
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
