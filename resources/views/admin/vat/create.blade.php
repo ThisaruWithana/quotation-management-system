@@ -1,28 +1,23 @@
 <x-admin>
-    @section('title'){{ $title }} @endsection
+    @section('title', 'VAT Configurations')
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
             <div class="col-lg-6">
                 <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">{{ $title }}</h3>
-                        <div class="card-tools">
-                            <a href="{{ route('admin.vat.index') }}"
-                                class="btn btn-sm btn-dark">Back</a>
-                        </div>
-                    </div>
+                    <h5 class="card-header  white-text text-left py-3">
+                        <!-- <strong>{{ $title }}</strong> -->
+                        {{ $title }}
+                    </h5>
                     <!-- /.card-header -->
                     <!-- form start -->
                     <form action="{{ route('admin.vat.store') }}" method="POST"
-                        class="needs-validation" novalidate="">
+                        class="text-center border border-light p-5">
                         @csrf
-                        <div class="card-body">
+                        <div class="card-body px-lg-2 pt-0">
                             <div class="row">
-                                @if($page === 'edit')
-                                @else
                                     <div class="col-lg-12">
-                                        <div class="form-group">
+                                        <div class="form-group text-left">
                                             <label for="name" class="form-label">VAT Name</label>
                                             <span class="required"> * </span>
                                             <input type="text" class="form-control" name="name" id="name"
@@ -34,7 +29,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <div class="form-group">
+                                        <div class="form-group  text-left">
                                             <label for="rate" class="form-label">VAT Rate (%)</label>
                                             <span class="required"> * </span>
                                             <input type="number" class="form-control" name="rate" id="rate"
@@ -45,14 +40,12 @@
                                             <div class="invalid-feedback">VAT Rate is required.</div>
                                         </div>
                                     </div>
-                                @endif
                             </div>
                         </div>
                         <!-- /.card-body -->
-                        <div class="card-footer float-end float-right">
-                            <button type="submit" id="submit"
-                                class="btn btn-primary float-end float-right">Save</button>
-                        </div>
+                     <div class="col-lg-4">
+                        <button class="btn btn-primary btn-block" type="submit">Save</button>
+                     </div>
                     </form>
                 </div>
             </div>
