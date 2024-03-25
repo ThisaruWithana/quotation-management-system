@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Session;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -44,5 +45,27 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    public function logout(Request $request)
+    {
+        // DB::beginTransaction();
+        try {
+            // $user = Auth::user();
+            // $user->logout = 1;
+            // $user->save();
+
+            Session::forget('client');
+            Session::forget('firstLogin');
+
+            // DB::commit();
+            Auth::logout();
+            return redirect('login');
+        } catch (\Exception $e) {
+            // DB::rollBack();
+            Auth::logout();
+            return redirect('login');
+        }
+
     }
 }

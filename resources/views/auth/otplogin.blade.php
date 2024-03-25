@@ -13,7 +13,7 @@
                         @endif
                     </div>
                     <div class="p-2 mt-4">
-                        <form method="POST" action="{{ route('otp.generate') }}">
+                        <form method="POST" action="{{ route('otp.generate') }}" class="text-center border border-light p-2">
                             @csrf
 
                             <div class="mb-3">

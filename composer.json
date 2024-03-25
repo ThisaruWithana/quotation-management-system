@@ -12,6 +12,8 @@
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.11",
         "laravel/tinker": "^2.8",
+        "milon/barcode": "^10.0",
+        "propaganistas/laravel-phone": "^5.2",
         "spatie/laravel-permission": "^6.0",
         "twilio/sdk": "^7.14",
         "zalanihir/country-state-city": "^1.0"

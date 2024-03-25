@@ -5,7 +5,6 @@
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
         </p>
     </header>
 
@@ -23,7 +22,7 @@
                 autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
-        <div class="mb-3">
+        <div class="mb-3" style="display:none;">
             <x-input-label for="Mode" class="form-label" :value="__('Mode')" />
             <select name="mode" id="Mode" class="form-control">
                 <option {{ Auth::user()->mode == 'dark' ? 'selected' : '' }} value="dark">Dark</option>

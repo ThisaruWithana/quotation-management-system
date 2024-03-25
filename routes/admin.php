@@ -14,6 +14,7 @@ use App\Http\Controllers\VatController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ItemController;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard',[ProfileController::class,'dashboard'])->name('dashboard');
@@ -57,4 +58,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     
     Route::resource('customer',CustomerController::class);
     Route::post('customer/change-status', [CustomerController::class, 'changeStatus'])->name('customer.change-status');
+    Route::post('user/change-status', [UserController::class, 'changeStatus'])->name('user.change-status');
+    Route::post('role/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
+    Route::post('permission/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
+    
+    Route::resource('item',ItemController::class);
+    Route::post('item/store', [ItemController::class, 'store'])->name('item.store');
+
+
 });
+
+Route::get('/barcode', [VatController::class, 'barcode']);

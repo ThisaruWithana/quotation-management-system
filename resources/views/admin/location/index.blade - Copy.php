@@ -1,24 +1,22 @@
 <x-admin>
-@section('title')  {{ 'Sub Departments' }} @endsection
+    @section('title')  {{ 'Product Locations' }} @endsection
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ $title }}</h3>
+            <h3 class="card-title">Product Locations</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.department.sub.create') }}" class="btn btn-sm btn-primary">Add New</a>
-                <a href="{{ route('admin.department.index') }}" class="btn btn-sm btn-warning">Departments</a>
+                <a href="{{ route('admin.location.create') }}" class="btn btn-sm btn-primary">Add</a>
             </div>
         </div>
         <div class="card-body">
             <table class="table table-striped" id="dataTable">
                 <thead>
                     <tr>
-                        <th class="th-sm">Sub Department</th>
-                        <th class="th-sm">Department</th>
-                        <th class="th-sm">Created By</th>
-                        <th class="th-sm">Created At</th>
-                        <th class="th-sm">Last Updated</th>
-                        <th class="th-sm">Status</th>
-                        <th class="th-sm"></th>
+                        <th>Name</th>
+                        <th>Created By</th>
+                        <th>Created At</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,10 +24,8 @@
                 @foreach ($data as $value)
                         <tr>
                             <td>{{ $value->name }}</td>
-                            <td>{{ $value->departments->name }}</td>
                             <td>{{ $value->created_user->name }}</td>
                             <td>{{ $value->created_at }}</td>
-                            <td>{{ $value->updated_at }}</td>
                             <td>
                                 @if($value->status == 1)
                                 <span class="badge badge-success">Active</span>
@@ -38,9 +34,11 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.department.sub.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('admin.location.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
+                            </td>
+                            <td>
                                 @if($value->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -66,9 +64,6 @@
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
-              "aoColumnDefs": [
-                { "bSortable": false, "aTargets": [ 6] }, 
-            ]
                 });
             });
 
@@ -83,7 +78,7 @@
                 }).then((e)=>{
                 if ( e == ("confirm")){
                         $.ajax({
-                            url: "{{ url('admin/department/sub/change-status') }}",
+                            url: "{{ url('admin/location/change-status') }}",
                             type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",

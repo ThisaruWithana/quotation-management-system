@@ -6,14 +6,6 @@
                 <p>Dashboard</p>
             </a>
         </li>
-        
-        <li class="nav-item">
-            <a href="{{ route('admin.profile.edit') }}"
-                class="nav-link {{ Route::is('admin.profile.edit') ? 'active' : '' }}">
-                <i class="nav-icon fas fa-id-card"></i>
-                <p>Profile</p>
-            </a>
-        </li>
 
         @role('admin')
             
@@ -42,8 +34,8 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.product.index') }}"
-                    class="nav-link {{ Route::is('admin.product.index') ? 'active' : '' }}">
+                <a href="{{ route('admin.item.index') }}"
+                    class="nav-link {{ Route::is('admin.item.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-th"></i>
                     <p>Item Management</p>
                 </a>

@@ -22,8 +22,9 @@ class RoleController extends Controller
 
     public function create()
     {
+        $title = 'Add New Role';
         $permissions = Permission::where('status',1)->get();
-        return view('admin.role.create', compact('permissions'));
+        return view('admin.role.create', compact('permissions', 'title'));
     }
 
     public function store(Request $request)
@@ -34,10 +35,12 @@ class RoleController extends Controller
                 if($request->id){
                     $request->validate([
                         'name' => 'required|max:25|unique:roles,name,'.$request->id,
+                        'permission' => 'required',
                     ]);
                 }else{
                     $request->validate([
                         'name' => 'required|unique:roles|max:255',
+                        'permission' => 'required',
                     ]);
                 }
                 $role = Role::updateOrCreate(
@@ -68,16 +71,37 @@ class RoleController extends Controller
 
     public function edit($id)
     {
+        $title = 'Edit Role';
         $data = Role::with('permissions')->where('id',decrypt($id))->first();
         $selectedPermissions = RolePermission::where('role_id',decrypt($id))->pluck('permission_id')->toArray();
         $permissions = Permission::where('status',1)->get();
 
-        return view('admin.role.edit',compact('data', 'permissions', 'selectedPermissions'));
+        return view('admin.role.edit',compact('data', 'permissions', 'selectedPermissions', 'title'));
     }
 
-    public function destroy($id)
+    public function changeStatus(Request $request)
     {
-        Role::where('id',decrypt($id))->delete();
-        return redirect()->route('admin.role.index')->with('error','Role deleted successfully.');
+        $status = $request->input('status');
+        $id = $request->input('id');
+
+        if($status == 1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = Role::find($id);
+            $queryStatus->status = $status;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
     }
 }

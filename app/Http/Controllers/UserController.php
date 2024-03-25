@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
+use DB;
+use Auth;
 
 class UserController extends Controller
 {
@@ -21,7 +23,8 @@ class UserController extends Controller
     }
     public function create()
     {
-        return view('admin.user.create');
+        $title = 'Add New User';
+        return view('admin.user.create', compact('title'));
     }
     public function store(Request $request)
     {
@@ -35,15 +38,19 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'mode' => 'light',
             'password' => bcrypt($request->password),
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()->id,
         ]);
         $user->assignRole($request->role);
         return redirect()->route('admin.user.index')->with('success','User created successfully.');
     }
     public function edit($id)
     {
+        $title = 'Edit User';
         $user = User::where('id',decrypt($id))->first();
-        return view('admin.user.edit',compact('user'));
+        return view('admin.user.edit',compact('user', 'title'));
     }
     public function update(Request $request, User $user)
     {
@@ -55,13 +62,37 @@ class UserController extends Controller
         $user = User::find($request->id);
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->mode = 'light';
+        $user->updated_by = Auth::user()->id;
         $user->save();
         $user->assignRole($request->role);
         return redirect()->route('admin.user.index')->with('success','User updated successfully.');
     }
-    public function destroy($id)
+
+    public function changeStatus(Request $request)
     {
-        User::where('id',decrypt($id))->delete();
-        return redirect()->back()->with('success','User deleted successfully.');
+        $status = $request->input('status');
+        $id = $request->input('id');
+
+        if($status == 1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = User::find($id);
+            $queryStatus->status = $status;
+            $queryStatus->updated_by = Auth::user()->id;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
     }
 }

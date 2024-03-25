@@ -3,6 +3,7 @@
 use App\Http\Controllers\LoginWithOTPController;
 use App\Http\Controllers\SocialiteController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,6 +25,8 @@ Route::prefix('/otp')->middleware('guest')->name('otp.')->controller(LoginWithOT
     Route::get('/verification/{userId}','verification')->name('verification');
     Route::post('login/verification','loginWithOtp')->name('loginWithOtp');
 });
+
+Route::get('logout', [AuthenticatedSessionController::class,'logout'])->name('logout');
 
 // Socialite Routes
 Route::prefix('oauth/')->group(function(){
