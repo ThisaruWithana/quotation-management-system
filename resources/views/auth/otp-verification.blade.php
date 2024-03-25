@@ -13,7 +13,7 @@
                         @endif
                     </div>
                     <div class="p-2 mt-4">
-                        <form method="POST" action="{{ route('otp.loginWithOtp') }}">
+                        <form method="POST" action="{{ route('otp.loginWithOtp') }}" class="text-center border border-light p-2">
                             @csrf
                             <input type="hidden" value="{{ $userId }}" name="user_id">
                             <div class="mb-3">

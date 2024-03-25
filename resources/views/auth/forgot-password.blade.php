@@ -9,7 +9,7 @@
             </div> -->
             <div class="card-body">
 
-            <form class="text-center border border-light p-2" action="{{ route('login') }}" method="POST">
+            <form class="text-center border border-light p-2" action="{{ route('password.email') }}" method="POST">
                 @csrf
                 <p class="h4 mb-4">Forgot Password</p>
 

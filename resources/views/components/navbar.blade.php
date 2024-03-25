@@ -15,7 +15,7 @@
       </a>
       <div class="dropdown-menu dropdown-menu-right dropdown-default" aria-labelledby="navbarDropdownMenuLink-333">
         <a class="dropdown-item" href="{{ route('admin.profile.edit') }}">My Profile</a>
-        <a class="dropdown-item" href="{{ url('logout') }}">Log Out</a>
+        <a class="dropdown-item" href="{{ url('logout') }}">Sign Out</a>
       </div>
       </form>
     </li>
