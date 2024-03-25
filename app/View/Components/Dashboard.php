@@ -2,9 +2,9 @@
 
 namespace App\View\Components;
 
-use App\Models\Category;
-use App\Models\Collection;
-use App\Models\Product;
+use App\Models\Item;
+use App\Models\Department;
+use App\Models\Supplier;
 use App\Models\User;
 use Closure;
 use Illuminate\Contracts\View\View;
@@ -17,17 +17,17 @@ class Dashboard extends Component
      */
     public function __construct()
     {
-        $user = User::count();
+        $user = User::where('status', 1)->count();
         view()->share('user',$user);
         
-        $category = Category::count();
-        view()->share('category',$category);
+        $item = Item::where('status', 1)->count();
+        view()->share('item',$item);
         
-        $product = Product::count();
-        view()->share('product',$product);
+        $supplier = Supplier::where('status', 1)->count();
+        view()->share('supplier',$supplier);
         
-        $collection = Collection::count();
-        view()->share('collection',$collection);
+        $department = Department::where('status', 1)->count();
+        view()->share('department',$department);
     }
 
     /**
