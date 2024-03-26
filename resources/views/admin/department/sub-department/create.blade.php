@@ -13,7 +13,7 @@
                     <form action="{{ route('admin.department.sub.store') }}" method="POST"
                     class="text-center border border-light p-5">
                         @csrf
-               <div class="card-body px-lg-2 pt-0">
+                        <div class="card-body px-lg-2 pt-0">
                             <div class="row">
                                 @if($page === 'edit')
                                     <input type="hidden" name="id" value="{{ $data->id }}">

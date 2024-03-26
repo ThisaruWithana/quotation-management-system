@@ -64,6 +64,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     
     Route::resource('item',ItemController::class);
     Route::post('item/store', [ItemController::class, 'store'])->name('item.store');
+    Route::post('item/store-details', [ItemController::class, 'storeItemDetails'])->name('item.store-details');
+    Route::post('item/store-stock-settings', [ItemController::class, 'updateStockSettings'])->name('item.store-stock-settings');
+    Route::post('item/store-item-pricing', [ItemController::class, 'updatePriceDetails'])->name('item.store-item-pricing');
 
 
 });

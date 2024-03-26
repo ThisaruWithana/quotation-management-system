@@ -73,6 +73,9 @@
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
+                    "aoColumnDefs": [
+                        { "bSortable": false, "aTargets": [ 8] }, 
+                    ]
                 });
             });
             

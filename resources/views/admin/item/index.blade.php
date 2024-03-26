@@ -11,9 +11,9 @@
                 <thead>
                     <tr>
                         <th class="th-sm">Name</th>
-                        <th class="th-sm">Contact Person</th>
-                        <th class="th-sm">Address</th>
-                        <th class="th-sm">Telephone</th>
+                        <th class="th-sm">Supplier</th>
+                        <th class="th-sm">Department</th>
+                        <th class="th-sm">Sub Department</th>
                         <th class="th-sm">Email</th>
                         <th class="th-sm">Created By</th>
                         <th class="th-sm">Created At</th>
@@ -68,6 +68,9 @@
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
+                    "aoColumnDefs": [
+                        { "bSortable": false, "aTargets": [ 8] }, 
+                    ]
                 });
             });
             
