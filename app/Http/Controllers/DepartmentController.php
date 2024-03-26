@@ -206,4 +206,23 @@ class DepartmentController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function getSubDepartmentByDept(Request $request)
+    {
+        $department = $request->input('department');
+        $data = SubDepartment::where('department_id', $department)->where('status', 1)->orderBy('name','ASC')->get();
+        return json_encode($data);
+    }
+
+    public function getVatValue(Request $request)
+    {
+        $department = $request->input('department');
+        $data = Department::with('vat')->where('id', $department)->first();
+ 
+        $response = array();
+        $response['vat'] = $data['vat']['value'];
+
+        return json_encode($response);
+    }
+
 }

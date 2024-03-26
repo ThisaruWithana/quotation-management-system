@@ -102,6 +102,15 @@
                           </div>
                       </div>
                       </div>
+                      <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group text-left">
+                                <label for="vat" class="form-label">Sales VAT (%)</label>
+                                <input type="text" class="form-control" name="vat" id="vat"
+                                value="" autocomplete="off"  readonly>
+                            </div>
+                        </div>
+                      </div>
                           
                           <div class="text-left">
                             <button class="btn btn-primary" type="submit">Next</button>
@@ -321,6 +330,52 @@
     <script>
 
         $(document).ready(function() {
+
+            $('#department').on('change', function() {
+                $("#sub_department").empty();
+
+                $.ajax({
+                    url: "{{ url('admin/department/get-subdepartments-by-departments') }}",
+                    type: 'POST',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "department": this.value,
+                        },
+                        success: function (data) {
+
+                            var result = JSON.parse(data);
+
+                            if (result.length > 0) {
+
+                                $.each(result, function (count, val) {
+
+                                  $('#sub_department').append(
+                                    '<option value="' + val['id'] + '">' + val['name'] + '</option>'
+                                    );
+                              });
+                            } 
+
+                        }, error: function (data) {
+                                    
+                    }
+                });
+
+                $.ajax({
+                    url: "{{ url('admin/department/get-vat-value') }}",
+                    type: 'POST',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "department": this.value,
+                        },
+                        success: function (data) {
+                            var result = JSON.parse(data);
+                            $('#vat').val(result['vat']);
+
+                        }, error: function (data) {
+                                    
+                    }
+                });
+            });
 
             $("#itemCreate").submit(function(event) {
                 event.preventDefault();
