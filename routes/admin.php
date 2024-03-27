@@ -70,7 +70,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('item/store-details', [ItemController::class, 'storeItemDetails'])->name('item.store-details');
     Route::post('item/store-stock-settings', [ItemController::class, 'updateStockSettings'])->name('item.store-stock-settings');
     Route::post('item/store-item-pricing', [ItemController::class, 'updatePriceDetails'])->name('item.store-item-pricing');
-
+    Route::post('item/change-status', [ItemController::class, 'changeStatus'])->name('item.change-status');
+    Route::post('item/filter', [ItemController::class, 'filterItems'])->name('item.filter');
+    Route::post('item/update', [ItemController::class, 'update'])->name('item.update');
 
 });
 

@@ -21,4 +21,23 @@ class Item extends Model
         return $this->belongsTo('App\Models\User', 'created_by','id');
     }
 
+    public function department()
+    {
+        return $this->belongsTo('App\Models\Department', 'department_id','id');
+    }
+
+    public function subdepartment()
+    {
+        return $this->belongsTo('App\Models\SubDepartment', 'sub_department_id','id');
+    }
+
+    public function barcode()
+    {
+        return $this->belongsTo('App\Models\Barcode', 'barcode_id','id');
+    }
+    
+    public function suppliers()
+    {
+        return $this->hasMany('App\Models\ItemSupplier', 'item_id', 'id')->where('status',1);
+    }
 }

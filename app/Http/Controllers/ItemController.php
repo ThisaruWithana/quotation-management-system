@@ -19,7 +19,7 @@ class ItemController extends Controller
     public function index()
     {
         $title = 'Item Maintainance';
-        $data = Item::with('created_user')->orderBy('id','DESC')->get();
+        $data = Item::with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')->orderBy('id','DESC')->get();
         return view('admin.item.index', compact('data', 'title'));
     }
 
@@ -40,8 +40,19 @@ class ItemController extends Controller
     {
         $title = 'Edit Item';
         $page = 'edit';
-        $data = Item::where('id',decrypt($id))->first();
-        return view('admin.item.create',compact('data', 'title', 'page'));
+        $data = Item::with('barcode')->where('id',decrypt($id))->first();
+
+        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
+        $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
+        $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
+        $locations = Location::where('status', 1)->orderBy('name','ASC')->get();
+
+        $selectedSuppliers = ItemSupplier::where('item_id', decrypt($id))->pluck('supplier_id')->toArray();
+
+        return view('admin.item.edit',compact(
+            'data', 'title', 'page', 'suppliers', 'departments', 'sub_departments', 'locations',
+            'selectedSuppliers'
+        ));
     }
 
     public function store(Request $request)
@@ -222,6 +233,96 @@ class ItemController extends Controller
             }catch(\Exception $e){
                 DB::rollback();
                 return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+            } 
+    }
+
+    public function changeStatus(Request $request)
+    {
+        $status = $request->input('status');
+        $id = $request->input('id');
+
+        if($status == 1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = Item::find($id);
+            $queryStatus->status = $status;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+    
+    public function filterItems(Request $request)
+    {
+        $data = Item::with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')
+                        ->where('status', $request->input('status'))
+                        ->orderBy('id','DESC')->get();
+
+        return json_encode($data);
+    }
+
+    public function update(Request $request)
+    {
+        $item_id = $request->input('id');
+        $suppliers = $request->input('supplier');
+
+        $response = array();
+
+            try{
+                DB::beginTransaction();
+
+                    $updateItemDetails = Item::where('id', $item_id)->update([
+                        'department_id' => $request->input('department'),
+                        'sub_department_id' => $request->input('sub_department'),
+                        'updated_by' => Auth::user()->id
+                    ]);
+                    
+
+                    $disableSuppliers = ItemSupplier::where('item_id', $item_id)->update([
+                        'status' => 0,
+                        'updated_by' => Auth::user()->id
+                    ]);
+
+                    foreach($suppliers as $supplier){
+
+                        $addNewSuppliers = ItemSupplier::create([
+                            'item_id' => $item_id,
+                            'supplier_id' => $supplier,
+                            'created_by' => Auth::user()->id,
+                            'updated_by' => Auth::user()->id,
+                        ]);
+
+                    }
+
+                DB::commit(); 
+
+                if($addNewSuppliers){
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                    $response['data'] = $item_id;
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                    $response['data'] = '';
+                }
+
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
             } 
     }
 }

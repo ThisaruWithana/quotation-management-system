@@ -18,4 +18,20 @@ class ItemSupplier extends Model
         return $this->belongsTo('App\Models\User', 'created_by','id');
     }
 
+    public function suppliername()
+    {
+        return $this->belongsTo('App\Models\Supplier', 'supplier_id','id');
+    }
+
+    public function getSupplierName()
+    {
+        $data = Enquiry::where("vendor_id",$this->id)
+        ->whereIn('object_model',array_keys(get_bookable_services()))
+        ->orderBy('id', 'desc')
+        ->where('status', 'pending')
+        ->get();
+        
+        return count($data);
+    }
+
 }
