@@ -347,7 +347,14 @@ class ItemController extends Controller
         $netRetail = $retailPrice / $vatConst;
         $netProfit = $netRetail - ($costPrice / $caseSize);
         $margin = ($netProfit / $netRetail) * 100;
-        
+
         return json_encode(round($margin, 2));
+    }
+
+    public function viewItemDetails($id)
+    {
+         $data = Item::with('barcode', 'department.vat', 'subdepartment', 'location', 'suppliers.suppliername')->where('id',decrypt($id))->first();
+
+        return view('admin.item.detail',compact('data'));
     }
 }

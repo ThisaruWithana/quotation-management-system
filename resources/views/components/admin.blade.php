@@ -62,6 +62,14 @@
         .required{
             color:red;
         }
+
+        .info-lb{
+            display: inline !important;
+        }
+        .item-img{
+            /* width:100%; */
+            height:100%;
+        }
     </style>
     @yield('css')
 </head>

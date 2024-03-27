@@ -1,5 +1,5 @@
 <x-admin>
-    @section('title')  {{ $title }} @endsection
+    @section('title')  {{ 'Item Maintainance' }} @endsection
 
     <div class="card col-md-12">
         <div class="card-header">
@@ -36,7 +36,7 @@
                 <div class="step" data-target="#test-l-4">
                   <button type="button" class="btn step-trigger">
                     <span class="bs-stepper-circle">4</span>
-                    <span class="bs-stepper-label">Order Details</span>
+                    <span class="bs-stepper-label">Optional Items</span>
                   </button>
                 </div>
                 <div class="line"></div>
@@ -57,8 +57,7 @@
                           <div class="col-lg-5">
                               <div class="form-group text-left">
                                   <label for="product_code" class="form-label">Product Code</label>
-                                  <span class="required"> * </span>
-                                  <input type="text" class="form-control" name="product_code" id="product_code" required=""
+                                  <input type="text" class="form-control" name="product_code" id="product_code"
                                   value="{{ $data->barcode['product_code'] }}" autocomplete="off"  readonly>
                               </div>
                           </div>

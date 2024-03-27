@@ -1,5 +1,5 @@
 <x-admin>
-    @section('title')  {{ $title }} @endsection
+    @section('title')  {{ 'Item Maintainance' }} @endsection
     <div class="card col-md-12">
         <div class="card-header">
             <h3 class="card-title">{{ $title }}</h3>
@@ -35,7 +35,7 @@
               <div class="step" data-target="#test-l-4">
                 <button type="button" class="btn step-trigger">
                   <span class="bs-stepper-circle">4</span>
-                  <span class="bs-stepper-label">Order Details</span>
+                  <span class="bs-stepper-label">Optional Items</span>
                 </button>
               </div>
               <div class="line"></div>

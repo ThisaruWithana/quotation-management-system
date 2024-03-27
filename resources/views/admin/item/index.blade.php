@@ -1,5 +1,5 @@
 <x-admin>
-    @section('title')  {{ $title }} @endsection
+    @section('title') {{ 'Item Maintainance' }} @endsection
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
@@ -73,7 +73,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.item.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                    <a href="{{ route('admin.item.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" target="_blank">
                                         <i class="far fa-edit"></i>
                                     </a>
                                     @if($value->status === 1)
@@ -85,7 +85,7 @@
                                             <i class="fas fa-check-circle"></i>
                                         </a>
                                     @endif
-                                    <a href="{{ route('admin.item.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                    <a href="{{ route('admin.item.detail',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                         <i class="far fa-eye"></i>
                                     </a>
                                 </td>

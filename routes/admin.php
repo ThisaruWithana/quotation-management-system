@@ -74,6 +74,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('item/filter', [ItemController::class, 'filterItems'])->name('item.filter');
     Route::post('item/update', [ItemController::class, 'update'])->name('item.update');
     Route::post('item/calculate-margin', [ItemController::class, 'calculateMargin'])->name('item.calculate-margin');
+    Route::get('item/detail/{id}', [ItemController::class, 'viewItemDetails'])->name('item.detail');
 
 });
 

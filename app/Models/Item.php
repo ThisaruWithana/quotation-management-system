@@ -40,4 +40,10 @@ class Item extends Model
     {
         return $this->hasMany('App\Models\ItemSupplier', 'item_id', 'id')->where('status',1);
     }
+
+    public function location()
+    {
+        return $this->belongsTo('App\Models\Location', 'location_id','id');
+    }
+    
 }
