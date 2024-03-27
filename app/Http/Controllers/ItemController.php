@@ -40,14 +40,14 @@ class ItemController extends Controller
     {
         $title = 'Edit Item';
         $page = 'edit';
-        $data = Item::with('barcode')->where('id',decrypt($id))->first();
+        $data = Item::with('barcode', 'department.vat')->where('id',decrypt($id))->first();
 
         $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
         $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
         $locations = Location::where('status', 1)->orderBy('name','ASC')->get();
 
-        $selectedSuppliers = ItemSupplier::where('item_id', decrypt($id))->pluck('supplier_id')->toArray();
+        $selectedSuppliers = ItemSupplier::where('item_id', decrypt($id))->where('status', 1)->pluck('supplier_id')->toArray();
 
         return view('admin.item.edit',compact(
             'data', 'title', 'page', 'suppliers', 'departments', 'sub_departments', 'locations',
@@ -152,10 +152,6 @@ class ItemController extends Controller
         $exclude_from_stock = 1;
         $response = array();
 
-        $request->validate([
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
-
         if(!$request->input('auto_order')){
             $auto_order = 0;
         }
@@ -170,11 +166,8 @@ class ItemController extends Controller
       
             try{
                 DB::beginTransaction();
-                    $imageName = $id.'-'.date("YmdHis").'.'.$request->image->extension();  
-                    $upload = $request->image->move(public_path('images'), $imageName);
 
                     $updateItemDetails = Item::where('id', $id)->update([
-                        'image' => $imageName,
                         'min_stock' => $request->input('min_stock'),
                         'location_id' => $request->input('location'),
                         'auto_order' => $auto_order,
@@ -182,6 +175,24 @@ class ItemController extends Controller
                         'exclude_from_stock' => $exclude_from_stock,
                         'updated_by' => Auth::user()->id,
                     ]);
+
+                    if($request->image){
+
+                        $request->validate([
+                            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+                        ]);
+
+                        $imageName = $id.'-'.date("YmdHis").'.'.$request->image->extension();  
+                        $upload = $request->image->move(public_path('images'), $imageName);
+
+                        if($upload){
+
+                            $updateItemDetails = Item::where('id', $id)->update([
+                                'image' => $imageName,
+                                'updated_by' => Auth::user()->id
+                            ]);
+                        }
+                    }
 
                 DB::commit();
 
@@ -214,6 +225,7 @@ class ItemController extends Controller
                         'cost_price' => $request->input('cost_price'),
                         'retail_price' => $request->input('retail_price'),
                         'margin' => $request->input('margin'),
+                        'case_size' => $request->input('case_size'),
                         'updated_by' => Auth::user()->id,
                     ]);
 
@@ -287,7 +299,6 @@ class ItemController extends Controller
                         'updated_by' => Auth::user()->id
                     ]);
                     
-
                     $disableSuppliers = ItemSupplier::where('item_id', $item_id)->update([
                         'status' => 0,
                         'updated_by' => Auth::user()->id
@@ -301,9 +312,7 @@ class ItemController extends Controller
                             'created_by' => Auth::user()->id,
                             'updated_by' => Auth::user()->id,
                         ]);
-
                     }
-
                 DB::commit(); 
 
                 if($addNewSuppliers){
@@ -324,5 +333,21 @@ class ItemController extends Controller
                 $response['msg'] = $e->getMessage();
                 return json_encode($response);
             } 
+    }
+
+    public function calculateMargin(Request $request)
+    {
+        $itemId = $request->input('id');
+        $retailPrice = $request->input('retail_price');
+        $costPrice = $request->input('cost_price');
+        $caseSize = $request->input('case_size');
+        $vat = $request->input('vat');
+
+        $vatConst = ($vat + 100)/100;
+        $netRetail = $retailPrice / $vatConst;
+        $netProfit = $netRetail - ($costPrice / $caseSize);
+        $margin = ($netProfit / $netRetail) * 100;
+        
+        return json_encode(round($margin, 2));
     }
 }

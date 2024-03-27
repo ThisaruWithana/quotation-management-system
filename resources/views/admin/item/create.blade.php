@@ -251,12 +251,22 @@
                         <div class="row">
                           <div class="col-lg-5">
                               <div class="form-group text-left">
+                                  <label for="case_size" class="form-label">Case Size</label>
+                                  <span class="required"> * </span>
+                                  <input type="text" class="form-control" name="case_size" id="case_size"
+                                  value="" autocomplete="off"  placeholder="" required>
+                              </div>
+                          </div>
+                          <div class="col-lg-5">
+                              <div class="form-group text-left">
                                   <label for="cost_price" class="form-label">Cost Price</label>
                                   <span class="required"> * </span>
                                   <input type="text" class="form-control" name="cost_price" id="cost_price"
                                   value="" autocomplete="off"  placeholder="" required>
                               </div>
                           </div>
+                        </div>
+                        <div class="row">
                           <div class="col-lg-5">
                               <div class="form-group text-left">
                                   <label for="retail_price" class="form-label">Retail Price</label>
@@ -265,13 +275,11 @@
                                   value="" autocomplete="off"  placeholder="" required>
                               </div>
                           </div>
-                        </div>
-                        <div class="row">
                           <div class="col-lg-5">
                               <div class="form-group text-left">
                                   <label for="margin" class="form-label">Margin (%)</label>
                                   <input type="text" class="form-control" name="margin" id="margin"
-                                  value="" autocomplete="off"  placeholder="">
+                                  value="" autocomplete="off"  placeholder="" readonly>
                               </div>
                           </div>
                         </div>
@@ -375,6 +383,29 @@
                                     
                     }
                 });
+            });
+
+            $("#retail_price").keyup(function (){
+
+                $.ajax({
+                    url: "{{ url('admin/item/calculate-margin') }}",
+                    type: 'POST',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": $('#item_id').val(),
+                            "retail_price": this.value,
+                            "cost_price": $('#cost_price').val(),
+                            "vat": $('#vat').val(),
+                            "case_size": $('#case_size').val()
+                        },
+                        success: function (data) {
+                            var result = JSON.parse(data);
+                            $('#margin').val(result);
+                        }, error: function (data) {
+                                    
+                    }
+                });
+
             });
 
             $("#itemCreate").submit(function(event) {
@@ -502,7 +533,8 @@
                             "id": $('#item_id').val(),
                             "cost_price": $('#cost_price').val(),
                             "retail_price": $('#retail_price').val(),
-                            "margin": $('#margin').val()
+                            "margin": $('#margin').val(),
+                            "case_size": $('#case_size').val()
                         },
                             success: function (data) {
                             var result = JSON.parse(data);

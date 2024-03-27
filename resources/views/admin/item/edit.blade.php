@@ -54,12 +54,19 @@
                       <form class="text-center border border-light p-5" action="" id="itemCreate" onsubmit="return false;">
                           
                         <div class="row">
-                          <div class="col-lg-10">
+                          <div class="col-lg-5">
                               <div class="form-group text-left">
                                   <label for="product_code" class="form-label">Product Code</label>
                                   <span class="required"> * </span>
                                   <input type="text" class="form-control" name="product_code" id="product_code" required=""
                                   value="{{ $data->barcode['product_code'] }}" autocomplete="off"  readonly>
+                              </div>
+                          </div>
+                          <div class="col-lg-5">
+                              <div class="form-group text-left">
+                                  <label for="barcode" class="form-label">Barcode</label>
+                                  <input type="text" class="form-control" name="barcode" id="barcode"
+                                  value="{{ $data->barcode['barcode'] }}" autocomplete="off"  readonly>
                               </div>
                           </div>
                         </div>
@@ -111,7 +118,7 @@
                               <div class="form-group text-left">
                                   <label for="vat" class="form-label">Sales VAT (%)</label>
                                   <input type="text" class="form-control" name="vat" id="vat"
-                                  value="" autocomplete="off"  readonly>
+                                  value="{{ $data->department->vat['value'] }}" autocomplete="off"  readonly>
                               </div>
                           </div>
                         </div>
@@ -132,7 +139,7 @@
                                     <label for="name" class="form-label">Item Name</label>
                                     <span class="required"> * </span>
                                     <input type="text" class="form-control" name="name" id="name"
-                                    value="" autocomplete="off"  placeholder="" required>
+                                    value="{{ $data['name'] }}" autocomplete="off"  placeholder="" required>
                                 </div>
                             </div>
                           </div>
@@ -141,8 +148,7 @@
                             <div class="col-lg-10">
                                 <div class="form-group text-left">
                                     <label for="description" class="form-label">Description</label>
-                                    <textarea class="form-control" name="description" id="description"
-                                                  required=""></textarea>
+                                    <textarea class="form-control" name="description" id="description">{{ $data['description'] }}</textarea>
                                 </div>
                             </div>
                           </div>
@@ -153,7 +159,7 @@
                                       <label for="item_size" class="form-label">Item Size</label>
                                       <span class="required"> * </span>
                                       <input type="text" class="form-control" name="item_size" id="item_size"
-                                      value="" autocomplete="off"  placeholder="" required>
+                                      value="{{ $data['item_size'] }}" autocomplete="off"  placeholder="" required>
                                   </div>
                               </div>
     
@@ -162,8 +168,8 @@
                                       <label for="margin_type" class="form-label">Margin Type</label>
                                       <span class="required"> * </span>
                                       <select id="margin_type" name="margin_type" class="browser-default custom-select selectpicker" required>
-                                          <option value="Floating">Floating</option>
-                                          <option value="Fixed">Fixed</option>
+                                          <option value="Floating" @if ($data->margin_type == 'Floating') selected @endif>Floating</option>
+                                          <option value="Fixed" @if ($data->margin_type == 'Fixed') selected @endif>Fixed</option>
                                       </select>
                                   </div>
                               </div>
@@ -185,7 +191,7 @@
                                     <label for="min_stock" class="form-label">Min Stock</label>
                                     <span class="required"> * </span>
                                     <input type="text" class="form-control" name="min_stock" id="min_stock"
-                                    value="" autocomplete="off"  placeholder="" required>
+                                    value="{{ $data['min_stock'] }}" autocomplete="off"  placeholder="" required>
                                 </div>
                             </div>
                               <div class="col-lg-5">
@@ -195,7 +201,8 @@
                                       <select id="location" name="location" class="browser-default custom-select selectpicker" required>
                                           <option value="">Select Location</option>
                                           @foreach ($locations as $value)
-                                          <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                          <option value="{{ $value->id }}"
+                                              {{ $value->id === $data->location_id ? 'selected' : '' }}>{{ $value->name }}</option>
                                           @endforeach
                                       </select>
                                   </div>
@@ -213,25 +220,25 @@
                                 <div class="form-group text-left">
                                     <label for="in_stock" class="form-label">In Stock</label>
                                     <input type="text" class="form-control" name="in_stock" id="in_stock"
-                                    value="" autocomplete="off"  placeholder="" disabled>
+                                    value="" autocomplete="off"  placeholder="" readonly>
                                 </div>
                             </div>
                           </div>
                           <div class="col-lg-3">
                               <div class="form-group text-left form-check">
-                                <input class="form-check-input" type="checkbox" value="1" name="auto_order" id="auto_order" checked/>
+                                <input class="form-check-input" type="checkbox" value="1" name="auto_order" id="auto_order" @if($data->auto_order == 1) checked @endif/>
                                 <label class="form-check-label" for="auto_order">Auto Order</label>
                               </div>
                           </div>
                           <div class="col-lg-3">
                             <div class="form-group text-left form-check">
-                              <input class="form-check-input" type="checkbox" value="1" name="status" id="status"/>
+                              <input class="form-check-input" type="checkbox" value="1" name="status" id="status" @if($data->status == 1) checked @endif/>
                               <label class="form-check-label" for="status">Active</label>
                             </div>
                           </div>
                           <div class="col-lg-3">
                             <div class="form-group text-left form-check">
-                              <input class="form-check-input" type="checkbox" value="1" id="exclude_from_stock" name="exclude_from_stock"/>
+                              <input class="form-check-input" type="checkbox" value="1" id="exclude_from_stock" name="exclude_from_stock" @if($data->exclude_from_stock == 1) checked @endif/>
                               <label class="form-check-label" for="exclude_from_stock">Exclude from stock</label>
                             </div>
                           </div>
@@ -255,27 +262,35 @@
                           <div class="row">
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
-                                    <label for="cost_price" class="form-label">Cost Price</label>
+                                    <label for="case_size" class="form-label">Case Size</label>
                                     <span class="required"> * </span>
-                                    <input type="text" class="form-control" name="cost_price" id="cost_price"
-                                    value="" autocomplete="off"  placeholder="" required>
+                                    <input type="text" class="form-control" name="case_size" id="case_size"
+                                    value="{{ $data['case_size'] }}" autocomplete="off"  placeholder="" required>
                                 </div>
                             </div>
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
-                                    <label for="retail_price" class="form-label">Retail Price</label>
+                                    <label for="cost_price" class="form-label">Cost Price</label>
                                     <span class="required"> * </span>
-                                    <input type="text" class="form-control" name="retail_price" id="retail_price"
-                                    value="" autocomplete="off"  placeholder="" required>
+                                    <input type="text" class="form-control" name="cost_price" id="cost_price"
+                                    value="{{ $data['cost_price'] }}" autocomplete="off"  placeholder="" required>
                                 </div>
                             </div>
                           </div>
                           <div class="row">
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
+                                    <label for="retail_price" class="form-label">Retail Price</label>
+                                    <span class="required"> * </span>
+                                    <input type="text" class="form-control" name="retail_price" id="retail_price"
+                                    value="{{ $data['retail_price'] }}" autocomplete="off"  placeholder="" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-group text-left">
                                     <label for="margin" class="form-label">Margin (%)</label>
                                     <input type="text" class="form-control" name="margin" id="margin"
-                                    value="" autocomplete="off"  placeholder="">
+                                    value="" autocomplete="off"  placeholder="" readonly>
                                 </div>
                             </div>
                           </div>
@@ -371,6 +386,29 @@
                                     
                     }
                 });
+            });
+
+            $("#retail_price").keyup(function (){
+
+                $.ajax({
+                    url: "{{ url('admin/item/calculate-margin') }}",
+                    type: 'POST',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": $('#item_id').val(),
+                            "retail_price": this.value,
+                            "cost_price": $('#cost_price').val(),
+                            "vat": $('#vat').val(),
+                            "case_size": $('#case_size').val()
+                        },
+                        success: function (data) {
+                            var result = JSON.parse(data);
+                            $('#margin').val(result);
+                        }, error: function (data) {
+                                    
+                    }
+                });
+
             });
 
             $("#itemCreate").submit(function(event) {
@@ -499,7 +537,8 @@
                             "id": $('#item_id').val(),
                             "cost_price": $('#cost_price').val(),
                             "retail_price": $('#retail_price').val(),
-                            "margin": $('#margin').val()
+                            "margin": $('#margin').val(),
+                            "case_size": $('#case_size').val()
                         },
                             success: function (data) {
                             var result = JSON.parse(data);
