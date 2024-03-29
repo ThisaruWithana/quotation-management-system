@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class Item extends Model
 {
+    use Sortable;
     protected $table = 'items';
 
     protected $fillable = [
@@ -15,6 +17,8 @@ class Item extends Model
         'delivery_days','cost_price', 'retail_price', 'margin', 'min_stock', 'exclude_from_stock', 'image',
         'last_order_date','status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'case_size'
     ];
+
+    public $sortable = [ 'id', 'name','description'];
 
     public function created_user()
     {

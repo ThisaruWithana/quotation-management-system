@@ -69,8 +69,12 @@
             display: inline !important;
         }
         .item-img{
-            width: 200px;;
-            height: 200px;;
+            width: 200px;
+            height: 200px;
+        }
+        .item-table{
+            display: block;
+            overflow: auto !important;
         }
     </style>
     @yield('css')

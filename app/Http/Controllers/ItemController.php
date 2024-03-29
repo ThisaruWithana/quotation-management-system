@@ -17,11 +17,26 @@ use Auth;
 
 class ItemController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $pageSize;
+
+        if (!isset($request->pagesize)) {
+            $new = 10;
+        }else{
+            $new = $request->pagesize;
+        }
+
+        $pageSize = $new;
+        
         $title = 'Item Maintainance';
-        $data = Item::with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')->orderBy('id','DESC')->get();
-        return view('admin.item.index', compact('data', 'title'));
+        $data = Item::with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')->paginate($pageSize);
+
+        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
+        $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
+        $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
+
+        return view('admin.item.index', compact('data', 'title', 'suppliers', 'departments', 'sub_departments', 'pageSize'));
     }
 
     public function create()

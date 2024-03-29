@@ -78,6 +78,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     // Route::post('item/get-items', [ItemController::class, 'getItems'])->name('item.get-items');
     Route::post('item/store-sub-items', [ItemController::class, 'storeSubItems'])->name('item.store-sub-items');
     Route::post('item/update-mandatory-status', [ItemController::class, 'updateMandatoryStatus'])->name('item.update-mandatory-status');
+    // Route::get('item/list', [ItemController::class, 'index'])->name('item.list');
 
 });
 

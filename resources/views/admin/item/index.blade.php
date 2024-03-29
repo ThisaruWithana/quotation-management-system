@@ -10,26 +10,75 @@
         <div class="card-body">
             
 
-            <!-- <div class="row">
-                <div class="form-group text-left col-lg-2">
-                    <select id="status" name="status" class="browser-default custom-select selectpicker" required>
-                        <option value="">Status</option>        
-                        <option value="1">Active</option>     
-                        <option value="0">Deactive</option> 
+            <div class="row">
+                <div class="form-group" style="margin-left:10px;">
+                    <form method="GET" action="{{ route('admin.item.index') }}" id="frm-list">
+
+                        <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
+                            onchange="selectPageSize(this.value)">
+                            <option value="10" {{ $pageSize == '10' ? 'selected="selected"' : '' }}>10
+                            </option>
+                            <option value="3" {{ $pageSize == '3' ? 'selected="selected"' : '' }}>25
+                            </option>
+                            <option value="50" {{ $pageSize == '50' ? 'selected="selected"' : '' }}>50
+                            </option>
+                            <option value="100" {{ $pageSize == '100' ? 'selected="selected"' : '' }}>100
+                            </option>
+                        </select>
+                    </form>
+                </div>
+                <div class="form-group" style="margin-left:10px;">
+                <select id="status" name="status" class="selectpicker show-tick" data-live-search="false">
+                    <option value="">Status</option>        
+                    <option value="1">Active</option>     
+                    <option value="0">Deactive</option> 
+                </select>
+                </div>
+
+                <div class="form-group" style="margin-left:10px;">
+                    <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" >
+                        <option value="">Supplier</option>        
+                        @foreach ($suppliers as $value)
+                            <option value="{{ $value->id }}">{{ $value->name }}</option>
+                        @endforeach 
                     </select>
                 </div>
-                <div class="form-group text-left col-lg-2">
+                
+                <div class="form-group" style="margin-left:10px;">
+                    <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true">
+                        <option value="">Departments</option>        
+                        @foreach ($departments as $value)
+                            <option value="{{ $value->id }}">{{ $value->name }}</option>
+                        @endforeach 
+                    </select>
+                </div>
+                
+                <div class="form-group" style="margin-left:10px;">
+                    <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true">
+                        <option value="">Sub Departments</option>        
+                        @foreach ($sub_departments as $value)
+                            <option value="{{ $value->id }}">{{ $value->name }}</option>
+                        @endforeach 
+                    </select>
+                </div>
+
+                <!-- <div class="form-group col-md-2">
+                    <input type="text" class="form-control" name="search" id="search" placeholder="Search">
+                </div> -->
+
+                <div class="form-group text-right" style="margin-left:10px;">
                     <button class="btn btn-primary" type="submit" onclick="filterData()">Filter</button>
                 </div>
-            </div><br> -->
+            </div>
+
+            <div class="row">    
+            </div>
+            <br>
 
             <div>
                 <table class="table" id="dataTable">
                     <thead>
                         <tr>
-                            <th class="th-sm">
-                                <input type="checkbox" class="form-check-label" id="check-all">
-                            </th>
                             <th class="th-sm">ID</th>
                             <th class="th-sm">Name</th>
                             <th class="th-sm">Barcode</th>
@@ -37,8 +86,8 @@
                             <th class="th-sm" style="width: 100px;">Margin Type</th>
                             <th class="th-sm" style="width: 100px;">Supplier</th>
                             <th class="th-sm" style="width: 100px;">Department</th>
-                            <th class="th-sm" style="width: 120px;">Sub Department</th>
-                            <th class="th-sm" style="width: 80px;">Created By</th>
+                            <th class="th-sm" style="width: 150px;">Sub Department</th>
+                            <th class="th-sm" style="width: 100px;">Created By</th>
                             <th class="th-sm" style="width: 80px;">Created At</th>
                             <th class="th-sm">Status</th>
                             <th class="th-sm" style="width: 120px;"></th>
@@ -48,9 +97,6 @@
                     <?php $i = 1; ?>
                     @foreach ($data as $value)
                             <tr>
-                                <td>
-                                    <input type="checkbox" name="ids[]" value="{{ $value->id }}" class="form-check-label">
-                                </td>
                                 <td>{{ $value->id }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->barcode['barcode'] }}</td>
@@ -95,21 +141,22 @@
                     </tbody>
                 </table>
             </div>
+            <div id="list_pagination" style="float: right;">{{ $data->appends(Request::all())->links() }}</div>
         </div>
     </div>
     @section('js')
         <script>
+            
             $(function() {
                 $('#dataTable').DataTable({
-                    "paging": true,
+                    "bPaginate": false,
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
                     "scrollX": true,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 12 ]},
-                        { "bSortable": true, "aTargets": [ 0 ]}
+                        { "bSortable": false, "aTargets": [ 11 ]},
                     ]
                 });
                 
@@ -227,6 +274,10 @@
                     }
                 });
             }
+
+            function selectPageSize(pageSize) {
+                    document.getElementById('frm-list').submit();
+                }
         </script>
     @endsection
 </x-admin>
