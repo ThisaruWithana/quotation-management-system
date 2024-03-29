@@ -28,15 +28,44 @@ class ItemController extends Controller
         }
 
         $pageSize = $new;
+        $status = $request->input('status');
+        $supplierId = $request->input('supplier');
+        $department = $request->input('departments');
+        $sub_department = $request->input('sub_departments');
         
         $title = 'Item Maintainance';
-        $data = Item::with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')->paginate($pageSize);
 
         $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
         $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
 
-        return view('admin.item.index', compact('data', 'title', 'suppliers', 'departments', 'sub_departments', 'pageSize'));
+        
+        $data = Item::query()->with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')->orderBy('id','desc');
+
+        if($request->query('form_action') === 'search'){
+
+            if(!is_null($status)) {
+                $data->orWhere('status', $status);
+            }
+
+            if(!is_null($department)) {
+                $data->where('department_id',  $department);
+            }
+
+            if(!is_null($sub_department)) {
+                $data->where('sub_department_id',  $sub_department);
+            }
+
+            if(!is_null($supplierId)) {
+
+                $data->whereHas('suppliers', function($q) use ($supplierId){
+                    $q->where('supplier_id', $supplierId);
+                });
+            }
+        }
+        $listData = $data->paginate($pageSize);  
+
+        return view('admin.item.index', compact('listData', 'title', 'suppliers', 'departments', 'sub_departments', 'pageSize'));
     }
 
     public function create()
@@ -297,15 +326,6 @@ class ItemController extends Controller
             return $e->getMessage();
         }
     }
-    
-    public function filterItems(Request $request)
-    {
-        $data = Item::with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')
-                        ->where('status', $request->input('status'))
-                        ->orderBy('id','DESC')->get();
-
-        return json_encode($data);
-    }
 
     public function update(Request $request)
     {
@@ -484,4 +504,5 @@ class ItemController extends Controller
                 return json_encode($response);
             } 
     }
+    
 }

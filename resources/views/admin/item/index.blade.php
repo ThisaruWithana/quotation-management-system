@@ -9,70 +9,67 @@
         </div>
         <div class="card-body">
             
+                
+        <form method="GET" action="{{ route('admin.item.index') }}" id="frm-list">
 
             <div class="row">
-                <div class="form-group" style="margin-left:10px;">
-                    <form method="GET" action="{{ route('admin.item.index') }}" id="frm-list">
+                    <div class="form-group" style="margin-left:10px;">
 
-                        <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
-                            onchange="selectPageSize(this.value)">
-                            <option value="10" {{ $pageSize == '10' ? 'selected="selected"' : '' }}>10
-                            </option>
-                            <option value="3" {{ $pageSize == '3' ? 'selected="selected"' : '' }}>25
-                            </option>
-                            <option value="50" {{ $pageSize == '50' ? 'selected="selected"' : '' }}>50
-                            </option>
-                            <option value="100" {{ $pageSize == '100' ? 'selected="selected"' : '' }}>100
-                            </option>
+                            <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
+                                onchange="selectPageSize(this.value)">
+                                <option value="10" {{ $pageSize == '10' ? 'selected="selected"' : '' }}>10
+                                </option>
+                                <option value="3" {{ $pageSize == '3' ? 'selected="selected"' : '' }}>25
+                                </option>
+                                <option value="50" {{ $pageSize == '50' ? 'selected="selected"' : '' }}>50
+                                </option>
+                                <option value="100" {{ $pageSize == '100' ? 'selected="selected"' : '' }}>100
+                                </option>
+                            </select>
+                    </div>
+
+                    <div class="form-group" style="margin-left:10px;">
+                    <select id="status" name="status" class="selectpicker show-tick" data-live-search="false">
+                        <option value="">Status</option>        
+                        <option value="1" @if(Request()->status == '1') selected @endif>Active</option>     
+                        <option value="0" @if(Request()->status == '0') selected @endif>Deactive</option> 
+                    </select>
+                    </div>
+
+                    <div class="form-group" style="margin-left:10px;">
+                        <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" >
+                            <option value="">Supplier</option>        
+                            @foreach ($suppliers as $value)
+                                <option value="{{ $value->id }}" @if(Request()->supplier == $value->id) selected @endif>{{ $value->name }}</option>
+                            @endforeach 
                         </select>
-                    </form>
-                </div>
-                <div class="form-group" style="margin-left:10px;">
-                <select id="status" name="status" class="selectpicker show-tick" data-live-search="false">
-                    <option value="">Status</option>        
-                    <option value="1">Active</option>     
-                    <option value="0">Deactive</option> 
-                </select>
-                </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-left:10px;">
+                        <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true">
+                            <option value="">Departments</option>        
+                            @foreach ($departments as $value)
+                                <option value="{{ $value->id }}" @if(Request()->departments == $value->id) selected @endif>{{ $value->name }}</option>
+                            @endforeach 
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="margin-left:10px;">
+                        <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true">
+                            <option value="">Sub Departments</option>        
+                            @foreach ($sub_departments as $value)
+                                <option value="{{ $value->id }}"  @if(Request()->sub_departments == $value->id) selected @endif>{{ $value->name }}</option>
+                            @endforeach 
+                        </select>
+                    </div>
 
-                <div class="form-group" style="margin-left:10px;">
-                    <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" >
-                        <option value="">Supplier</option>        
-                        @foreach ($suppliers as $value)
-                            <option value="{{ $value->id }}">{{ $value->name }}</option>
-                        @endforeach 
-                    </select>
-                </div>
-                
-                <div class="form-group" style="margin-left:10px;">
-                    <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true">
-                        <option value="">Departments</option>        
-                        @foreach ($departments as $value)
-                            <option value="{{ $value->id }}">{{ $value->name }}</option>
-                        @endforeach 
-                    </select>
-                </div>
-                
-                <div class="form-group" style="margin-left:10px;">
-                    <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true">
-                        <option value="">Sub Departments</option>        
-                        @foreach ($sub_departments as $value)
-                            <option value="{{ $value->id }}">{{ $value->name }}</option>
-                        @endforeach 
-                    </select>
-                </div>
+                    <input type="hidden" name="form_action" value="search">
 
-                <!-- <div class="form-group col-md-2">
-                    <input type="text" class="form-control" name="search" id="search" placeholder="Search">
-                </div> -->
-
-                <div class="form-group text-right" style="margin-left:10px;">
-                    <button class="btn btn-primary" type="submit" onclick="filterData()">Filter</button>
-                </div>
+                    <div class="form-group text-right" style="margin-left:10px;">
+                        <button class="btn btn-primary" type="submit">Filter</button>
+                    </div>
             </div>
-
-            <div class="row">    
-            </div>
+            </form>
             <br>
 
             <div>
@@ -95,7 +92,7 @@
                     </thead>
                     <tbody>
                     <?php $i = 1; ?>
-                    @foreach ($data as $value)
+                    @foreach ($listData as $value)
                             <tr>
                                 <td>{{ $value->id }}</td>
                                 <td>{{ $value->name }}</td>
@@ -141,12 +138,12 @@
                     </tbody>
                 </table>
             </div>
-            <div id="list_pagination" style="float: right;">{{ $data->appends(Request::all())->links() }}</div>
+            <div id="list_pagination" style="float: right;">{{ $listData->appends(Request::all())->links() }}</div>
         </div>
     </div>
     @section('js')
         <script>
-            
+
             $(function() {
                 $('#dataTable').DataTable({
                     "bPaginate": false,
@@ -231,49 +228,49 @@
                 });
             }
 
-            function filterData(){
+            // function filterData(){
 
-                $.ajax({
-                    url: "{{ url('admin/item/filter') }}",
-                    type: 'POST',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "status": $('#status').val(),
-                        },
-                        success: function (data) {
-                            $("#dataTable tbody").empty();
-                            var result = JSON.parse(data);
+            //     $.ajax({
+            //         url: "{{ url('admin/item/filter') }}",
+            //         type: 'POST',
+            //             data: {
+            //                 "_token": "{{ csrf_token() }}",
+            //                 "status": $('#status').val(),
+            //             },
+            //             success: function (data) {
+            //                 $("#dataTable tbody").empty();
+            //                 var result = JSON.parse(data);
 
-                            alert(result.length);
+            //                 alert(result.length);
 
-                            if (result.length > 0) {
+            //                 if (result.length > 0) {
 
-                                $.each(result, function (count, val) {
+            //                     $.each(result, function (count, val) {
 
-                                    $('#dataTable tbody').append(
-                                        '<tr>'
-                                        +'</td><input type="checkbox" name="ids[]" value="'+ val['id'] +'" class="form-check-label"></td>'
-                                        +'</td>'+ val['id'] +'</td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</td></td>'
-                                        +'</tr>'
-                                    );
-                                });
-                            } 
-                        }, error: function (data) {
+            //                         $('#dataTable tbody').append(
+            //                             '<tr>'
+            //                             +'</td><input type="checkbox" name="ids[]" value="'+ val['id'] +'" class="form-check-label"></td>'
+            //                             +'</td>'+ val['id'] +'</td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</td></td>'
+            //                             +'</tr>'
+            //                         );
+            //                     });
+            //                 } 
+            //             }, error: function (data) {
                                     
-                    }
-                });
-            }
+            //         }
+            //     });
+            // }
 
             function selectPageSize(pageSize) {
                     document.getElementById('frm-list').submit();
