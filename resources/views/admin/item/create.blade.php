@@ -53,7 +53,7 @@
                     <form class="text-center border border-light p-5" action="" id="itemCreate" onsubmit="return false;">
                         
                       <div class="row">
-                        <div class="col-lg-10">
+                          <div class="col-lg-5">
                             <div class="form-group text-left">
                                 <label for="product_code" class="form-label">Product Code</label>
                                 <span class="required"> * </span>
@@ -63,11 +63,11 @@
                         </div>
                       </div>
                         <div class="row">
-                        <div class="col-lg-10">
+                          <div class="col-lg-6">
                             <div class="form-group text-left">
                                 <label for="supplier" class="form-label">Supplier</label>
-                                <span class="required"> * </span>
-                            <select id="supplier" name="supplier" class="browser-default custom-select selectpicker" required>
+                                <span class="required"> * </span><br>
+                            <select id="supplier" name="supplier" class="selectpicker  show-tick col-lg-6" data-live-search="true" multiple required>
                                 <option value="">Select Supplier</option>
                                 @foreach ($suppliers as $value)
                                 <option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -77,11 +77,11 @@
                         </div>
                         </div>
                         <div class="row">
-                        <div class="col-lg-5">
+                        <div class="col-lg-6">
                             <div class="form-group text-left">
                                 <label for="department" class="form-label">Department</label>
-                                <span class="required"> * </span>
-                            <select id="department" name="department" class="browser-default custom-select selectpicker" required>
+                                <span class="required"> * </span><br>
+                            <select id="department" name="department" class="selectpicker  show-tick col-lg-6" data-live-search="true" required>
                                 <option value="">Select Department</option>
                                 @foreach ($departments as $value)
                                 <option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -89,11 +89,11 @@
                             </select>
                             </div>
                         </div>
-                      <div class="col-lg-5">
+                      <div class="col-lg-6">
                           <div class="form-group text-left">
                               <label for="sub_department" class="form-label">Sub Department</label>
-                              <span class="required"> * </span>
-                          <select id="sub_department" name="sub_department" class="browser-default custom-select selectpicker" required>
+                              <span class="required"> * </span><br>
+                          <select id="sub_department" name="sub_department" class="selectpicker show-tick col-lg-6" data-live-search="true" required>
                               <option value="">Select Sub Department</option>
                               @foreach ($sub_departments as $value)
                               <option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -103,7 +103,7 @@
                       </div>
                       </div>
                       <div class="row">
-                        <div class="col-lg-3">
+                        <div class="col-lg-6">
                             <div class="form-group text-left">
                                 <label for="vat" class="form-label">Sales VAT (%)</label>
                                 <input type="text" class="form-control" name="vat" id="vat"
@@ -112,10 +112,9 @@
                         </div>
                       </div>
                           
-                          <div class="text-left">
-                            <button class="btn btn-primary" type="submit">Next</button>
-                          </div>
-             
+                      <div class="text-left">
+                        <button class="btn btn-primary" type="submit">Next</button>
+                      </div>
                     </form>
               </div>
               <div id="test-l-2" class="content">
@@ -155,8 +154,8 @@
   
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
-                                    <label for="margin_type" class="form-label">Margin Type</label>
-                                    <span class="required"> * </span>
+                                    <label for="margin_type" class="selectpicker show-tick col-lg-5">Margin Type</label>
+                                    <span class="required"> * </span><br>
                                     <select id="margin_type" name="margin_type" class="browser-default custom-select selectpicker" required>
                                         <option value="Floating">Floating</option>
                                         <option value="Fixed">Fixed</option>
@@ -187,8 +186,8 @@
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
                                     <label for="location" class="form-label">Location</label>
-                                    <span class="required"> * </span>
-                                    <select id="location" name="location" class="browser-default custom-select selectpicker" required>
+                                    <span class="required"> * </span><br>
+                                    <select id="location" name="location" lass="selectpicker show-tick col-lg-5" data-live-search="true" required>
                                         <option value="">Select Location</option>
                                         @foreach ($locations as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -203,6 +202,10 @@
                                   <label for="image" class="form-label">Image</label>
                                   <input type="file" class="form-control" name="image" id="image"
                                   value="" autocomplete="off"  placeholder="">
+                              </div>
+
+                              <div class="img-upload">
+                                  <img class="item-img" src="" alt="">
                               </div>
                           </div>
                           <div class="col-lg-5">
@@ -311,16 +314,6 @@
         console.warn('shown.bs-stepper', event)
       });
 
-      // var stepper2 = new Stepper(document.querySelector('#stepper2'), {
-      //   linear: false,
-      //   animation: true
-      // });
-      // var stepper3 = new Stepper(document.querySelector('#stepper3'), {
-      //   animation: true
-      // });
-      // var stepper4 = new Stepper(document.querySelector('#stepper4'));
-
-
       // Select picker
         const sorting = document.querySelector('.selectpicker');
         const commentSorting = document.querySelector('.selectpicker');
@@ -339,9 +332,14 @@
 
         $(document).ready(function() {
 
-            $('#department').on('change', function() {
-                $("#sub_department").empty();
+            $("#image").change(function(){
+                readURL(this);
+            });
 
+            $('#department').on('change', function() {
+
+              var select = document.querySelector("[name=sub_department]");
+  
                 $.ajax({
                     url: "{{ url('admin/department/get-subdepartments-by-departments') }}",
                     type: 'POST',
@@ -350,16 +348,17 @@
                             "department": this.value,
                         },
                         success: function (data) {
+                          select.innerHTML = "";
 
                             var result = JSON.parse(data);
 
                             if (result.length > 0) {
-
                                 $.each(result, function (count, val) {
-
+               
                                   $('#sub_department').append(
                                     '<option value="' + val['id'] + '">' + val['name'] + '</option>'
                                     );
+                                  $(select).selectpicker('refresh');
                               });
                             } 
 
@@ -436,7 +435,7 @@
                                     timeOut: 1500,
                                     fadeOut: 1500,
                                     onHidden: function () {
-                                      window.location.reload();
+                                      // window.location.reload();
                                     }
                                   }
                                 );

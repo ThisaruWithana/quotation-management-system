@@ -3,7 +3,7 @@
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                <a href="#" class="btn btn-sm btn-primary" >Bulck Edit</a>
+                <!-- <a href="#" class="btn btn-sm btn-primary" >Bulck Edit</a> -->
                 <a href="{{ route('admin.item.create') }}" class="btn btn-sm btn-primary" >Add New</a>
             </div>
         </div>

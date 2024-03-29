@@ -11,6 +11,7 @@ use App\Models\ItemSupplier;
 use App\Models\Department;
 use App\Models\SubDepartment;
 use App\Models\Location;
+use App\Models\SubItem;
 use DB;
 use Auth;
 
@@ -41,23 +42,28 @@ class ItemController extends Controller
         $title = 'Edit Item';
         $page = 'edit';
         $data = Item::with('barcode', 'department.vat')->where('id',decrypt($id))->first();
+        $optionalItems = SubItem::with('subitem.barcode', 'subitem.department')->where('parent_id', decrypt($id))->where('status', 1)->orderBy('id','DESC')->get();
 
         $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
         $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
         $locations = Location::where('status', 1)->orderBy('name','ASC')->get();
+        $itemList = Item::with('barcode', 'department.vat')->where('id', '!=', decrypt($id))->where('status', 1)->get();
 
         $selectedSuppliers = ItemSupplier::where('item_id', decrypt($id))->where('status', 1)->pluck('supplier_id')->toArray();
 
+        $selectedOptionalItems = SubItem::where('parent_id', decrypt($id))->where('status', 1)->pluck('sub_item_id')->toArray();
+
         return view('admin.item.edit',compact(
             'data', 'title', 'page', 'suppliers', 'departments', 'sub_departments', 'locations',
-            'selectedSuppliers'
+            'selectedSuppliers', 'itemList', 'selectedOptionalItems', 'optionalItems'
         ));
     }
 
     public function store(Request $request)
     {
         $response = array();
+        $suppliers = $request->input('supplier');
 
             try{
                 DB::beginTransaction();
@@ -79,12 +85,15 @@ class ItemController extends Controller
                         'updated_by' => Auth::user()->id,
                     ]);
 
-                    $addSuppliers = ItemSupplier::create([
-                        'item_id' => $createItem->id,
-                        'supplier_id' => $request->input('supplier'),
-                        'created_by' => Auth::user()->id,
-                        'updated_by' => Auth::user()->id,
-                    ]);
+                    foreach($suppliers as $supplier){
+
+                        $addSuppliers = ItemSupplier::create([
+                            'item_id' => $createItem->id,
+                            'supplier_id' => $supplier,
+                            'created_by' => Auth::user()->id,
+                            'updated_by' => Auth::user()->id,
+                        ]);
+                    }
                 }
 
                 DB::commit(); 
@@ -356,5 +365,108 @@ class ItemController extends Controller
          $data = Item::with('barcode', 'department.vat', 'subdepartment', 'location', 'suppliers.suppliername')->where('id',decrypt($id))->first();
 
         return view('admin.item.detail',compact('data'));
+    }
+
+    public function getItems(Request $request)
+    {
+        $items = $request->input('item_list');
+
+        $data = Item::with('department', 'subdepartment', 'barcode', 'suppliers.suppliername')
+                    ->whereIn('id', $items)
+                    ->where('status', 1)
+                    ->orderBy('id','DESC')->get();
+
+        return json_encode($data);
+    }
+
+    public function storeSubItems(Request $request)
+    {
+        $response = array();
+        $items = $request->input('item_list');
+        $parent_id = $request->input('parent_id');
+
+            try{
+                DB::beginTransaction();
+
+                    $disableSuppliers = SubItem::where('parent_id', $parent_id)->update([
+                        'status' => 0,
+                        'updated_by' => Auth::user()->id
+                    ]);
+
+                    foreach($items as $value){
+
+                        $addItems = SubItem::create([
+                            'parent_id' => $parent_id,
+                            'sub_item_id' => $value,
+                            'created_by' => Auth::user()->id,
+                            'updated_by' => Auth::user()->id,
+                        ]);
+                    }
+                DB::commit(); 
+
+                if($addItems){
+                    
+                    $data = SubItem::with('subitem.barcode', 'subitem.department')->where('parent_id', $parent_id)
+                                    ->where('status', 1)->orderBy('id','DESC')->get();
+
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                    $response['data'] = $data;
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                    $response['data'] = '';
+                }
+
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function updateMandatoryStatus(Request $request)
+    {
+        $response = array();
+        $ischecked = $request->input('ischecked');
+        $id = $request->input('id');
+
+            try{
+                DB::beginTransaction();
+
+                if($ischecked == true){
+                    $is_mandatory = 1;
+                }else{
+                    $is_mandatory = 0;
+                }
+
+                $update = SubItem::where('id', $id)->update([
+                    'is_mandatory' => $is_mandatory,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                DB::commit(); 
+
+                if($update){
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                    $response['data'] = '';
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                    $response['data'] = '';
+                }
+
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
     }
 }

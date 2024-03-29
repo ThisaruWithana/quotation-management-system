@@ -11,17 +11,12 @@
               <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
                 <i class="fas fa-times"></i>
               </button> -->
-                <a href="#" class="btn btn-sm btn-primary"><i class="far fa-edit"></i>  Edit Item</a>
+                <a href="{{ route('admin.item.edit',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="far fa-edit"></i>  Edit Item</a>
             </div>
           </div>
           <div class="card-body">
             <div class="row">
               <div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
-                <!-- <div class="row">
-                  <div class="col-12 col-sm-4">
-                        <img class="item-img" src="{{ URL::to('/') }}/images/{{ $data->image }}" alt="{{ $data->name }}">
-                  </div>
-                </div> -->
                 <div class="row">
                   <div class="col-12">
                     <h4>Suppliers</h4><br>
@@ -52,7 +47,7 @@
                         </table>
                     </div>
                     
-                    <h4>Sub Item List</h4><br>
+                    <h4>Optional Item List</h4><br>
 
                     <div class="post">
                         <table class="table table-head-fixed text-nowrap" id="">

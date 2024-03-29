@@ -70,47 +70,47 @@
                           </div>
                         </div>
                           <div class="row">
-                          <div class="col-lg-10">
-                              <div class="form-group text-left">
-                                  <label for="supplier" class="form-label">Supplier</label>
-                                  <span class="required"> * </span>
-                              <select id="supplier" name="supplier[]" class="browser-default custom-select selectpicker" multiple required>
-                                  <option value="">Select Supplier</option>
-                                  @foreach ($suppliers as $value)
-                                  <option value="{{ $value->id }}"
-                                  {{in_array($value->id, $selectedSuppliers) ? 'selected' : ''}}>{{ $value->name }}</option>
-                                  @endforeach
-                              </select>
-                              </div>
-                          </div>
+                            <div class="col-lg-6">
+                                <div class="form-group text-left">
+                                    <label for="supplier" class="form-label">Supplier</label>
+                                    <span class="required"> * </span><br>
+                                    <select id="supplier" name="supplier[]" class="selectpicker show-tick col-lg-6" data-live-search="true" multiple required>
+                                        <option value="">Select Supplier</option>
+                                        @foreach ($suppliers as $value)
+                                        <option value="{{ $value->id }}"
+                                        {{in_array($value->id, $selectedSuppliers) ? 'selected' : ''}}>{{ $value->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                           </div>
                           <div class="row">
-                          <div class="col-lg-5">
+                            <div class="col-lg-6">
+                                <div class="form-group text-left">
+                                    <label for="department" class="form-label">Department</label>
+                                    <span class="required"> * </span><br>
+                                    <select id="department" name="department" class="selectpicker show-tick col-lg-6" data-live-search="true" required>
+                                        <option value="">Select Department</option>
+                                        @foreach ($departments as $value)
+                                        <option value="{{ $value->id }}"
+                                            {{ $value->id === $data->department_id ? 'selected' : '' }}>{{ $value->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                          </div>
+                          <div class="col-lg-6">
                               <div class="form-group text-left">
-                                  <label for="department" class="form-label">Department</label>
-                                  <span class="required"> * </span>
-                              <select id="department" name="department" class="browser-default custom-select selectpicker" required>
-                                  <option value="">Select Department</option>
-                                  @foreach ($departments as $value)
-                                  <option value="{{ $value->id }}"
-                                      {{ $value->id === $data->department_id ? 'selected' : '' }}>{{ $value->name }}</option>
-                                  @endforeach
-                              </select>
+                                  <label for="sub_department" class="form-label">Sub Department</label>
+                                  <span class="required"> * </span><br>
+                                  <select id="sub_department" name="sub_department" class="selectpicker show-tick col-lg-6" data-live-search="true" required>
+                                      <option value="">Select Sub Department</option>
+                                      @foreach ($sub_departments as $value)
+                                      <option value="{{ $value->id }}"
+                                        {{ $value->id === $data->sub_department_id ? 'selected' : '' }}>{{ $value->name }}</option>
+                                      @endforeach
+                                  </select>
                               </div>
                           </div>
-                        <div class="col-lg-5">
-                            <div class="form-group text-left">
-                                <label for="sub_department" class="form-label">Sub Department</label>
-                                <span class="required"> * </span>
-                            <select id="sub_department" name="sub_department" class="browser-default custom-select selectpicker" required>
-                                <option value="">Select Sub Department</option>
-                                @foreach ($sub_departments as $value)
-                                <option value="{{ $value->id }}"
-                                  {{ $value->id === $data->sub_department_id ? 'selected' : '' }}>{{ $value->name }}</option>
-                                @endforeach
-                            </select>
-                            </div>
-                        </div>
                         </div>
                         <div class="row">
                           <div class="col-lg-3">
@@ -151,29 +151,29 @@
                                 </div>
                             </div>
                           </div>
-
                             <div class="row">
                               <div class="col-lg-5">
-                                  <div class="form-group text-left">
-                                      <label for="item_size" class="form-label">Item Size</label>
-                                      <span class="required"> * </span>
-                                      <input type="text" class="form-control" name="item_size" id="item_size"
-                                      value="{{ $data['item_size'] }}" autocomplete="off"  placeholder="" required>
-                                  </div>
+                                    <div class="form-group text-left">
+                                        <label for="item_size" class="form-label">Item Size</label>
+                                        <span class="required"> * </span>
+                                        <input type="text" class="form-control" name="item_size" id="item_size"
+                                        value="{{ $data['item_size'] }}" autocomplete="off"  placeholder="" required>
+                                    </div>
                               </div>
-    
                               <div class="col-lg-5">
                                   <div class="form-group text-left">
                                       <label for="margin_type" class="form-label">Margin Type</label>
-                                      <span class="required"> * </span>
-                                      <select id="margin_type" name="margin_type" class="browser-default custom-select selectpicker" required>
+                                      <span class="required"> * </span><br>
+                                      <select id="margin_type" name="margin_type" class="selectpicker show-tick col-lg-6" required>
                                           <option value="Floating" @if ($data->margin_type == 'Floating') selected @endif>Floating</option>
                                           <option value="Fixed" @if ($data->margin_type == 'Fixed') selected @endif>Fixed</option>
                                       </select>
                                   </div>
                               </div>
+                            </div> 
+                            <div class="row">
                             </div>
-                            
+                        
                             <div class="text-left">
                               <button class="btn btn-primary item-info" type="submit">Next</button>
                               <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
@@ -188,7 +188,7 @@
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
                                     <label for="min_stock" class="form-label">Min Stock</label>
-                                    <span class="required"> * </span>
+                                    <span class="required"> * </span><br>
                                     <input type="text" class="form-control" name="min_stock" id="min_stock"
                                     value="{{ $data['min_stock'] }}" autocomplete="off"  placeholder="" required>
                                 </div>
@@ -196,8 +196,8 @@
                               <div class="col-lg-5">
                                   <div class="form-group text-left">
                                       <label for="location" class="form-label">Location</label>
-                                      <span class="required"> * </span>
-                                      <select id="location" name="location" class="browser-default custom-select selectpicker" required>
+                                      <span class="required"> * </span><br>
+                                      <select id="location" name="location" class="selectpicker show-tick col-lg-6" required>
                                           <option value="">Select Location</option>
                                           @foreach ($locations as $value)
                                           <option value="{{ $value->id }}"
@@ -213,6 +213,14 @@
                                     <label for="image" class="form-label">Image</label>
                                     <input type="file" class="form-control" name="image" id="image"
                                     value="" autocomplete="off"  placeholder="">
+                                </div>
+
+                                <div class="img-upload">
+                                  @if ($data->image)
+                                    <img class="item-img" src="{{ URL::to('/') }}/images/{{ $data->image }}" alt="{{ $data->name }}">
+                                  @else
+                                    <img class="item-img" src="" alt="Item Image">
+                                  @endif
                                 </div>
                             </div>
                             <div class="col-lg-5">
@@ -251,9 +259,61 @@
                   </form>
                 </div>
                 <div id="test-l-4" class="content">
-                  <p class="text-center">test 4</p>
-                  <button class="btn btn-primary" onclick="stepper1.next()">Next</button>
-                  <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
+                    <form class="text-center border border-light p-5" action="" id="itemOptionalItems" onsubmit="return false;">
+                            
+                            <div class="row">
+                              <div class="col-lg-8">
+                                  <div class="form-group text-left">
+                                      <label for="case_size" class="form-label">Optional Items</label>
+                                      <span class="required"> * </span>
+                                      <select class="selectpicker  show-tick col-lg-8" data-live-search="true" id="optional_items" name="optional_items[]" multiple>
+                                          <!-- <option value="">Select Items</option> -->
+                                          @foreach ($itemList as $value)
+                                            <option value="{{ $value->id }}"
+                                          {{in_array($value->id, $selectedOptionalItems) ? 'selected' : ''}}>{{ $value->barcode->barcode }} - (Dep) {{ $value->department->name }} - {{ $value->name }}</option>
+                                          @endforeach
+                                      </select>
+                                      <button class="btn btn-primary" type="button" id="addOptionalItems">Save</button>
+                                  </div>
+                              </div>
+                            </div><br><br>
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <table class="table table-head-fixed text-nowrap text-left" id="optionalItemTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-sm">ID</th>
+                                            <th class="th-sm">Name</th>
+                                            <th class="th-sm">Barcode</th>
+                                            <th class="th-sm">Department</th>
+                                            <th class="th-sm">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
+                                            <th class="th-sm">Is Mandatory</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($optionalItems as $value)
+                                            <tr>
+                                                <td>{{ $value->subitem->id }}</td>
+                                                <td>{{ $value->subitem->name }}</td>
+                                                <td>{{ $value->subitem->barcode->barcode }}</td>
+                                                <td>{{ $value->subitem->department->name }}</td>
+                                                <td>{{ $value->subitem->cost_price }}</td>
+                                                <td>{{ $value->subitem->retail_price }}</td>
+                                                <td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="{{ $value->id }}" class="form-check-label" 
+                                                  @if($value->is_mandatory == 1) checked @endif></td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                              </div>
+                            </div>
+
+                              <div class="text-left">
+                              <button class="btn btn-primary" type="submit" onclick="stepper1.next()">Next</button>
+                                <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
+                              </div>
+                    </form>
                 </div>
                 <div id="test-l-5" class="content">
                   <form class="text-center border border-light p-5" action="" id="itemPricingInfo" onsubmit="return false;">
@@ -289,7 +349,7 @@
                                 <div class="form-group text-left">
                                     <label for="margin" class="form-label">Margin (%)</label>
                                     <input type="text" class="form-control" name="margin" id="margin"
-                                    value="" autocomplete="off"  placeholder="" readonly>
+                                    value="{{ $data['margin'] }}" autocomplete="off"  placeholder="" readonly>
                                 </div>
                             </div>
                           </div>
@@ -341,8 +401,13 @@
 
         $(document).ready(function() {
 
+            $("#image").change(function(){
+                readURL(this);
+            });
+
             $('#department').on('change', function() {
-                $("#sub_department").empty();
+
+                var select = document.querySelector("[name=sub_department]");
 
                 $.ajax({
                     url: "{{ url('admin/department/get-subdepartments-by-departments') }}",
@@ -352,6 +417,7 @@
                             "department": this.value,
                         },
                         success: function (data) {
+                          select.innerHTML = "";
 
                             var result = JSON.parse(data);
 
@@ -362,6 +428,7 @@
                                   $('#sub_department').append(
                                     '<option value="' + val['id'] + '">' + val['name'] + '</option>'
                                     );
+                                  $(select).selectpicker('refresh');
                               });
                             } 
 
@@ -557,6 +624,72 @@
                                             }
                                         );
                                     }
+                        }, error: function (data) {
+                                    
+                    }
+                });
+            });
+
+            $('#addOptionalItems').click(function(){
+   
+              if( $('#optional_items :selected').length > 0){
+             
+                  var selectednumbers = [];
+                  $('#optional_items :selected').each(function(i, selected) {
+                      selectednumbers[i] = $(selected).val();
+                  });
+
+                  $.ajax({
+                    url: "{{ url('admin/item/store-sub-items') }}",
+                    type: 'POST',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "item_list": selectednumbers,
+                            "parent_id":  $('#item_id').val()
+                        },
+                        success: function (data) {
+                            var result = JSON.parse(data);
+                            $('#optionalItemTable tbody').empty();
+
+                            if (result['data'].length > 0) {
+                                $.each(result['data'], function (count, val) {
+               
+                                  $('#optionalItemTable tbody').append(
+                                    '<tr>'
+                                    +'<td>' + val['subitem']['id'] + '</td>'
+                                    +'<td>' + val['subitem']['name'] + '</td>'
+                                    +'<td>' + val['subitem']['barcode']['barcode'] + '</td>'
+                                    +'<td>' + val['subitem']['department']['name'] + '</td>'
+                                    +'<td>' + val['subitem']['cost_price'] + '</td>'
+                                    +'<td>' + val['subitem']['retail_price'] + '</td>'
+                                    +'<td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="' + val['id'] + '" class="form-check-label"></td>'
+                                    +'</tr>'
+                                    );
+                              });
+                            } 
+                        }, error: function (data) {
+                                    
+                    }
+                });
+              }
+            });
+
+            $('#is_mandatory').click(function() {
+
+              var ischecked = $(this).is(":checked");
+              alert(ischecked);
+
+              $.ajax({
+                    url: "{{ url('admin/item/update-mandatory-status') }}",
+                    type: 'POST',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": $(this).val(),
+                            "ischecked": ischecked
+                        },
+                        success: function (data) {
+                            var result = JSON.parse(data);
+
                         }, error: function (data) {
                                     
                     }
