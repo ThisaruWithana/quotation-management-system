@@ -219,7 +219,7 @@
                                   @if ($data->image)
                                     <img class="item-img" src="{{ URL::to('/') }}/images/{{ $data->image }}" alt="{{ $data->name }}">
                                   @else
-                                    <img class="item-img" src="" alt="Item Image">
+                                    <img class="item-img" src="" alt="" style="display:none;">
                                   @endif
                                 </div>
                             </div>
@@ -369,7 +369,7 @@
     
 
     @section('js')
-    <!-- <script src="dist/js/bs-stepper.js"></script> -->
+
     <script>
 
         // Form stepper
@@ -402,6 +402,7 @@
         $(document).ready(function() {
 
             $("#image").change(function(){
+              $(".item-img").show();
                 readURL(this);
             });
 
@@ -677,7 +678,6 @@
             $('#is_mandatory').click(function() {
 
               var ischecked = $(this).is(":checked");
-              alert(ischecked);
 
               $.ajax({
                     url: "{{ url('admin/item/update-mandatory-status') }}",

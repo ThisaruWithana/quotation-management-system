@@ -55,21 +55,29 @@
                                 <tr>
                                     <th class="th-sm">ID</th>
                                     <th class="th-sm">Name</th>
-                                    <th class="th-sm">Contact Person</th>
-                                    <th class="th-sm">Address</th>
-                                    <th class="th-sm">Contact No</th>
-                                    <th class="th-sm">Email</th>
+                                    <th class="th-sm">Barcode</th>
+                                    <th class="th-sm">Department</th>
+                                    <th class="th-sm">Cost Price</th>
+                                    <th class="th-sm">Retail Price</th>
+                                    <th class="th-sm">Is Mandatory</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($data->suppliers as $value)
+                                @foreach ($optionalItems as $value)
                                     <tr>
-                                        <td>{{ $value->suppliername->id }}</td>
-                                        <td>{{ $value->suppliername->name }}</td>
-                                        <td>{{ $value->suppliername->contact_person }}</td>
-                                        <td>{{ $value->suppliername->address }} {{ $value->suppliername->postal_code }}</td>
-                                        <td>{{ $value->suppliername->tel }}</td>
-                                        <td>{{ $value->suppliername->email }}</td>
+                                        <td>{{ $value->subitem->id }}</td>
+                                        <td>{{ $value->subitem->name }}</td>
+                                        <td>{{ $value->subitem->barcode->barcode }}</td>
+                                        <td>{{ $value->subitem->department->name }}</td>
+                                        <td>{{ $value->subitem->cost_price }}</td>
+                                        <td>{{ $value->subitem->retail_price }}</td>
+                                        <td>
+                                            @if($value->is_mandatory == 1)
+                                                Yes
+                                            @else
+                                                No
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -80,9 +88,12 @@
               </div>
               <div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
               <h4> {{ 'Item Details' }} </h4><br>
-                <div class="post">
-                    <img class="item-img" src="{{ URL::to('/') }}/images/{{ $data->image }}" alt="{{ $data->name }}">
-                </div>
+              
+                    @if(isset($data->image))
+                    <div class="post">
+                        <img class="item-img" src="{{ URL::to('/') }}/images/{{ $data->image }}" alt="{{ $data->name }}">
+                    </div>
+                    @endif
                 
                 <div class="text-muted">
                     <p class="text-sm"><b class="d-block info-lb">Name: </b> {{ $data->name }}</p>

@@ -43,7 +43,7 @@
                                         <div class="form-group text-left">
                                             <label for="department" class="form-label">Department</label>
                                             <span class="required"> * </span>
-                                            <select name="department" id="department" class="form-control"  required data-mdb-filter="true">
+                                            <select name="department" id="department" required class="selectpicker form-control show-tick" data-live-search="true">
                                                 <option value="" selected disabled>Selecte department</option>
                                                 @foreach ($departments as $department)
                                                     <option value="{{ $department->id }}"
@@ -83,7 +83,7 @@
                                         <div class="form-group text-left">
                                             <label for="department" class="form-label">Department</label>
                                             <span class="required"> * </span>
-                                            <select name="department" id="department"  class="browser-default custom-select mb-4 selectpicker"  required data-mdb-filter="true">
+                                            <select name="department" id="department" required class="selectpicker form-control show-tick" data-live-search="true">
                                                 <option value="" selected disabled>Selecte department</option>
                                                 @foreach ($departments as $department)
                                                     <option value="{{ $department->id }}"

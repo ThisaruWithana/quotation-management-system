@@ -77,8 +77,9 @@ class ItemController extends Controller
         $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
         $locations = Location::where('status', 1)->orderBy('name','ASC')->get();
+        $itemList = Item::with('barcode', 'department.vat')->where('status', 1)->get();
 
-        return view('admin.item.create', compact('title', 'page', 'suppliers', 'departments', 'sub_departments', 'locations'));
+        return view('admin.item.create', compact('title', 'page', 'suppliers', 'departments', 'sub_departments', 'locations', 'itemList'));
     }
     
     public function edit($id)
@@ -108,35 +109,61 @@ class ItemController extends Controller
     {
         $response = array();
         $suppliers = $request->input('supplier');
+        $id = $request->input('id');
 
             try{
                 DB::beginTransaction();
 
-                $createBarcode = Barcode::create([
-                    'product_code' => $request->input('product_code'),
-                    'barcode' => $request->input('product_code'),
-                    'created_by' => Auth::user()->id,
-                    'updated_by' => Auth::user()->id,
-                ]);
+                if($id != ''){
 
-                if($createBarcode){
-
-                    $createItem = Item::create([
-                        'barcode_id' => $createBarcode->id,
+                    $updateItemDetails = Item::where('id', $item_id)->update([
                         'department_id' => $request->input('department'),
                         'sub_department_id' => $request->input('sub_department'),
-                        'created_by' => Auth::user()->id,
-                        'updated_by' => Auth::user()->id,
+                        'updated_by' => Auth::user()->id
+                    ]);
+
+                    $disableSuppliers = ItemSupplier::where('item_id', $id)->update([
+                        'status' => 0,
+                        'updated_by' => Auth::user()->id
                     ]);
 
                     foreach($suppliers as $supplier){
 
-                        $addSuppliers = ItemSupplier::create([
-                            'item_id' => $createItem->id,
+                        $addNewSuppliers = ItemSupplier::create([
+                            'item_id' => $id,
                             'supplier_id' => $supplier,
                             'created_by' => Auth::user()->id,
                             'updated_by' => Auth::user()->id,
                         ]);
+                    }
+
+                }else{
+                    $createBarcode = Barcode::create([
+                        'product_code' => $request->input('product_code'),
+                        'barcode' => $request->input('product_code'),
+                        'created_by' => Auth::user()->id,
+                        'updated_by' => Auth::user()->id,
+                    ]);
+    
+                    if($createBarcode){
+    
+                        $createItem = Item::create([
+                            'barcode_id' => $createBarcode->id,
+                            'department_id' => $request->input('department'),
+                            'sub_department_id' => $request->input('sub_department'),
+                            'created_by' => Auth::user()->id,
+                            'updated_by' => Auth::user()->id,
+                        ]);
+    
+                        foreach($suppliers as $supplier){
+    
+                            $addSuppliers = ItemSupplier::create([
+                                'item_id' => $createItem->id,
+                                'supplier_id' => $supplier,
+                                'created_by' => Auth::user()->id,
+                                'updated_by' => Auth::user()->id,
+                            ]);
+                        }
                     }
                 }
 
@@ -220,7 +247,7 @@ class ItemController extends Controller
             try{
                 DB::beginTransaction();
 
-                    $updateItemDetails = Item::where('id', $id)->update([
+                  $updateItemDetails = Item::where('id', $id)->update([
                         'min_stock' => $request->input('min_stock'),
                         'location_id' => $request->input('location'),
                         'auto_order' => $auto_order,
@@ -230,14 +257,14 @@ class ItemController extends Controller
                     ]);
 
                     if($request->image){
-
+                       
                         $request->validate([
                             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
                         ]);
 
                         $imageName = $id.'-'.date("YmdHis").'.'.$request->image->extension();  
                         $upload = $request->image->move(public_path('images'), $imageName);
-
+              
                         if($upload){
 
                             $updateItemDetails = Item::where('id', $id)->update([
@@ -397,9 +424,10 @@ class ItemController extends Controller
 
     public function viewItemDetails($id)
     {
-         $data = Item::with('barcode', 'department.vat', 'subdepartment', 'location', 'suppliers.suppliername')->where('id',decrypt($id))->first();
+        $data = Item::with('barcode', 'department.vat', 'subdepartment', 'location', 'suppliers.suppliername')->where('id',decrypt($id))->first();
+        $optionalItems = SubItem::with('subitem.barcode', 'subitem.department')->where('parent_id', decrypt($id))->where('status', 1)->orderBy('id','DESC')->get();
 
-        return view('admin.item.detail',compact('data'));
+        return view('admin.item.detail',compact('data', 'optionalItems'));
     }
 
     public function getItems(Request $request)

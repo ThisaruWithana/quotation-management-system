@@ -58,7 +58,7 @@
                                 <label for="product_code" class="form-label">Product Code</label>
                                 <span class="required"> * </span>
                                 <input type="text" class="form-control" name="product_code" id="product_code" required=""
-                                value="" autocomplete="off"  placeholder="">
+                                value="" autocomplete="off"  placeholder="" pattern=".{13,}">
                             </div>
                         </div>
                       </div>
@@ -81,7 +81,7 @@
                             <div class="form-group text-left">
                                 <label for="department" class="form-label">Department</label>
                                 <span class="required"> * </span><br>
-                            <select id="department" name="department" class="selectpicker  show-tick col-lg-6" data-live-search="true" required>
+                            <select id="department" name="department" class="selectpicker form-control show-tick col-lg-6" data-live-search="true" required>
                                 <option value="">Select Department</option>
                                 @foreach ($departments as $value)
                                 <option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -93,7 +93,7 @@
                           <div class="form-group text-left">
                               <label for="sub_department" class="form-label">Sub Department</label>
                               <span class="required"> * </span><br>
-                          <select id="sub_department" name="sub_department" class="selectpicker show-tick col-lg-6" data-live-search="true" required>
+                          <select id="sub_department" name="sub_department" class="selectpicker form-control show-tick col-lg-6" data-live-search="true" required>
                               <option value="">Select Sub Department</option>
                               @foreach ($sub_departments as $value)
                               <option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -137,7 +137,7 @@
                               <div class="form-group text-left">
                                   <label for="description" class="form-label">Description</label>
                                   <textarea class="form-control" name="description" id="description"
-                                                required=""></textarea>
+                                               ></textarea>
                               </div>
                           </div>
                         </div>
@@ -154,9 +154,9 @@
   
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
-                                    <label for="margin_type" class="selectpicker show-tick col-lg-5">Margin Type</label>
+                                    <label for="margin_type">Margin Type</label>
                                     <span class="required"> * </span><br>
-                                    <select id="margin_type" name="margin_type" class="browser-default custom-select selectpicker" required>
+                                    <select id="margin_type" name="margin_type" class="selectpicker show-tick col-lg-5" required>
                                         <option value="Floating">Floating</option>
                                         <option value="Fixed">Fixed</option>
                                     </select>
@@ -187,7 +187,7 @@
                                 <div class="form-group text-left">
                                     <label for="location" class="form-label">Location</label>
                                     <span class="required"> * </span><br>
-                                    <select id="location" name="location" lass="selectpicker show-tick col-lg-5" data-live-search="true" required>
+                                    <select id="location" name="location" class="selectpicker show-tick col-lg-5" data-live-search="true" required>
                                         <option value="">Select Location</option>
                                         @foreach ($locations as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -204,7 +204,7 @@
                                   value="" autocomplete="off"  placeholder="">
                               </div>
 
-                              <div class="img-upload">
+                              <div class="img-upload" style="display:none;">
                                   <img class="item-img" src="" alt="">
                               </div>
                           </div>
@@ -244,9 +244,48 @@
                 </form>
               </div>
               <div id="test-l-4" class="content">
-                <p class="text-center">test 4</p>
-                <button class="btn btn-primary" onclick="stepper1.next()">Next</button>
-                <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
+                    <form class="text-center border border-light p-5" action="" id="itemOptionalItems" onsubmit="return false;">
+                            
+                            <div class="row">
+                              <div class="col-lg-8">
+                                  <div class="form-group text-left">
+                                      <label for="case_size" class="form-label">Optional Items</label>
+                                      <select class="selectpicker  show-tick col-lg-8" data-live-search="true" id="optional_items" name="optional_items[]" multiple>
+                                          <!-- <option value="">Select Items</option> -->
+                                          @foreach ($itemList as $value)
+                                            <option value="{{ $value->id }}">{{ $value->barcode->barcode }} - (Dep) {{ $value->department->name }} - {{ $value->name }}</option>
+                                          @endforeach
+                                      </select>
+                                      <button class="btn btn-primary" type="button" id="addOptionalItems">Save</button>
+                                  </div>
+                              </div>
+                            </div><br><br>
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <table class="table table-head-fixed text-nowrap text-left" id="optionalItemTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-sm">ID</th>
+                                            <th class="th-sm">Name</th>
+                                            <th class="th-sm">Barcode</th>
+                                            <th class="th-sm">Department</th>
+                                            <th class="th-sm">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
+                                            <th class="th-sm">Is Mandatory</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                     
+                                    </tbody>
+                                </table>
+                              </div>
+                            </div>
+
+                              <div class="text-left">
+                              <button class="btn btn-primary" type="submit" onclick="stepper1.next()">Next</button>
+                                <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
+                              </div>
+                    </form>
               </div>
               <div id="test-l-5" class="content">
                 <form class="text-center border border-light p-5" action="" id="itemPricingInfo" onsubmit="return false;">
@@ -333,6 +372,7 @@
         $(document).ready(function() {
 
             $("#image").change(function(){
+              $(".img-upload").show();
                 readURL(this);
             });
 
@@ -418,6 +458,7 @@
                             "supplier": $('#supplier').val(),
                             "product_code": $('#product_code').val(),
                             "department": $('#department').val(),
+                            "id": $('#item_id').val(),
                             "sub_department": $('#sub_department').val()
                         },
                         success: function (data) {
@@ -559,7 +600,70 @@
                 });
             });
 
+            $('#addOptionalItems').click(function(){
+   
+              if( $('#optional_items :selected').length > 0){
+              
+                  var selectednumbers = [];
+                  $('#optional_items :selected').each(function(i, selected) {
+                      selectednumbers[i] = $(selected).val();
+                  });
+
+                  $.ajax({
+                    url: "{{ url('admin/item/store-sub-items') }}",
+                    type: 'POST',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "item_list": selectednumbers,
+                            "parent_id":  $('#item_id').val()
+                        },
+                        success: function (data) {
+                            var result = JSON.parse(data);
+                            $('#optionalItemTable tbody').empty();
+
+                            if (result['data'].length > 0) {
+                                $.each(result['data'], function (count, val) {
+                
+                                  $('#optionalItemTable tbody').append(
+                                    '<tr>'
+                                    +'<td>' + val['subitem']['id'] + '</td>'
+                                    +'<td>' + val['subitem']['name'] + '</td>'
+                                    +'<td>' + val['subitem']['barcode']['barcode'] + '</td>'
+                                    +'<td>' + val['subitem']['department']['name'] + '</td>'
+                                    +'<td>' + val['subitem']['cost_price'] + '</td>'
+                                    +'<td>' + val['subitem']['retail_price'] + '</td>'
+                                    +'<td><input type="checkbox" id="is_mandatory" name="is_mandatory" onclick="checkMandatory(this)" value="' + val['id'] + '" class="form-check-label"></td>'
+                                    +'</tr>'
+                                    );
+                              });
+                            } 
+                        }, error: function (data) {
+                                    
+                    }
+                });
+              }
+            });
         });
+
+        function checkMandatory(isChecked){
+              var ischecked = isChecked.checked;
+
+              $.ajax({
+                    url: "{{ url('admin/item/update-mandatory-status') }}",
+                    type: 'POST',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": isChecked.value,
+                            "ischecked": ischecked
+                        },
+                        success: function (data) {
+                            var result = JSON.parse(data);
+
+                        }, error: function (data) {
+                                    
+                    }
+              });
+        }
     </script>
     @endsection
 </x-admin>

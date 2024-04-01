@@ -28,8 +28,8 @@
                 <div class="form-group text-left">
                   <label for="role" class="form-label">Role</label>
                   <span class="required"> * </span>
-                  <select name="role" id="role" class="browser-default custom-select mb-4 selectpicker" required>
-                    <option value="" selected disabled>selecte the role</option> @foreach ($roles as $role) <option value="{{ $role->name }}" {{ $user->roles[0]['name'] === $role->name ? 'selected' : '' }}>{{ $role->name }}</option> @endforeach
+                  <select name="role" id="role" class="selectpicker form-control show-tick" data-live-search="true" required>
+                    <option value="" selected disabled>Selecte the role</option> @foreach ($roles as $role) <option value="{{ $role->name }}" {{ $user->roles[0]['name'] === $role->name ? 'selected' : '' }}>{{ $role->name }}</option> @endforeach
                   </select> @error('role') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
               </div>

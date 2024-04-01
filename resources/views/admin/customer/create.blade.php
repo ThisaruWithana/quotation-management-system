@@ -110,7 +110,7 @@
                                         <div class="form-group text-left">
                                             <label for="ctype" class="form-label">Customer Type</label>
                                             <span class="required"> * </span>
-                                            <select name="ctype" id="ctype" class="browser-default custom-select mb-4 selectpicker" required>
+                                            <select name="ctype" id="ctype" class="selectpicker form-control show-tick" required>
                                                 <option value="Prospective" @if ($data->type == 'Prospective') selected @endif>Prospective</option>
                                                 <option value="Accepted" @if ($data->type == 'Accepted') selected @endif>Accepted</option>
                                                 <option value="Installed" @if ($data->type == 'Installed') selected @endif>Installed</option>
@@ -217,7 +217,7 @@
                                         <div class="form-group text-left">
                                             <label for="ctype" class="form-label">Customer Type</label>
                                             <span class="required"> * </span>
-                                            <select name="ctype" id="ctype" class="browser-default custom-select mb-4 selectpicker"  required>
+                                            <select name="ctype" id="ctype" class="selectpicker form-control show-tick" required>
                                                 <option value="Prospective">Prospective</option>
                                                 <option value="Accepted">Accepted</option>
                                                 <option value="Installed">Installed</option>
