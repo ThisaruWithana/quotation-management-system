@@ -49,9 +49,10 @@
               </div>
 
               <div class="bs-stepper-content">
+              <form class="text-center border border-light p-5" action="" id="itemdetails" enctype="multipart/form-data" onsubmit="return false;">
                 <div id="test-l-1" class="content">
 
-                      <form class="text-center border border-light p-5" action="" id="itemCreate" onsubmit="return false;">
+                      <!-- <form class="text-center border border-light p-5" action="" id="itemCreate" onsubmit="return false;"> -->
                           
                         <div class="row">
                           <div class="col-lg-5">
@@ -123,14 +124,14 @@
                         </div>
                             
                             <div class="text-left">
-                              <button class="btn btn-primary" type="submit">Next</button>
+                              <button class="btn btn-primary" type="button" onclick="stepper1.next()">Next</button>
                             </div>
               
-                      </form>
+                      <!-- </form> -->
                 </div>
                 <div id="test-l-2" class="content">
 
-                  <form class="text-center border border-light p-5" action="" id="itemdetails" onsubmit="return false;">
+                  <!-- <form class="text-center border border-light p-5" action="" id="itemdetails" onsubmit="return false;"> -->
                           
                           <div class="row">
                             <div class="col-lg-10">
@@ -175,14 +176,14 @@
                             </div>
                         
                             <div class="text-left">
-                              <button class="btn btn-primary item-info" type="submit">Next</button>
+                              <button class="btn btn-primary item-info" type="button"  onclick="stepper1.next()">Next</button>
                               <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
                             </div>
-                  </form>
+                  <!-- </form> -->
                 </div>
                 <div id="test-l-3" class="content">
                   
-                  <form class="text-center border border-light p-5" action="" id="itemStockSettings" enctype="multipart/form-data" onsubmit="return false;">
+                  <!-- <form class="text-center border border-light p-5" action="" id="itemStockSettings" enctype="multipart/form-data" onsubmit="return false;"> -->
                           
                           <div class="row">
                             <div class="col-lg-5">
@@ -253,13 +254,13 @@
                           <input type="hidden" class="form-control" name="item_id" id="item_id" value="{{ $data['id'] }}">
                             
                             <div class="text-left">
-                              <button class="btn btn-primary stock-setting" type="submit">Next</button>
+                              <button class="btn btn-primary stock-setting" type="button" onclick="stepper1.next()">Next</button>
                               <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
                             </div>
-                  </form>
+                  <!-- </form> -->
                 </div>
                 <div id="test-l-4" class="content">
-                    <form class="text-center border border-light p-5" action="" id="itemOptionalItems" onsubmit="return false;">
+                    <!-- <form class="text-center border border-light p-5" action="" id="itemOptionalItems" onsubmit="return false;"> -->
                             
                             <div class="row">
                               <div class="col-lg-8">
@@ -310,13 +311,13 @@
                             </div>
 
                               <div class="text-left">
-                              <button class="btn btn-primary" type="submit" onclick="stepper1.next()">Next</button>
+                              <button class="btn btn-primary" type="button" onclick="stepper1.next()">Next</button>
                                 <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
                               </div>
-                    </form>
+                    <!-- </form> -->
                 </div>
                 <div id="test-l-5" class="content">
-                  <form class="text-center border border-light p-5" action="" id="itemPricingInfo" onsubmit="return false;">
+                  <!-- <form class="text-center border border-light p-5" action="" id="itemPricingInfo" onsubmit="return false;"> -->
                           
                           <div class="row">
                             <div class="col-lg-5">
@@ -358,8 +359,9 @@
                               <button class="btn btn-primary" type="submit">Save</button>
                               <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
                             </div>
-                  </form>
+                  <!-- </form> -->
                 </div>
+                </form>
               </div>
             </div>
           </div>
@@ -478,90 +480,53 @@
 
             });
 
-            $("#itemCreate").submit(function(event) {
-                event.preventDefault();
+            // $("#itemCreate").submit(function(event) {
+            //     event.preventDefault();
 
-                $.ajax({
-                    url: "{{ url('admin/item/update') }}",
-                    type: 'POST',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "id": $('#item_id').val(),
-                            "supplier": $('#supplier').val(),
-                            "product_code": $('#product_code').val(),
-                            "department": $('#department').val(),
-                            "sub_department": $('#sub_department').val()
-                        },
-                        success: function (data) {
+            //     $.ajax({
+            //         url: "{{ url('admin/item/update') }}",
+            //         type: 'POST',
+            //             data: {
+            //                 "_token": "{{ csrf_token() }}",
+            //                 "id": $('#item_id').val(),
+            //                 "supplier": $('#supplier').val(),
+            //                 "product_code": $('#product_code').val(),
+            //                 "department": $('#department').val(),
+            //                 "sub_department": $('#sub_department').val()
+            //             },
+            //             success: function (data) {
 
-                            var result = JSON.parse(data);
+            //                 var result = JSON.parse(data);
 
-                              if (result['code'] == 1) {
-                                $('#item_id').val(result['data']);
-                                stepper1.next();
-                              } else {
-                                toastr.error(
-                                  'Error',
-                                  result['msg'],
-                                  {
-                                    timeOut: 1500,
-                                    fadeOut: 1500,
-                                    onHidden: function () {
-                                      // window.location.reload();
-                                    }
-                                  }
-                                );
-                              }
-                        }, error: function (data) {
+            //                   if (result['code'] == 1) {
+            //                     $('#item_id').val(result['data']);
+            //                     stepper1.next();
+            //                   } else {
+            //                     toastr.error(
+            //                       'Error',
+            //                       result['msg'],
+            //                       {
+            //                         timeOut: 1500,
+            //                         fadeOut: 1500,
+            //                         onHidden: function () {
+            //                           // window.location.reload();
+            //                         }
+            //                       }
+            //                     );
+            //                   }
+            //             }, error: function (data) {
                                     
-                    }
-                });
-            });
+            //         }
+            //     });
+            // });
 
             $("#itemdetails").submit(function(event) {
-                event.preventDefault();
-
-                $.ajax({
-                    url: "{{ url('admin/item/store-details') }}",
-                    type: 'POST',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "id": $('#item_id').val(),
-                            "name": $('#name').val(),
-                            "description": $('#description').val(),
-                            "item_size": $('#item_size').val(),
-                            "margin_type": $('#margin_type').val()
-                        },
-                            success: function (data) {
-                            var result = JSON.parse(data);
-                                    if (result['code'] == 1) {
-                                      stepper1.next();
-                                    } else {
-                                        toastr.error(
-                                            'Error',
-                                            'Something Went Wrong!',
-                                            {
-                                                timeOut: 1500,
-                                                fadeOut: 1500,
-                                                onHidden: function () {
-                                                    window.location.reload();
-                                                }
-                                            }
-                                        );
-                                    }
-                        }, error: function (data) {
-                                    
-                    }
-                });
-            });
-
-            $("#itemStockSettings").submit(function(event) {
                 event.preventDefault();
 
                 var formData = new FormData(this);
 
                 $.ajax({
-                    url: "{{ url('admin/item/store-stock-settings') }}",
+                    url: "{{ url('admin/item/update') }}",
                     type: 'POST',
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         data: formData,
@@ -573,7 +538,7 @@
                             var result = data;
 
                                     if (result['code'] == 1) {
-                                      stepper1.next();
+                                      window.location = '{{ url("admin/item") }}';
                                     } else {
                                         toastr.error(
                                             'Error',
@@ -591,45 +556,84 @@
                                     
                     }
                 });
+
             });
 
-            $("#itemPricingInfo").submit(function(event) {
-                event.preventDefault();
+            // $("#itemStockSettings").submit(function(event) {
+            //     event.preventDefault();
 
-                $.ajax({
-                    url: "{{ url('admin/item/store-item-pricing') }}",
-                    type: 'POST',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "id": $('#item_id').val(),
-                            "cost_price": $('#cost_price').val(),
-                            "retail_price": $('#retail_price').val(),
-                            "margin": $('#margin').val(),
-                            "case_size": $('#case_size').val()
-                        },
-                            success: function (data) {
-                            var result = JSON.parse(data);
-                                    if (result['code'] == 1) {
-                                      window.location = '{{ url("admin/item/") }}';
+            //     var formData = new FormData(this);
 
-                                    } else {
-                                        toastr.error(
-                                            'Error',
-                                            'Something Went Wrong!',
-                                            {
-                                                timeOut: 1500,
-                                                fadeOut: 1500,
-                                                onHidden: function () {
-                                                    window.location.reload();
-                                                }
-                                            }
-                                        );
-                                    }
-                        }, error: function (data) {
+            //     $.ajax({
+            //         url: "{{ url('admin/item/store-stock-settings') }}",
+            //         type: 'POST',
+            //             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            //             data: formData,
+            //             dataType:'JSON',
+            //             contentType: false,
+            //             cache: false,
+            //             processData: false,
+            //             success: function (data) {
+            //                 var result = data;
+
+            //                         if (result['code'] == 1) {
+            //                           stepper1.next();
+            //                         } else {
+            //                             toastr.error(
+            //                                 'Error',
+            //                                 'Something Went Wrong!',
+            //                                 {
+            //                                     timeOut: 1500,
+            //                                     fadeOut: 1500,
+            //                                     onHidden: function () {
+            //                                         window.location.reload();
+            //                                     }
+            //                                 }
+            //                             );
+            //                         }
+            //             }, error: function (data) {
                                     
-                    }
-                });
-            });
+            //         }
+            //     });
+            // });
+
+            // $("#itemPricingInfo").submit(function(event) {
+            //     event.preventDefault();
+
+            //     $.ajax({
+            //         url: "{{ url('admin/item/store-item-pricing') }}",
+            //         type: 'POST',
+            //             data: {
+            //                 "_token": "{{ csrf_token() }}",
+            //                 "id": $('#item_id').val(),
+            //                 "cost_price": $('#cost_price').val(),
+            //                 "retail_price": $('#retail_price').val(),
+            //                 "margin": $('#margin').val(),
+            //                 "case_size": $('#case_size').val()
+            //             },
+            //                 success: function (data) {
+            //                 var result = JSON.parse(data);
+            //                         if (result['code'] == 1) {
+            //                           window.location = '{{ url("admin/item/") }}';
+
+            //                         } else {
+            //                             toastr.error(
+            //                                 'Error',
+            //                                 'Something Went Wrong!',
+            //                                 {
+            //                                     timeOut: 1500,
+            //                                     fadeOut: 1500,
+            //                                     onHidden: function () {
+            //                                         window.location.reload();
+            //                                     }
+            //                                 }
+            //                             );
+            //                         }
+            //             }, error: function (data) {
+                                    
+            //         }
+            //     });
+            // });
 
             $('#addOptionalItems').click(function(){
    

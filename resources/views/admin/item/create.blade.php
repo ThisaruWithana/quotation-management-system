@@ -458,7 +458,7 @@
                             "supplier": $('#supplier').val(),
                             "product_code": $('#product_code').val(),
                             "department": $('#department').val(),
-                            "id": $('#item_id').val(),
+                            "item_id": $('#item_id').val(),
                             "sub_department": $('#sub_department').val()
                         },
                         success: function (data) {
@@ -495,7 +495,7 @@
                     type: 'POST',
                         data: {
                             "_token": "{{ csrf_token() }}",
-                            "id": $('#item_id').val(),
+                            "item_id": $('#item_id').val(),
                             "name": $('#name').val(),
                             "description": $('#description').val(),
                             "item_size": $('#item_size').val(),
@@ -570,7 +570,7 @@
                     type: 'POST',
                         data: {
                             "_token": "{{ csrf_token() }}",
-                            "id": $('#item_id').val(),
+                            "item_id": $('#item_id').val(),
                             "cost_price": $('#cost_price').val(),
                             "retail_price": $('#retail_price').val(),
                             "margin": $('#margin').val(),

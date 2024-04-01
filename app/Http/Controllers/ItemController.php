@@ -109,7 +109,7 @@ class ItemController extends Controller
     {
         $response = array();
         $suppliers = $request->input('supplier');
-        $id = $request->input('id');
+        $id = $request->input('item_id');
 
             try{
                 DB::beginTransaction();
@@ -191,13 +191,13 @@ class ItemController extends Controller
 
     public function storeItemDetails(Request $request)
     {
-        $id = $request->input('id');
+        $id = $request->input('item_id');
         $response = array();
 
             try{
                 DB::beginTransaction();
 
-                    $updateItemDetails = Item::where('id', $id)->update([
+                  $updateItemDetails = Item::where('id', $id)->update([
                         'name' => $request->input('name'),
                         'description' => $request->input('description'),
                         'item_size' => $request->input('item_size'),
@@ -295,7 +295,7 @@ class ItemController extends Controller
 
     public function updatePriceDetails(Request $request)
     {
-        $id = $request->input('id');
+        $id = $request->input('item_id');
         $response = array();
 
             try{
@@ -356,7 +356,7 @@ class ItemController extends Controller
 
     public function update(Request $request)
     {
-        $item_id = $request->input('id');
+        $item_id = $request->input('item_id');
         $suppliers = $request->input('supplier');
 
         $response = array();
@@ -376,7 +376,6 @@ class ItemController extends Controller
                     ]);
 
                     foreach($suppliers as $supplier){
-
                         $addNewSuppliers = ItemSupplier::create([
                             'item_id' => $item_id,
                             'supplier_id' => $supplier,
@@ -384,6 +383,11 @@ class ItemController extends Controller
                             'updated_by' => Auth::user()->id,
                         ]);
                     }
+
+                    $storeItemDetails = $this->storeItemDetails($request);
+                    $updateStockSettings = $this->updateStockSettings($request);
+                    $updatePriceDetails = $this->updatePriceDetails($request);
+
                 DB::commit(); 
 
                 if($addNewSuppliers){
