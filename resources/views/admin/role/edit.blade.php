@@ -37,7 +37,7 @@
                                     <div class="form-group text-left">
                                         <label for="permission" class="form-label">Permissions</label>
                                         <span class="required"> * </span>
-                                        <select name="permission[]" id="permission"  class="browser-default custom-select mb-4 selectpicker"  required multiple data-mdb-filter="true">
+                                        <select name="permission[]" id="permission" required multiple class="selectpicker form-control show-tick" data-live-search="true">
                                             <option value="" selected disabled>Selecte permissions</option>
                                             @foreach ($permissions as $permission)
                                                 <option value="{{ $permission->name }}"

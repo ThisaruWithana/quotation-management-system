@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="card-body">
-            <table class="table table-striped" id="dataTable">
+            <table class="table" id="dataTable">
                 <thead>
                     <tr>
                         <th class="th-sm">Name</th>
@@ -73,6 +73,9 @@
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
+                    "aoColumnDefs": [
+                        { "bSortable": false, "aTargets": [ 8] }, 
+                    ]
                 });
             });
             

@@ -55,7 +55,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('department/sub/store', [DepartmentController::class, 'storeSubDepartment'])->name('department.sub.store');
     Route::get('department/sub/edit/{id}', [DepartmentController::class, 'editSubDepartment'])->name('department.sub.edit');
     Route::post('department/sub/change-status', [DepartmentController::class, 'changeStatusSubDepartments'])->name('department.sub.change-status');
-    
+    Route::post('department/get-subdepartments-by-departments', [DepartmentController::class, 'getSubDepartmentByDept'])->name('department.get-subdepartments-by-departments');
+    Route::post('department/get-vat-value', [DepartmentController::class, 'getVatValue'])->name('department.get-vat-value');
+
+
     Route::resource('customer',CustomerController::class);
     Route::post('customer/change-status', [CustomerController::class, 'changeStatus'])->name('customer.change-status');
     Route::post('user/change-status', [UserController::class, 'changeStatus'])->name('user.change-status');
@@ -64,8 +67,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     
     Route::resource('item',ItemController::class);
     Route::post('item/store', [ItemController::class, 'store'])->name('item.store');
+    Route::post('item/store-details', [ItemController::class, 'storeItemDetails'])->name('item.store-details');
+    Route::post('item/store-stock-settings', [ItemController::class, 'updateStockSettings'])->name('item.store-stock-settings');
+    Route::post('item/store-item-pricing', [ItemController::class, 'updatePriceDetails'])->name('item.store-item-pricing');
+    Route::post('item/change-status', [ItemController::class, 'changeStatus'])->name('item.change-status');
+    Route::post('item/update', [ItemController::class, 'update'])->name('item.update');
+    Route::post('item/calculate-margin', [ItemController::class, 'calculateMargin'])->name('item.calculate-margin');
+    Route::get('item/detail/{id}', [ItemController::class, 'viewItemDetails'])->name('item.detail');
+    Route::post('item/store-sub-items', [ItemController::class, 'storeSubItems'])->name('item.store-sub-items');
+    Route::post('item/update-mandatory-status', [ItemController::class, 'updateMandatoryStatus'])->name('item.update-mandatory-status');
 
-
+    Route::get('item/download-barcode/{id}', [ItemController::class, 'downloadBarcode'])->name('item.download-barcode');
 });
 
 Route::get('/barcode', [VatController::class, 'barcode']);

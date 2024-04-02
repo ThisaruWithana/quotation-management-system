@@ -33,7 +33,7 @@
                                         <div class="form-group text-left">
                                             <label for="sales_vat" class="form-label">Sales VAT</label>
                                             <span class="required"> * </span>
-                                            <select name="sales_vat" id="sales_vat" class="browser-default custom-select mb-4 selectpicker"   required data-mdb-filter="true">
+                                            <select name="sales_vat" id="sales_vat" class="selectpicker form-control show-tick" data-live-search="true" required>
                                                 @foreach ($sales_vat as $value)
                                                     <option value="{{ $value->id }}" 
                                                     {{ $data->vat_id === $value->id ? 'selected' : '' }}>{{ $value->name }} - {{ $value->value }} %</option>
@@ -64,7 +64,7 @@
                                         <div class="form-group text-left">
                                             <label for="sales_vat" class="form-label">Sales VAT</label>
                                             <span class="required"> * </span>
-                                            <select name="sales_vat" id="sales_vat" class="browser-default custom-select mb-4 selectpicker"   required data-mdb-filter="true">
+                                            <select name="sales_vat" id="sales_vat" class="selectpicker form-control show-tick" data-live-search="true" required>
                                                 @foreach ($sales_vat as $value)
                                                     <option value="{{ $value->id }}">{{ $value->name }} - {{ $value->value }} %</option>
                                                 @endforeach

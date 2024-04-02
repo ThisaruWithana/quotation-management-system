@@ -72,8 +72,7 @@ class VatController extends Controller
         $update = DB::table('vat')
             ->where('id', $id)
             ->update([
-                'status' => 0,
-                'created_by' => Auth::user()->id
+                'status' => 0
         ]);
         
         $query = VAT::create([

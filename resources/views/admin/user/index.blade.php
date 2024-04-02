@@ -6,7 +6,7 @@
             <div class="card-tools"><a href="{{ route('admin.user.create') }}" class="btn btn-sm btn-primary">Add New</a></div>
         </div>
         <div class="card-body">
-            <table class="table table-striped" id="dataTable">
+            <table class="table" id="dataTable">
                 <thead>
                     <tr>
                         <th class="th-sm">Name</th>
