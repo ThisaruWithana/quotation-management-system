@@ -14,6 +14,7 @@ use App\Models\Location;
 use App\Models\SubItem;
 use DB;
 use Auth;
+use PDF;
 
 class ItemController extends Controller
 {
@@ -535,6 +536,19 @@ class ItemController extends Controller
                 $response['msg'] = $e->getMessage();
                 return json_encode($response);
             } 
+    }
+
+    public function downloadBarcode($id)
+    {        
+        $item = Item::with('barcode')->where('id',decrypt($id))->first();
+
+        $data = [
+            'title' => 'Barcode of '.$item['name'],
+            'barcode' =>$item['barcode']['barcode']
+        ];
+        
+        $pdf = PDF::loadView('admin.reports.barcode', $data);
+        return $pdf->download($item['name'].'.pdf');
     }
     
 }
