@@ -26,10 +26,10 @@
                         <tr>
                             <td>{{ $value->name }}</td>
                             <td>{{ $value->remark }}</td>
-                            <td>{{ $value->bundle_cost }}</td>
-                            <td>{{ $value->total_retail }}</td>
-                            <td>{{ $value->total_cost }}</td>
-                            <td></td>
+                            <td>{{ number_format($value->bundle_cost, 2) }}</td>
+                            <td>{{ number_format($value->total_retail, 2) }}</td>
+                            <td>{{ number_format($value->total_cost, 2) }}</td>
+                            <td>{{ number_format($value->bundle_cost - $value->total_cost, 2) }}</td>
                             <td>
                                 @if($value->status == 1)
                                 <span class="badge badge-success">Active</span>
@@ -62,6 +62,7 @@
     @section('js')
         <script>
             $(function() {
+
                 $('#dataTable').DataTable({
                     "bPaginate": true,
                     "searching": true,

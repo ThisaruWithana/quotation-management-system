@@ -87,6 +87,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('bundle/add-items', [BundleController::class, 'addItems'])->name('bundle.add-items');
     Route::post('bundle/update-display-status', [BundleController::class, 'updateDisplayStatus'])->name('bundle.update-display-status');
     Route::post('bundle/delete-item', [BundleController::class, 'deleteItem'])->name('bundle.delete-item');
+    Route::post('bundle/change-status', [BundleController::class, 'changeStatus'])->name('bundle.change-status');
 });
 
 Route::get('/barcode', [VatController::class, 'barcode']);
