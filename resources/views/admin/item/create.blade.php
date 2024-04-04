@@ -339,7 +339,6 @@
         </div>
     </div>
     @section('js')
-    <!-- <script src="dist/js/bs-stepper.js"></script> -->
     <script>
 
         // Form stepper
@@ -353,18 +352,6 @@
         console.warn('shown.bs-stepper', event)
       });
 
-      // Select picker
-        const sorting = document.querySelector('.selectpicker');
-        const commentSorting = document.querySelector('.selectpicker');
-        const sortingchoices = new Choices(sorting, {
-            placeholder: false,
-            itemSelectText: ''
-        });
-
-        let sortingClass = sorting.getAttribute('class');
-        window.onload= function () {
-            sorting.parentElement.setAttribute('class', sortingClass);
-        }
     </script>
 
     <script>

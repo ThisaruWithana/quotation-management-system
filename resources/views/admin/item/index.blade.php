@@ -7,9 +7,8 @@
                 <a href="{{ route('admin.item.create') }}" class="btn btn-sm btn-primary" >Add New</a>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body  table-responsive">
             
-                
         <form method="GET" action="{{ route('admin.item.index') }}" id="frm-list">
 
             <div class="row">

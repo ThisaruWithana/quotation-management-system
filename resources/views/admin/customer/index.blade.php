@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="card-body">
-            <table class="table" id="dataTable">
+            <table class="table table-responsive" id="dataTable">
                 <thead>
                     <tr>
                         <th class="th-sm">Name</th>

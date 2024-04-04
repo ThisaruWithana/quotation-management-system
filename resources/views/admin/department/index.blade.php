@@ -7,54 +7,54 @@
                 <a href="{{ route('admin.department.sub.index') }}" class="btn btn-sm btn-warning">Sub Departments</a>
             </div>
         </div>
-        <div class="card-body">
-            <table class="table" id="dataTable">
-                <thead>
-                    <tr>
-                        <th class="th-sm">Department</th>
-                        <th class="th-sm">Sales VAT (%)</th>
-                        <th class="th-sm">Created By</th>
-                        <th class="th-sm">Created At</th>
-                        <th class="th-sm">Last Updated</th>
-                        <th class="th-sm">Status</th>
-                        <th class="th-sm"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php $i = 1; ?>
-                @foreach ($data as $value)
+        <div class="card-body table-responsive">
+                <table class="table" id="dataTable">
+                    <thead>
                         <tr>
-                            <td>{{ $value->name }}</td>
-                            <td>{{ $value->vat->name }} - {{ $value->vat->value }}</td>
-                            <td>{{ $value->created_user->name }}</td>
-                            <td>{{ $value->created_at }}</td>
-                            <td>{{ $value->updated_at }}</td>
-                            <td>
-                                @if($value->status == 1)
-                                <span class="badge badge-success">Active</span>
-                                @else 
-                                <span class="badge badge-warning">Deactive</span>
-                                @endif
-                            </td>
-                            <td>
-                                <a href="{{ route('admin.department.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                                    <i class="far fa-edit"></i>
-                                </a>
-                                @if($value->status === 1)
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                @else
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                        <i class="fas fa-check-circle"></i>
-                                    </a>
-                                @endif
-                            </td>
+                            <th class="th-sm">Department</th>
+                            <th class="th-sm">Sales VAT (%)</th>
+                            <th class="th-sm">Created By</th>
+                            <th class="th-sm">Created At</th>
+                            <th class="th-sm">Last Updated</th>
+                            <th class="th-sm">Status</th>
+                            <th class="th-sm" style="width:100px;"></th>
                         </tr>
-                     <?php $i++; ?>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    <?php $i = 1; ?>
+                    @foreach ($data as $value)
+                            <tr>
+                                <td>{{ $value->name }}</td>
+                                <td>{{ $value->vat->name }} - {{ $value->vat->value }}</td>
+                                <td>{{ $value->created_user->name }}</td>
+                                <td>{{ $value->created_at }}</td>
+                                <td>{{ $value->updated_at }}</td>
+                                <td>
+                                    @if($value->status == 1)
+                                    <span class="badge badge-success">Active</span>
+                                    @else 
+                                    <span class="badge badge-warning">Deactive</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.department.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                        <i class="far fa-edit"></i>
+                                    </a>
+                                    @if($value->status === 1)
+                                        <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    @else
+                                        <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                            <i class="fas fa-check-circle"></i>
+                                        </a>
+                                    @endif
+                                </td>
+                            </tr>
+                        <?php $i++; ?>
+                        @endforeach
+                    </tbody>
+                </table>
         </div>
     </div>
     @section('js')

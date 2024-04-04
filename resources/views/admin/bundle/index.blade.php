@@ -1,24 +1,23 @@
 <x-admin>
-@section('title')  {{ 'Sub Departments' }} @endsection
+   @section('title')  {{ 'Bundle Management' }} @endsection
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.department.sub.create') }}" class="btn btn-sm btn-primary">Add New</a>
-                <a href="{{ route('admin.department.index') }}" class="btn btn-sm btn-warning">Departments</a>
+                <a href="{{ route('admin.bundle.create') }}" class="btn btn-sm btn-primary">Add New</a>
             </div>
         </div>
         <div class="card-body table-responsive">
             <table class="table" id="dataTable">
                 <thead>
                     <tr>
-                        <th class="th-sm">Sub Department</th>
-                        <th class="th-sm">Department</th>
-                        <th class="th-sm">Created By</th>
-                        <th class="th-sm">Created At</th>
-                        <th class="th-sm">Last Updated</th>
+                        <th class="th-sm">Bundle Name</th>
+                        <th class="th-sm">Remark</th>
+                        <th class="th-sm">Bundle Cost</th>
+                        <th class="th-sm">Bundle Retail</th>
+                        <th class="th-sm">Total Cost</th>
+                        <th class="th-sm">Difference</th>
                         <th class="th-sm">Status</th>
-                        <th class="th-sm" style="width:100px;"></th>
+                        <th class="th-sm"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,10 +25,11 @@
                 @foreach ($data as $value)
                         <tr>
                             <td>{{ $value->name }}</td>
-                            <td>{{ $value->departments->name }}</td>
-                            <td>{{ $value->created_user->name }}</td>
-                            <td>{{ $value->created_at }}</td>
-                            <td>{{ $value->updated_at }}</td>
+                            <td>{{ $value->remark }}</td>
+                            <td>{{ $value->bundle_cost }}</td>
+                            <td>{{ $value->total_retail }}</td>
+                            <td>{{ $value->total_cost }}</td>
+                            <td></td>
                             <td>
                                 @if($value->status == 1)
                                 <span class="badge badge-success">Active</span>
@@ -38,9 +38,10 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.department.sub.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('admin.bundle.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
+                                
                                 @if($value->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -62,16 +63,18 @@
         <script>
             $(function() {
                 $('#dataTable').DataTable({
-                    "paging": true,
+                    "bPaginate": true,
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
-              "aoColumnDefs": [
-                { "bSortable": false, "aTargets": [ 6] }, 
-            ]
+                    // "scrollX": false,
+                    "autoWidth":true,
+                    "aoColumnDefs": [
+                        { "bSortable": false, "aTargets": [ 7 ]},
+                    ]
                 });
             });
-
+            
         function changeStatus(id, status) {
 
             cuteAlert({
@@ -83,7 +86,7 @@
                 }).then((e)=>{
                 if ( e == ("confirm")){
                         $.ajax({
-                            url: "{{ url('admin/department/sub/change-status') }}",
+                            url: "{{ url('admin/bundle/change-status') }}",
                             type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
@@ -133,7 +136,7 @@
                 } else {
                 }
             });
-            }
+        }
         </script>
     @endsection
 </x-admin>
