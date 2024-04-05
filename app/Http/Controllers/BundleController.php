@@ -201,7 +201,7 @@ class BundleController extends Controller
     }
 
     public function getTotalCost($bundle_id)
-    { 
+    {
        return $query = BundleItem::where('bundle_id', $bundle_id)->where('status', 1)->sum('total_cost');
     }
 
@@ -334,5 +334,73 @@ class BundleController extends Controller
             DB::rollBack();
             return $e->getMessage();
         }
+    }
+
+    public function itemUpdate(Request $request)
+    {
+        $response = array();
+        $bundle_item_id = $request->input('bundle_item_id');
+        $actual_cost = $request->input('actual_cost');
+        $qty = $request->input('qty');
+        $bundle_id = $request->input('bundle_id');
+        $retail = $request->input('retail');
+
+            try{
+                DB::beginTransaction();
+                $item_total_cost = $actual_cost * $qty;
+                $item_total_retail = $retail * $qty;
+
+                $update = BundleItem::where('id', $bundle_item_id)->update([
+                    'actual_cost' => $actual_cost,
+                    'qty' => $qty,
+                    'total_cost' => $item_total_cost,
+                    'total_retail' => $item_total_retail,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                if($update){
+
+                    $total_cost = $this->getTotalCost($bundle_id);
+                    $total_retail = $this->getTotalRetail($bundle_id);
+                    $bundle_cost = $this->getBundleCost($bundle_id);
+          
+                    $queryUpdate = Bundle::where('id', $bundle_id)->where('status', 1)->update([
+                        'total_cost' => $total_cost,
+                        'total_retail' => $total_retail,
+                        'updated_by' => Auth::user()->id
+                    ]);
+ 
+                    
+                    if($queryUpdate){
+                        DB::commit(); 
+                        
+                        $getBundleItemList = BundleItem::with('item')->where('bundle_id', $bundle_id)
+                        ->where('status', 1)->orderBy('id', 'asc')->get();
+
+                        $response['code'] = 1;
+                        $response['msg'] = "Success";
+                        $response['data'] = $getBundleItemList;
+                        $response['total_cost'] = $total_cost;
+                        $response['total_retail'] = $total_retail;
+                        $response['bundle_cost'] = $bundle_cost;
+                    }else{
+                        DB::rollback();
+                        $response['code'] = 0;
+                        $response['msg'] = 'Something went wrong !';
+                        $response['data'] = '';
+                    }
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                    $response['data'] = '';
+                }
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
     }
 }

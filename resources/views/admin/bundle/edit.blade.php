@@ -108,6 +108,7 @@
                                             <th class="th-sm">Total Retail</th>
                                             <th class="th-sm">Display In Report</th>
                                             <th class="th-sm"></th>
+                                            <th class="th-sm"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -124,7 +125,16 @@
                                                 <td><input type="checkbox" id="item" name="item" 
                                                     onclick="updateDisplayStatus()" value="{{ $value->id }}" class="form-check-label" 
                                                     @if($value->display_report == 1) checked @endif></td>
-                                                <td><a href="" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->bundle_id }})"><i class="fas fa-trash-alt"></i></a></td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->bundle_id }})">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value->id }}, {{ $value->actual_cost }}, {{ $value->qty }}, {{ $value->retail }})">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -229,6 +239,44 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Detail -->
+        <div class="modal fade" id="editDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Bundle Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form action="" method="" onsubmit="return false;" id="formEditBundleItem">
+                <div class="modal-body">
+                        @csrf
+                    <input type="hidden" name="bundle_item_id" value="" id="bundle_item_id">
+                    <input type="hidden" name="bundleId" value="" id="bundle_item_id">
+                    <input type="hidden" name="retail" value="" id="retail">
+                    <div class="form-group">
+                        <label for="actual_cost" class="col-form-label">Actual Cost</label>
+                        <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
+                            required="" value="" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="qty" class="col-form-label">Qty</label>
+                        <input type="text" class="form-control" id="qty" name="qty"  
+                            required="" value="" autocomplete="off">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="btnModalSave">Save</button>
+                </div>
+                </form>
+
                 </div>
             </div>
         </div>
@@ -386,7 +434,12 @@
                                             +'<td>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
-                                            +'<td><a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['bundle_id'] + ')"><i class="fas fa-trash-alt"></i></a></td>'
+                                            +'<td>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['bundle_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                            +'</td>'
+                                            +'<td>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['actual_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                            +'</td>'
                                             +'</tr>'
                                         );
                                     });
@@ -464,7 +517,12 @@
                                             +'<td>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
-                                            +'<td><a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['bundle_id'] + ')"><i class="fas fa-trash-alt"></i></a></td>'
+                                            +'<td>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['bundle_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                            +'</td>'
+                                            +'<td>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['actual_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                            +'</td>'
                                             +'</tr>'
                                         );
                                     });
@@ -475,6 +533,54 @@
                         }
                 });
             }
+
+            function editDetails(id, actual_cost, qty, retail){
+                $("#actual_cost").val(actual_cost);
+                $("#qty").val(qty);
+                $("#bundle_item_id").val(id);
+                $("#retail").val(retail);
+                $("#editDetails").modal('show');
+            }
+
+            $('#formEditBundleItem').submit(function(event){
+                event.preventDefault();
+
+                var formData = new FormData(this);
+                formData.append('bundle_id', $('#bundle_id').val());
+            
+                $.ajax({
+                    url: "{{ url('admin/bundle/item-update') }}",
+                    type: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        data: formData,
+                        dataType:'JSON',
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                        success: function (data) {
+                            var result = data;
+
+                            if (result['code'] == 1) {
+                                window.location.reload();
+
+                            } else {
+                                toastr.error(
+                                    'Error',
+                                    'Something Went Wrong!',
+                                    {
+                                        timeOut: 1500,
+                                        fadeOut: 1500,
+                                        onHidden: function () {
+                                            window.location.reload();
+                                        }
+                                    }
+                                );
+                            }
+                        }, error: function (data) {
+                                    
+                    }
+                });
+            });
         </script>
     @endsection
 </x-admin>
