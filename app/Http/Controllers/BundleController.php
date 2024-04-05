@@ -42,10 +42,9 @@ class BundleController extends Controller
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
 
         $data = Bundle::where('id',decrypt($id))->first();
-        $bundleItems = BundleItem::with('item', 'item.suppliers.suppliername')
-                            ->where('bundle_id', decrypt($id))->where('status', 1)
-                            ->orderBy('order','ASC')->get();
-        
+
+        $bundleItems = $this->getBundleItems(decrypt($id));
+     
         return view('admin.bundle.edit',compact('data', 'title', 'bundleItems', 'page', 'departments', 'sub_departments', 'suppliers'));
     }
 
@@ -56,14 +55,6 @@ class BundleController extends Controller
         try{
             DB::beginTransaction();
     
-            // $store = Bundle::create([
-            //     'name' => $request->input('name'),
-            //     'remark' => $request->input('remark'),
-            //     'bundle_cost' => $request->input('bundle_cost'),
-            //     'created_by' => Auth::user()->id,
-            //     'updated_by' => Auth::user()->id,
-            // ]);
-
             $store = Bundle::updateOrCreate(
                 [
                     'id'=>$request->input('bundle_id')
@@ -166,14 +157,13 @@ class BundleController extends Controller
 
             if($store){
 
-                $getBundleItemList = BundleItem::with('item')->where('bundle_id', $bundle_id)
-                                    ->where('status', 1)->orderBy('id', 'asc')->get();
-
                 $queryUpdate = Bundle::where('id', $bundle_id)->where('status', 1)->update([
                                 'total_cost' => $total_cost,
                                 'total_retail' => $total_retail,
                                 'updated_by' => Auth::user()->id
                             ]);
+                
+                $getBundleItemList = $this->getBundleItems($bundle_id);
 
                 $response['code'] = 1;
                 $response['msg'] = "Success";
@@ -284,9 +274,8 @@ class BundleController extends Controller
                 DB::commit(); 
 
                 if($update){
-
-                    $getBundleItemList = BundleItem::with('item')->where('bundle_id', $bundle_id)
-                    ->where('status', 1)->orderBy('id', 'asc')->get();
+                   
+                    $getBundleItemList = $this->getBundleItems($bundle_id);
 
                     $response['code'] = 1;
                     $response['msg'] = "Success";
@@ -373,9 +362,8 @@ class BundleController extends Controller
                     
                     if($queryUpdate){
                         DB::commit(); 
-                        
-                        $getBundleItemList = BundleItem::with('item')->where('bundle_id', $bundle_id)
-                        ->where('status', 1)->orderBy('id', 'asc')->get();
+                   
+                        $getBundleItemList = $this->getBundleItems($bundle_id);
 
                         $response['code'] = 1;
                         $response['msg'] = "Success";
@@ -402,5 +390,40 @@ class BundleController extends Controller
                 $response['msg'] = $e->getMessage();
                 return json_encode($response);
             } 
+    }
+
+    public function getBundleItems($bundleId)
+    {
+        $bundleItemList = BundleItem::with('item', 'item.suppliers.suppliername')
+        ->where('bundle_id', $bundleId)->where('status', 1)
+        ->orderBy('order','ASC')->get();
+
+        $bundleItems = array();
+
+        foreach($bundleItemList as $value){
+            $supplierList = array();
+                    
+                foreach($value['item']['suppliers'] as $supplier){
+                    $supplier = $supplier['suppliername']['name'];
+                    array_push($supplierList, $supplier);
+                }
+                    
+                $data2 = ([
+                    'id' => $value['id'],
+                    'item_id' => $value['item']['id'],
+                    'name' => $value['item']['name'],
+                    'actual_cost' => $value['actual_cost'],
+                    'retail' => $value['retail'],
+                    'qty' => $value['qty'],
+                    'total_cost' => $value['total_cost'],
+                    'total_retail' => $value['total_retail'],
+                    'display_report' => $value['display_report'],
+                    'bundle_id' => $value['bundle_id'],
+                    'supplier' => implode(" ",$supplierList)
+                    ]);
+
+            array_push($bundleItems, $data2);
+        }
+     return $bundleItems;
     }
 }

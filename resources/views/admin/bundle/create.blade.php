@@ -100,7 +100,7 @@
                                         <tr>
                                             <th class="th-sm">Code</th>
                                             <th class="th-sm">Name</th>
-                                            <!-- <th class="th-sm">Supplier</th> -->
+                                            <th class="th-sm">Supplier</th>
                                             <th class="th-sm">Cost</th>
                                             <th class="th-sm">Actual Cost</th>
                                             <th class="th-sm">Retail</th>
@@ -265,7 +265,7 @@
                 $('#dataTable').DataTable({
                     "bPaginate": false,
                     "searching": false,
-                    "ordering": true,
+                    "ordering": false,
                     "responsive": true,
                     "scrollX": true,
                     "autoWidth":true,
@@ -408,9 +408,9 @@
 
                                         $('.bundle-item-list tbody').append(
                                             '<tr>'
-                                            +'<td>' + val['item']['id'] + '</td>'
-                                            +'<td>' + val['item']['name'] + '</td>'
-                                            // +'<td>' + val['item']['name'] + '</td>'
+                                            +'<td>' + val['item_id'] + '</td>'
+                                            +'<td>' + val['name'] + '</td>'
+                                            +'<td>' + val['supplier'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
@@ -491,9 +491,9 @@
 
                                         $('.bundle-item-list tbody').append(
                                             '<tr>'
-                                            +'<td>' + val['item']['id'] + '</td>'
-                                            +'<td>' + val['item']['name'] + '</td>'
-                                            // +'<td>' + val['item']['name'] + '</td>'
+                                            +'<td>' + val['item_id'] + '</td>'
+                                            +'<td>' + val['name'] + '</td>'
+                                            +'<td>' + val['supplier'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
@@ -559,9 +559,9 @@
 
                                         $('.bundle-item-list tbody').append(
                                             '<tr>'
-                                            +'<td>' + val['item']['id'] + '</td>'
-                                            +'<td>' + val['item']['name'] + '</td>'
-                                            // +'<td>' + val['item']['name'] + '</td>'
+                                            +'<td>' + val['item_id'] + '</td>'
+                                            +'<td>' + val['name'] + '</td>'
+                                            +'<td>' + val['supplier'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
