@@ -48,15 +48,15 @@
                     <p>Quotation Management</p>
                 </a>
             </li>
-            <!-- <li class="nav-item">
-                <a href="{{ route('admin.subcategory.index') }}"
-                    class="nav-link {{ Route::is('admin.subcategory.index') ? 'active' : '' }}">
+            <li class="nav-item">
+                <a href="{{ route('admin.bundle.index') }}"
+                    class="nav-link {{ Route::is('admin.bundle.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-list"></i>
-                    <p>Sub Category
-                        <span class="badge badge-secondary right">{{ $SubCategoryCount }}</span>
+                    <p>Bundle Management
+                        <!-- <span class="badge badge-secondary right">{{ $SubCategoryCount }}</span> -->
                     </p>
                 </a>
-            </li> -->
+            </li>
             <li class="nav-item">
                 <a href="{{ route('admin.collection.index') }}"
                     class="nav-link {{ Route::is('admin.collection.index') ? 'active' : '' }}">

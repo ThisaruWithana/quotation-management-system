@@ -15,6 +15,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\BundleController;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard',[ProfileController::class,'dashboard'])->name('dashboard');
@@ -76,8 +77,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::get('item/detail/{id}', [ItemController::class, 'viewItemDetails'])->name('item.detail');
     Route::post('item/store-sub-items', [ItemController::class, 'storeSubItems'])->name('item.store-sub-items');
     Route::post('item/update-mandatory-status', [ItemController::class, 'updateMandatoryStatus'])->name('item.update-mandatory-status');
+    
+    Route::post('item/search', [ItemController::class, 'search'])->name('item.search');
 
     Route::get('item/download-barcode/{id}', [ItemController::class, 'downloadBarcode'])->name('item.download-barcode');
+
+    
+    Route::resource('bundle',BundleController::class);
+    Route::post('bundle/add-items', [BundleController::class, 'addItems'])->name('bundle.add-items');
+    Route::post('bundle/update-display-status', [BundleController::class, 'updateDisplayStatus'])->name('bundle.update-display-status');
+    Route::post('bundle/delete-item', [BundleController::class, 'deleteItem'])->name('bundle.delete-item');
+    Route::post('bundle/change-status', [BundleController::class, 'changeStatus'])->name('bundle.change-status');
+    Route::post('bundle/item-update', [BundleController::class, 'itemUpdate'])->name('bundle.item-update');
 });
 
 Route::get('/barcode', [VatController::class, 'barcode']);

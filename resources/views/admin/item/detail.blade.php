@@ -12,7 +12,7 @@
                 <i class="fas fa-times"></i>
               </button> -->
                 <a href="{{ route('admin.item.edit',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="far fa-edit"></i>  Edit Item</a>
-                <a href="{{ route('admin.item.download-barcode',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="far fa-edit"></i>  Barcode Item</a>
+                <a href="{{ route('admin.item.download-barcode',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="fa fa-print"></i>   Barcode</a>
             </div>
           </div>
           <div class="card-body">

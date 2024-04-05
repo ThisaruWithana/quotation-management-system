@@ -12,6 +12,7 @@ use App\Models\Department;
 use App\Models\SubDepartment;
 use App\Models\Location;
 use App\Models\SubItem;
+use App\Models\BundleItem;
 use DB;
 use Auth;
 use PDF;
@@ -550,5 +551,77 @@ class ItemController extends Controller
         $pdf = PDF::loadView('admin.reports.barcode', $data);
         return $pdf->download($item['name'].'.pdf');
     }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        $search_type = $request->input('search_type');
+        $status = $request->input('status');
+        $supplierId = $request->input('supplier');
+        $department = $request->input('departments');
+        $sub_department = $request->input('sub_departments');
+
+        if($search_type === 'bundle_search'){
+
+            $bundle_id = $request->input('bundle');
+            $getExistBundleItems = BundleItem::select('item_id')->where('bundle_id', $bundle_id)->where('status', 1)->get();
+
+            $data = Item::query()->with('suppliers.suppliername', 'department')->whereNotIn('id', $getExistBundleItems)->orderBy('id','desc');
+        }else{
+            $data = Item::query()->with('suppliers.suppliername', 'department')->orderBy('id','desc');
+        }
+
+            if(!is_null($status)) {
+                $data->where('status', $status);
+            }
+
+            if(!is_null($department)) {
+                $data->where('department_id',  $department);
+            }
+
+            if(!is_null($sub_department)) {
+                $data->where('sub_department_id',  $sub_department);
+            }
+
+            if(!is_null($supplierId)) {
+
+                $data->whereHas('suppliers', function($q) use ($supplierId){
+                    $q->where('supplier_id', $supplierId);
+                });
+            }
+
+            if(!is_null($keyword)) {
+
+                 $data->where(function ($qry) use ($keyword) {
+                    $qry->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('description', 'like', '%' . $keyword . '%')
+                        ->orWhere('id', 'like', '%' . $keyword . '%');
+                });
+            }
+
+        $listData = $data->get();  
+
+        $response = array();
+
+        foreach($listData as $value){
+            $supplierList = array();
+
+            foreach($value['suppliers'] as $supplier){
+                $supplier = $supplier['suppliername']['name'];
+                array_push($supplierList, $supplier);
+            }
+
+            $data = ([
+                'id' => $value['id'],
+                'name' => $value['name'],
+                'department' => $value['department']['name'],
+                'cost_price' => $value['cost_price'],
+                'supplier' => implode(" ",$supplierList)
+            ]);
+            array_push($response, $data);
+        }
     
+        return json_encode($response);
+        
+    }
 }
