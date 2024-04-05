@@ -99,7 +99,7 @@
                                         <tr>
                                             <th class="th-sm">Code</th>
                                             <th class="th-sm">Name</th>
-                                            <!-- <th class="th-sm">Supplier</th> -->
+                                            <th class="th-sm">Supplier</th>
                                             <th class="th-sm">Cost</th>
                                             <th class="th-sm">Actual Cost</th>
                                             <th class="th-sm">Retail</th>
@@ -114,24 +114,25 @@
                                     <tbody>
                                         @foreach ($bundleItems as $value)
                                             <tr>
-                                                <td>{{ $value->item->id }}</td>
-                                                <td>{{ $value->item->name }}</td>
-                                                <td>{{ $value->actual_cost }}</td>
-                                                <td>{{ $value->actual_cost }}</td>
-                                                <td>{{ $value->retail }}</td>
-                                                <td>{{ $value->qty }}</td>
-                                                <td>{{ $value->total_cost }}</td>
-                                                <td>{{ $value->total_retail }}</td>
+                                                <td>{{ $value['item_id'] }}</td>
+                                                <td>{{ $value['name'] }}</td>
+                                                <td>{{ $value['supplier'] }}</td>
+                                                <td>{{ $value['actual_cost'] }}</td>
+                                                <td>{{ $value['actual_cost'] }}</td>
+                                                <td>{{ $value['retail'] }}</td>
+                                                <td>{{ $value['qty'] }}</td>
+                                                <td>{{ $value['total_cost'] }}</td>
+                                                <td>{{ $value['total_retail'] }}</td>
                                                 <td><input type="checkbox" id="item" name="item" 
-                                                    onclick="updateDisplayStatus()" value="{{ $value->id }}" class="form-check-label" 
-                                                    @if($value->display_report == 1) checked @endif></td>
+                                                    onclick="updateDisplayStatus()" value="{{ $value['id'] }}" class="form-check-label" 
+                                                    @if($value['display_report'] == 1) checked @endif></td>
                                                 <td>
-                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->bundle_id }})">
+                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['bundle_id'] }})">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value->id }}, {{ $value->actual_cost }}, {{ $value->qty }}, {{ $value->retail }})">
+                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['actual_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                 </td>
@@ -424,9 +425,9 @@
 
                                         $('.bundle-item-list tbody').append(
                                             '<tr>'
-                                            +'<td>' + val['item']['id'] + '</td>'
-                                            +'<td>' + val['item']['name'] + '</td>'
-                                            +'<td>' + val['item']['name'] + '</td>'
+                                            +'<td>' + val['item_id'] + '</td>'
+                                            +'<td>' + val['name'] + '</td>'
+                                            +'<td>' + val['supplier'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
@@ -504,12 +505,12 @@
                                         if(displayReport === 1){
                                             checkboxStatus = 'checked';
                                         }
-
+                                        
                                         $('.bundle-item-list tbody').append(
                                             '<tr>'
-                                            +'<td>' + val['item']['id'] + '</td>'
-                                            +'<td>' + val['item']['name'] + '</td>'
-                                            +'<td>' + val['item']['name'] + '</td>'
+                                            +'<td>' + val['item_id'] + '</td>'
+                                            +'<td>' + val['name'] + '</td>'
+                                            +'<td>' + val['supplier'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
