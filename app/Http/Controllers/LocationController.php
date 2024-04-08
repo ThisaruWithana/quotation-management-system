@@ -26,19 +26,19 @@ class LocationController extends Controller
 
     public function store(Request $request)
     {
+        // Check validation
+        if($request->input('id')){
+            $request->validate([
+                'name' => ['required', 'string', 'max:255', Rule::unique('locations')->ignore($request->input('id'))]
+            ]);
+        }else{
+            $request->validate([
+                'name' => 'required', 'string', 'max:255', 'unique:'.Location::class
+            ]);
+        }
+
             try{
                 DB::beginTransaction();
-
-                // Check validation
-                if($request->input('id')){
-                    $request->validate([
-                        'name' => ['required', 'string', 'max:255', Rule::unique('locations')->ignore($request->input('id'))]
-                    ]);
-                }else{
-                    $request->validate([
-                        'name' => 'required', 'string', 'max:255', 'unique:'.Location::class
-                    ]);
-                }
 
                  $query = Location::updateOrCreate(
                     [

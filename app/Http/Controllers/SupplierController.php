@@ -35,28 +35,29 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $id = $request->input('id');
+
+        // Check validation
+        if($request->input('id')){
+            $request->validate([
+                'name' => 'required', 'string', 'max:255',
+                'contact_person' => 'required',
+                'email' => ['required', 'string', 'email', 'max:255', Rule::unique('supplier')->ignore($id)],
+                'address' => 'required|max:255',
+                // 'tel' => 'required|phone:US,UK'
+            ]);
+        }else{
+ 
+            $request->validate([
+                'name' => 'required', 'string', 'max:255',
+                'contact_person' => 'required',
+                'email' => 'required', 'string', 'email', 'max:255', 'unique:'.Supplier::class,
+                'address' => 'required|max:255',
+                // 'tel' => 'required|phone:US,UK'
+            ]);
+        }
+        
             try{
                 DB::beginTransaction();
-
-                // Check validation
-                if($request->input('id')){
-                    $request->validate([
-                        'name' => 'required', 'string', 'max:255',
-                        'contact_person' => 'required',
-                        'email' => ['required', 'string', 'email', 'max:255', Rule::unique('supplier')->ignore($id)],
-                        'address' => 'required|max:255',
-                        // 'tel' => 'required|phone:US,UK'
-                    ]);
-                }else{
-         
-                    $request->validate([
-                        'name' => 'required', 'string', 'max:255',
-                        'contact_person' => 'required',
-                        'email' => 'required', 'string', 'email', 'max:255', 'unique:'.Supplier::class,
-                        'address' => 'required|max:255',
-                        // 'tel' => 'required|phone:US,UK'
-                    ]);
-                }
 
                 // Add or update supplier details
                 $query = Supplier::updateOrCreate(
