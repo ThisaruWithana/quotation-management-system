@@ -11,7 +11,6 @@ use Auth;
 
 class CustomerController extends Controller
 {
-
     public function index()
     {
         $title = 'Customers';
@@ -37,29 +36,30 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $id = $request->input('id');
+
+            // Check validation
+            if($request->input('id')){
+                $request->validate([
+                    'name' => 'required', 'string', 'max:255',
+                    'contact_person' => 'required',
+                    'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customer')->ignore($id)],
+                    'address' => 'required|max:255',
+                    'tel' => 'required|max:11',
+                    'symbol_group' => 'required',
+                ]);
+            }else{
+                $request->validate([
+                    'name' => 'required', 'string', 'max:255',
+                    'contact_person' => 'required',
+                    'email' => 'required', 'string', 'email', 'max:255', 'unique:'.Customer::class,
+                    'address' => 'required|max:255',
+                    'tel' => 'required|max:11',
+                    'symbol_group' => 'required',
+                ]);
+            }
+
             try{
                 DB::beginTransaction();
-
-                // Check validation
-                if($request->input('id')){
-                    $request->validate([
-                        'name' => 'required', 'string', 'max:255',
-                        'contact_person' => 'required',
-                        'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customer')->ignore($id)],
-                        'address' => 'required|max:255',
-                        'tel' => 'required|max:15',
-                        'symbol_group' => 'required',
-                    ]);
-                }else{
-                    $request->validate([
-                        'name' => 'required', 'string', 'max:255',
-                        'contact_person' => 'required',
-                        'email' => 'required', 'string', 'email', 'max:255', 'unique:'.Customer::class,
-                        'address' => 'required|max:255',
-                        'tel' => 'required|max:15',
-                        'symbol_group' => 'required',
-                    ]);
-                }
 
                 // Add or update customer details
                 $query = Customer::updateOrCreate(
@@ -84,10 +84,21 @@ class CustomerController extends Controller
                 DB::commit();
 
                 if($id){
+                    $customer_id = $id;
+                    $code = $this->generateCustomerCode($id);
                     $msg = 'Customer updated successfully.';
+
                 }else{
+                    $customer_id = $query->id;
+                    $code = $this->generateCustomerCode($query->id);
                     $msg = 'Customer created successfully.';
                 }
+
+                $update = Customer::where('id', $customer_id)->update([
+                    'code' => $code,
+                    'updated_by' => Auth::user()->id
+                ]);
+
                 return redirect()->route('admin.customer.index')->with('success',$msg);
 
             }catch(\Exception $e){
@@ -120,5 +131,40 @@ class CustomerController extends Controller
             DB::rollBack();
             return $e->getMessage();
         }
+    }
+
+    public function generateCustomerCode($customerId)
+    {
+       $customer = Customer::where('id',$customerId)->first();
+
+       if($customer){
+
+            $customer_id = $customer->id;
+            $customer_type = $customer->type;
+            $code;
+            $type;
+
+            $length = strlen((string)$customer_id);
+
+            if($customer_type === 'Prospective'){
+                $type = 'P';
+            }else if($customer_type === 'Accepted'){
+                $type = 'A';
+            }else{
+                $type = 'I';
+            }
+
+            if($length == 1){
+                $code =  $type.'000'.$customer_id;
+            }else if($length == 2){
+                $code =  $type.'00'.$customer_id;
+            }else if($length == 3){
+                $code =  $type.'0'.$customer_id;
+            }else{
+                $code =  $type.$customer_id;
+            }
+
+            return $code;
+       }
     }
 }
