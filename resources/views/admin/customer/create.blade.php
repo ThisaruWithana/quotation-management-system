@@ -26,7 +26,6 @@
                                                 @error('name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Customer Name is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -38,7 +37,6 @@
                                                 @error('contact_person')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Contact Person is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -50,7 +48,6 @@
                                                 @error('address')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Address is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -71,7 +68,6 @@
                                                 @error('tel')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Telephone Number is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -130,7 +126,6 @@
                                                 @error('name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Customer Name is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -142,7 +137,6 @@
                                                 @error('contact_person')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Contact Person is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -154,7 +148,6 @@
                                                 @error('address')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Address is required.</div>
                                         </div>
                                     </div>
 
@@ -177,7 +170,6 @@
                                                 @error('tel')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Telephone Number is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -199,7 +191,6 @@
                                                 @error('email')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
-                                            <div class="invalid-feedback">Email is required.</div>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">

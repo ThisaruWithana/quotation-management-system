@@ -40,21 +40,22 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $id = $request->input('id');
+
+        // Check validation
+        if($request->input('id')){
+            $request->validate([
+                'name' => ['required', 'string', 'max:255', Rule::unique('department')->ignore($id)],
+                'sales_vat' => 'required'
+            ]);
+        }else{
+            $request->validate([
+                'name' => 'required', 'string', 'max:255', 'unique:'.Department::class,
+                'sales_vat' => 'required'
+            ]);
+        }
+
             try{
                 DB::beginTransaction();
-
-                // Check validation
-                if($request->input('id')){
-                    $request->validate([
-                        'name' => ['required', 'string', 'max:255', Rule::unique('department')->ignore($id)],
-                        'sales_vat' => 'required'
-                    ]);
-                }else{
-                    $request->validate([
-                        'name' => 'required', 'string', 'max:255', 'unique:'.Department::class,
-                        'sales_vat' => 'required'
-                    ]);
-                }
 
                 // Add or update department details
                 $query = Department::updateOrCreate(
@@ -139,19 +140,20 @@ class DepartmentController extends Controller
     public function storeSubDepartment(Request $request)
     {
         $id = $request->input('id');
+
+        // Check validation
+        if($request->input('id')){
+            $request->validate([
+                'name' => ['required', 'string', 'max:255', Rule::unique('sub_department')->ignore($id)]
+            ]);
+        }else{
+            $request->validate([
+                'name' => 'required', 'string', 'max:255', 'unique:'.SubDepartment::class
+            ]);
+        }
+
             try{
                 DB::beginTransaction();
-
-                // Check validation
-                if($request->input('id')){
-                    $request->validate([
-                        'name' => ['required', 'string', 'max:255', Rule::unique('sub_department')->ignore($id)]
-                    ]);
-                }else{
-                    $request->validate([
-                        'name' => 'required', 'string', 'max:255', 'unique:'.SubDepartment::class
-                    ]);
-                }
 
                 // Add or update department details
                 $query = SubDepartment::updateOrCreate(

@@ -6,35 +6,34 @@
                 <a href="{{ route('admin.customer.create') }}" class="btn btn-sm btn-primary">Add New</a>
             </div>
         </div>
-        <div class="card-body">
-            <table class="table table-responsive" id="dataTable">
+        <div class="card-body table-responsive">
+            <table class="table" id="dataTable">
                 <thead>
                     <tr>
+                        <th class="th-sm">Code</th>
                         <th class="th-sm">Name</th>
                         <th class="th-sm">Contact Person</th>
-                        <th class="th-sm">Type</th>
                         <th class="th-sm">Address</th>
                         <th class="th-sm">Telephone</th>
                         <th class="th-sm">Email</th>
-                        <!-- <th class="th-sm">Symbol Group</th> -->
-                        <!-- <th class="th-sm">Created By</th> -->
+                        <th class="th-sm">Type</th>
+                        <th class="th-sm">Symbol Group</th>
                         <th class="th-sm">Created At</th>
                         <th class="th-sm">Status</th>
-                        <th class="th-sm"></th>
+                        <th class="th-sm" style="width:80px;"></th>
                     </tr>
                 </thead>
                 <tbody>
-                <?php $i = 1; ?>
                 @foreach ($data as $value)
                         <tr>
+                            <td>{{ $value->code }}</td>
                             <td>{{ $value->name }}</td>
                             <td>{{ $value->contact_person }}</td>
-                            <td>{{ $value->type }}</td>
                             <td>{{ $value->address }} {{ $value->postal_code }}</td>
                             <td>{{ $value->tel }}</td>
                             <td>{{ $value->email }}</td>
-                            <!-- <td>{{ $value->symbol_group }}</td> -->
-                            <!-- <td>{{ $value->created_user->name }}</td> -->
+                            <td>{{ $value->type }}</td>
+                            <td>{{ $value->symbol_group }}</td>
                             <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                             <td>
                                 @if($value->status == 1)
@@ -59,7 +58,6 @@
                                 @endif
                             </td>
                         </tr>
-                     <?php $i++; ?>
                     @endforeach
                 </tbody>
             </table>
@@ -73,8 +71,10 @@
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
+                    "scrollX": true,
+                    "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 8] }, 
+                        { "bSortable": false, "aTargets": [ 10] }, 
                     ]
                 });
             });

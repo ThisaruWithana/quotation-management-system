@@ -26,13 +26,13 @@ class VatController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required',
+            'rate' => 'required',
+        ]);
+
             try{
                 DB::beginTransaction();
-
-                $request->validate([
-                    'name' => 'required',
-                    'rate' => 'required',
-                ]);
 
                 // Add new VAT value
                 $query = VAT::create([
