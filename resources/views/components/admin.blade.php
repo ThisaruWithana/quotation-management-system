@@ -76,6 +76,9 @@
             display: block;
             overflow: auto !important;
         }
+        .item-div{
+            width: 100% !important;
+        }
     </style>
     @yield('css')
 </head>

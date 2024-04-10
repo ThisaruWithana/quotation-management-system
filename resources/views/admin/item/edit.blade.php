@@ -538,7 +538,17 @@
                             var result = data;
 
                                     if (result['code'] == 1) {
-                                      window.location = '{{ url("admin/item") }}';
+                                        toastr.success(
+                                            'Success',
+                                            result['msg'],
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                  window.location = '{{ url("admin/item") }}';
+                                                }
+                                            }
+                                        );
                                     } else {
                                         toastr.error(
                                             'Error',

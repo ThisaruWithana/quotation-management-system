@@ -124,7 +124,7 @@
                                                 <td>{{ $value['total_cost'] }}</td>
                                                 <td>{{ $value['total_retail'] }}</td>
                                                 <td><input type="checkbox" id="item" name="item" 
-                                                    onclick="updateDisplayStatus()" value="{{ $value['id'] }}" class="form-check-label" 
+                                                    onclick="updateDisplayStatus(this)" value="{{ $value['id'] }}" class="form-check-label" 
                                                     @if($value['display_report'] == 1) checked @endif></td>
                                                 <td>
                                                     <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['bundle_id'] }})">

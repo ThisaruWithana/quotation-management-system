@@ -167,4 +167,10 @@ class CustomerController extends Controller
             return $code;
        }
     }
+
+    public function getDetails(Request $request)
+    {
+        $data = Customer::where('id',$request->input('id'))->first();
+        return json_encode($data);
+    }
 }

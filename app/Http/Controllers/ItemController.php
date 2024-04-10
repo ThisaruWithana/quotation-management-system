@@ -13,6 +13,7 @@ use App\Models\SubDepartment;
 use App\Models\Location;
 use App\Models\SubItem;
 use App\Models\BundleItem;
+use App\Models\QuotationItem;
 use DB;
 use Auth;
 use PDF;
@@ -198,7 +199,7 @@ class ItemController extends Controller
 
             try{
                 DB::beginTransaction();
-
+      
                   $updateItemDetails = Item::where('id', $id)->update([
                         'name' => $request->input('name'),
                         'description' => $request->input('description'),
@@ -385,16 +386,15 @@ class ItemController extends Controller
                             'updated_by' => Auth::user()->id,
                         ]);
                     }
+                    DB::commit(); 
 
                     $storeItemDetails = $this->storeItemDetails($request);
                     $updateStockSettings = $this->updateStockSettings($request);
                     $updatePriceDetails = $this->updatePriceDetails($request);
 
-                DB::commit(); 
-
                 if($addNewSuppliers){
                     $response['code'] = 1;
-                    $response['msg'] = "Success";
+                    $response['msg'] = "Successfully updated !";
                     $response['data'] = $item_id;
                 }else{
                     DB::rollback();
@@ -567,6 +567,13 @@ class ItemController extends Controller
             $getExistBundleItems = BundleItem::select('item_id')->where('bundle_id', $bundle_id)->where('status', 1)->get();
 
             $data = Item::query()->with('suppliers.suppliername', 'department')->whereNotIn('id', $getExistBundleItems)->orderBy('id','desc');
+        
+        } else if($search_type === 'quotation_search'){
+
+            $quotation_id = $request->input('quotation');
+            $getExistItems = QuotationItem::select('item_id')->where('quotation_id', $quotation_id)->where('status', 1)->get();
+
+            $data = Item::query()->with('suppliers.suppliername', 'department')->whereNotIn('id', $getExistItems)->orderBy('id','desc');
         }else{
             $data = Item::query()->with('suppliers.suppliername', 'department')->orderBy('id','desc');
         }

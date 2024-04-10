@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -27,7 +27,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         // Route::resource('user',UserController::class);
         // Route::resource('role',RoleController::class);
         Route::resource('permission',PermissionController::class);
-        Route::resource('category',CategoryController::class);
         Route::resource('subcategory',SubCateoryController::class);
         Route::resource('collection',CollectionController::class);
         Route::resource('product',ProductController::class);
@@ -62,6 +61,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
 
     Route::resource('customer',CustomerController::class);
     Route::post('customer/change-status', [CustomerController::class, 'changeStatus'])->name('customer.change-status');
+    Route::post('customer/get-details', [CustomerController::class, 'getDetails'])->name('customer.get-details');
+
     Route::post('user/change-status', [UserController::class, 'changeStatus'])->name('user.change-status');
     Route::post('role/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
     Route::post('permission/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
@@ -89,6 +90,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('bundle/delete-item', [BundleController::class, 'deleteItem'])->name('bundle.delete-item');
     Route::post('bundle/change-status', [BundleController::class, 'changeStatus'])->name('bundle.change-status');
     Route::post('bundle/item-update', [BundleController::class, 'itemUpdate'])->name('bundle.item-update');
+    Route::post('bundle/get-details', [BundleController::class, 'getDetails'])->name('bundle.get-details');
+
+    
+    Route::resource('quotation',QuotationController::class);
+    Route::post('quotation/add-items', [QuotationController::class, 'addItems'])->name('quotation.add-items');
+    Route::post('quotation/update-display-status', [QuotationController::class, 'updateDisplayStatus'])->name('quotation.update-display-status');
+    Route::post('quotation/delete-item', [QuotationController::class, 'deleteItem'])->name('quotation.delete-item');
+    Route::post('quotation/change-status', [QuotationController::class, 'changeStatus'])->name('quotation.change-status');
+    Route::post('quotation/item-update', [QuotationController::class, 'itemUpdate'])->name('quotation.item-update');
 });
 
 Route::get('/barcode', [VatController::class, 'barcode']);

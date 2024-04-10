@@ -42,8 +42,8 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.category.index') }}"
-                    class="nav-link {{ Route::is('admin.category.index') ? 'active' : '' }}">
+                <a href="{{ route('admin.quotation.index') }}"
+                    class="nav-link {{ Route::is('admin.quotation.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-gavel"></i>
                     <p>Quotation Management</p>
                 </a>
@@ -147,8 +147,8 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.category.index') }}"
-                    class="nav-link {{ Route::is('admin.category.index') ? 'active' : '' }}">
+                <a href="{{ route('admin.quotation.index') }}"
+                    class="nav-link {{ Route::is('admin.quotation.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-gavel"></i>
                     <p>Quotation Management</p>
                 </a>

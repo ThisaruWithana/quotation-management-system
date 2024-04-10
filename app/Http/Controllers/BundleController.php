@@ -426,4 +426,10 @@ class BundleController extends Controller
         }
      return $bundleItems;
     }
+
+    public function getDetails(Request $request)
+    {
+        $data = Bundle::where('id',$request->input('id'))->first();
+        return json_encode($data);
+    }
 }
