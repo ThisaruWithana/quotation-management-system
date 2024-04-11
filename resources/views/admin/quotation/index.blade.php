@@ -7,52 +7,90 @@
             </div>
         </div>
         <div class="card-body table-responsive">
-            <table class="table" id="dataTable">
-                <thead>
-                    <tr>
-                        <th class="th-sm">#</th>
-                        <th class="th-sm" style="width:200px;">Customer Name</th>
-                        <th class="th-sm">Description</th>
-                        <th class="th-sm" style="width:150px;">Quotation Price</th>
-                        <th class="th-sm">Discount</th>
-                        <th class="th-sm">Status</th>
-                        <th class="th-sm" style="width:80px;"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach ($data as $value)
+        <form method="GET" action="{{ route('admin.quotation.index') }}" id="frm-list">
+
+            <div class="row">
+                <div class="form-group" style="margin-left:10px;">
+
+                        <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
+                            onchange="selectPageSize(this.value)">
+                                <option value="10" {{ $pageSize == '10' ? 'selected="selected"' : '' }}>10
+                                </option>
+                                <option value="3" {{ $pageSize == '3' ? 'selected="selected"' : '' }}>25
+                                </option>
+                                <option value="50" {{ $pageSize == '50' ? 'selected="selected"' : '' }}>50
+                                </option>
+                                <option value="100" {{ $pageSize == '100' ? 'selected="selected"' : '' }}>100
+                                </option>
+                        </select>
+                </div>
+                    
+                <div class="form-group" style="margin-left:10px;">
+                    <select id="customer" name="customer" class="selectpicker show-tick" data-live-search="true">
+                        <option value="">Customer</option>        
+                        @foreach ($customers as $value)
+                            <option value="{{ $value->id }}" @if(Request()->customer == $value->id) selected @endif>{{ $value->name }}</option>
+                        @endforeach 
+                    </select>
+                </div>
+                    
+                <input type="hidden" name="form_action" value="search">
+
+                <div class="form-group text-right" style="margin-left:10px;">
+                    <button class="btn btn-primary" type="submit">Filter</button>
+                </div>
+                </div>
+            </form>
+            <br>
+            <div>
+                <table class="table" id="dataTable" width="100%">
+                    <thead>
                         <tr>
-                            <td>{{ $value->id }}</td>
-                            <td>{{ $value->customer->name }}</td>
-                            <td>{{ $value->description->description }}</td>
-                            <td>{{ number_format($value->price, 2) }}</td>
-                            <td>{{ $value->discount }}</td>
-                            <td>
-                                @if($value->status == 1)
-                                <span class="badge badge-success">Active</span>
-                                @else 
-                                <span class="badge badge-warning">Deactive</span>
-                                @endif
-                            </td>
-                            <td>
-                                <a href="{{ route('admin.quotation.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                                    <i class="far fa-edit"></i>
-                                </a>
-                                
-                                @if($value->status === 1)
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </a>
-                                @else
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                        <i class="fas fa-check-circle"></i>
-                                    </a>
-                                @endif
-                            </td>
+                            <th class="th-sm">#</th>
+                            <th class="th-sm" style="width:200px;">Customer Name</th>
+                            <th class="th-sm">Description</th>
+                            <th class="th-sm" style="width:150px;">Quotation Price</th>
+                            <th class="th-sm">Discount</th>
+                            <th class="th-sm">Status</th>
+                            <th class="th-sm" style="width:80px;"></th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    @foreach ($listData as $value)
+                            <tr>
+                                <td>{{ $value->id }}</td>
+                                <td>{{ $value->customer->name }}</td>
+                                <td>{{ $value->description }}</td>
+                                <td>{{ number_format($value->price, 2) }}</td>
+                                <td>{{ $value->discount }}</td>
+                                <td>
+                                    @if($value->status == 1)
+                                    <span class="badge badge-success">Active</span>
+                                    @else 
+                                    <span class="badge badge-warning">Deactive</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <a href="{{ route('admin.quotation.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                        <i class="far fa-edit"></i>
+                                    </a>
+                                    
+                                    @if($value->status === 1)
+                                        <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    @else
+                                        <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                            <i class="fas fa-check-circle"></i>
+                                        </a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div id="list_pagination" style="float: right;">{{ $listData->appends(Request::all())->links() }}</div>
         </div>
     </div>
     @section('js')
@@ -60,7 +98,7 @@
             $(function() {
 
                 $('#dataTable').DataTable({
-                    "bPaginate": true,
+                    "bPaginate": false,
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
@@ -68,7 +106,8 @@
                     "autoWidth":true,
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 6 ]},
-                    ]
+                    ],
+                    "order": [0,'desc'],
                 });
             });
             
@@ -133,6 +172,10 @@
                 } else {
                 }
             });
+        }
+
+        function selectPageSize(pageSize) {
+            document.getElementById('frm-list').submit();
         }
         </script>
     @endsection

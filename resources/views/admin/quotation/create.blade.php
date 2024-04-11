@@ -9,12 +9,11 @@
                     {{ $title }}
                 </h5>
                     <!-- /.card-header -->
+                            <!-- form start -->
+                    <form action="{{ route('admin.quotation.store') }}" method="PUT" class="text-center border border-light p-5" id="formCreate">
+                         @csrf
                         <div class="card-body px-lg-2 pt-0">
 
-                            <!-- form start -->
-                            <form action="{{ route('admin.quotation.store') }}" method="PUT"
-                            class="text-center border border-light p-5" id="formCreate">
-                                @csrf
                                 <div>
                                     <div class="row">
                                         <div class="col-lg-6">
@@ -36,15 +35,24 @@
                                                 <div class="col-lg-12">
                                                     <div class="form-group text-left">
                                                         <label for="description" class="form-label">Description</label>
-                                                        <select id="description" name="description" class="selectpicker show-tick col-lg-12" data-live-search="true">
-                                                            <option value="">Select Client</option>
-                                                            @foreach ($descriptions as $value)
-                                                            <option value="{{ $value->id }}">{{ $value->description }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <span class="required"> * </span><br>
+                               
+                                                        <textarea class="form-control" name="description" id="description" rows="4"
+                                                            required></textarea><br>
+                                                            
+                                                        <button class="btn btn-default add-description" type="button" style="float:right; margin-top:-20px;"><i class="fa fa-plus"> Add</i></button><br>
+                                                    
+                                                        <div style="display:none;" class="add-description-history">
+                                                            <select id="description_dropdown" name="description_dropdown" class="selectpicker show-tick col-lg-12" data-live-search="true">
+                                                                <option value="">Select Description</option>
+                                                                @foreach ($descriptions as $value)
+                                                                <option value="{{ $value->description }}">{{ $value->description }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                            
                                                     </div>
                                                 </div>
-                                                
                                             </div>
                                         </div>
                                         
@@ -90,15 +98,10 @@
                                 <div class="col-lg-2">
                                     <button class="btn btn-primary btn-block" type="submit" id="btnSave">Save</button>
                                 </div> 
-                            
-                            </form>
-                            
                             <hr>
-                            <div class=" add-items" style="display:none;">
+              
+                            <div class=" add-items" style="display:block;">
 
-                                <form action="#" method="PUT" class="text-center border border-light p-5" id="">
-                                
-                                @csrf
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="form-group text-left">
@@ -106,7 +109,7 @@
                                                 <select id="bundle" name="bundle" class="selectpicker show-tick col-lg-12" data-live-search="true">
                                                     <option value="">Select Bundle</option>
                                                     @foreach ($bundles as $value)
-                                                    <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                    <option value="{{ $value->id }}">{{ number_format($value->bundle_cost, 2) }} - {{ $value->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -120,7 +123,7 @@
                                         <div class="col-lg-3">
                                             <div class="form-group text-left">
                                                 <label for="discount" class="form-label">Discount</label>
-                                                <input type="text" class="form-control" id="discount" name="discount" value="">
+                                                <input type="text" class="form-control" id="discount" name="discount" value="" autocomplete="off">
                                             </div>
                                         </div>                                
                                     </div>
@@ -129,13 +132,13 @@
                                             <div class="form-group text-left">
                                                 <label for="price" class="form-label">Quotation Price</label>
                                                 <span class="required"> * </span><br>
-                                                <input type="text" class="form-control" id="price" name="price" required
+                                                <input type="text" class="form-control" id="price" name="price" value="" autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="form-group text-left">
                                                 <label for="margin" class="form-label">Quotation Margin</label>
-                                                <input type="text" class="form-control" id="margin" name="margin" readonly>
+                                                <input type="text" class="form-control" id="margin" name="margin" value="" readonly>
                                             </div>
                                         </div>                               
                                     </div>
@@ -150,7 +153,7 @@
                                             </div><br>
 
                                             <div class="col-lg-12 table-responsive">
-                                                <table class="table item-list" id="dataTable">
+                                                <table class="table item-list table-bordered" id="dataTable" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th class="th-sm">Code</th>
@@ -164,9 +167,11 @@
                                                             <th class="th-sm">Total Retail</th>
                                                             <th class="th-sm">Display In Report</th>
                                                             <th class="th-sm"></th>
+                                                            <th class="th-sm"></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                        
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -253,23 +258,27 @@
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="margin-lbl"></span></b></p></td>
                                                 </tr>
+                                                <tr>
+                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Discount</b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="discount-lbl"></span></b></p></td>
+                                                </tr>
                                             </table>
                                         </div>
 
                                         <div class="col-lg-2">
-                                            <button class="btn btn-primary btn-block" type="button" id="btnSaveChanges">Save Changes</button>
+                                            <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Changes</button>
                                         </div>
                                     </div>
-                                </form>
                             </div>
-
                         </div>
-
+                        </form>
                 </div> 
 
             </div>
         </div>
         <!-- /.card -->
+        
         <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -280,64 +289,52 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    
+
                     <form action="{{ route('admin.item.search') }}" method="POST"
-                        class="text-center border border-light p-5" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
                             @csrf
-                            
+
                         <div class="row">
-                            <div class="form-group">
-                                <input type="text" class="form-control" name="keyword" id="keyword" 
+                            <div class="form-group mr-1">
+                                <input type="text" class="form-control" name="keyword" id="keyword"
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
                             <input type="hidden" value="quotation_search" id="search_type" name="search_type">
                             <input type="hidden" value="" id="quotation" name="quotation">
-                            
-                            <!-- <div class="form-group">
-                                <select id="status" name="status" class="selectpicker show-tick" data-live-search="false" onchange="searchItem(this.form)">
-                                    <option value="">Status</option>        
-                                    <option value="1">Active</option>     
-                                    <option value="0">Deactive</option> 
-                                </select>
-                            </div> -->
-                            <div class="form-group">
+
+                            <div class="form-group mr-1">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
-                                    <option value="">Supplier</option>        
+                                    <option value="">Supplier</option>
                                     @foreach ($suppliers as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                             </div>
-                            
-                            <div class="form-group">
+
+                            <div class="form-group mr-1">
                                 <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
-                                    <option value="">Departments</option>        
+                                    <option value="">Departments</option>
                                     @foreach ($departments as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                             </div>
-                            
-                            <div class="form-group">
+
+                            <div class="form-group mr-1">
                                 <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
-                                    <option value="">Sub Departments</option>        
+                                    <option value="">Sub Departments</option>
                                     @foreach ($sub_departments as $value)
                                         <option value="{{ $value->id }}" >{{ $value->name }}</option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                             </div>
 
                             <input type="hidden" name="form_action" value="search">
-
-                            <!-- <div class="form-group text-right" style="margin-left:10px;">
-                                <button class="btn btn-primary" type="submit">Find</button>
-                            </div> -->
                         </div>
 
                         <div class="row">
-                            
                             <div class="col-lg-12 table-responsive">
-                                <table class="table table-item-search" id="dataTable">
+                                <table class="table table-item-search table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Item Code</th>
@@ -353,17 +350,15 @@
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <!-- <button type="button" class="btn btn-primary">Add</button> -->
                 </div>
                 </div>
             </div>
-        </div>        
+        </div>
         
         <!-- Edit Detail -->
         <div class="modal fade" id="editDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -381,10 +376,15 @@
                         @csrf
                     <input type="hidden" name="quotation_item_id" value="" id="quotation_item_id">
                     <input type="hidden" name="bundleId" value="" id="quotation_item_id">
-                    <input type="hidden" name="retail" value="" id="retail">
+          
                     <div class="form-group">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>
                         <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
+                            required="" value="" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="retail" class="col-form-label">Item Retail</label>
+                        <input type="text" class="form-control" id="retail" name="retail"  
                             required="" value="" autocomplete="off">
                     </div>
                     <div class="form-group">
@@ -418,7 +418,7 @@
                     "fixedHeader": true,
                     "paging": false,
                     "scrollCollapse": true,
-                    "scrollY": '30vh',
+                    "scrollY": '50vh',
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 8,9 ]},
                     ]
@@ -439,6 +439,17 @@
         </script>
         <script>
             $(document).ready(function() {
+
+                $('.add-description').click(function(){
+                    $('.add-description-history').show();
+                });
+
+                $('#description_dropdown').on('change', function() {
+                    var txt = $.trim(this.value);
+                    $('#description').append(txt);
+                    $('.add-description-history').hide();
+                });
+
                 $("#formCreate").submit(function(event) {
                     event.preventDefault();
 
@@ -575,7 +586,7 @@
                                                 +'<td>' + val['name'] + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
                                                 +'<td>' + val['actual_cost'] + '</td>'
-                                                +'<td>' + val['actual_cost'] + '</td>'
+                                                +'<td>' + val['item_cost'] + '</td>'
                                                 +'<td>' + val['retail'] + '</td>'
                                                 +'<td>' + val['qty'] + '</td>'
                                                 +'<td>' + val['total_cost'] + '</td>'
@@ -585,7 +596,7 @@
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                                 +'</td>'
                                                 +'<td>'
-                                                +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['actual_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
                                                 +'</td>'
                                                 +'</tr>'
                                             );
@@ -605,7 +616,7 @@
                                         }
                                     );
                                 }
-                                calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
+                                calculatePrices($('#price').val(), result['total_retail'], result['total_cost']);
                                 
                                 $("#editDetails").modal('hide');
                             }, error: function (data) {
@@ -683,7 +694,7 @@
                                             +'<td>' + val['name'] + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
-                                            +'<td>' + val['actual_cost'] + '</td>'
+                                            +'<td>' + val['item_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
                                             +'<td>' + val['qty'] + '</td>'
                                             +'<td>' + val['total_cost'] + '</td>'
@@ -693,14 +704,14 @@
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
                                             +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['actual_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
                                             +'</td>'
                                             +'</tr>'
                                         );
                                     });
                                 } 
 
-                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost']);
+                                calculatePrices($('#price').val(), result['total_retail'], result['total_cost']);
                             }, error: function (data) {
                                         
                         }
@@ -769,7 +780,7 @@
                                             +'<td>' + val['name'] + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
-                                            +'<td>' + val['actual_cost'] + '</td>'
+                                            +'<td>' + val['item_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
                                             +'<td>' + val['qty'] + '</td>'
                                             +'<td>' + val['total_cost'] + '</td>'
@@ -779,7 +790,7 @@
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
                                             +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['actual_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
                                             +'</td>'
                                             +'</tr>'
                                         );

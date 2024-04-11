@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('quotation', function (Blueprint $table) {
             $table->id();
             $table->integer('customer_id');
-            $table->integer('description_id')->nullable();
+            $table->text('description')->nullable();
             $table->string('ref')->nullable();
             $table->double('price')->default(0);
             $table->double('margin')->nullable();
