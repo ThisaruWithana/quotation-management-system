@@ -53,7 +53,7 @@
                 <div id="test-l-1" class="content">
 
                       <!-- <form class="text-center border border-light p-5" action="" id="itemCreate" onsubmit="return false;"> -->
-                          
+
                         <div class="row">
                           <div class="col-lg-5">
                               <div class="form-group text-left">
@@ -122,17 +122,17 @@
                               </div>
                           </div>
                         </div>
-                            
+
                             <div class="text-left">
                               <button class="btn btn-primary" type="button" onclick="stepper1.next()">Next</button>
                             </div>
-              
+
                       <!-- </form> -->
                 </div>
                 <div id="test-l-2" class="content">
 
                   <!-- <form class="text-center border border-light p-5" action="" id="itemdetails" onsubmit="return false;"> -->
-                          
+
                           <div class="row">
                             <div class="col-lg-10">
                                 <div class="form-group text-left">
@@ -143,7 +143,7 @@
                                 </div>
                             </div>
                           </div>
-                          
+
                           <div class="row">
                             <div class="col-lg-10">
                                 <div class="form-group text-left">
@@ -171,10 +171,10 @@
                                       </select>
                                   </div>
                               </div>
-                            </div> 
+                            </div>
                             <div class="row">
                             </div>
-                        
+
                             <div class="text-left">
                               <button class="btn btn-primary item-info" type="button"  onclick="stepper1.next()">Next</button>
                               <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
@@ -182,9 +182,9 @@
                   <!-- </form> -->
                 </div>
                 <div id="test-l-3" class="content">
-                  
+
                   <!-- <form class="text-center border border-light p-5" action="" id="itemStockSettings" enctype="multipart/form-data" onsubmit="return false;"> -->
-                          
+
                           <div class="row">
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
@@ -250,9 +250,9 @@
                               <label class="form-check-label" for="exclude_from_stock">Exclude from stock</label>
                             </div>
                           </div>
-                          
+
                           <input type="hidden" class="form-control" name="item_id" id="item_id" value="{{ $data['id'] }}">
-                            
+
                             <div class="text-left">
                               <button class="btn btn-primary stock-setting" type="button" onclick="stepper1.next()">Next</button>
                               <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
@@ -261,7 +261,7 @@
                 </div>
                 <div id="test-l-4" class="content">
                     <!-- <form class="text-center border border-light p-5" action="" id="itemOptionalItems" onsubmit="return false;"> -->
-                            
+
                             <div class="row">
                               <div class="col-lg-8">
                                   <div class="form-group text-left">
@@ -280,7 +280,7 @@
                             </div><br><br>
                             <div class="row">
                               <div class="col-lg-12">
-                                <table class="table table-head-fixed text-nowrap text-left" id="optionalItemTable">
+                                <table class="table table-head-fixed text-nowrap text-left table-bordered" id="optionalItemTable" width="100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">ID</th>
@@ -301,7 +301,7 @@
                                                 <td>{{ $value->subitem->department->name }}</td>
                                                 <td>{{ $value->subitem->cost_price }}</td>
                                                 <td>{{ $value->subitem->retail_price }}</td>
-                                                <td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="{{ $value->id }}" class="form-check-label" 
+                                                <td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="{{ $value->id }}" class="form-check-label"
                                                   @if($value->is_mandatory == 1) checked @endif></td>
                                             </tr>
                                         @endforeach
@@ -318,7 +318,7 @@
                 </div>
                 <div id="test-l-5" class="content">
                   <!-- <form class="text-center border border-light p-5" action="" id="itemPricingInfo" onsubmit="return false;"> -->
-                          
+
                           <div class="row">
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
@@ -354,7 +354,7 @@
                                 </div>
                             </div>
                           </div>
-                            
+
                             <div class="text-left">
                               <button class="btn btn-primary" type="submit">Save</button>
                               <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
@@ -368,36 +368,44 @@
 
         </div>
     </div>
-    
+
 
     @section('js')
 
-    <script>
-
-        // Form stepper
-      var stepper1Node = document.querySelector('#stepper1');
-      var stepper1 = new Stepper(document.querySelector('#stepper1'));
-
-      stepper1Node.addEventListener('show.bs-stepper', function (event) {
-        console.warn('show.bs-stepper', event)
-      });
-      stepper1Node.addEventListener('shown.bs-stepper', function (event) {
-        console.warn('shown.bs-stepper', event)
-      });
-
-      // Select picker
-        const sorting = document.querySelector('.selectpicker');
-        const commentSorting = document.querySelector('.selectpicker');
-        const sortingchoices = new Choices(sorting, {
-            placeholder: false,
-            itemSelectText: ''
+            <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to hide all content divs
+    function hideAllContentDivs() {
+        document.querySelectorAll('.bs-stepper-content .content').forEach(function(contentDiv) {
+            contentDiv.style.display = 'none';
         });
+    }
 
-        let sortingClass = sorting.getAttribute('class');
-        window.onload= function () {
-            sorting.parentElement.setAttribute('class', sortingClass);
+    // Function to show the relevant content div based on the data-target attribute
+    function showRelevantContentDiv(targetId) {
+        const targetDiv = document.querySelector(targetId);
+        if (targetDiv) {
+            targetDiv.style.display = 'block';
         }
-    </script>
+    }
+
+    // Add event listeners to all step-trigger buttons
+    document.querySelectorAll('.step .step-trigger').forEach(function(triggerBtn) {
+        triggerBtn.addEventListener('click', function() {
+            const targetId = this.parentElement.getAttribute('data-target'); // Get data-target from parent .step div
+            hideAllContentDivs(); // Hide all content divs
+            showRelevantContentDiv(targetId); // Show the relevant content div
+        });
+    });
+
+
+    const firstStepTrigger = document.querySelector('.step .step-trigger');
+    if (firstStepTrigger) {
+        firstStepTrigger.click();
+    }
+});
+</script>
+
 
     <script>
 
@@ -433,10 +441,10 @@
                                     );
                                   $(select).selectpicker('refresh');
                               });
-                            } 
+                            }
 
                         }, error: function (data) {
-                                    
+
                     }
                 });
 
@@ -452,7 +460,7 @@
                             $('#vat').val(result['vat']);
 
                         }, error: function (data) {
-                                    
+
                     }
                 });
             });
@@ -474,51 +482,11 @@
                             var result = JSON.parse(data);
                             $('#margin').val(result);
                         }, error: function (data) {
-                                    
+
                     }
                 });
 
             });
-
-            // $("#itemCreate").submit(function(event) {
-            //     event.preventDefault();
-
-            //     $.ajax({
-            //         url: "{{ url('admin/item/update') }}",
-            //         type: 'POST',
-            //             data: {
-            //                 "_token": "{{ csrf_token() }}",
-            //                 "id": $('#item_id').val(),
-            //                 "supplier": $('#supplier').val(),
-            //                 "product_code": $('#product_code').val(),
-            //                 "department": $('#department').val(),
-            //                 "sub_department": $('#sub_department').val()
-            //             },
-            //             success: function (data) {
-
-            //                 var result = JSON.parse(data);
-
-            //                   if (result['code'] == 1) {
-            //                     $('#item_id').val(result['data']);
-            //                     stepper1.next();
-            //                   } else {
-            //                     toastr.error(
-            //                       'Error',
-            //                       result['msg'],
-            //                       {
-            //                         timeOut: 1500,
-            //                         fadeOut: 1500,
-            //                         onHidden: function () {
-            //                           // window.location.reload();
-            //                         }
-            //                       }
-            //                     );
-            //                   }
-            //             }, error: function (data) {
-                                    
-            //         }
-            //     });
-            // });
 
             $("#itemdetails").submit(function(event) {
                 event.preventDefault();
@@ -538,17 +506,7 @@
                             var result = data;
 
                                     if (result['code'] == 1) {
-                                        toastr.success(
-                                            'Success',
-                                            result['msg'],
-                                            {
-                                                timeOut: 1500,
-                                                fadeOut: 1500,
-                                                onHidden: function () {
-                                                  window.location = '{{ url("admin/item") }}';
-                                                }
-                                            }
-                                        );
+                                      window.location = '{{ url("admin/item") }}';
                                     } else {
                                         toastr.error(
                                             'Error',
@@ -557,98 +515,21 @@
                                                 timeOut: 1500,
                                                 fadeOut: 1500,
                                                 onHidden: function () {
-                                                    window.location.reload();
                                                 }
                                             }
                                         );
                                     }
                         }, error: function (data) {
-                                    
+
                     }
                 });
 
             });
 
-            // $("#itemStockSettings").submit(function(event) {
-            //     event.preventDefault();
-
-            //     var formData = new FormData(this);
-
-            //     $.ajax({
-            //         url: "{{ url('admin/item/store-stock-settings') }}",
-            //         type: 'POST',
-            //             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            //             data: formData,
-            //             dataType:'JSON',
-            //             contentType: false,
-            //             cache: false,
-            //             processData: false,
-            //             success: function (data) {
-            //                 var result = data;
-
-            //                         if (result['code'] == 1) {
-            //                           stepper1.next();
-            //                         } else {
-            //                             toastr.error(
-            //                                 'Error',
-            //                                 'Something Went Wrong!',
-            //                                 {
-            //                                     timeOut: 1500,
-            //                                     fadeOut: 1500,
-            //                                     onHidden: function () {
-            //                                         window.location.reload();
-            //                                     }
-            //                                 }
-            //                             );
-            //                         }
-            //             }, error: function (data) {
-                                    
-            //         }
-            //     });
-            // });
-
-            // $("#itemPricingInfo").submit(function(event) {
-            //     event.preventDefault();
-
-            //     $.ajax({
-            //         url: "{{ url('admin/item/store-item-pricing') }}",
-            //         type: 'POST',
-            //             data: {
-            //                 "_token": "{{ csrf_token() }}",
-            //                 "id": $('#item_id').val(),
-            //                 "cost_price": $('#cost_price').val(),
-            //                 "retail_price": $('#retail_price').val(),
-            //                 "margin": $('#margin').val(),
-            //                 "case_size": $('#case_size').val()
-            //             },
-            //                 success: function (data) {
-            //                 var result = JSON.parse(data);
-            //                         if (result['code'] == 1) {
-            //                           window.location = '{{ url("admin/item/") }}';
-
-            //                         } else {
-            //                             toastr.error(
-            //                                 'Error',
-            //                                 'Something Went Wrong!',
-            //                                 {
-            //                                     timeOut: 1500,
-            //                                     fadeOut: 1500,
-            //                                     onHidden: function () {
-            //                                         window.location.reload();
-            //                                     }
-            //                                 }
-            //                             );
-            //                         }
-            //             }, error: function (data) {
-                                    
-            //         }
-            //     });
-            // });
-
             $('#addOptionalItems').click(function(){
-   
+
               if( $('#optional_items :selected').length > 0){
-             
+
                   var selectednumbers = [];
                   $('#optional_items :selected').each(function(i, selected) {
                       selectednumbers[i] = $(selected).val();
@@ -668,7 +549,7 @@
 
                             if (result['data'].length > 0) {
                                 $.each(result['data'], function (count, val) {
-               
+
                                   $('#optionalItemTable tbody').append(
                                     '<tr>'
                                     +'<td>' + val['subitem']['id'] + '</td>'
@@ -681,9 +562,9 @@
                                     +'</tr>'
                                     );
                               });
-                            } 
+                            }
                         }, error: function (data) {
-                                    
+
                     }
                 });
               }
@@ -705,7 +586,7 @@
                             var result = JSON.parse(data);
 
                         }, error: function (data) {
-                                    
+
                     }
                 });
             });

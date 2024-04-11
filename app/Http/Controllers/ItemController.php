@@ -119,12 +119,13 @@ class ItemController extends Controller
 
                 if($id != ''){
 
-                    $updateItemDetails = Item::where('id', $item_id)->update([
+                    $updateItemDetails = Item::where('id', $id)->update([
                         'department_id' => $request->input('department'),
                         'sub_department_id' => $request->input('sub_department'),
                         'updated_by' => Auth::user()->id
                     ]);
 
+                    
                     $disableSuppliers = ItemSupplier::where('item_id', $id)->update([
                         'status' => 0,
                         'updated_by' => Auth::user()->id
@@ -141,21 +142,30 @@ class ItemController extends Controller
                     }
 
                 }else{
-                    $createBarcode = Barcode::create([
-                        'product_code' => $request->input('product_code'),
-                        'barcode' => $request->input('product_code'),
+                    
+                    $createItem = Item::create([
+                        'barcode_id' => 0,
+                        'department_id' => $request->input('department'),
+                        'sub_department_id' => $request->input('sub_department'),
                         'created_by' => Auth::user()->id,
                         'updated_by' => Auth::user()->id,
                     ]);
     
-                    if($createBarcode){
+                    if($createItem){
+                    
+                        $generateBarcode = $this->generateBarcode();
+                        $barcode = $createItem->id.$generateBarcode;
     
-                        $createItem = Item::create([
-                            'barcode_id' => $createBarcode->id,
-                            'department_id' => $request->input('department'),
-                            'sub_department_id' => $request->input('sub_department'),
+                        $createBarcode = Barcode::create([
+                            'product_code' => $request->input('product_code'),
+                            'barcode' => $barcode,
                             'created_by' => Auth::user()->id,
                             'updated_by' => Auth::user()->id,
+                        ]);
+
+                        $updateBarcode = Item::where('id', $createItem->id)->update([
+                            'barcode_id' => $createBarcode->id,
+                            'updated_by' => Auth::user()->id
                         ]);
     
                         foreach($suppliers as $supplier){
@@ -540,14 +550,16 @@ class ItemController extends Controller
     }
 
     public function downloadBarcode($id)
-    {        
+    {    
         $item = Item::with('barcode')->where('id',decrypt($id))->first();
 
         $data = [
             'title' => 'Barcode of '.$item['name'],
+            'item' => $item['name'],
+            'product_code' => $item['barcode']['product_code'],
             'barcode' =>$item['barcode']['barcode']
         ];
-        
+
         $pdf = PDF::loadView('admin.reports.barcode', $data);
         return $pdf->download($item['name'].'.pdf');
     }
@@ -566,16 +578,16 @@ class ItemController extends Controller
             $bundle_id = $request->input('bundle');
             $getExistBundleItems = BundleItem::select('item_id')->where('bundle_id', $bundle_id)->where('status', 1)->get();
 
-            $data = Item::query()->with('suppliers.suppliername', 'department')->whereNotIn('id', $getExistBundleItems)->orderBy('id','desc');
+            $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->whereNotIn('id', $getExistBundleItems)->orderBy('id','desc');
         
         } else if($search_type === 'quotation_search'){
 
             $quotation_id = $request->input('quotation');
             $getExistItems = QuotationItem::select('item_id')->where('quotation_id', $quotation_id)->where('status', 1)->get();
 
-            $data = Item::query()->with('suppliers.suppliername', 'department')->whereNotIn('id', $getExistItems)->orderBy('id','desc');
+            $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->whereNotIn('id', $getExistItems)->orderBy('id','desc');
         }else{
-            $data = Item::query()->with('suppliers.suppliername', 'department')->orderBy('id','desc');
+            $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->orderBy('id','desc');
         }
 
             if(!is_null($status)) {
@@ -630,5 +642,16 @@ class ItemController extends Controller
     
         return json_encode($response);
         
+    }
+
+    public  function generateBarcode($length = 11) {
+        $characters = '0123456789';
+        $charactersLength = strlen($characters);
+        $uniqueNumber = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $uniqueNumber .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $uniqueNumber;
     }
 }

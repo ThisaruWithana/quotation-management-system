@@ -40,14 +40,6 @@
                     <p>Item Management</p>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a href="{{ route('admin.quotation.index') }}"
-                    class="nav-link {{ Route::is('admin.quotation.index') ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-gavel"></i>
-                    <p>Quotation Management</p>
-                </a>
-            </li>
             <li class="nav-item">
                 <a href="{{ route('admin.bundle.index') }}"
                     class="nav-link {{ Route::is('admin.bundle.index') ? 'active' : '' }}">
@@ -55,6 +47,13 @@
                     <p>Bundle Management
                         <!-- <span class="badge badge-secondary right">{{ $SubCategoryCount }}</span> -->
                     </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('admin.quotation.index') }}"
+                    class="nav-link {{ Route::is('admin.quotation.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-gavel"></i>
+                    <p>Quotation Management</p>
                 </a>
             </li>
             <li class="nav-item">

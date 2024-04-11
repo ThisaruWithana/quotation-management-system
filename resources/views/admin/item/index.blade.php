@@ -153,7 +153,8 @@
                     "autoWidth":true,
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 11 ]},
-                    ]
+                    ],
+                    "order": [0,'desc'],
                 });
                 
                 var dt = $('#dataTable').DataTable();
