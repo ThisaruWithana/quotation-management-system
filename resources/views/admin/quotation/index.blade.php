@@ -46,7 +46,7 @@
                 <table class="table" id="dataTable" width="100%">
                     <thead>
                         <tr>
-                            <th class="th-sm">#</th>
+                            <th class="th-sm">Quot.Ref</th>
                             <th class="th-sm" style="width:200px;">Customer Name</th>
                             <th class="th-sm">Description</th>
                             <th class="th-sm" style="width:150px;">Quotation Price</th>
@@ -58,7 +58,7 @@
                     <tbody>
                     @foreach ($listData as $value)
                             <tr>
-                                <td>{{ $value->id }}</td>
+                                <td>{{ $value->ref }}</td>
                                 <td>{{ $value->customer->name }}</td>
                                 <td>{{ $value->description }}</td>
                                 <td>{{ number_format($value->price, 2) }}</td>

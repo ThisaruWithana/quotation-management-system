@@ -19,6 +19,13 @@
                                         <div class="col-lg-6">
                                             <div class="row">
                                                 
+                                                <div class="col-lg-6">
+                                                    <div class="form-group text-left">
+                                                        <label for="ref" class="form-label">Quot. Ref</label>
+                                                        <input type="text" class="form-control" id="ref" name="ref" value="" readonly>
+                                                    </div>
+                                                </div>
+                                                
                                                 <div class="col-lg-12">
                                                     <div class="form-group text-left">
                                                         <label for="customer" class="form-label">Client</label>
@@ -152,8 +159,8 @@
                                                 </button>
                                             </div><br>
 
-                                            <div class="col-lg-12 table-responsive">
-                                                <table class="table item-list table-bordered" id="dataTable" width="100%">
+                                            <div class="">
+                                                <table class="table item-list table-bordered" id="dataTable">
                                                     <thead>
                                                         <tr>
                                                             <th class="th-sm">Code</th>
@@ -189,11 +196,6 @@
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="item-cost-lbl"></span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Extra Item Cost </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="extra-item-lbl"></span></b></p></td>
-                                                </tr>
-                                                <tr>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
@@ -207,11 +209,6 @@
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Item Retail </b></p></td>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="item-retail-lbl"></span></b></p></td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width:150px;"><p class="text-sm"><b class="d-block info-lb">Extra Item Retail </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="extra-item-lbl"></span></b></p></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
@@ -247,11 +244,6 @@
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Quot. + VAT</b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-vat-lbl"></span></b></p></td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Extra Item Margin</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="extra-item-margin-lbl"></span></b></p></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Margin</b></p></td>
@@ -290,7 +282,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <form action="{{ route('admin.item.search') }}" method="POST"
+                    <form action="{{ url('admin/item/search') }}" method="POST"
                         class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
                             @csrf
 
@@ -479,6 +471,7 @@
 
                                     $("#quotation_id").val(result['data']);
                                     $("#quotation").val(result['data']);
+                                    $("#ref").val(result['ref']);
                                     
                                 } else {
                                     toastr.error(

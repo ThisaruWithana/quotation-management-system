@@ -34,27 +34,13 @@ class QuotationController extends Controller
         $pageSize = $new;
         $customers = Customer::where('status', 1)->orderBy('name','ASC')->get();
         $data = Quotation::query()->with('customer')->orderBy('id','DESC');
+        $customer = $request->input('customer');
 
         if($request->query('form_action') === 'search'){
 
-            // if(!is_null($status)) {
-            //     $data->orWhere('status', $status);
-            // }
-
-            // if(!is_null($department)) {
-            //     $data->where('department_id',  $department);
-            // }
-
-            // if(!is_null($sub_department)) {
-            //     $data->where('sub_department_id',  $sub_department);
-            // }
-
-            // if(!is_null($supplierId)) {
-
-            //     $data->whereHas('suppliers', function($q) use ($supplierId){
-            //         $q->where('supplier_id', $supplierId);
-            //     });
-            // }
+            if(!is_null($customer)) {
+                $data->where('customer_id',  $customer);
+            }
         }
         $listData = $data->paginate($pageSize);  
 
@@ -129,6 +115,7 @@ class QuotationController extends Controller
                  $response['code'] = 1;
                  $response['msg'] = "Success";
                  $response['data'] = $id;
+                 $response['ref'] = $referenceNo;
              }else{
                  DB::rollback();
                  $response['code'] = 0;

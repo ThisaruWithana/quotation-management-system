@@ -22,6 +22,13 @@
                                         <div class="col-lg-6">
                                             <div class="row">
                                                 
+                                                <div class="col-lg-6">
+                                                    <div class="form-group text-left">
+                                                        <label for="ref" class="form-label">Quot. Ref</label>
+                                                        <input type="text" class="form-control" id="ref" name="ref" value="{{ $data->ref }}" readonly>
+                                                    </div>
+                                                </div>
+                                                
                                                 <div class="col-lg-12">
                                                     <div class="form-group text-left">
                                                         <label for="customer" class="form-label">Client</label>
@@ -301,7 +308,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <form action="{{ route('admin.item.search') }}" method="POST"
+                    <form action="{{ url('admin/item/search') }}" method="POST"
                         class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
                             @csrf
 
@@ -458,38 +465,6 @@
 
                     var formData = new FormData(this);
 
-                    // $.ajax({
-                    //     url: "{{ route('admin.quotation.store') }}",
-                    //     type: 'POST',
-                    //         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    //         data: formData,
-                    //         dataType:'JSON',
-                    //         contentType: false,
-                    //         cache: false,
-                    //         processData: false,
-                    //         success: function (data) {
-                    //             var result = data;
-
-                    //             if (result['code'] == 1) {
-                    //                 window.location = '{{ url("admin/quotation") }}';
-                                    
-                    //             } else {
-                    //                 toastr.error(
-                    //                     'Error',
-                    //                     'Something Went Wrong!',
-                    //                     {
-                    //                         timeOut: 1500,
-                    //                         fadeOut: 1500,
-                    //                         onHidden: function () {
-                    //                         }
-                    //                     }
-                    //                 );
-                    //             }
-                    //         }, error: function (data) {
-                                        
-                    //     }
-                    // });
-
                     $.ajax({
                             url: "{{ url('admin/quotation/store') }}",
                             type: 'POST',
@@ -509,9 +484,7 @@
                                     "total_cost": $("#total-cost-lbl").text(),
                                     "total_retail": $("#retail-lbl").text(),
                                     "quotation_vat": $("#quot-vat-lbl").text(),
-                                    "quotation_margin": $("#quot-margin-lbl").text()
-
-                                    
+                                    "quotation_margin": $("#quot-margin-lbl").text()                                    
                                 },
                                 success: function (data) {
                                     var result = JSON.parse(data);

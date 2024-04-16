@@ -79,7 +79,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('item/store-sub-items', [ItemController::class, 'storeSubItems'])->name('item.store-sub-items');
     Route::post('item/update-mandatory-status', [ItemController::class, 'updateMandatoryStatus'])->name('item.update-mandatory-status');
     
-    Route::post('item/search', [ItemController::class, 'search'])->name('item.search');
 
     Route::get('item/download-barcode/{id}', [ItemController::class, 'downloadBarcode'])->name('item.download-barcode');
 
@@ -92,7 +91,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('bundle/item-update', [BundleController::class, 'itemUpdate'])->name('bundle.item-update');
     Route::post('bundle/get-details', [BundleController::class, 'getDetails'])->name('bundle.get-details');
 
-    
+    Route::prefix('item')->group(function(){
+        Route::post('search', [ItemController::class, 'search'])->name('item.search');
+    });
     // Route::resource('quotation',QuotationController::class);
     // Route::post('quotation/add-items', [QuotationController::class, 'addItems'])->name('quotation.add-items');
     // Route::post('quotation/update-display-status', [QuotationController::class, 'updateDisplayStatus'])->name('quotation.update-display-status');

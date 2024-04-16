@@ -50,7 +50,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url('admin.quotation.index') }}"
+                <a href="{{ url('admin/quotation') }}"
                     class="nav-link {{ Route::is('admin.quotation.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-gavel"></i>
                     <p>Quotation Management</p>
