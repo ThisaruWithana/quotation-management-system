@@ -111,7 +111,7 @@
                             <div class=" add-items" style="display:block;">
 
                                     <div class="row">
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-4">
                                             <div class="form-group text-left">
                                                 <label for="bundle" class="form-label">Bundle</label>
                                                 <select id="bundle" name="bundle" class="selectpicker show-tick col-lg-12" data-live-search="true">
@@ -122,16 +122,10 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3">
+                                        <div class="col-lg-2">
                                             <div class="form-group text-left">
                                                 <label for="bundle_cost" class="form-label">Bundle Cost</label>
                                                 <input type="text" class="form-control" id="bundle_cost" name="bundle_cost" readonly>
-                                            </div>
-                                        </div>  
-                                        <div class="col-lg-3">
-                                            <div class="form-group text-left">
-                                                <label for="discount" class="form-label">Discount</label>
-                                                <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['discount'] }}" autocomplete="off">
                                             </div>
                                         </div>                                
                                     </div>
@@ -143,6 +137,12 @@
                                                 <input type="text" class="form-control" id="price" name="price" value="{{ $data['price'] }}" autocomplete="off">
                                             </div>
                                         </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group text-left">
+                                                <label for="discount" class="form-label">Discount</label>
+                                                <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['discount'] }}" autocomplete="off">
+                                            </div>
+                                        </div>  
                                         <div class="col-lg-3">
                                             <div class="form-group text-left">
                                                 <label for="margin" class="form-label">Quotation Margin</label>
@@ -182,7 +182,15 @@
                                                         @foreach ($quotationItems as $value)
                                                             <tr>
                                                                 <td>{{ $value['item_id'] }}</td>
-                                                                <td>{{ $value['name'] }}</td>
+                                                                <td>
+                                                                    @if($value['type'] === 'bundle')
+                                                                    <a class="" title="Edit Bundle" onclick="editBundle({{ $value['quotation_id'] }},{{ $value['item_id'] }})">
+                                                                        {{ $value['name'] }}
+                                                                    </a>
+                                                                    @else
+                                                                        {{ $value['name'] }}
+                                                                    @endif
+                                                                </td>
                                                                 <td>{{ $value['supplier'] }}</td>
                                                                 <td>{{ $value['actual_cost'] }}</td>
                                                                 <td>{{ $value['item_cost'] }}</td>
@@ -515,17 +523,65 @@
                 });
 
                 $('#bundle').on('change', function() {
+
                     $.ajax({
-                        url: "{{ url('admin/bundle/get-details') }}",
+                        url: "{{ url('admin/quotation/add-bundle') }}",
                         type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
-                                "id": this.value
+                                "bundle": this.value,
+                                "quotation_id":$('#quotation_id').val(),
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
 
                                 $("#bundle_cost").val(result['bundle_cost']);
+                                $('.item-list tbody').empty();
+
+                                if (result['data'].length > 0) {
+                                    $.each(result['data'], function (count, val) {
+
+                                        var displayReport = val['display_report'];
+                                        var checkboxStatus = '';
+
+                                        if(displayReport === 1){
+                                            checkboxStatus = 'checked';
+                                        }
+
+                                        var type = val['type'];
+                                        var name;
+
+                                        if(type === 'bundle'){
+                                            name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                        }else{
+                                            name = val['name'];
+                                        }
+
+                                        $('.item-list tbody').append(
+                                            '<tr>'
+                                            +'<td>' + val['item_id'] + '</td>'
+                                            +'<td>' + name + '</td>'
+                                            +'<td>' + val['supplier'] + '</td>'
+                                            +'<td>' + val['actual_cost'] + '</td>'
+                                            +'<td>' + val['item_cost'] + '</td>'
+                                            +'<td>' + val['retail'] + '</td>'
+                                            +'<td>' + val['qty'] + '</td>'
+                                            +'<td>' + val['total_cost'] + '</td>'
+                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                            +'<td>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                            +'</td>'
+                                            +'<td>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                            +'</td>'
+                                            +'</tr>'
+                                        );
+                                    });
+                                } 
+
+                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
+
 
                             }, error: function (data) {
         
@@ -578,10 +634,19 @@
                                                 checkboxStatus = 'checked';
                                             }
 
+                                            var type = val['type'];
+                                            var name;
+
+                                            if(type === 'bundle'){
+                                                name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                            }else{
+                                                name = val['name'];
+                                            }
+
                                             $('.item-list tbody').append(
                                                 '<tr>'
                                                 +'<td>' + val['item_id'] + '</td>'
-                                                +'<td>' + val['name'] + '</td>'
+                                                +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
                                                 +'<td>' + val['actual_cost'] + '</td>'
                                                 +'<td>' + val['item_cost'] + '</td>'
@@ -715,10 +780,19 @@
                                             checkboxStatus = 'checked';
                                         }
 
+                                        var type = val['type'];
+                                            var name;
+
+                                            if(type === 'bundle'){
+                                                name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                            }else{
+                                                name = val['name'];
+                                            }
+
                                         $('.item-list tbody').append(
                                             '<tr>'
                                             +'<td>' + val['item_id'] + '</td>'
-                                            +'<td>' + val['name'] + '</td>'
+                                            +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['item_cost'] + '</td>'
@@ -800,10 +874,19 @@
                                             checkboxStatus = 'checked';
                                         }
 
+                                        var type = val['type'];
+                                        var name;
+
+                                        if(type === 'bundle'){
+                                            name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                        }else{
+                                            name = val['name'];
+                                        }
+
                                         $('.item-list tbody').append(
                                             '<tr>'
                                             +'<td>' + val['item_id'] + '</td>'
-                                            +'<td>' + val['name'] + '</td>'
+                                            +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
                                             +'<td>' + val['actual_cost'] + '</td>'
                                             +'<td>' + val['item_cost'] + '</td>'
@@ -835,6 +918,92 @@
                 $("#quotation_item_id").val(id);
                 $("#retail").val(retail);
                 $("#editDetails").modal('show');
+            }
+
+            function editBundle(quotationId, ItemId) {
+
+                cuteAlert({
+                    type: "question",
+                    title: "Are you sure",
+                    message: "You want to edit this bundle ?",
+                    confirmText: "Yes",
+                    cancelText: "Cancel"
+                    }).then((e)=>{
+                    if ( e == ("confirm")){
+                            $.ajax({
+                                url: "{{ url('admin/quotation/edit-bundle') }}",
+                                type: 'POST',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    "quotation_id": quotationId,
+                                    "bundle_id": ItemId,
+                                },
+                                success: function (data) {
+                                    var result = JSON.parse(data);
+
+                                    $('.item-list tbody').empty();
+
+                                    if (result['data'].length > 0) {
+                                        $.each(result['data'], function (count, val) {
+
+                                            var displayReport = val['display_report'];
+                                            var checkboxStatus = '';
+
+                                            if(displayReport === 1){
+                                                checkboxStatus = 'checked';
+                                            }
+
+                                            var type = val['type'];
+                                            var name;
+
+                                            if(type === 'bundle'){
+                                                name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                            }else{
+                                                name = val['name'];
+                                            }
+
+                                            $('.item-list tbody').append(
+                                                '<tr>'
+                                                +'<td>' + val['item_id'] + '</td>'
+                                                +'<td>' + name + '</td>'
+                                                +'<td>' + val['supplier'] + '</td>'
+                                                +'<td>' + val['actual_cost'] + '</td>'
+                                                +'<td>' + val['item_cost'] + '</td>'
+                                                +'<td>' + val['retail'] + '</td>'
+                                                +'<td>' + val['qty'] + '</td>'
+                                                +'<td>' + val['total_cost'] + '</td>'
+                                                +'<td>' + val['total_retail'] + '</td>'
+                                                +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                                +'<td>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'</td>'
+                                                +'<td>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                                +'</td>'
+                                                +'</tr>'
+                                            );
+                                        });
+                                    } 
+
+                                    calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
+
+                                }, error: function (data) {
+                                        toastr.error(
+                                            'Error',
+                                            'Something Went Wrong!',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
+                                            }
+                                        );
+                                }
+                            });
+                    } else {
+                    }
+                });
             }
 
         </script>

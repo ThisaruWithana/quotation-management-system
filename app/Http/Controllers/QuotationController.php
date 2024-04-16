@@ -13,6 +13,7 @@ use App\Models\Supplier;
 use App\Models\Bundle;
 use App\Models\QuotationDescription;
 use App\Models\QuotationItem;
+use App\Models\BundleItem;
 use App\Models\Item;
 use DB;
 
@@ -97,6 +98,7 @@ class QuotationController extends Controller
  
              if($request->input('quotation_id')){
                  $id = $request->input('quotation_id');
+                 $referenceNo = '';
 
                  $this->updatePriceInfo($request);
              }else{
@@ -140,10 +142,11 @@ class QuotationController extends Controller
         $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
         $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
-        $bundles = Bundle::where('status', 1)->orderBy('id','DESC')->get();
         $descriptions = QuotationDescription::where('status', 1)->orderBy('description','ASC')->get();
 
-        
+        $selectedBundles = QuotationItem::where('status', 1)->where('type','bundle')->pluck('item_id');
+        $bundles = Bundle::whereNotIn('id', $selectedBundles)->where('status', 1)->orderBy('id','DESC')->get();
+
         $total_cost = $this->getTotalCost(decrypt($id));
         $total_retail = $this->getTotalRetail(decrypt($id));
         $quotation_cost = $this->getQuotationCost(decrypt($id));
@@ -290,16 +293,6 @@ class QuotationController extends Controller
     {
         return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('total_retail');
     }    
-    
-    // public function getItemCost($quotation_id)
-    // {
-    //    return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('item_cost');
-    // }
-
-    // public function getItemRetail($quotation_id)
-    // {
-    //    return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('retail');
-    // }
 
     public function getQuotationCost($quotation_id)
     {
@@ -326,17 +319,32 @@ class QuotationController extends Controller
 
         foreach($itemList as $value){
             $supplierList = array();
-                    
+
+            if($value['type'] != 'item'){
+
+                $bundle = Bundle::where('id', $value['item_id'])->where('status', 1)->first();
+
+                $name = $bundle['name'];
+                $item_id = $bundle['id'];
+                $actual_cost = $bundle['bundle_cost'];
+
+            }else{
                 foreach($value['item']['suppliers'] as $supplier){
                     $supplier = $supplier['suppliername']['name'];
                     array_push($supplierList, $supplier);
                 }
+
+                $name = $value['item']['name'];
+                $item_id = $value['item']['id'];
+                $actual_cost = $value['item']['cost_price'];
+            }
                     
                 $data2 = ([
                     'id' => $value['id'],
-                    'item_id' => $value['item']['id'],
-                    'name' => $value['item']['name'],
-                    'actual_cost' => $value['item']['cost_price'],
+                    'item_id' => $item_id,
+                    'quotation_id' => $value['quotation_id'],
+                    'name' => $name,
+                    'actual_cost' => $actual_cost,
                     'item_cost' => $value['item_cost'],
                     'retail' => $value['retail'],
                     'qty' => $value['qty'],
@@ -344,6 +352,7 @@ class QuotationController extends Controller
                     'total_retail' => $value['total_retail'],
                     'display_report' => $value['display_report'],
                     'quotation_id' => $value['quotation_id'],
+                    'type' => $value['type'],
                     'supplier' => implode(" ",$supplierList)
                     ]);
 
@@ -643,4 +652,201 @@ class QuotationController extends Controller
             } 
     }
 
+    public function addBundle(Request $request)
+    {
+        $response = array();
+        $bundle = $request->input('bundle');
+        $quotation_id = $request->input('quotation_id');
+
+        try{
+            DB::beginTransaction();
+
+            $bundleDetails = Bundle::where('id',$bundle)->first();
+            $total_cost = $bundleDetails['total_cost'];
+            $total_retail = $bundleDetails['total_retail'];
+            $bundle_cost = $bundleDetails['bundle_cost'];
+
+            $getLastInsert = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->orderBy('id', 'desc')->first();
+     
+            if(empty($getLastInsert)){
+                $order = 1;
+            }else{
+                $lastInsertOrder = $getLastInsert['order'];
+                $order = $lastInsertOrder + 1;
+            }
+            $store = QuotationItem::create([
+                'quotation_id' => $quotation_id,
+                'item_id' => $bundle,
+                'item_cost' => $bundle_cost,
+                'actual_cost' => $bundle_cost,
+                'retail' => $total_retail,
+                'actual_retail' => $total_retail,
+                'qty' => 1,
+                'total_cost' => $bundle_cost,
+                'total_retail' => $total_retail,
+                'order' => $order,
+                'status' => 1,
+                'type' => 'bundle',
+                'created_by' => Auth::user()->id,
+                'updated_by' => Auth::user()->id,
+            ]);
+
+            DB::commit(); 
+
+            $total_cost = $this->getTotalCost($quotation_id);
+            $total_retail = $this->getTotalRetail($quotation_id);
+            $quotation_cost = $this->getQuotationCost($quotation_id);
+            
+            $total_item_cost = $this->getTotalItemCost($quotation_id);
+            $total_item_retail = $this->getTotalItemRetail($quotation_id);
+
+            if($store){
+
+                $request->request->add([
+                    'price' => $quotation_cost,
+                    // 'discount' => 0,
+                    // 'margin' => 0,
+                    'item_cost' => $total_item_cost,
+                    'item_retail' => $total_item_retail,
+                    'vat' => 0,
+                    'total_vat' => 0,
+                    'item_retail_margin' => 0,
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail,
+                    'quotation_vat' => 0,
+                    'quotation_margin' => 0,
+                ]);
+
+                $updatePriceInfo = $this->updatePriceInfo($request);
+                
+                $getQuotationItemList = $this->getQuotationItems($quotation_id);
+
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+                $response['data'] = $getQuotationItemList;
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $quotation_cost;
+                $response['total_item_cost'] = $total_item_cost;
+                $response['total_item_retail'] = $total_item_retail;
+                $response['bundle_cost'] = $bundle_cost;
+            }else{
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = 'Something went wrong !';
+                $response['data'] = '';
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $quotation_cost;
+                $response['total_item_cost'] = $total_item_cost;
+                $response['total_item_retail'] = $total_item_retail;
+            }
+              
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
+
+    public function editBundle(Request $request)
+    {
+        $response = array();
+        $bundle_id = $request->input('bundle_id');
+        $quotation_id = $request->input('quotation_id');
+
+        try{
+            DB::beginTransaction();
+            
+            // Disable existing bundle
+            $update = QuotationItem::where('quotation_id', $quotation_id)->where('item_id', $bundle_id)->update([
+                'status' => 0,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            if($update){
+
+                $bundleItemList = BundleItem::with('item', 'item.suppliers.suppliername')->where('bundle_id',$bundle_id)->where('status',1)->get();
+
+                foreach($bundleItemList as $value){
+                    
+                    // Add bundle items to quotation
+                    $store = QuotationItem::create([
+                        'quotation_id' => $quotation_id,
+                        'item_id' => $value['item']['id'],
+                        'item_cost' => $value['item_cost'],
+                        'actual_cost' => $value['actual_cost'],
+                        'retail' => $value['total_retail'],
+                        'actual_retail' => $value['retail'],
+                        'qty' => $value['qty'],
+                        'total_cost' => $value['total_cost'],
+                        'total_retail' => $value['total_retail'],
+                        'order' => $value['order'],
+                        'display_report' => $value['display_report'],
+                        'status' => 1,
+                        'created_by' => Auth::user()->id,
+                        'updated_by' => Auth::user()->id,
+                    ]);
+
+                }
+            }
+
+            DB::commit(); 
+            $total_cost = $this->getTotalCost($quotation_id);
+            $total_retail = $this->getTotalRetail($quotation_id);
+            $quotation_cost = $this->getQuotationCost($quotation_id);
+            
+            $total_item_cost = $this->getTotalItemCost($quotation_id);
+            $total_item_retail = $this->getTotalItemRetail($quotation_id);
+
+            if($store){
+
+                $request->request->add([
+                    'price' => $quotation_cost,
+                    // 'discount' => 0,
+                    // 'margin' => 0,
+                    'item_cost' => $total_item_cost,
+                    'item_retail' => $total_item_retail,
+                    'vat' => 0,
+                    'total_vat' => 0,
+                    'item_retail_margin' => 0,
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail,
+                    'quotation_vat' => 0,
+                    'quotation_margin' => 0,
+                ]);
+
+                $updatePriceInfo = $this->updatePriceInfo($request);
+                $getQuotationItemList = $this->getQuotationItems($quotation_id);
+
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+                $response['data'] = $getQuotationItemList;
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $quotation_cost;
+                $response['total_item_cost'] = $total_item_cost;
+                $response['total_item_retail'] = $total_item_retail;
+            }else{
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = 'Something went wrong !';
+                $response['data'] = '';
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $quotation_cost;
+                $response['total_item_cost'] = $total_item_cost;
+                $response['total_item_retail'] = $total_item_retail;
+            }
+              
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
 }

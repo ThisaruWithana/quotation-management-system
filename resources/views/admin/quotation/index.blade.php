@@ -46,6 +46,7 @@
                 <table class="table" id="dataTable" width="100%">
                     <thead>
                         <tr>
+                            <th class="th-sm">#</th>
                             <th class="th-sm">Quot.Ref</th>
                             <th class="th-sm" style="width:200px;">Customer Name</th>
                             <th class="th-sm">Description</th>
@@ -58,6 +59,7 @@
                     <tbody>
                     @foreach ($listData as $value)
                             <tr>
+                                <td>{{ $value->id }}</td>
                                 <td>{{ $value->ref }}</td>
                                 <td>{{ $value->customer->name }}</td>
                                 <td>{{ $value->description }}</td>
@@ -105,7 +107,7 @@
                     "scrollX": true,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 6 ]},
+                        { "bSortable": false, "aTargets": [ 7 ]},
                     ],
                     "order": [0,'desc'],
                 });

@@ -94,15 +94,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::prefix('item')->group(function(){
         Route::post('search', [ItemController::class, 'search'])->name('item.search');
     });
-    // Route::resource('quotation',QuotationController::class);
-    // Route::post('quotation/add-items', [QuotationController::class, 'addItems'])->name('quotation.add-items');
-    // Route::post('quotation/update-display-status', [QuotationController::class, 'updateDisplayStatus'])->name('quotation.update-display-status');
-    // Route::post('quotation/delete-item', [QuotationController::class, 'deleteItem'])->name('quotation.delete-item');
-    // Route::post('quotation/change-status', [QuotationController::class, 'changeStatus'])->name('quotation.change-status');
-    // Route::post('quotation/item-update', [QuotationController::class, 'itemUpdate'])->name('quotation.item-update');
-    // Route::post('quotation/update-price-info', [QuotationController::class, 'updatePriceInfo'])->name('quotation.update-price-info');
 
     Route::prefix('quotation')->group(function(){
+
         Route::get('/', [QuotationController::class, 'index'])->name('quotation');
         Route::get('create', [QuotationController::class, 'create'])->name('quotation.create');
         Route::get('edit/{id}', [QuotationController::class, 'edit'])->name('quotation.edit');
@@ -114,6 +108,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('change-status', [QuotationController::class, 'changeStatus'])->name('quotation.change-status');
         Route::post('item-update', [QuotationController::class, 'itemUpdate'])->name('quotation.item-update');
         Route::post('update-price-info', [QuotationController::class, 'updatePriceInfo'])->name('quotation.update-price-info');
+        Route::post('add-bundle', [QuotationController::class, 'addBundle'])->name('quotation.add-bundle');
+        Route::post('edit-bundle', [QuotationController::class, 'editBundle'])->name('quotation.edit-bundle');
+
     });
 });
 

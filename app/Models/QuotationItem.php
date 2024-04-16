@@ -13,7 +13,7 @@ class QuotationItem extends Model
 
     protected $fillable = [
         'id','quotation_id', 'item_id', 'item_cost','retail','qty', 'total_cost', 'total_retail', 'order', 
-        'display_report', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'actual_cost', 'actual_retail', 'vat'
+        'display_report', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'actual_cost', 'actual_retail', 'vat', 'type'
     ];
 
     public $sortable = [ 'id', 'description'];
