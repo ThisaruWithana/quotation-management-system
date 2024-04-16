@@ -93,12 +93,27 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('bundle/get-details', [BundleController::class, 'getDetails'])->name('bundle.get-details');
 
     
-    Route::resource('quotation',QuotationController::class);
-    Route::post('quotation/add-items', [QuotationController::class, 'addItems'])->name('quotation.add-items');
-    Route::post('quotation/update-display-status', [QuotationController::class, 'updateDisplayStatus'])->name('quotation.update-display-status');
-    Route::post('quotation/delete-item', [QuotationController::class, 'deleteItem'])->name('quotation.delete-item');
-    Route::post('quotation/change-status', [QuotationController::class, 'changeStatus'])->name('quotation.change-status');
-    Route::post('quotation/item-update', [QuotationController::class, 'itemUpdate'])->name('quotation.item-update');
+    // Route::resource('quotation',QuotationController::class);
+    // Route::post('quotation/add-items', [QuotationController::class, 'addItems'])->name('quotation.add-items');
+    // Route::post('quotation/update-display-status', [QuotationController::class, 'updateDisplayStatus'])->name('quotation.update-display-status');
+    // Route::post('quotation/delete-item', [QuotationController::class, 'deleteItem'])->name('quotation.delete-item');
+    // Route::post('quotation/change-status', [QuotationController::class, 'changeStatus'])->name('quotation.change-status');
+    // Route::post('quotation/item-update', [QuotationController::class, 'itemUpdate'])->name('quotation.item-update');
+    // Route::post('quotation/update-price-info', [QuotationController::class, 'updatePriceInfo'])->name('quotation.update-price-info');
+
+    Route::prefix('quotation')->group(function(){
+        Route::get('/', [QuotationController::class, 'index'])->name('quotation');
+        Route::get('create', [QuotationController::class, 'create'])->name('quotation.create');
+        Route::get('edit/{id}', [QuotationController::class, 'edit'])->name('quotation.edit');
+
+        Route::post('store', [QuotationController::class, 'store'])->name('quotation.store');
+        Route::post('add-items', [QuotationController::class, 'addItems'])->name('quotation.add-items');
+        Route::post('update-display-status', [QuotationController::class, 'updateDisplayStatus'])->name('quotation.update-display-status');
+        Route::post('delete-item', [QuotationController::class, 'deleteItem'])->name('quotation.delete-item');
+        Route::post('change-status', [QuotationController::class, 'changeStatus'])->name('quotation.change-status');
+        Route::post('item-update', [QuotationController::class, 'itemUpdate'])->name('quotation.item-update');
+        Route::post('update-price-info', [QuotationController::class, 'updatePriceInfo'])->name('quotation.update-price-info');
+    });
 });
 
 Route::get('/barcode', [VatController::class, 'barcode']);

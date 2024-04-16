@@ -3,11 +3,11 @@
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                <a href="{{ route('admin.quotation.create') }}" class="btn btn-sm btn-primary">Add New</a>
+                <a href="{{ url('admin/quotation/create') }}" class="btn btn-sm btn-primary">Add New</a>
             </div>
         </div>
         <div class="card-body table-responsive">
-        <form method="GET" action="{{ route('admin.quotation.index') }}" id="frm-list">
+        <form method="GET" action="{{ url('admin/quotation') }}" id="frm-list">
 
             <div class="row">
                 <div class="form-group" style="margin-left:10px;">
@@ -71,7 +71,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.quotation.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                    <a href="{{ url('admin/quotation/edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                         <i class="far fa-edit"></i>
                                     </a>
                                     

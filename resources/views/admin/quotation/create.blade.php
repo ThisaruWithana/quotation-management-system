@@ -10,7 +10,7 @@
                 </h5>
                     <!-- /.card-header -->
                             <!-- form start -->
-                    <form action="{{ route('admin.quotation.store') }}" method="PUT" class="text-center border border-light p-5" id="formCreate">
+                    <form action="{{ url('admin/quotation/store') }}" method="PUT" class="text-center border border-light p-5" id="formCreate">
                          @csrf
                         <div class="card-body px-lg-2 pt-0">
 
@@ -100,7 +100,7 @@
                                 </div> 
                             <hr>
               
-                            <div class=" add-items" style="display:block;">
+                            <div class=" add-items" style="display:none;">
 
                                     <div class="row">
                                         <div class="col-lg-6">
@@ -267,7 +267,7 @@
                                         </div>
 
                                         <div class="col-lg-2">
-                                            <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Changes</button>
+                                            <button class="btn btn-primary btn-block" type="button" id="btnSaveChanges">Save Changes</button>
                                         </div>
                                     </div>
                             </div>
@@ -456,7 +456,7 @@
                     var formData = new FormData(this);
 
                     $.ajax({
-                        url: "{{ route('admin.quotation.store') }}",
+                        url: "{{ url('admin/quotation/store') }}",
                         type: 'POST',
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                             data: formData,
@@ -616,13 +616,61 @@
                                         }
                                     );
                                 }
-                                calculatePrices($('#price').val(), result['total_retail'], result['total_cost']);
+                                calculatePrices($('#price').val(), result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
                                 
                                 $("#editDetails").modal('hide');
                             }, error: function (data) {
                                         
                         }
                     });
+                });
+
+                $('#btnSaveChanges').click(function(){
+                   
+                    $.ajax({
+                            url: "{{ url('admin/quotation/update-price-info') }}",
+                            type: 'POST',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    "quotation_id": $('#quotation_id').val(),
+                                    "price": $('#price').val(),
+                                    "discount": $('#discount').val(),
+                                    "margin": $('#margin').val(),
+                                    "item_cost": $("#item-cost-lbl").text(),
+                                    "item_retail": $("#item-retail-lbl").text(),
+                                    "vat": $("#vat-lbl").text(),
+                                    "total_vat": $("#quot-vat-lbl").text(),
+                                    "item_retail_margin": $("#item-retail-margin-lbl").text(),
+                                    "total_cost": $("#total-cost-lbl").text(),
+                                    "total_retail": $("#retail-lbl").text(),
+                                    "quotation_vat": $("#quot-vat-lbl").text(),
+                                    "quotation_margin": $("#quot-margin-lbl").text()
+
+                                    
+                                },
+                                success: function (data) {
+                                    var result = JSON.parse(data);
+
+                                    if (result['code'] == 1) {
+                                        window.location = '{{ url("admin/quotation") }}';
+                                    
+                                    } else {
+                                        toastr.error(
+                                            'Error',
+                                            'Something Went Wrong!',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                }
+                                            }
+                                        );
+                                    }
+                                }, error: function (data) {
+                                            
+                            }
+                    });
+
                 });
 
             });
@@ -711,22 +759,20 @@
                                     });
                                 } 
 
-                                calculatePrices($('#price').val(), result['total_retail'], result['total_cost']);
+                                calculatePrices($('#price').val(), result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
                             }, error: function (data) {
                                         
                         }
                 });
             }
 
-            function calculatePrices(quotationCost, totalRetail, totalCost){
-                var difference = quotationCost - totalCost;
-
+            function calculatePrices(quotationCost, totalRetail, totalCost, itemCost, itemRetail){
                 $("#quot-price-lbl").text(Number(quotationCost).toFixed(2));
 
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
-                $("#item-cost-lbl").text(Number(totalCost).toFixed(2));
+                $("#item-cost-lbl").text(Number(itemCost).toFixed(2));
 
-                $("#item-retail-lbl").text(Number(totalRetail).toFixed(2));
+                $("#item-retail-lbl").text(Number(itemRetail).toFixed(2));
                 $("#retail-lbl").text(Number(totalRetail).toFixed(2));
             }
 
@@ -796,7 +842,7 @@
                                         );
                                     });
                                 } 
-                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost']);
+                                calculatePrices($('#price').val(), result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
                             }, error: function (data) {
                                         
                         }

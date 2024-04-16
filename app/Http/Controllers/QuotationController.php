@@ -37,24 +37,24 @@ class QuotationController extends Controller
 
         if($request->query('form_action') === 'search'){
 
-            if(!is_null($status)) {
-                $data->orWhere('status', $status);
-            }
+            // if(!is_null($status)) {
+            //     $data->orWhere('status', $status);
+            // }
 
-            if(!is_null($department)) {
-                $data->where('department_id',  $department);
-            }
+            // if(!is_null($department)) {
+            //     $data->where('department_id',  $department);
+            // }
 
-            if(!is_null($sub_department)) {
-                $data->where('sub_department_id',  $sub_department);
-            }
+            // if(!is_null($sub_department)) {
+            //     $data->where('sub_department_id',  $sub_department);
+            // }
 
-            if(!is_null($supplierId)) {
+            // if(!is_null($supplierId)) {
 
-                $data->whereHas('suppliers', function($q) use ($supplierId){
-                    $q->where('supplier_id', $supplierId);
-                });
-            }
+            //     $data->whereHas('suppliers', function($q) use ($supplierId){
+            //         $q->where('supplier_id', $supplierId);
+            //     });
+            // }
         }
         $listData = $data->paginate($pageSize);  
 
@@ -89,7 +89,7 @@ class QuotationController extends Controller
 
               $checkExist = QuotationDescription::where('description', 'LIKE',"%$description%")->get();
 
-             if(!$checkExist){
+             if(count($checkExist) == 0){
                 $add = QuotationDescription::create([
                     'description' => $description,
                     'created_by' => Auth::user()->id,
@@ -111,8 +111,16 @@ class QuotationController extends Controller
  
              if($request->input('quotation_id')){
                  $id = $request->input('quotation_id');
+
+                 $this->updatePriceInfo($request);
              }else{
                  $id = $store->id;
+                 $referenceNo = $this->generateQuotationReference($id, $request->input('customer'));
+
+                 $update = Quotation::where('id', $id)->update([
+                    'ref' => $referenceNo,
+                    'updated_by' => Auth::user()->id
+                ]);
              }
  
              DB::commit(); 
@@ -157,7 +165,7 @@ class QuotationController extends Controller
 
         $data = Quotation::where('id',decrypt($id))->first();
 
-         $quotationItems = $this->getQuotationItems(decrypt($id));
+        $quotationItems = $this->getQuotationItems(decrypt($id));
      
         return view('admin.quotation.edit',compact('data', 'title', 'customers', 'quotationItems',
                 'departments', 'sub_departments', 'suppliers', 'bundles', 'descriptions',
@@ -231,11 +239,29 @@ class QuotationController extends Controller
 
             if($store){
 
-                $queryUpdate = Quotation::where('id', $quotation_id)->where('status', 1)->update([
-                                'item_cost' => $total_cost,
-                                'item_retail' => $total_retail,
-                                'updated_by' => Auth::user()->id
-                            ]);
+                $request->request->add([
+                    // 'price' => $quotation_cost,
+                    // 'discount' => 0,
+                    // 'margin' => 0,
+                    'item_cost' => $total_item_cost,
+                    'item_retail' => $total_item_retail,
+                    'vat' => 0,
+                    'total_vat' => 0,
+                    'item_retail_margin' => 0,
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail,
+                    'quotation_vat' => 0,
+                    'quotation_margin' => 0,
+                ]);
+
+                $updatePriceInfo = $this->updatePriceInfo($request);
+                
+                // $queryUpdate = Quotation::where('id', $quotation_id)->where('status', 1)->update([
+                //         'item_cost' => $item_cost,
+                //         'total_cost' => $total_cost,
+                //         'item_retail' => $total_retail,
+                //         'updated_by' => Auth::user()->id
+                //     ]);
                 
                 $getQuotationItemList = $this->getQuotationItems($quotation_id);
 
@@ -276,7 +302,17 @@ class QuotationController extends Controller
     public function getTotalRetail($quotation_id)
     {
         return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('total_retail');
-    }
+    }    
+    
+    // public function getItemCost($quotation_id)
+    // {
+    //    return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('item_cost');
+    // }
+
+    // public function getItemRetail($quotation_id)
+    // {
+    //    return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('retail');
+    // }
 
     public function getQuotationCost($quotation_id)
     {
@@ -285,12 +321,12 @@ class QuotationController extends Controller
 
     public function getTotalItemCost($quotation_id)
     {
-       return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('actual_cost');
+       return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('item_cost');
     }
 
     public function getTotalItemRetail($quotation_id)
     {
-       return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('actual_retail');
+       return $query = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->sum('retail');
     }
 
     public function getQuotationItems($quotationId)
@@ -391,16 +427,33 @@ class QuotationController extends Controller
                 $total_item_cost = $this->getTotalItemCost($quotation_id);
                 $total_item_retail = $this->getTotalItemRetail($quotation_id);
                 
-                $queryUpdate = Quotation::where('id', $quotation_id)->where('status', 1)->update([
-                    'item_cost' => $total_cost,
-                    'item_retail' => $total_retail,
-                    'updated_by' => Auth::user()->id
-                ]);
+                // $queryUpdate = Quotation::where('id', $quotation_id)->where('status', 1)->update([
+                //     'item_cost' => $total_cost,
+                //     'item_retail' => $total_retail,
+                //     'updated_by' => Auth::user()->id
+                // ]); 
+               
 
                 DB::commit(); 
 
                 if($update){
-                   
+
+                    $request->request->add([
+                        'price' => $quotation_cost,
+                        // 'discount' => 0,
+                        // 'margin' => 0,
+                        'item_cost' => $total_item_cost,
+                        'item_retail' => $total_item_retail,
+                        'vat' => 0,
+                        'total_vat' => 0,
+                        'item_retail_margin' => 0,
+                        'total_cost' => $total_cost,
+                        'total_retail' => $total_retail,
+                        'quotation_vat' => 0,
+                        'quotation_margin' => 0,
+                    ]);
+    
+                    $queryUpdate = $this->updatePriceInfo($request);
                     $getQuotationItemList = $this->getQuotationItems($quotation_id);
 
                     $response['code'] = 1;
@@ -483,11 +536,29 @@ class QuotationController extends Controller
                     $total_item_cost = $this->getTotalItemCost($quotation_id);
                     $total_item_retail = $this->getTotalItemRetail($quotation_id);
           
-                    $queryUpdate = Quotation::where('id', $quotation_id)->where('status', 1)->update([
-                        'item_cost' => $total_cost,
-                        'item_retail' => $total_retail,
-                        'updated_by' => Auth::user()->id
+                    // $queryUpdate = Quotation::where('id', $quotation_id)->where('status', 1)->update([
+                    //     'item_cost' => $total_cost,
+                    //     'item_retail' => $total_retail,
+                    //     'updated_by' => Auth::user()->id
+                    // ]);
+
+                    
+                    $request->request->add([
+                        'price' => $quotation_cost,
+                        // 'discount' => 0,
+                        // 'margin' => 0,
+                        'item_cost' => $total_item_cost,
+                        'item_retail' => $total_item_retail,
+                        'vat' => 0,
+                        'total_vat' => 0,
+                        'item_retail_margin' => 0,
+                        'total_cost' => $total_cost,
+                        'total_retail' => $total_retail,
+                        'quotation_vat' => 0,
+                        'quotation_margin' => 0,
                     ]);
+
+                    $queryUpdate = $this->updatePriceInfo($request);
                     
                     if($queryUpdate){
                         DB::commit(); 
@@ -522,4 +593,67 @@ class QuotationController extends Controller
                 return json_encode($response);
             } 
     }
+
+    public function generateQuotationReference($quotation_id, $customer_id)
+    {
+        $query = Quotation::where('customer_id', $customer_id)->where('status', 1)->get();
+        $quotationCount = count($query);
+
+        if($quotationCount > 1){
+            $count = $quotationCount + 1;
+        }else{
+            $count = 1;
+        }
+
+        $referenceNo = $quotation_id.'-'.$count.'-'.date('Ymd');
+
+       return $referenceNo;
+    }
+
+    public function updatePriceInfo(Request $request)
+    {
+        $response = array();
+        $quotation_id = $request->input('quotation_id');
+
+            try{
+                DB::beginTransaction();
+
+                $update = Quotation::where('id', $quotation_id)->update([
+                    'price' => $request->input('price'),
+                    'discount' => $request->input('discount'),
+                    'margin' => $request->input('margin'),
+                    'item_cost' => floatval($request->input('item_cost')),
+                    'item_retail' => floatval($request->input('item_retail')),
+                    'vat' => floatval($request->input('vat')),
+                    'total_vat' => floatval($request->input('total_vat')),
+                    'item_retail_margin' => floatval($request->input('item_retail_margin')),
+                    'total_cost' => floatval($request->input('total_cost')),
+                    'total_retail' => floatval($request->input('total_retail')),
+                    'quotation_vat' => floatval($request->input('quotation_vat')),
+                    'quotation_margin' => floatval($request->input('quotation_margin')),
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                if($update){
+                    DB::commit(); 
+                   
+                    $getItemList = $this->getQuotationItems($quotation_id);
+
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                  
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                }
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
 }
