@@ -37,7 +37,7 @@
                                                             <option value="">Select Client</option>
                                                             @foreach ($customers as $value)
                                                             <option value="{{ $value->id }}" 
-                                                                {{ $value->id === $data->customer_id ? 'selected' : '' }}>{{ $value->code }} - {{ $value->name }}</option>
+                                                                {{ $value->id === $data->customer_id ? 'selected' : '' }}>{{ $value->code }} - {{  $value->postal_code }} - {{ $value->name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -106,6 +106,7 @@
                                     </div>
                                     <input type="hidden" name="quotation_id" id="quotation_id" value="{{ $data['id'] }}">
                                     <input type="hidden" name="in_office" id="in_office" value="">
+                                    <input type="hidden" name="vat_rate" id="vat_rate" value="{{ $data['vat_rate'] }}">
                                 </div>
                             
                             <hr>
@@ -141,7 +142,7 @@
                                         <div class="col-lg-3">
                                             <div class="form-group text-left">
                                                 <label for="discount" class="form-label">Discount</label>
-                                                <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['discount'] }}" autocomplete="off">
+                                                <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['discount'] ?: 0 }}" autocomplete="off">
                                             </div>
                                         </div>  
                                         <div class="col-lg-3">
@@ -175,7 +176,7 @@
                                                             <th class="th-sm item-list-qty">Qty</th>
                                                             <th class="th-sm item-list-total-cost">Total Cost</th>
                                                             <th class="th-sm">Total Retail</th>
-                                                            <th class="th-sm">Display In Report</th>
+                                                            <th class="th-sm item-list-display-report">Display In Report</th>
                                                             <th class="th-sm"></th>
                                                             <th class="th-sm"></th>
                                                         </tr>
@@ -200,18 +201,22 @@
                                                                 <td class="item-list-qty">{{ $value['qty'] }}</td>
                                                                 <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
                                                                 <td>{{ $value['total_retail'] }}</td>
-                                                                <td><input type="checkbox" id="item" name="item" 
-                                                                    onclick="updateDisplayStatus(this)" value="{{ $value['id'] }}" class="form-check-label" 
-                                                                    @if($value['display_report'] == 1) checked @endif></td>
+                                                                <td class="item-list-display-report">
+                                                                        <input type="checkbox" id="item" name="item" 
+                                                                        onclick="updateDisplayStatus(this)" value="{{ $value['id'] }}" class="form-check-label" 
+                                                                        @if($value['display_report'] == 1) checked @endif>
+                                                                </td>
                                                                 <td>
                                                                     <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['quotation_id'] }})">
                                                                         <i class="fas fa-trash-alt"></i>
                                                                     </a>
                                                                 </td>
                                                                 <td>
+                                                                    @if($value['type'] != 'bundle')
                                                                     <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})">
                                                                         <i class="fas fa-edit"></i>
                                                                     </a>
+                                                                    @endif
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -224,27 +229,12 @@
                                     <br><hr>
                                     <div class="row text-left">
 
-                                        <div class="col-lg-4" id="lbl-cost-details" style="display:none;">
+                                        <div class="col-lg-4">
                                             <table>
-                                                <tr>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb">Item Cost </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="item-cost-lbl">{{ number_format($total_item_cost, 2) }}</span></b></p></td>
-                                                </tr>
-                                                <tr>
+                                                <tr id="lbl-cost-details" style="display:none;">
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($total_cost, 2) }}</span></b></p></td>
-                                                </tr>
-                                            </table>
-                                        </div>
-
-                                        <div class="col-lg-4">
-                                            <table>
-                                                <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Item Retail </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="item-retail-lbl">{{ number_format($total_item_retail, 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
@@ -252,49 +242,39 @@
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="retail-lbl">{{ number_format($total_retail, 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:150px;"><p class="text-sm"><b class="d-block info-lb">Item Retail Margin</b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Discount (%)</b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="item-retail-margin-lbl"></span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="discount-lbl">{{ $data->discount, 2 }}</span></b></p></td>
                                                 </tr>
-                                            </table>
-                                        </div>
-
-                                        <div class="col-lg-4">
-                                            <table>
                                                 <tr>
                                                     <td style="width:150px;"><p class="text-sm"><b class="d-block info-lb">Quot. Price </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($quotation_cost[0], 2) }}</span></b></p></td>
                                                 </tr>
+                                            </table>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <table>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Quot. Margin </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-margin-lbl"></span></b></p></td>
+                                                    <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-margin-lbl"></span></b></p></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">VAT</b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="vat-lbl"></span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="vat-lbl">{{ number_format($vatAmt, 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Quot. + VAT</b></p></td>
+                                                    <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb">Quot. + VAT</b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-vat-lbl"></span></b></p></td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Margin</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="margin-lbl"></span></b></p></td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Discount</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="discount-lbl">{{ number_format($data->discount, 2) }}</span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
                                     </div>
-
+                                    <br>
                                     <div class="col-lg-2">
                                         <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Changes</button>
                                     </div>
@@ -405,7 +385,7 @@
                         @csrf
                     <input type="hidden" name="quotation_item_id" value="" id="quotation_item_id">
                    
-                    <div class="form-group">
+                    <div class="form-group" id="actual_cost_edit">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>
                         <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
                             required="" value="" autocomplete="off">
@@ -478,6 +458,7 @@
                 $('.item-list-total-cost').hide();
                 $('.item-list-cost').hide();
                 $('.item-search-cost').hide();
+                $('.item-list-display-report').hide();
                 
                 cuteAlert({
                     type: "question",
@@ -493,10 +474,40 @@
                         $('.item-list-total-cost').show();
                         $('.item-list-cost').show();
                         $('.item-search-cost').show();
+                        $('.item-list-display-report').show();
                         
                     } else {
                         $('#in_office').val('no');
                     }
+                });
+
+                var totalCost = parseFloat($("#total-cost-lbl").text());
+                var totalRetail = parseFloat($("#retail-lbl").text());
+                var quotationCost = parseFloat($('#price').val());
+                var discount = $('#discount').val();
+       
+                calculatePrices(quotationCost, totalRetail, totalCost, discount);
+
+                $("#discount").on("keyup", function() {
+
+                    var discount = this.value;
+                    var totalCost = parseFloat($("#total-cost-lbl").text());
+                    var totalRetail = parseFloat($("#retail-lbl").text());
+                    var quotationCost = parseFloat($('#price').val());
+
+                    calculatePrices(quotationCost, totalRetail, totalCost, discount);
+
+                });
+
+                $("#price").on("keyup", function() {
+
+                    var quotationCost = this.value;
+                    var totalCost = parseFloat($("#total-cost-lbl").text());
+                    var totalRetail = parseFloat($("#retail-lbl").text());
+                    var discount = parseFloat($('#discount').val());
+
+                    calculatePrices(quotationCost, totalRetail, totalCost, discount);
+
                 });
 
                 $("#formCreate").submit(function(event) {
@@ -513,13 +524,10 @@
                                     "customer": $('#customer').val(),
                                     "quotation_id": $('#quotation_id').val(),
                                     "price": $('#price').val(),
+                                    "price_after_discount":  $("#quot-price-lbl").text(),
                                     "discount": $('#discount').val(),
-                                    "margin": $('#margin').val(),
-                                    "item_cost": $("#item-cost-lbl").text(),
-                                    "item_retail": $("#item-retail-lbl").text(),
                                     "vat": $("#vat-lbl").text(),
                                     "total_vat": $("#quot-vat-lbl").text(),
-                                    "item_retail_margin": $("#item-retail-margin-lbl").text(),
                                     "total_cost": $("#total-cost-lbl").text(),
                                     "total_retail": $("#retail-lbl").text(),
                                     "quotation_vat": $("#quot-vat-lbl").text(),
@@ -585,14 +593,16 @@
                                         if(displayReport === 1){
                                             checkboxStatus = 'checked';
                                         }
-console.log(costColHidden);
+
                                         var type = val['type'];
                                         var name;
+                                        var editBtn = '';
 
                                         if(type === 'bundle'){
                                             name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                         }else{
                                             name = val['name'];
+                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
                                         }
 
                                         $('.item-list tbody').append(
@@ -606,12 +616,12 @@ console.log(costColHidden);
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
                                             +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
-                                            +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                            +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
                                             +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                            + editBtn
                                             +'</td>'
                                             +'</tr>'
                                         );
@@ -622,8 +632,7 @@ console.log(costColHidden);
                                     });
                                 } 
 
-                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
-
+                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
                             }, error: function (data) {
         
@@ -685,12 +694,15 @@ console.log(costColHidden);
 
                                             var type = val['type'];
                                             var name;
+                                            var editBtn = '';
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                             }else{
                                                 name = val['name'];
+                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
                                             }
+
 
                                             $('.item-list tbody').append(
                                                 '<tr>'
@@ -703,13 +715,11 @@ console.log(costColHidden);
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
                                                 +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                                 +'<td>' + val['total_retail'] + '</td>'
-                                                +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                                +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                                 +'</td>'
-                                                +'<td>'
-                                                +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
-                                                +'</td>'
+                                                +'<td>' + editBtn +'</td>'
                                                 +'</tr>'
                                             );
                                         
@@ -719,6 +729,7 @@ console.log(costColHidden);
                                         });
                                     } 
 
+                                    $("#editDetails").modal('hide');
                                 } else {
                                     toastr.error(
                                         'Error',
@@ -727,12 +738,13 @@ console.log(costColHidden);
                                             timeOut: 1500,
                                             fadeOut: 1500,
                                             onHidden: function () {
-                                                // window.location.reload();
+                                                window.location.reload();
                                             }
                                         }
                                     );
                                 }
-                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
+                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
+
                                 
                                 $("#editDetails").modal('hide');
                             }, error: function (data) {
@@ -848,11 +860,13 @@ console.log(costColHidden);
 
                                         var type = val['type'];
                                             var name;
+                                            var editBtn = '';
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                             }else{
                                                 name = val['name'];
+                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
                                             }
                                
                                         $('.item-list tbody').append(
@@ -866,12 +880,12 @@ console.log(costColHidden);
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
                                             +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
-                                            +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                            +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
                                             +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                            +editBtn
                                             +'</td>'
                                             +'</tr>'
                                         );
@@ -882,22 +896,41 @@ console.log(costColHidden);
                                     });
                                 } 
 
-                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
+                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
+
                             }, error: function (data) {
                                         
                         }
                 });
             }
 
-            function calculatePrices(quotationCost, totalRetail, totalCost, itemCost, itemRetail){
+            function calculatePrices(quotationCost, totalRetail, totalCost, discount){
 
-                $("#quot-price-lbl").text(Number(quotationCost).toFixed(2));
+                if(typeof discount == "undefined"){
+                    discount = 0;
+                }else{
+                    discount = parseFloat(discount);
+                }
 
+                var quotationPriceAfterDiscount = quotationCost - ((quotationCost * discount)/100);
+
+                var quotationMargin = quotationPriceAfterDiscount - totalCost;
+                var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
+                var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+
+                var vat_rate = $("#vat_rate").val();
+                $("#margin").val(quotationMarginRate);
+
+                var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
+
+                $("#quot-price-lbl").text(Number(quotationPriceAfterDiscount).toFixed(2));
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
-                $("#item-cost-lbl").text(Number(itemCost).toFixed(2));
-
-                $("#item-retail-lbl").text(Number(itemRetail).toFixed(2));
                 $("#retail-lbl").text(Number(totalRetail).toFixed(2));
+
+                $("#quot-margin-lbl").text(quotationMarginVal);
+                $("#discount-lbl").text(discount);
+                $("#vat-lbl").text(Number(vatValue).toFixed(2));
+                $("#quot-vat-lbl").text(Number(vatValue + quotationPriceAfterDiscount).toFixed(2));
             }
 
             function updateDisplayStatus(isChecked){
@@ -953,11 +986,13 @@ console.log(costColHidden);
 
                                         var type = val['type'];
                                         var name;
+                                        var editBtn = '';
 
                                         if(type === 'bundle'){
                                             name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                         }else{
                                             name = val['name'];
+                                             editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
                                         }
 
                                         $('.item-list tbody').append(
@@ -971,12 +1006,12 @@ console.log(costColHidden);
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
                                             +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
-                                            +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                            +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
                                             +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                            +editBtn
                                             +'</td>'
                                             +'</tr>'
                                         );
@@ -986,7 +1021,8 @@ console.log(costColHidden);
                                         $('.item-list-qty').addClass('editable');
                                     });
                                 } 
-                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
+                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
+
                             }, error: function (data) {
                                         
                         }
@@ -999,6 +1035,11 @@ console.log(costColHidden);
                 $("#quotation_item_id").val(id);
                 $("#retail").val(retail);
                 $("#editDetails").modal('show');
+
+                if($('#in_office').val() != 'yes'){
+                    $("#actual_cost_edit").hide();
+                }
+                
             }
 
             function editBundle(quotationId, ItemId) {
@@ -1042,11 +1083,13 @@ console.log(costColHidden);
 
                                             var type = val['type'];
                                             var name;
+                                            var editBtn = '';
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                             }else{
                                                 name = val['name'];
+                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
                                             }
 
                                             $('.item-list tbody').append(
@@ -1060,12 +1103,12 @@ console.log(costColHidden);
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
                                                 +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                                 +'<td>' + val['total_retail'] + '</td>'
-                                                +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                                +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                                 +'</td>'
                                                 +'<td>'
-                                                +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>'
+                                                +editBtn
                                                 +'</td>'
                                                 +'</tr>'
                                             );
@@ -1077,7 +1120,7 @@ console.log(costColHidden);
                                         });
                                     } 
 
-                                    calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
+                                    calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
                                 }, error: function (data) {
                                         toastr.error(
@@ -1087,7 +1130,7 @@ console.log(costColHidden);
                                                 timeOut: 1500,
                                                 fadeOut: 1500,
                                                 onHidden: function () {
-                                                    window.location.reload();
+                                                    // window.location.reload();
                                                 }
                                             }
                                         );

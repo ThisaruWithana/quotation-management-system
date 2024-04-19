@@ -21,8 +21,8 @@ return new class extends Migration
             $table->double('discount')->default(0);
             $table->double('item_cost')->nullable();
             $table->double('item_retail')->nullable();
-            $table->double('vat')->nullable();
-            $table->double('total_vat')->nullable();
+            $table->double('vat_rate')->nullable();
+            $table->double('vat_amt')->nullable();
             $table->double('item_retail_margin')->nullable();
             $table->tinyInteger('status')->default(1)->comment('1-active,0-deactive');
             $table->integer('created_by');

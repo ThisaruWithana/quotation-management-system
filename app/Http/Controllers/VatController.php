@@ -96,4 +96,9 @@ class VatController extends Controller
     {
         return view('barcode');
     }
+
+    public function getLatestVatRate()
+    {
+       return $query = VAT::where('value', '!=', 0)->where('status', 1)->pluck('value');
+    }
 }

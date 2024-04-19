@@ -12,8 +12,8 @@ class Quotation extends Model
     protected $table = 'quotation';
 
     protected $fillable = [
-        'id','customer_id', 'description','ref','price','margin', 'discount', 'item_cost', 'item_retail', 'vat',
-        'total_vat','item_retail_margin','status', 'created_at', 'updated_at', 'created_by', 'updated_by'
+        'id','customer_id', 'description','ref','price','margin', 'discount', 'vat_rate',
+        'vat_amt','final_price','status', 'created_at', 'updated_at', 'created_by', 'updated_by'
         ,'total_cost', 'total_retail', 'quotation_vat', 'quotation_margin'
     ];
 
