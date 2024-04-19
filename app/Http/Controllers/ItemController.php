@@ -635,6 +635,7 @@ class ItemController extends Controller
                 'name' => $value['name'],
                 'department' => $value['department']['name'],
                 'cost_price' => $value['cost_price'],
+                'retail_price' => $value['retail_price'],
                 'supplier' => implode(" ",$supplierList)
             ]);
             array_push($response, $data);

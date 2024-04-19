@@ -124,7 +124,7 @@
                 }).then((e)=>{
                 if ( e == ("confirm")){
                         $.ajax({
-                            url: "{{ url('admin/bundle/change-status') }}",
+                            url: "{{ url('admin/quotation/change-status') }}",
                             type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",

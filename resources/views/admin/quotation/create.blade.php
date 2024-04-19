@@ -100,6 +100,7 @@
                                         </div>
                                     </div>
                                     <input type="hidden" name="quotation_id" id="quotation_id" value="">
+                                    <input type="hidden" name="in_office" id="in_office" value="">
                                 </div>
                                 
                                 <div class="col-lg-2">
@@ -107,7 +108,7 @@
                                 </div> 
                             <hr>
               
-                            <div class=" add-items" style="display:none;">
+                            <div class="add-items" style="display:none;">
 
                                     <div class="row">
                                         <div class="col-lg-4">
@@ -160,17 +161,17 @@
                                             </div><br>
 
                                             <div class="">
-                                                <table class="table item-list table-bordered" id="dataTable">
+                                                <table class="table item-list table-bordered" id="dataTable" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th class="th-sm">Code</th>
                                                             <th class="th-sm">Name</th>
                                                             <th class="th-sm">Supplier</th>
-                                                            <th class="th-sm">Cost</th>
-                                                            <th class="th-sm">Actual Cost</th>
-                                                            <th class="th-sm">Retail</th>
-                                                            <th class="th-sm">Qty</th>
-                                                            <th class="th-sm">Total Cost</th>
+                                                            <th class="th-sm item-list-cost">Cost</th>
+                                                            <th class="th-sm item-list-item-cost">Actual Cost</th>
+                                                            <th class="th-sm item-list-retail">Retail</th>
+                                                            <th class="th-sm item-list-qty">Qty</th>
+                                                            <th class="th-sm item-list-total-cost">Total Cost</th>
                                                             <th class="th-sm">Total Retail</th>
                                                             <th class="th-sm">Display In Report</th>
                                                             <th class="th-sm"></th>
@@ -188,7 +189,7 @@
                                     <br><hr>
                                     <div class="row text-left">
 
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-4" id="lbl-cost-details" style="display:none;">
                                             <table>
                                                 <tr>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb">Item Cost </b></p></td>
@@ -257,11 +258,11 @@
                                                 </tr>
                                             </table>
                                         </div>
-
-                                        <div class="col-lg-2">
-                                            <button class="btn btn-primary btn-block" type="button" id="btnSaveChanges">Save Changes</button>
-                                        </div>
                                     </div>
+
+                                <div class="col-lg-2">
+                                    <button class="btn btn-primary btn-block" type="button" id="btnSaveChanges">Save Changes</button>
+                                </div>
                             </div>
                         </div>
                         </form>
@@ -333,8 +334,8 @@
                                             <th class="th-sm">Item Name</th>
                                             <th class="th-sm">Department</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm">Cost</th>
-                                            <th class="th-sm">Actual Cost</th>
+                                            <th class="th-sm item-search-cost">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
                                             <th class="th-sm"></th>
                                         </tr>
                                     </thead>
@@ -400,6 +401,7 @@
     @section('js')
         <script>
             $(function() {
+
                 $('#dataTable').DataTable({
                     "bPaginate": false,
                     "searching": false,
@@ -431,6 +433,35 @@
         </script>
         <script>
             $(document).ready(function() {
+
+                $('.item-list-item-cost').addClass('editable');
+                $('.item-list-retail').addClass('editable');
+                $('.item-list-qty').addClass('editable');
+
+                $('.item-list-item-cost').hide();
+                $('.item-list-total-cost').hide();
+                $('.item-list-cost').hide();
+                $('.item-search-cost').hide();
+                
+                cuteAlert({
+                    type: "question",
+                    title: "Are you in the office",
+                    message: "",
+                    confirmText: "Yes",
+                    cancelText: "No"
+                    }).then((e)=>{
+                    if ( e == ("confirm")){
+                        $('#in_office').val('yes');
+                        $("#lbl-cost-details").show();
+                        $('.item-list-item-cost').show();
+                        $('.item-list-total-cost').show();
+                        $('.item-list-cost').show();
+                        $('.item-search-cost').show();
+                        
+                    } else {
+                        $('#in_office').val('no');
+                    }
+                });
 
                 $('.add-description').click(function(){
                     $('.add-description-history').show();
@@ -536,6 +567,13 @@
                                 $('.item-list tbody').empty();
 
                                 if (result['data'].length > 0) {
+                                    
+                                    var costColHidden;
+
+                                    if($('#in_office').val() != 'yes'){
+                                        costColHidden = 'style="display:none;"';
+                                    }
+
                                     $.each(result['data'], function (count, val) {
 
                                         var displayReport = val['display_report'];
@@ -559,11 +597,11 @@
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td>' + val['actual_cost'] + '</td>'
-                                            +'<td>' + val['item_cost'] + '</td>'
-                                            +'<td>' + val['retail'] + '</td>'
-                                            +'<td>' + val['qty'] + '</td>'
-                                            +'<td>' + val['total_cost'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
+                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
@@ -574,11 +612,14 @@
                                             +'</td>'
                                             +'</tr>'
                                         );
+                                        
+                                        $('.item-list-item-cost').addClass('editable');
+                                        $('.item-list-retail').addClass('editable');
+                                        $('.item-list-qty').addClass('editable');
                                     });
                                 } 
 
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
-
 
                             }, error: function (data) {
         
@@ -612,6 +653,13 @@
                                 if (result['code'] == 1) {
 
                                     if (result['data'].length > 0) {
+                                    
+                                        var costColHidden;
+
+                                        if($('#in_office').val() != 'yes'){
+                                            costColHidden = 'style="display:none;"';
+                                        }
+
                                         $.each(result['data'], function (count, val) {
 
                                             var displayReport = val['display_report'];
@@ -636,11 +684,11 @@
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
-                                                +'<td>' + val['actual_cost'] + '</td>'
-                                                +'<td>' + val['item_cost'] + '</td>'
-                                                +'<td>' + val['retail'] + '</td>'
-                                                +'<td>' + val['qty'] + '</td>'
-                                                +'<td>' + val['total_cost'] + '</td>'
+                                                +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
+                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
+                                                +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                                +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                                +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                                 +'<td>' + val['total_retail'] + '</td>'
                                                 +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
@@ -651,6 +699,10 @@
                                                 +'</td>'
                                                 +'</tr>'
                                             );
+                                        
+                                            $('.item-list-item-cost').addClass('editable');
+                                            $('.item-list-retail').addClass('editable');
+                                            $('.item-list-qty').addClass('editable');
                                         });
                                     } 
 
@@ -739,6 +791,12 @@
                         $('.table-item-search tbody').empty();
 
                             if (result.length > 0) {
+                                var costColHidden;
+
+                                if($('#in_office').val() != 'yes'){
+                                    costColHidden = 'style="display:none;"';
+                                }
+
                                 $.each(result, function (count, val) {
                     
                                     $('.table-item-search tbody').append(
@@ -747,8 +805,8 @@
                                         +'<td>' + val['name'] + '</td>'
                                         +'<td>' + val['department']+ '</td>'
                                         +'<td>' + val['supplier'] + '</td>'
-                                        +'<td>' + val['cost_price'] + '</td>'
-                                        +'<td>' + val['cost_price'] + '</td>'
+                                        +'<td class="item-search-cost" '+ costColHidden +'>' + val['cost_price'] + '</td>'
+                                        +'<td>' + val['retail_price'] + '</td>'
                                         +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this)" value="' + val['id'] + '" class="form-check-label"></td>'
                                         +'</tr>'
                                     );
@@ -778,6 +836,12 @@
                                 $('.item-list tbody').empty();
 
                                 if (result['data'].length > 0) {
+                                    var costColHidden;
+
+                                    if($('#in_office').val() != 'yes'){
+                                        costColHidden = 'style="display:none;"';
+                                    }
+
                                     $.each(result['data'], function (count, val) {
 
                                         var displayReport = val['display_report'];
@@ -801,11 +865,11 @@
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td>' + val['actual_cost'] + '</td>'
-                                            +'<td>' + val['item_cost'] + '</td>'
-                                            +'<td>' + val['retail'] + '</td>'
-                                            +'<td>' + val['qty'] + '</td>'
-                                            +'<td>' + val['total_cost'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
+                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
@@ -816,6 +880,10 @@
                                             +'</td>'
                                             +'</tr>'
                                         );
+                                        
+                                        $('.item-list-item-cost').addClass('editable');
+                                        $('.item-list-retail').addClass('editable');
+                                        $('.item-list-qty').addClass('editable');
                                     });
                                 } 
 
@@ -871,6 +939,12 @@
                                 $('.item-list tbody').empty();
 
                                 if (result['data'].length > 0) {
+                                    var costColHidden;
+
+                                    if($('#in_office').val() != 'yes'){
+                                        costColHidden = 'style="display:none;"';
+                                    }
+
                                     $.each(result['data'], function (count, val) {
 
                                         var displayReport = val['display_report'];
@@ -894,11 +968,11 @@
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td>' + val['actual_cost'] + '</td>'
-                                            +'<td>' + val['item_cost'] + '</td>'
-                                            +'<td>' + val['retail'] + '</td>'
-                                            +'<td>' + val['qty'] + '</td>'
-                                            +'<td>' + val['total_cost'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
+                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
@@ -909,6 +983,10 @@
                                             +'</td>'
                                             +'</tr>'
                                         );
+                                        
+                                        $('.item-list-item-cost').addClass('editable');
+                                        $('.item-list-retail').addClass('editable');
+                                        $('.item-list-qty').addClass('editable');
                                     });
                                 } 
                                 calculatePrices($('#price').val(), result['total_retail'], result['total_cost'], result['total_item_cost'], result['total_item_retail']);
@@ -950,6 +1028,12 @@
                                     $('.item-list tbody').empty();
 
                                     if (result['data'].length > 0) {
+                                        var costColHidden;
+
+                                        if($('#in_office').val() != 'yes'){
+                                            costColHidden = 'style="display:none;"';
+                                        }
+                                        
                                         $.each(result['data'], function (count, val) {
 
                                             var displayReport = val['display_report'];
@@ -973,11 +1057,11 @@
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
-                                                +'<td>' + val['actual_cost'] + '</td>'
-                                                +'<td>' + val['item_cost'] + '</td>'
-                                                +'<td>' + val['retail'] + '</td>'
-                                                +'<td>' + val['qty'] + '</td>'
-                                                +'<td>' + val['total_cost'] + '</td>'
+                                                +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
+                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
+                                                +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                                +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                                +'<td '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                                 +'<td>' + val['total_retail'] + '</td>'
                                                 +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
@@ -988,6 +1072,10 @@
                                                 +'</td>'
                                                 +'</tr>'
                                             );
+                                        
+                                            $('.item-list-item-cost').addClass('editable');
+                                            $('.item-list-retail').addClass('editable');
+                                            $('.item-list-qty').addClass('editable');
                                         });
                                     } 
 
