@@ -67,7 +67,7 @@
                                             <div class="form-group text-left">
                                                 <label for="price" class="form-label">Quotation Price</label>
                                                 <span class="required"> * </span><br>
-                                                <input type="text" class="form-control" id="price" name="price" value="" autocomplete="off">
+                                                <input type="text" class="form-control" id="price" name="price" value="" autocomplete="off" required>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
@@ -132,7 +132,7 @@
                                 </div> 
                             <hr>
               
-                            <div class="add-items" style="display:block;">
+                            <div class="add-items" style="display:none;">
 
                                     <div class="row">
                                         <div class="col-lg-4">
