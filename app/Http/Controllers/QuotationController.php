@@ -15,6 +15,7 @@ use App\Models\QuotationDescription;
 use App\Models\QuotationItem;
 use App\Models\BundleItem;
 use App\Models\Item;
+use App\Models\SubItem;
 use DB;
 
 class QuotationController extends Controller
@@ -212,7 +213,46 @@ class QuotationController extends Controller
                     'created_by' => Auth::user()->id,
                     'updated_by' => Auth::user()->id,
                 ]);
+                
+                if($request->input('type') === 'main'){
 
+                    $checkSubItems = SubItem::where('parent_id',$id)->where('status', 1)->get();
+
+                    if(count($checkSubItems) > 0){
+    
+                        foreach($checkSubItems as $value){
+                            $is_mandatory = $value['is_mandatory'];
+    
+                            if($is_mandatory == 1){
+                                $lastInsert = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->orderBy('id', 'desc')->first();
+         
+                                if(empty($lastInsert)){
+                                    $subItemOrder = 1;
+                                }else{
+                                    $lastInsert = $lastInsert['order'];
+                                    $subItemOrder = $lastInsert + 1;
+                                }
+                    
+                                $store = QuotationItem::create([
+                                    'quotation_id' => $quotation_id,
+                                    'item_id' => $value['subitem']['id'],
+                                    'item_cost' => $value['subitem']['cost_price'],
+                                    'actual_cost' => $value['subitem']['cost_price'],
+                                    'retail' => $value['subitem']['retail_price'],
+                                    'actual_retail' => $value['subitem']['retail_price'],
+                                    'qty' => 1,
+                                    'total_cost' => $value['subitem']['cost_price'],
+                                    'total_retail' => $value['subitem']['retail_price'],
+                                    'order' => $subItemOrder,
+                                    'status' => 1,
+                                    'created_by' => Auth::user()->id,
+                                    'updated_by' => Auth::user()->id,
+                                ]);
+                            }
+                        }
+                    }
+    
+                }
             }else{
 
                 $is_checked = 0;

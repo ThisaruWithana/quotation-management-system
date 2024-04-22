@@ -93,6 +93,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
 
     Route::prefix('item')->group(function(){
         Route::post('search', [ItemController::class, 'search'])->name('item.search');
+        
+        Route::post('get-sub-items', [ItemController::class, 'getSubItems'])->name('item.get-sub-items');
     });
 
     Route::prefix('quotation')->group(function(){

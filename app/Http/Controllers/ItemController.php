@@ -655,4 +655,38 @@ class ItemController extends Controller
         }
         return $uniqueNumber;
     }
+
+    public function getSubItems(Request $request)
+    {
+        $response = array();
+        $itemId = $request->input('id');
+        $optionalItems = SubItem::with('subitem.department', 'subitem.suppliers')->where('parent_id', $itemId)->where('status', 1)->orderBy('id','DESC')->get();
+        
+        foreach($optionalItems as $value){
+            $supplierList = array();
+
+            foreach($value['subitem']['suppliers'] as $supplier){
+                $supplier = $supplier['suppliername']['name'];
+                array_push($supplierList, $supplier);
+            }
+
+            $data = ([
+                'is_mandatory' => $value['is_mandatory'],
+                'id' => $value['subitem']['id'],
+                'name' => $value['subitem']['name'],
+                'department' => $value['subitem']['department']['name'],
+                'cost_price' => $value['subitem']['cost_price'],
+                'retail_price' => $value['subitem']['retail_price'],
+                'supplier' => implode(" ",$supplierList)
+            ]);
+            array_push($response, $data);
+        }
+    
+
+        // $response['code'] = 1;
+        // $response['msg'] = "Success";
+        // $response['data'] = $optionalItems;
+
+        return json_encode($response);
+    }
 }

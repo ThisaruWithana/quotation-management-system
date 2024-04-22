@@ -368,7 +368,6 @@
             </div>
         </div>
 
-        
         <!-- Edit Detail -->
         <div class="modal fade" id="editDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -407,6 +406,50 @@
                 </div>
                 </form>
 
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Items Model -->
+        <div class="modal fade bd-example-modal-lg" id="subItemList" tabindex="-1" role="dialog" aria-labelledby="subItemList" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="" method="POST"
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                            @csrf
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive">
+                                <table class="table table-sub-items table-bordered" id="dataTable" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-sm">Item Code</th>
+                                            <th class="th-sm">Item Name</th>
+                                            <th class="th-sm">Department</th>
+                                            <th class="th-sm">Supplier</th>
+                                            <th class="th-sm item-search-cost">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
+                                            <th class="th-sm"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
                 </div>
             </div>
         </div>
@@ -537,7 +580,7 @@
                                     var result = JSON.parse(data);
 
                                     if (result['code'] == 1) {
-                                        window.location = '{{ url("admin/quotation") }}';
+                                        window.location.reload();
                                     
                                     } else {
                                         toastr.error(
@@ -805,6 +848,7 @@
                                 }
 
                                 $.each(result, function (count, val) {
+                                    var type = 'main';
                     
                                     $('.table-item-search tbody').append(
                                         '<tr>'
@@ -814,7 +858,7 @@
                                         +'<td>' + val['supplier'] + '</td>'
                                         +'<td '+ costColHidden +'>' + val['cost_price'] + '</td>'
                                         +'<td>' + val['retail_price'] + '</td>'
-                                        +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this)" value="' + val['id'] + '" class="form-check-label"></td>'
+                                        +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this, \'' + type + '\')" value="' + val['id'] + '" class="form-check-label"></td>'
                                         +'</tr>'
                                     );
                                 });
@@ -825,7 +869,7 @@
                 });
             }
 
-            function selectItem(isChecked){
+            function selectItem(isChecked, Itemtype){
               var ischecked = isChecked.checked;
 
                 $.ajax({
@@ -836,6 +880,7 @@
                                 "id": isChecked.value,
                                 "ischecked": ischecked,
                                 "quotation_id":$('#quotation_id').val(),
+                                "type": Itemtype
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
@@ -898,6 +943,9 @@
 
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
+                                if(Itemtype == 'main'){
+                                    displaySubItemList(isChecked.value);
+                                }
                             }, error: function (data) {
                                         
                         }
@@ -1141,6 +1189,59 @@
                 });
             }
 
+            function displaySubItemList(ItemId){
+                
+                $.ajax({
+                    url: "{{ url('admin/item/get-sub-items') }}",
+                    type: 'POST',
+                    data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": ItemId
+                        },
+                    success: function (data) {
+                        var result = JSON.parse(data);
+
+                        $('.table-sub-items tbody').empty();
+
+                        if (result.length > 0) {
+                            $("#subItemList").modal('show');
+                            var costColHidden;
+                    
+                            if($('#in_office').val() != 'yes'){
+                                costColHidden = 'style="display:none;"';
+                            }
+                    
+                            $.each(result, function (count, val) {
+                                var isMandatory = val['is_mandatory'];
+                                var selected;
+                                var type = 'sub';
+
+                                if(isMandatory == 1){
+                                    selected = 'checked disabled';
+                                }else{
+                                    selected = '';
+                                }
+                                            
+                                $('.table-sub-items tbody').append(
+                                    '<tr>'
+                                    +'<td>' + val['id'] + '</td>'
+                                    +'<td>' + val['name'] + '</td>'
+                                    +'<td>' + val['department']+ '</td>'
+                                    +'<td>' + val['supplier'] + '</td>'
+                                    +'<td '+ costColHidden +'>' + val['cost_price'] + '</td>'
+                                    +'<td>' + val['retail_price'] + '</td>'
+                                    +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this, \'' + type + '\')" value="' + val['id'] + '" class="form-check-label" '+ selected +'></td>'
+                                    +'</tr>'
+                                    );
+                            });
+                        }else{
+
+                        }
+                    }, error: function (data) {
+                                                        
+                    }
+                });
+            }
         </script>
     @endsection
 </x-admin>
