@@ -3,27 +3,51 @@
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                <a href="{{ route('admin.bundle.create') }}" class="btn btn-sm btn-primary">Add New</a>
+                <a href="{{ url('admin/bundle/create') }}" class="btn btn-sm btn-primary">Add New</a>
             </div>
         </div>
         <div class="card-body table-responsive">
-            <table class="table" id="dataTable">
-                <thead>
-                    <tr>
-                        <th class="th-sm">Bundle Name</th>
-                        <th class="th-sm">Remark</th>
-                        <th class="th-sm">Bundle Cost</th>
-                        <th class="th-sm">Bundle Retail</th>
-                        <th class="th-sm">Total Cost</th>
-                        <th class="th-sm">Difference</th>
-                        <th class="th-sm">Status</th>
-                        <th class="th-sm"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php $i = 1; ?>
-                @foreach ($data as $value)
+        <form method="GET" action="{{ url('admin/bundle') }}" id="frm-list">
+
+            <div class="row">
+                <div class="form-group" style="margin-left:10px;">
+
+                        <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
+                            onchange="selectPageSize(this.value)">
+                                <option value="10" {{ $pageSize == '10' ? 'selected="selected"' : '' }}>10
+                                </option>
+                                <option value="25" {{ $pageSize == '25' ? 'selected="selected"' : '' }}>25
+                                </option>
+                                <option value="50" {{ $pageSize == '50' ? 'selected="selected"' : '' }}>50
+                                </option>
+                                <option value="100" {{ $pageSize == '100' ? 'selected="selected"' : '' }}>100
+                                </option>
+                        </select>
+                </div>
+                    
+                <input type="hidden" name="form_action" value="search">
+                </div>
+            </form>
+            <br>
+            <div>
+                <table class="table" id="dataTable" width="100%">
+                    <thead>
                         <tr>
+                            <th class="th-sm">#</th>
+                            <th class="th-sm">Bundle Name</th>
+                            <th class="th-sm">Remark</th>
+                            <th class="th-sm">Bundle Cost</th>
+                            <th class="th-sm">Bundle Retail</th>
+                            <th class="th-sm">Total Cost</th>
+                            <th class="th-sm">Difference</th>
+                            <th class="th-sm">Status</th>
+                            <th class="th-sm"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($listData as $value)
+                        <tr>
+                            <td>{{ $value->id }}</td>
                             <td>{{ $value->name }}</td>
                             <td>{{ $value->remark }}</td>
                             <td>{{ number_format($value->bundle_cost, 2) }}</td>
@@ -53,10 +77,11 @@
                                 @endif
                             </td>
                         </tr>
-                     <?php $i++; ?>
-                    @endforeach
-                </tbody>
-            </table>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div id="list_pagination" style="float: right;">{{ $listData->appends(Request::all())->links() }}</div>
         </div>
     </div>
     @section('js')
@@ -64,15 +89,16 @@
             $(function() {
 
                 $('#dataTable').DataTable({
-                    "bPaginate": true,
+                    "bPaginate": false,
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
                     // "scrollX": false,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 7 ]},
-                    ]
+                        { "bSortable": false, "aTargets": [ 8 ]},
+                    ],
+                    "order": [0,'desc'],
                 });
             });
             
@@ -137,6 +163,10 @@
                 } else {
                 }
             });
+        }
+
+        function selectPageSize(pageSize) {
+            document.getElementById('frm-list').submit();
         }
         </script>
     @endsection

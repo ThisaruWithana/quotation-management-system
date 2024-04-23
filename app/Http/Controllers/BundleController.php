@@ -16,10 +16,34 @@ use Auth;
 
 class BundleController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $data = Bundle::with('created_user')->orderBy('id','DESC')->get();
+    //     return view('admin.bundle.index', compact('data'));
+    // }
+
+    public function index(Request $request)
     {
-        $data = Bundle::with('created_user')->orderBy('id','DESC')->get();
-        return view('admin.bundle.index', compact('data'));
+        $pageSize;
+
+        if (!isset($request->pagesize)) {
+            $new = 10;
+        }else{
+            $new = $request->pagesize;
+        }
+
+        $pageSize = $new;
+        $data = Bundle::query()->with('created_user')->orderBy('id','DESC');
+
+        if($request->query('form_action') === 'search'){
+
+            // if(!is_null($customer)) {
+            //     $data->where('customer_id',  $customer);
+            // }
+        }
+        $listData = $data->paginate($pageSize);  
+
+        return view('admin.bundle.index',compact('listData', 'pageSize'));
     }
 
     public function create()
