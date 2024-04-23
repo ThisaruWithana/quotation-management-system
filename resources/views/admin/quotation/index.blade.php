@@ -16,7 +16,7 @@
                             onchange="selectPageSize(this.value)">
                                 <option value="10" {{ $pageSize == '10' ? 'selected="selected"' : '' }}>10
                                 </option>
-                                <option value="3" {{ $pageSize == '3' ? 'selected="selected"' : '' }}>25
+                                <option value="25" {{ $pageSize == '25' ? 'selected="selected"' : '' }}>25
                                 </option>
                                 <option value="50" {{ $pageSize == '50' ? 'selected="selected"' : '' }}>50
                                 </option>

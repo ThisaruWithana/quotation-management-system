@@ -53,7 +53,7 @@
                                     <div class="col-lg-4 pricing-details">
                                         <div class="text-left" style="margin-left:100px;margin-top: 25px;">
                                             <table>
-                                                <tr>
+                                                <tr class="bundle-item-cost">
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
                                                     <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($data->total_cost, 2) }}</span></b></p></td>
@@ -81,6 +81,7 @@
                                 <input type="hidden" value="{{ $data->total_cost }}" id="total_cost" name="total_cost">
                                 <input type="hidden" value="{{ $data->total_retail }}" id="total_retail" name="total_retail">
                                 <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="{{ $data->id }}">
+                                <input type="hidden" name="in_office" id="in_office" value="">
                         </div>
                         <!-- /.card-body -->
 
@@ -100,13 +101,13 @@
                                             <th class="th-sm">Code</th>
                                             <th class="th-sm">Name</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm">Cost</th>
-                                            <th class="th-sm">Actual Cost</th>
+                                            <th class="th-sm item-list-cost">Cost</th>
+                                            <th class="th-sm item-list-item-cost">Actual Cost</th>
                                             <th class="th-sm">Retail</th>
-                                            <th class="th-sm">Qty</th>
-                                            <th class="th-sm">Total Cost</th>
+                                            <th class="th-sm item-list-qty">Qty</th>
+                                            <th class="th-sm item-list-total-cost">Total Cost</th>
                                             <th class="th-sm">Total Retail</th>
-                                            <th class="th-sm">Display In Report</th>
+                                            <th class="th-sm item-list-display-report">Display In Report</th>
                                             <th class="th-sm"></th>
                                             <th class="th-sm"></th>
                                         </tr>
@@ -117,13 +118,14 @@
                                                 <td>{{ $value['item_id'] }}</td>
                                                 <td>{{ $value['name'] }}</td>
                                                 <td>{{ $value['supplier'] }}</td>
-                                                <td>{{ $value['actual_cost'] }}</td>
-                                                <td>{{ $value['actual_cost'] }}</td>
+                                                <td class="item-list-cost">{{ $value['actual_cost'] }}</td>
+                                                <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
                                                 <td>{{ $value['retail'] }}</td>
-                                                <td>{{ $value['qty'] }}</td>
-                                                <td>{{ $value['total_cost'] }}</td>
+                                                <td class="item-list-qty">{{ $value['qty'] }}</td>
+                                                <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
                                                 <td>{{ $value['total_retail'] }}</td>
-                                                <td><input type="checkbox" id="item" name="item"
+                                                <td class="item-list-display-report">
+                                                    <input type="checkbox" id="item" name="item"
                                                     onclick="updateDisplayStatus(this)" value="{{ $value['id'] }}" class="form-check-label"
                                                     @if($value['display_report'] == 1) checked @endif></td>
                                                 <td>
@@ -215,8 +217,8 @@
                                             <th class="th-sm">Item Name</th>
                                             <th class="th-sm">Department</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm">Cost</th>
-                                            <th class="th-sm">Actual Cost</th>
+                                            <th class="th-sm item-search-cost">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
                                             <th class="th-sm"></th>
                                         </tr>
                                     </thead>
@@ -251,7 +253,8 @@
                     <input type="hidden" name="bundle_item_id" value="" id="bundle_item_id">
                     <input type="hidden" name="bundleId" value="" id="bundle_item_id">
                     <input type="hidden" name="retail" value="" id="retail">
-                    <div class="form-group">
+
+                    <div class="form-group" id="actual_cost_edit">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>
                         <input type="text" class="form-control" id="actual_cost" name="actual_cost"
                             required="" value="" autocomplete="off">
@@ -271,7 +274,50 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Sub Items Model -->
+        <div class="modal fade bd-example-modal-lg" id="subItemList" tabindex="-1" role="dialog" aria-labelledby="subItemList" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
 
+                    <form action="" method="POST"
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                            @csrf
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive">
+                                <table class="table table-sub-items table-bordered" id="dataTable" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-sm">Item Code</th>
+                                            <th class="th-sm">Item Name</th>
+                                            <th class="th-sm">Department</th>
+                                            <th class="th-sm">Supplier</th>
+                                            <th class="th-sm item-search-cost">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
+                                            <th class="th-sm"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     @section('js')
@@ -305,6 +351,40 @@
         </script>
         <script>
             $(document).ready(function() {
+
+                $('.item-list-item-cost').addClass('editable');
+                $('.item-list-retail').addClass('editable');
+                $('.item-list-qty').addClass('editable');
+
+                $('.bundle-item-cost').hide();
+                $('.item-list-item-cost').hide();
+                $('.item-list-total-cost').hide();
+                $('.item-list-cost').hide();
+                $('.item-search-cost').hide();
+                $('.item-list-display-report').hide();
+
+                cuteAlert({
+                    type: "question",
+                    title: "Are you in the office",
+                    message: "",
+                    confirmText: "Yes",
+                    cancelText: "No"
+                    }).then((e)=>{
+                    if ( e == ("confirm")){
+                        $('#in_office').val('yes');
+                        $(".bundle-item-cost").show();
+                        $('.item-list-item-cost').show();
+                        $('.item-list-total-cost').show();
+                        $('.item-list-cost').show();
+                        $('.item-search-cost').show();
+                        $('.item-list-display-report').show();
+                        
+                    } else {
+                        $('#in_office').val('no');
+                    }
+                });
+
+                
                 $("#bundleCreate").submit(function(event) {
                     event.preventDefault();
 
@@ -365,28 +445,36 @@
                         $('.table-item-search tbody').empty();
 
                             if (result.length > 0) {
-                                $.each(result, function (count, val) {
+                                    
+                                var costColHidden;
 
+                                if($('#in_office').val() != 'yes'){
+                                    costColHidden = 'style="display:none;"';
+                                }
+
+                                $.each(result, function (count, val) {
+                                    var type = 'main';
+                    
                                     $('.table-item-search tbody').append(
                                         '<tr>'
                                         +'<td>' + val['id'] + '</td>'
                                         +'<td>' + val['name'] + '</td>'
                                         +'<td>' + val['department']+ '</td>'
                                         +'<td>' + val['supplier'] + '</td>'
-                                        +'<td>' + val['cost_price'] + '</td>'
-                                        +'<td>' + val['cost_price'] + '</td>'
-                                        +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this)" value="' + val['id'] + '" class="form-check-label"></td>'
+                                        +'<td class="item-search-cost" '+ costColHidden +'>' + val['cost_price'] + '</td>'
+                                        +'<td>' + val['retail_price'] + '</td>'
+                                        +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this, \'' + type + '\')" value="' + val['id'] + '" class="form-check-label"></td>'
                                         +'</tr>'
                                     );
                                 });
-                            }
+                            } 
                         }, error: function (data) {
-
+                                    
                     }
                 });
             }
 
-            function selectItem(isChecked){
+            function selectItem(isChecked, Itemtype){
               var ischecked = isChecked.checked;
 
                 $.ajax({
@@ -397,11 +485,18 @@
                                 "id": isChecked.value,
                                 "ischecked": ischecked,
                                 "bundle_id":$('#bundle_id').val(),
+                                "type": Itemtype
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
 
                                 $('.bundle-item-list tbody').empty();
+                                    
+                                    var costColHidden;
+
+                                    if($('#in_office').val() != 'yes'){
+                                        costColHidden = 'style="display:none;"';
+                                    }
 
                                 if (result['data'].length > 0) {
                                     $.each(result['data'], function (count, val) {
@@ -418,13 +513,13 @@
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + val['name'] + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td>' + val['actual_cost'] + '</td>'
-                                            +'<td>' + val['actual_cost'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
-                                            +'<td>' + val['qty'] + '</td>'
-                                            +'<td>' + val['total_cost'] + '</td>'
+                                            +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
-                                            +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                            +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['bundle_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
@@ -433,10 +528,17 @@
                                             +'</td>'
                                             +'</tr>'
                                         );
+
+                                        $('.item-list-item-cost').addClass('editable');
+                                        $('.item-list-qty').addClass('editable');
                                     });
                                 }
 
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
+                                        
+                                if(Itemtype == 'main'){
+                                    displaySubItemList(isChecked.value);
+                                }
                             }, error: function (data) {
 
                         }
@@ -487,6 +589,13 @@
                                 $('.bundle-item-list tbody').empty();
 
                                 if (result['data'].length > 0) {
+                                    
+                                    var costColHidden;
+
+                                    if($('#in_office').val() != 'yes'){
+                                        costColHidden = 'style="display:none;"';
+                                    }
+
                                     $.each(result['data'], function (count, val) {
 
                                         var displayReport = val['display_report'];
@@ -501,13 +610,13 @@
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + val['name'] + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td>' + val['actual_cost'] + '</td>'
-                                            +'<td>' + val['actual_cost'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
-                                            +'<td>' + val['qty'] + '</td>'
-                                            +'<td>' + val['total_cost'] + '</td>'
+                                            +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
-                                            +'<td><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                            +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['bundle_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
@@ -516,6 +625,9 @@
                                             +'</td>'
                                             +'</tr>'
                                         );
+
+                                        $('.item-list-item-cost').addClass('editable');
+                                        $('.item-list-qty').addClass('editable');
                                     });
                                 }
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
@@ -531,6 +643,10 @@
                 $("#bundle_item_id").val(id);
                 $("#retail").val(retail);
                 $("#editDetails").modal('show');
+                
+                if($('#in_office').val() != 'yes'){
+                    $("#actual_cost_edit").hide();
+                }
             }
 
             $('#formEditBundleItem').submit(function(event){
@@ -572,6 +688,60 @@
                     }
                 });
             });
+
+            function displaySubItemList(ItemId){
+                
+                $.ajax({
+                    url: "{{ url('admin/item/get-sub-items') }}",
+                    type: 'POST',
+                    data: {
+                            "_token": "{{ csrf_token() }}",
+                            "id": ItemId
+                        },
+                    success: function (data) {
+                        var result = JSON.parse(data);
+
+                        $('.table-sub-items tbody').empty();
+
+                        if (result.length > 0) {
+                            $("#subItemList").modal('show');
+                            var costColHidden;
+                    
+                            if($('#in_office').val() != 'yes'){
+                                costColHidden = 'style="display:none;"';
+                            }
+                    
+                            $.each(result, function (count, val) {
+                                var isMandatory = val['is_mandatory'];
+                                var selected;
+                                var type = 'sub';
+
+                                if(isMandatory == 1){
+                                    selected = 'checked disabled';
+                                }else{
+                                    selected = '';
+                                }
+                                            
+                                $('.table-sub-items tbody').append(
+                                    '<tr>'
+                                    +'<td>' + val['id'] + '</td>'
+                                    +'<td>' + val['name'] + '</td>'
+                                    +'<td>' + val['department']+ '</td>'
+                                    +'<td>' + val['supplier'] + '</td>'
+                                    +'<td class="item-search-cost" '+ costColHidden +'>' + val['cost_price'] + '</td>'
+                                    +'<td>' + val['retail_price'] + '</td>'
+                                    +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this, \'' + type + '\')" value="' + val['id'] + '" class="form-check-label" '+ selected +'></td>'
+                                    +'</tr>'
+                                    );
+                            });
+                        }else{
+
+                        }
+                    }, error: function (data) {
+                                                        
+                    }
+                });
+            }
         </script>
     @endsection
 </x-admin>
