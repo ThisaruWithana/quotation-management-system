@@ -129,6 +129,7 @@ class BundleController extends Controller
                     'bundle_id' => $request->input('bundle_id'),
                     'item_id' => $id,
                     'actual_cost' => $actual_cost,
+                    'item_cost' => $actual_cost,
                     'retail' => $retail,
                     'qty' => 1,
                     'total_cost' => $total_cost,
@@ -340,7 +341,7 @@ class BundleController extends Controller
                 $item_total_retail = $retail * $qty;
 
                 $update = BundleItem::where('id', $bundle_item_id)->update([
-                    'actual_cost' => $actual_cost,
+                    'item_cost' => $actual_cost,
                     'qty' => $qty,
                     'total_cost' => $item_total_cost,
                     'total_retail' => $item_total_retail,
@@ -425,5 +426,11 @@ class BundleController extends Controller
             array_push($bundleItems, $data2);
         }
      return $bundleItems;
+    }
+
+    public function getDetails(Request $request)
+    {
+        $data = Bundle::where('id',$request->input('id'))->first();
+        return json_encode($data);
     }
 }

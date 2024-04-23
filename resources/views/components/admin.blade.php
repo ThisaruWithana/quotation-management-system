@@ -76,6 +76,12 @@
             display: block;
             overflow: auto !important;
         }
+        .item-div{
+            width: 100% !important;
+        }
+        .editable {
+        background-color: #f7dc6f;
+        }
     </style>
     @yield('css')
 </head>

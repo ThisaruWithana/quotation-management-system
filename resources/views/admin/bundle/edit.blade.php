@@ -3,7 +3,7 @@
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-lg-12">
                 <div class="card card-primary">
                 <h5 class="card-header  white-text text-left py-3">
                     <!-- <strong>{{ $title }}</strong> -->
@@ -12,12 +12,12 @@
                     <!-- /.card-header -->
                     <!-- form start -->
                     <form action="{{ route('admin.bundle.store') }}" method="PUT"
-                    class="text-center border border-light p-5" id="bundleCreate">
+                    class="text-center border border-light pt-4 pb-4 pl-3 pr-3" id="bundleCreate">
                         @csrf
                         <div class="card-body px-lg-2 pt-0">
-                               
+
                                 <div class="row">
-                                    <div class="col-lg-8">
+                                    <div class="col-lg-8 p-0">
                                         <div class="col-lg-12">
                                             <div class="form-group text-left">
                                                 <label for="name" class="form-label">Bundle Name</label>
@@ -46,7 +46,7 @@
                                             <div class="form-group text-left">
                                                 <label for="remark" class="form-label">Remark</label>
                                                 <textarea class="form-control" name="remark" id="remark">{{ $data->remark }}</textarea>
-                                
+
                                             </div>
                                         </div>
                                     </div>
@@ -77,24 +77,24 @@
                                         </div>
                                     </div>
                                 </div>
-                           
+
                                 <input type="hidden" value="{{ $data->total_cost }}" id="total_cost" name="total_cost">
                                 <input type="hidden" value="{{ $data->total_retail }}" id="total_retail" name="total_retail">
                                 <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="{{ $data->id }}">
                         </div>
                         <!-- /.card-body -->
-                            
+
                     <div class="row add-items" style="display:block;">
                         <div class="col-lg-12">
                             <div class="col-lg-2">
                                 <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
-                                    <i class="fa fa-search-plus"></i> 
+                                    <i class="fa fa-search-plus"></i>
                                     Find Items
                                 </button>
                             </div><br>
 
                             <div class="col-lg-12 table-responsive">
-                                <table class="table bundle-item-list" id="dataTable">
+                                <table class="table bundle-item-list table-bordered" id="dataTable" width="100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Code</th>
@@ -123,8 +123,8 @@
                                                 <td>{{ $value['qty'] }}</td>
                                                 <td>{{ $value['total_cost'] }}</td>
                                                 <td>{{ $value['total_retail'] }}</td>
-                                                <td><input type="checkbox" id="item" name="item" 
-                                                    onclick="updateDisplayStatus()" value="{{ $value['id'] }}" class="form-check-label" 
+                                                <td><input type="checkbox" id="item" name="item"
+                                                    onclick="updateDisplayStatus(this)" value="{{ $value['id'] }}" class="form-check-label"
                                                     @if($value['display_report'] == 1) checked @endif></td>
                                                 <td>
                                                     <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['bundle_id'] }})">
@@ -163,62 +163,52 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    
+
                     <form action="{{ route('admin.item.search') }}" method="POST"
-                        class="text-center border border-light p-5" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
                             @csrf
-                            
+
                         <div class="row">
-                            <div class="form-group">
-                                <input type="text" class="form-control" name="keyword" id="keyword" 
+                            <div class="form-group mr-1">
+                                <input type="text" class="form-control" name="keyword" id="keyword"
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
                             <input type="hidden" value="bundle_search" id="search_type" name="search_type">
                             <input type="hidden" value="{{ $data->id }}" id="bundle" name="bundle">
-                            
-                            <!-- <div class="form-group">
-                                <select id="status" name="status" class="selectpicker show-tick" data-live-search="false" onchange="searchItem(this.form)">
-                                    <option value="">Status</option>        
-                                    <option value="1">Active</option>     
-                                    <option value="0">Deactive</option> 
-                                </select>
-                            </div> -->
-                            <div class="form-group">
+
+                            <div class="form-group mr-1">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
-                                    <option value="">Supplier</option>        
+                                    <option value="">Supplier</option>
                                     @foreach ($suppliers as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                             </div>
-                            
-                            <div class="form-group">
+
+                            <div class="form-group mr-1">
                                 <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
-                                    <option value="">Departments</option>        
+                                    <option value="">Departments</option>
                                     @foreach ($departments as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                             </div>
-                            
-                            <div class="form-group">
+
+                            <div class="form-group mr-1">
                                 <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
-                                    <option value="">Sub Departments</option>        
+                                    <option value="">Sub Departments</option>
                                     @foreach ($sub_departments as $value)
                                         <option value="{{ $value->id }}" >{{ $value->name }}</option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                             </div>
 
                             <input type="hidden" name="form_action" value="search">
-                            <!-- <div class="form-group text-right" style="margin-left:10px;">
-                                <button class="btn btn-primary" type="submit">Find</button>
-                            </div> -->
                         </div>
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive">
-                                <table class="table table-item-search" id="dataTable">
+                                <table class="table table-item-search table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Item Code</th>
@@ -263,12 +253,12 @@
                     <input type="hidden" name="retail" value="" id="retail">
                     <div class="form-group">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>
-                        <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
+                        <input type="text" class="form-control" id="actual_cost" name="actual_cost"
                             required="" value="" autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label for="qty" class="col-form-label">Qty</label>
-                        <input type="text" class="form-control" id="qty" name="qty"  
+                        <input type="text" class="form-control" id="qty" name="qty"
                             required="" value="" autocomplete="off">
                     </div>
                 </div>
@@ -283,7 +273,7 @@
         </div>
 
     </section>
-    
+
     @section('js')
         <script>
             $(function() {
@@ -348,7 +338,7 @@
                                     );
                                 }
                             }, error: function (data) {
-                                        
+
                         }
                     });
                 });
@@ -376,7 +366,7 @@
 
                             if (result.length > 0) {
                                 $.each(result, function (count, val) {
-                    
+
                                     $('.table-item-search tbody').append(
                                         '<tr>'
                                         +'<td>' + val['id'] + '</td>'
@@ -389,9 +379,9 @@
                                         +'</tr>'
                                     );
                                 });
-                            } 
+                            }
                         }, error: function (data) {
-                                    
+
                     }
                 });
             }
@@ -444,11 +434,11 @@
                                             +'</tr>'
                                         );
                                     });
-                                } 
+                                }
 
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
                             }, error: function (data) {
-                                        
+
                         }
                 });
             }
@@ -477,7 +467,7 @@
                                 var result = JSON.parse(data);
 
                             }, error: function (data) {
-                                        
+
                         }
                 });
             }
@@ -505,7 +495,7 @@
                                         if(displayReport === 1){
                                             checkboxStatus = 'checked';
                                         }
-                                        
+
                                         $('.bundle-item-list tbody').append(
                                             '<tr>'
                                             +'<td>' + val['item_id'] + '</td>'
@@ -527,10 +517,10 @@
                                             +'</tr>'
                                         );
                                     });
-                                } 
+                                }
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
                             }, error: function (data) {
-                                        
+
                         }
                 });
             }
@@ -548,7 +538,7 @@
 
                 var formData = new FormData(this);
                 formData.append('bundle_id', $('#bundle_id').val());
-            
+
                 $.ajax({
                     url: "{{ url('admin/bundle/item-update') }}",
                     type: 'POST',
@@ -578,7 +568,7 @@
                                 );
                             }
                         }, error: function (data) {
-                                    
+
                     }
                 });
             });

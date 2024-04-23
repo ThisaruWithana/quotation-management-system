@@ -81,12 +81,12 @@
                             <div class="form-group text-left">
                                 <label for="department" class="form-label">Department</label>
                                 <span class="required"> * </span><br>
-                            <select id="department" name="department" class="selectpicker form-control show-tick col-lg-6" data-live-search="true" required>
-                                <option value="">Select Department</option>
-                                @foreach ($departments as $value)
-                                <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                @endforeach
-                            </select>
+                                <select id="department" name="department" class="selectpicker form-control show-tick col-lg-6" data-live-search="true" required>
+                                    <option value="">Select Department</option>
+                                    @foreach ($departments as $value)
+                                    <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                       <div class="col-lg-6">

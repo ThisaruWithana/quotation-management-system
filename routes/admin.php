@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
@@ -27,7 +27,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         // Route::resource('user',UserController::class);
         // Route::resource('role',RoleController::class);
         Route::resource('permission',PermissionController::class);
-        Route::resource('category',CategoryController::class);
         Route::resource('subcategory',SubCateoryController::class);
         Route::resource('collection',CollectionController::class);
         Route::resource('product',ProductController::class);
@@ -62,6 +61,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
 
     Route::resource('customer',CustomerController::class);
     Route::post('customer/change-status', [CustomerController::class, 'changeStatus'])->name('customer.change-status');
+    Route::post('customer/get-details', [CustomerController::class, 'getDetails'])->name('customer.get-details');
+
     Route::post('user/change-status', [UserController::class, 'changeStatus'])->name('user.change-status');
     Route::post('role/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
     Route::post('permission/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
@@ -78,7 +79,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('item/store-sub-items', [ItemController::class, 'storeSubItems'])->name('item.store-sub-items');
     Route::post('item/update-mandatory-status', [ItemController::class, 'updateMandatoryStatus'])->name('item.update-mandatory-status');
     
-    Route::post('item/search', [ItemController::class, 'search'])->name('item.search');
 
     Route::get('item/download-barcode/{id}', [ItemController::class, 'downloadBarcode'])->name('item.download-barcode');
 
@@ -89,6 +89,31 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('bundle/delete-item', [BundleController::class, 'deleteItem'])->name('bundle.delete-item');
     Route::post('bundle/change-status', [BundleController::class, 'changeStatus'])->name('bundle.change-status');
     Route::post('bundle/item-update', [BundleController::class, 'itemUpdate'])->name('bundle.item-update');
+    Route::post('bundle/get-details', [BundleController::class, 'getDetails'])->name('bundle.get-details');
+
+    Route::prefix('item')->group(function(){
+        Route::post('search', [ItemController::class, 'search'])->name('item.search');
+        
+        Route::post('get-sub-items', [ItemController::class, 'getSubItems'])->name('item.get-sub-items');
+    });
+
+    Route::prefix('quotation')->group(function(){
+
+        Route::get('/', [QuotationController::class, 'index'])->name('quotation');
+        Route::get('create', [QuotationController::class, 'create'])->name('quotation.create');
+        Route::get('edit/{id}', [QuotationController::class, 'edit'])->name('quotation.edit');
+
+        Route::post('store', [QuotationController::class, 'store'])->name('quotation.store');
+        Route::post('add-items', [QuotationController::class, 'addItems'])->name('quotation.add-items');
+        Route::post('update-display-status', [QuotationController::class, 'updateDisplayStatus'])->name('quotation.update-display-status');
+        Route::post('delete-item', [QuotationController::class, 'deleteItem'])->name('quotation.delete-item');
+        Route::post('change-status', [QuotationController::class, 'changeStatus'])->name('quotation.change-status');
+        Route::post('item-update', [QuotationController::class, 'itemUpdate'])->name('quotation.item-update');
+        Route::post('update-price-info', [QuotationController::class, 'updatePriceInfo'])->name('quotation.update-price-info');
+        Route::post('add-bundle', [QuotationController::class, 'addBundle'])->name('quotation.add-bundle');
+        Route::post('edit-bundle', [QuotationController::class, 'editBundle'])->name('quotation.edit-bundle');
+
+    });
 });
 
 Route::get('/barcode', [VatController::class, 'barcode']);
