@@ -34,8 +34,8 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.item.index') }}"
-                    class="nav-link {{ Route::is('admin.item.index') ? 'active' : '' }}">
+                <a href="{{ route('admin.item') }}"
+                    class="nav-link {{ Route::is('admin.item') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-th"></i>
                     <p>Item Management</p>
                 </a>

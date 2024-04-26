@@ -461,26 +461,23 @@ class ItemController extends Controller
     public function storeSubItems(Request $request)
     {
         $response = array();
-        $items = $request->input('item_list');
+        $item = $request->input('id');
         $parent_id = $request->input('parent_id');
 
             try{
                 DB::beginTransaction();
 
-                    $disableSuppliers = SubItem::where('parent_id', $parent_id)->update([
-                        'status' => 0,
-                        'updated_by' => Auth::user()->id
+                    // $disableSuppliers = SubItem::where('parent_id', $parent_id)->update([
+                    //     'status' => 0,
+                    //     'updated_by' => Auth::user()->id
+                    // ]);
+
+                    $addItems = SubItem::create([
+                        'parent_id' => $parent_id,
+                        'sub_item_id' => $item,
+                        'created_by' => Auth::user()->id,
+                        'updated_by' => Auth::user()->id,
                     ]);
-
-                    foreach($items as $value){
-
-                        $addItems = SubItem::create([
-                            'parent_id' => $parent_id,
-                            'sub_item_id' => $value,
-                            'created_by' => Auth::user()->id,
-                            'updated_by' => Auth::user()->id,
-                        ]);
-                    }
                 DB::commit(); 
 
                 if($addItems){
@@ -516,7 +513,7 @@ class ItemController extends Controller
             try{
                 DB::beginTransaction();
 
-                if($ischecked == true){
+                if($ischecked === 'true'){
                     $is_mandatory = 1;
                 }else{
                     $is_mandatory = 0;
@@ -586,6 +583,13 @@ class ItemController extends Controller
             $getExistItems = QuotationItem::select('item_id')->where('quotation_id', $quotation_id)->where('status', 1)->get();
 
             $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->whereNotIn('id', $getExistItems)->orderBy('id','desc');
+        
+        }else if($search_type === 'sub_items'){
+
+            $item_id = $request->input('id');
+            $getExistItems = SubItem::select('sub_item_id')->where('parent_id', $item_id)->where('status', 1)->get();
+
+            $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->where('id', '!=', $item_id)->whereNotIn('id', $getExistItems)->where('status', 1)->orderBy('id','desc');
         }else{
             $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->orderBy('id','desc');
         }

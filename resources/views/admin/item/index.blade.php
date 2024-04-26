@@ -9,7 +9,7 @@
         </div>
         <div class="card-body  table-responsive">
             
-        <form method="GET" action="{{ route('admin.item.index') }}" id="frm-list">
+        <form method="GET" action="{{ route('admin.item') }}" id="frm-list">
 
             <div class="row">
                     <div class="form-group" style="margin-left:10px;">
