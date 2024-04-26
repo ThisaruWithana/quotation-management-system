@@ -58,7 +58,7 @@
                                 <label for="product_code" class="form-label">Product Code</label>
                                 <span class="required"> * </span>
                                 <input type="text" class="form-control" name="product_code" id="product_code" required=""
-                                value="" autocomplete="off"  placeholder="" pattern=".{13,}">
+                                value="" autocomplete="off"  placeholder="" pattern=".{12,}">
                             </div>
                         </div>
                       </div>
@@ -247,17 +247,13 @@
                     <form class="text-center border border-light p-5" action="" id="itemOptionalItems" onsubmit="return false;">
                             
                             <div class="row">
-                              <div class="col-lg-8">
-                                  <div class="form-group text-left">
-                                      <label for="case_size" class="form-label">Optional Items</label>
-                                      <select class="selectpicker  show-tick col-lg-8" data-live-search="true" id="optional_items" name="optional_items[]" multiple>
-                                          <!-- <option value="">Select Items</option> -->
-                                          @foreach ($itemList as $value)
-                                            <option value="{{ $value->id }}">{{ $value->barcode->barcode }} - (Dep) {{ $value->department->name }} - {{ $value->name }}</option>
-                                          @endforeach
-                                      </select>
-                                      <button class="btn btn-primary" type="button" id="addOptionalItems">Save</button>
-                                  </div>
+                              <div class="col-lg-12">
+                                <div class="col-lg-2"style="float:right;">
+                                  <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                      <i class="fa fa-search-plus"></i>
+                                      Find Items
+                                  </button>
+                                </div>
                               </div>
                             </div><br><br>
                             <div class="row">
@@ -338,6 +334,87 @@
 
         </div>
     </div>
+        <!-- /.card -->
+        <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Add Items</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="{{ route('admin.item.search') }}" method="POST"
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                            @csrf
+
+                        <div class="row">
+                            <div class="form-group mr-1">
+                                <input type="text" class="form-control" name="keyword" id="keyword"
+                                    autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
+                            </div>
+                            <input type="hidden" value="sub_items" id="search_type" name="search_type">
+                            <input type="hidden" name="id" id="id" value="">
+
+                            <div class="form-group mr-1">
+                                <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
+                                    <option value="">Supplier</option>
+                                    @foreach ($suppliers as $value)
+                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group mr-1">
+                                <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
+                                    <option value="">Departments</option>
+                                    @foreach ($departments as $value)
+                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group mr-1">
+                                <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
+                                    <option value="">Sub Departments</option>
+                                    @foreach ($sub_departments as $value)
+                                        <option value="{{ $value->id }}" >{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <input type="hidden" name="form_action" value="search">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive">
+                                <table class="table table-item-search table-bordered" id="dataTable" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-sm">Item Code</th>
+                                            <th class="th-sm">Item Name</th>
+                                            <th class="th-sm">Department</th>
+                                            <th class="th-sm">Supplier</th>
+                                            <th class="th-sm item-search-cost">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
+                                            <th class="th-sm"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+        </div>
     @section('js')
     <script>
 
@@ -454,6 +531,7 @@
 
                               if (result['code'] == 1) {
                                 $('#item_id').val(result['data']);
+                                $('#id').val(result['data']);
                                 stepper1.next();
                               } else {
                                 toastr.error(
@@ -587,55 +665,12 @@
                 });
             });
 
-            $('#addOptionalItems').click(function(){
-   
-              if( $('#optional_items :selected').length > 0){
-              
-                  var selectednumbers = [];
-                  $('#optional_items :selected').each(function(i, selected) {
-                      selectednumbers[i] = $(selected).val();
-                  });
-
-                  $.ajax({
-                    url: "{{ url('admin/item/store-sub-items') }}",
-                    type: 'POST',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "item_list": selectednumbers,
-                            "parent_id":  $('#item_id').val()
-                        },
-                        success: function (data) {
-                            var result = JSON.parse(data);
-                            $('#optionalItemTable tbody').empty();
-
-                            if (result['data'].length > 0) {
-                                $.each(result['data'], function (count, val) {
-                
-                                  $('#optionalItemTable tbody').append(
-                                    '<tr>'
-                                    +'<td>' + val['subitem']['id'] + '</td>'
-                                    +'<td>' + val['subitem']['name'] + '</td>'
-                                    +'<td>' + val['subitem']['barcode']['barcode'] + '</td>'
-                                    +'<td>' + val['subitem']['department']['name'] + '</td>'
-                                    +'<td>' + val['subitem']['cost_price'] + '</td>'
-                                    +'<td>' + val['subitem']['retail_price'] + '</td>'
-                                    +'<td><input type="checkbox" id="is_mandatory" name="is_mandatory" onclick="checkMandatory(this)" value="' + val['id'] + '" class="form-check-label"></td>'
-                                    +'</tr>'
-                                    );
-                              });
-                            } 
-                        }, error: function (data) {
-                                    
-                    }
-                });
-              }
-            });
         });
 
-        function checkMandatory(isChecked){
+        function updateMandatoryStatus(isChecked){
               var ischecked = isChecked.checked;
 
-              $.ajax({
+                $.ajax({
                     url: "{{ url('admin/item/update-mandatory-status') }}",
                     type: 'POST',
                         data: {
@@ -647,10 +682,88 @@
                             var result = JSON.parse(data);
 
                         }, error: function (data) {
-                                    
                     }
-              });
+                });
         }
+        
+        function searchItem(form){
+
+          $.ajax({
+              url: "{{ url('admin/item/search') }}",
+              type: 'POST',
+              headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+              data: $(form).serialize(),
+              success: function (data) {
+                  var result = JSON.parse(data);
+
+                  $('.table-item-search tbody').empty();
+
+                      if (result.length > 0) {
+
+                          $.each(result, function (count, val) {
+              
+                              $('.table-item-search tbody').append(
+                                  '<tr>'
+                                  +'<td>' + val['id'] + '</td>'
+                                  +'<td>' + val['name'] + '</td>'
+                                  +'<td>' + val['department']+ '</td>'
+                                  +'<td>' + val['supplier'] + '</td>'
+                                  +'<td class="item-search-cost">' + val['cost_price'] + '</td>'
+                                  +'<td>' + val['retail_price'] + '</td>'
+                                  +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this)" value="' + val['id'] + '" class="form-check-label"></td>'
+                                  +'</tr>'
+                              );
+                          });
+                      } 
+                  }, error: function (data) {
+                              
+              }
+          });
+        }
+
+      function selectItem(isChecked){
+          var ischecked = isChecked.checked;
+            
+            $.ajax({
+                url: "{{ url('admin/item/store-sub-items') }}",
+                type: 'POST',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": isChecked.value,
+                        "ischecked": ischecked,
+                        "parent_id":  $('#item_id').val()
+                    },
+                    success: function (data) {
+                        var result = JSON.parse(data);
+                        $('#optionalItemTable tbody').empty();
+
+                        if (result['data'].length > 0) {
+                            $.each(result['data'], function (count, val) {
+
+                              var isMandatory = val['is_mandatory'];
+                              var checkboxStatus = '';
+
+                                if(isMandatory === 1){
+                                  checkboxStatus = 'checked';
+                                }
+
+                              $('#optionalItemTable tbody').append(
+                                '<tr>'
+                                +'<td>' + val['subitem']['id'] + '</td>'
+                                +'<td>' + val['subitem']['name'] + '</td>'
+                                +'<td>' + val['subitem']['barcode']['barcode'] + '</td>'
+                                +'<td>' + val['subitem']['department']['name'] + '</td>'
+                                +'<td>' + val['subitem']['cost_price'] + '</td>'
+                                +'<td>' + val['subitem']['retail_price'] + '</td>'
+                                +'<td><input type="checkbox" onclick="updateMandatoryStatus(this)" id="is_mandatory" name="is_mandatory" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                +'</tr>'
+                                );
+                          });
+                        }
+                    }, error: function (data) {
+                }
+            });
+      }
     </script>
     @endsection
 </x-admin>

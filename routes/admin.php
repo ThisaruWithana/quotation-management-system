@@ -67,21 +67,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('role/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
     Route::post('permission/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
     
-    Route::resource('item',ItemController::class);
-    Route::post('item/store', [ItemController::class, 'store'])->name('item.store');
-    Route::post('item/store-details', [ItemController::class, 'storeItemDetails'])->name('item.store-details');
-    Route::post('item/store-stock-settings', [ItemController::class, 'updateStockSettings'])->name('item.store-stock-settings');
-    Route::post('item/store-item-pricing', [ItemController::class, 'updatePriceDetails'])->name('item.store-item-pricing');
-    Route::post('item/change-status', [ItemController::class, 'changeStatus'])->name('item.change-status');
-    Route::post('item/update', [ItemController::class, 'update'])->name('item.update');
-    Route::post('item/calculate-margin', [ItemController::class, 'calculateMargin'])->name('item.calculate-margin');
-    Route::get('item/detail/{id}', [ItemController::class, 'viewItemDetails'])->name('item.detail');
-    Route::post('item/store-sub-items', [ItemController::class, 'storeSubItems'])->name('item.store-sub-items');
-    Route::post('item/update-mandatory-status', [ItemController::class, 'updateMandatoryStatus'])->name('item.update-mandatory-status');
-    
-
-    Route::get('item/download-barcode/{id}', [ItemController::class, 'downloadBarcode'])->name('item.download-barcode');
-
     
     Route::resource('bundle',BundleController::class);
     Route::post('bundle/add-items', [BundleController::class, 'addItems'])->name('bundle.add-items');
@@ -92,8 +77,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('bundle/get-details', [BundleController::class, 'getDetails'])->name('bundle.get-details');
 
     Route::prefix('item')->group(function(){
+
+        Route::get('/', [ItemController::class, 'index'])->name('item');
+        Route::get('create', [ItemController::class, 'create'])->name('item.create');
+        Route::get('edit/{id}', [ItemController::class, 'edit'])->name('item.edit');
+        Route::get('detail/{id}', [ItemController::class, 'viewItemDetails'])->name('item.detail');
+        Route::get('download-barcode/{id}', [ItemController::class, 'downloadBarcode'])->name('item.download-barcode');
+
+        Route::post('store', [ItemController::class, 'store'])->name('item.store');
+        Route::post('store-details', [ItemController::class, 'storeItemDetails'])->name('item.store-details');
+        Route::post('store-stock-settings', [ItemController::class, 'updateStockSettings'])->name('item.store-stock-settings');
+        Route::post('store-item-pricing', [ItemController::class, 'updatePriceDetails'])->name('item.store-item-pricing');
+        Route::post('change-status', [ItemController::class, 'changeStatus'])->name('item.change-status');
+        Route::post('update', [ItemController::class, 'update'])->name('item.update');
+        Route::post('calculate-margin', [ItemController::class, 'calculateMargin'])->name('item.calculate-margin');
         Route::post('search', [ItemController::class, 'search'])->name('item.search');
-        
+        Route::post('update-mandatory-status', [ItemController::class, 'updateMandatoryStatus'])->name('item.update-mandatory-status');
+        Route::post('store-sub-items', [ItemController::class, 'storeSubItems'])->name('item.store-sub-items');
         Route::post('get-sub-items', [ItemController::class, 'getSubItems'])->name('item.get-sub-items');
     });
 

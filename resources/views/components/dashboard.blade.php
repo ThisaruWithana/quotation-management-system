@@ -48,7 +48,7 @@
                 <div class="icon">
                     <i class="fas fas fa-file-pdf"></i>
                 </div>
-                <a href="{{ route('admin.item.index') }}" class="small-box-footer">View <i
+                <a href="{{ route('admin.item') }}" class="small-box-footer">View <i
                         class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
