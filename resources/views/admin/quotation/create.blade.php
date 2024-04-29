@@ -125,10 +125,11 @@
                                     <input type="hidden" name="quotation_id" id="quotation_id" value="">
                                     <input type="hidden" name="in_office" id="in_office" value="">
                                     <input type="hidden" name="vat_rate" id="vat_rate" value="{{ $vat_rate[0] }}">
+                                    <input type="hidden" name="row_order" id="row_order" value="">
                                 </div>
                                 
                                 <div class="col-lg-2">
-                                    <button class="btn btn-primary btn-block" type="submit" id="btnSave">Save</button>
+                                    <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
                                 </div> 
                             <hr>
               
@@ -162,8 +163,8 @@
                                                 </button>
                                             </div><br>
 
-                                            <div class="">
-                                                <table class="table item-list table-bordered" id="dataTable" width="100%">
+                                            <div class="table-responsiv">
+                                                <table class="table item-list table-bordered" id="sortable-table" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th class="th-sm">Code</th>
@@ -422,7 +423,7 @@
         <script>
             $(function() {
 
-                $('#dataTable').DataTable({
+                $('#sortable-table').DataTable({
                     "bPaginate": false,
                     "searching": false,
                     "ordering": false,
@@ -621,6 +622,7 @@
                                 if (result['data'].length > 0) {
                                     
                                     var costColHidden;
+                                    var i = 1;
 
                                     if($('#in_office').val() != 'yes'){
                                         costColHidden = 'style="display:none;"';
@@ -647,7 +649,7 @@
                                         }
 
                                         $('.item-list tbody').append(
-                                            '<tr>'
+                                            '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
@@ -668,6 +670,7 @@
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-retail').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
+                                        i++;
                                     });
                                 } 
 
@@ -707,6 +710,7 @@
                                     if (result['data'].length > 0) {
                                     
                                         var costColHidden;
+                                        var i = 1;
 
                                         if($('#in_office').val() != 'yes'){
                                             costColHidden = 'style="display:none;"';
@@ -734,7 +738,7 @@
                                             }
 
                                             $('.item-list tbody').append(
-                                                '<tr>'
+                                                '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
@@ -755,6 +759,7 @@
                                             $('.item-list-item-cost').addClass('editable');
                                             $('.item-list-retail').addClass('editable');
                                             $('.item-list-qty').addClass('editable');
+                                            i++;
                                         });
                                     } 
 
@@ -791,6 +796,7 @@
                                     "price": $('#price').val(),
                                     "discount": $('#discount').val(),
                                     "vat": $("#vat-lbl").text(),
+                                    "row_order": $('#row_order').val(),  
                                     "total_vat": $("#quot-vat-lbl").text(),
                                     "total_cost": $("#total-cost-lbl").text(),
                                     "total_retail": $("#retail-lbl").text(),
@@ -886,6 +892,7 @@
 
                                 if (result['data'].length > 0) {
                                     var costColHidden;
+                                    var i = 1;
 
                                     if($('#in_office').val() != 'yes'){
                                         costColHidden = 'style="display:none;"';
@@ -912,7 +919,7 @@
                                             }
                                
                                         $('.item-list tbody').append(
-                                            '<tr>'
+                                            '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
@@ -935,6 +942,7 @@
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-retail').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
+                                        i++;
                                     });
                                 } 
 
@@ -1015,6 +1023,7 @@
 
                                 if (result['data'].length > 0) {
                                     var costColHidden;
+                                    var i = 1;
 
                                     if($('#in_office').val() != 'yes'){
                                         costColHidden = 'style="display:none;"';
@@ -1041,7 +1050,7 @@
                                         }
 
                                         $('.item-list tbody').append(
-                                            '<tr>'
+                                            '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
@@ -1062,6 +1071,7 @@
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-retail').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
+                                        i++;
                                     });
                                 } 
                                 calculatePrices($('#price').val(), result['total_retail'], result['total_cost'], result['discount']);
@@ -1108,6 +1118,7 @@
 
                                     if (result['data'].length > 0) {
                                         var costColHidden;
+                                        var i = 1;
 
                                         if($('#in_office').val() != 'yes'){
                                             costColHidden = 'style="display:none;"';
@@ -1134,7 +1145,7 @@
                                             }
 
                                             $('.item-list tbody').append(
-                                                '<tr>'
+                                                '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
@@ -1155,6 +1166,7 @@
                                             $('.item-list-item-cost').addClass('editable');
                                             $('.item-list-retail').addClass('editable');
                                             $('.item-list-qty').addClass('editable');
+                                            i++;
                                         });
                                     } 
 
@@ -1234,5 +1246,52 @@
             }
 
         </script>
+        
+        <!--Rearrange table rows-->
+        <script>
+            $(function() {
+                // gettableRowOrder();
+
+                $("#sortable-table tbody").sortable({
+                    helper: fixHelper,
+                    update: function(event, ui) {
+                        // Get the sorted rows
+                        var sortedRows = $("#sortable-table tbody tr");
+                        // Loop through the sorted rows to update their order ID
+                        sortedRows.each(function(index) {
+                            $(this).attr("data-id", index + 1);
+                        });
+                    },
+                    stop: function() {
+                        var selectedData = new Array();
+                        $('#sortable-table tbody tr').each(function() {
+                            selectedData.push($(this).attr("id"));
+                        });
+                        $('#row_order').removeAttr('value');
+                        $('#row_order').val(selectedData);
+                    }
+                }).disableSelection();
+            });
+
+            function fixHelper(e, ui) {
+                ui.children().each(function() {
+                    $(this).width($(this).width());
+                });
+                return ui;
+            }
+
+            function gettableRowOrder(){
+
+                var selectedData = new Array();
+                $('#sortable-table tbody tr').each(function() {
+                    selectedData.push($(this).attr("id"));
+                });
+                
+                $('#row_order').removeAttr('value');
+                $('#row_order').val(selectedData);
+
+            }
+
+        </script>
     @endsection
 </x-admin>

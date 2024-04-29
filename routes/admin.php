@@ -75,6 +75,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('bundle/change-status', [BundleController::class, 'changeStatus'])->name('bundle.change-status');
     Route::post('bundle/item-update', [BundleController::class, 'itemUpdate'])->name('bundle.item-update');
     Route::post('bundle/get-details', [BundleController::class, 'getDetails'])->name('bundle.get-details');
+    Route::post('bundle/update-bundle-item-order', [BundleController::class, 'updateBundleItemOrder'])->name('bundle.update-bundle-item-order');
 
     Route::prefix('item')->group(function(){
 
@@ -112,6 +113,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('update-price-info', [QuotationController::class, 'updatePriceInfo'])->name('quotation.update-price-info');
         Route::post('add-bundle', [QuotationController::class, 'addBundle'])->name('quotation.add-bundle');
         Route::post('edit-bundle', [QuotationController::class, 'editBundle'])->name('quotation.edit-bundle');
+        Route::post('update-quotation-item-order', [QuotationController::class, 'updateQuotationItemOrder'])->name('quotation.update-quotation-item-order');
 
     });
 });

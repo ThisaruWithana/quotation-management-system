@@ -87,10 +87,11 @@
                                
                                 <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="">
                                 <input type="hidden" name="in_office" id="in_office" value="">
+                                <input type="hidden" name="row_order" id="row_order" value="">
                         </div>
                         <!-- /.card-body -->
                      <div class="col-lg-2">
-                        <button class="btn btn-primary btn-block" type="submit" id="btnSave">Save</button>
+                        <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
                      </div><br>
                             
                     <div class="row add-items" style="display:none;">
@@ -102,8 +103,8 @@
                                 </button>
                             </div><br>
 
-                            <div class="col-lg-12 table-responsive">
-                                <table class="table bundle-item-list" id="dataTable">
+                            <div class="table-responsive">
+                            <table class="table bundle-item-list table-bordered" id="sortable-table" width="100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Code</th>
@@ -128,6 +129,9 @@
                         </div>
                     </div>
 
+                    <div class="col-lg-2">
+                        <button class="btn btn-primary btn-block" type="button" id="btnUpdate" style="display:none;">Save</button>
+                     </div>
                     </form>
                 </div>
             </div>
@@ -304,7 +308,7 @@
     @section('js')
         <script>
             $(function() {
-                $('#dataTable').DataTable({
+                $('#sortable-table').DataTable({
                     "bPaginate": false,
                     "searching": false,
                     "ordering": false,
@@ -391,6 +395,7 @@
                                     
                                     $("#bundle_id").val(result['data']);
                                     $("#bundle").val(result['data']);
+                                    $("#btnUpdate").show();
                                     
                                 } else {
                                     toastr.error(
@@ -418,6 +423,42 @@
             $('#itemSearchBtn').click(function(){
                 $('.table-item-search tbody').empty();
             });
+
+            $('#btnUpdate').click(function(){
+                
+                $.ajax({
+                    url: "{{ url('admin/bundle/update-bundle-item-order') }}",
+                    type: 'POST',
+                    data: {
+                            "_token": "{{ csrf_token() }}",
+                            "bundle_id": $('#bundle_id').val(),
+                            "row_order": $('#row_order').val()
+                        },
+                    success: function (data) {
+
+                        var result = JSON.parse(data);
+                        
+                        if (result['code'] == 1) {
+                            window.location = '{{ url("admin/bundle") }}';
+                        } else {
+                            toastr.error(
+                                'Error',
+                                'Something Went Wrong!',
+                            {
+                                timeOut: 1500,
+                                fadeOut: 1500,
+                            onHidden: function () {
+                                window.location.reload();
+                                }
+                            }
+                        );
+                    }
+                    }, error: function (data) {
+                                                        
+                    }
+                });
+            });
+
 
             function searchItem(form){
 
@@ -486,6 +527,7 @@
                                     }
 
                                 if (result['data'].length > 0) {
+                                    var i = 1;
                                     $.each(result['data'], function (count, val) {
 
                                         var displayReport = val['display_report'];
@@ -496,7 +538,7 @@
                                         }
 
                                         $('.bundle-item-list tbody').append(
-                                            '<tr>'
+                                            '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + val['name'] + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
@@ -518,6 +560,7 @@
 
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
+                                        i++;
                                     });
                                 }
 
@@ -578,6 +621,7 @@
                                 if (result['data'].length > 0) {
                                     
                                     var costColHidden;
+                                    var i = 1;
 
                                     if($('#in_office').val() != 'yes'){
                                         costColHidden = 'style="display:none;"';
@@ -593,7 +637,7 @@
                                         }
 
                                         $('.bundle-item-list tbody').append(
-                                            '<tr>'
+                                            '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + val['name'] + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
@@ -615,6 +659,7 @@
 
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
+                                        i++;
                                     });
                                 }
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
@@ -660,6 +705,7 @@
                                 if (result['data'].length > 0) {
                                     
                                     var costColHidden;
+                                    var i = 1;
 
                                     if($('#in_office').val() != 'yes'){
                                         costColHidden = 'style="display:none;"';
@@ -675,7 +721,7 @@
                                         }
 
                                         $('.bundle-item-list tbody').append(
-                                            '<tr>'
+                                            '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + val['name'] + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
@@ -697,6 +743,7 @@
 
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
+                                        i++;
                                     });
                                 } 
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
@@ -776,5 +823,38 @@
                 });
             }
         </script>
+
+        <!--Rearrange table rows-->
+        <script>
+            $(function() {
+
+                $("#sortable-table tbody").sortable({
+                    helper: fixHelper,
+                    update: function(event, ui) {
+                        // Get the sorted rows
+                        var sortedRows = $("#sortable-table tbody tr");
+                        // Loop through the sorted rows to update their order ID
+                        sortedRows.each(function(index) {
+                            $(this).attr("data-id", index + 1);
+                        });
+                    },
+                    stop: function() {
+                        var selectedData = new Array();
+                        $('#sortable-table tbody tr').each(function() {
+                            selectedData.push($(this).attr("id"));
+                        });
+                        $('#row_order').removeAttr('value');
+                        $('#row_order').val(selectedData);
+                    }
+                }).disableSelection();
+            });
+
+        function fixHelper(e, ui) {
+            ui.children().each(function() {
+                $(this).width($(this).width());
+            });
+            return ui;
+        }
+        </script>
     @endsection
 </x-admin>

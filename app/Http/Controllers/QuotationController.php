@@ -107,6 +107,10 @@ class QuotationController extends Controller
                  $referenceNo = '';
 
                  $this->updatePriceInfo($request);
+
+                 if($request->input('row_order') != ''){
+                    $this->updateQuotationItemOrder($request);
+                }
              }else{
                  $id = $store->id;
                  $referenceNo = $this->generateQuotationReference($id, $request->input('customer'));
@@ -339,7 +343,6 @@ class QuotationController extends Controller
              return $priceAfterDiscount = $quotationPrice - ((floatval($quotationPrice) * $discount)/100);
         }
     }
-
 
     public function getQuotationMarginAmt($quotation_id, $quotation_cost)
     {
@@ -639,6 +642,11 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->id
                 ]);
 
+                
+                if($request->input('row_order') != ''){
+                    $this->updateQuotationItemOrder($request);
+                }
+
                 if($update){
                     DB::commit(); 
                    
@@ -820,6 +828,45 @@ class QuotationController extends Controller
                 $response['quotation_cost'] = $quotation_cost;
             }
               
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
+
+    public function updateQuotationItemOrder(Request $request)
+    {
+        $response = array();
+        $rowOrder = $request->input('row_order');
+        
+        try{
+            DB::beginTransaction();
+            $itemOrder = explode(",", $rowOrder);
+    
+                foreach($itemOrder as $item){
+
+                    $index = array_search($item, $itemOrder);
+        
+                    $queryUpdate = QuotationItem::where('id', $item)->update([
+                        'order' => $index + 1,
+                        'updated_by' => Auth::user()->id
+                    ]);
+                }
+
+                if($queryUpdate){
+                    DB::commit(); 
+
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                }
+ 
             return json_encode($response);
         }catch(\Exception $e){
             DB::rollback();
