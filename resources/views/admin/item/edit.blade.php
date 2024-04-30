@@ -122,10 +122,10 @@
                               </div>
                           </div>
                         </div>
-
+<!-- 
                             <div class="text-left">
                               <button class="btn btn-primary" type="button" onclick="stepper1.next()">Next</button>
-                            </div>
+                            </div> -->
 
                       <!-- </form> -->
                 </div>
@@ -175,10 +175,10 @@
                             <div class="row">
                             </div>
 
-                            <div class="text-left">
+                            <!-- <div class="text-left">
                               <button class="btn btn-primary item-info" type="button"  onclick="stepper1.next()">Next</button>
                               <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                            </div>
+                            </div> -->
                   <!-- </form> -->
                 </div>
                 <div id="test-l-3" class="content">
@@ -252,11 +252,11 @@
                           </div>
 
                           <input type="hidden" class="form-control" name="item_id" id="item_id" value="{{ $data['id'] }}">
-
+<!-- 
                             <div class="text-left">
                               <button class="btn btn-primary stock-setting" type="button" onclick="stepper1.next()">Next</button>
                               <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                            </div>
+                            </div> -->
                   <!-- </form> -->
                 </div>
                 <div id="test-l-4" class="content">
@@ -316,10 +316,10 @@
                               </div>
                             </div>
 
-                              <div class="text-left">
+                              <!-- <div class="text-left">
                               <button class="btn btn-primary" type="button" onclick="stepper1.next()">Next</button>
                                 <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                              </div>
+                              </div> -->
                     <!-- </form> -->
                 </div>
                 <div id="test-l-5" class="content">
@@ -363,7 +363,7 @@
 
                             <div class="text-left">
                               <button class="btn btn-primary" type="submit">Save</button>
-                              <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
+                              <!-- <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button> -->
                             </div>
                   <!-- </form> -->
                 </div>

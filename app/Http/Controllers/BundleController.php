@@ -16,12 +16,6 @@ use Auth;
 
 class BundleController extends Controller
 {
-    // public function index()
-    // {
-    //     $data = Bundle::with('created_user')->orderBy('id','DESC')->get();
-    //     return view('admin.bundle.index', compact('data'));
-    // }
-
     public function index(Request $request)
     {
         $pageSize;
@@ -94,6 +88,10 @@ class BundleController extends Controller
 
             if($request->input('bundle_id')){
                 $id = $request->input('bundle_id');
+
+                if($request->input('row_order') != ''){
+                    $this->updateBundleItemOrder($request);
+                }
             }else{
                 $id = $store->id;
             }
@@ -497,5 +495,44 @@ class BundleController extends Controller
     {
         $data = Bundle::where('id',$request->input('id'))->first();
         return json_encode($data);
+    }
+
+    public function updateBundleItemOrder(Request $request)
+    {
+        $response = array();
+        $rowOrder = $request->input('row_order');
+        
+        try{
+            DB::beginTransaction();
+            $itemOrder = explode(",", $rowOrder);
+    
+                foreach($itemOrder as $item){
+
+                    $index = array_search($item, $itemOrder);
+        
+                    $queryUpdate = BundleItem::where('id', $item)->update([
+                        'order' => $index + 1,
+                        'updated_by' => Auth::user()->id
+                    ]);
+                }
+
+                if($queryUpdate){
+                    DB::commit(); 
+
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                }
+ 
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
     }
 }

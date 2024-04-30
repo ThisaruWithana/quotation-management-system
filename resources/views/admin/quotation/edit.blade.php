@@ -107,6 +107,7 @@
                                     <input type="hidden" name="quotation_id" id="quotation_id" value="{{ $data['id'] }}">
                                     <input type="hidden" name="in_office" id="in_office" value="">
                                     <input type="hidden" name="vat_rate" id="vat_rate" value="{{ $data['vat_rate'] }}">
+                                    <input type="hidden" name="row_order" id="row_order" value="">
                                 </div>
                             
                             <hr>
@@ -162,8 +163,8 @@
                                                 </button>
                                             </div><br>
 
-                                            <div class="col-lg-12 table-responsive">
-                                                <table class="table item-list table-bordered" id="dataTable" width="100%">
+                                            <div class="table-responsive">
+                                                <table class="table item-list table-bordered" id="sortable-table" width="100%">
                                                     <thead>
                                                 
                                                         <tr>
@@ -182,8 +183,9 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                        <?php $i = 1; ?>
                                                         @foreach ($quotationItems as $value)
-                                                            <tr>
+                                                        <tr class="row_position" data-id="{{ $i }}" id="{{ $value['id'] }}">
                                                                 <td>{{ $value['item_id'] }}</td>
                                                                 <td>
                                                                     @if($value['type'] === 'bundle')
@@ -219,6 +221,7 @@
                                                                     @endif
                                                                 </td>
                                                             </tr>
+                                                            <?php $i++; ?>
                                                         @endforeach
                                                     </tbody>
                                                 </table>
@@ -459,7 +462,7 @@
     @section('js')
         <script>
             $(function() {
-                $('#dataTable').DataTable({
+                $('#sortable-table').DataTable({
                     "bPaginate": false,
                     "searching": false,
                     "ordering": false,
@@ -569,12 +572,13 @@
                                     "price": $('#price').val(),
                                     "price_after_discount":  $("#quot-price-lbl").text(),
                                     "discount": $('#discount').val(),
+                                    "row_order": $('#row_order').val(),     
                                     "vat": $("#vat-lbl").text(),
                                     "total_vat": $("#quot-vat-lbl").text(),
                                     "total_cost": $("#total-cost-lbl").text(),
                                     "total_retail": $("#retail-lbl").text(),
                                     "quotation_vat": $("#quot-vat-lbl").text(),
-                                    "quotation_margin": $("#quot-margin-lbl").text()                                    
+                                    "quotation_margin": $("#quot-margin-lbl").text()                            
                                 },
                                 success: function (data) {
                                     var result = JSON.parse(data);
@@ -623,6 +627,7 @@
                                 if (result['data'].length > 0) {
                                     
                                     var costColHidden;
+                                    var i = 1;
 
                                     if($('#in_office').val() != 'yes'){
                                         costColHidden = 'style="display:none;"';
@@ -649,7 +654,7 @@
                                         }
 
                                         $('.item-list tbody').append(
-                                            '<tr>'
+                                            '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
@@ -672,6 +677,7 @@
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-retail').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
+                                        i++;
                                     });
                                 } 
 
@@ -720,6 +726,7 @@
 
                                     if (result['data'].length > 0) {
                                     
+                                        var i = 1;
                                         var costColHidden;
 
                                         if($('#in_office').val() != 'yes'){
@@ -748,7 +755,7 @@
 
 
                                             $('.item-list tbody').append(
-                                                '<tr>'
+                                                '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
@@ -769,6 +776,7 @@
                                             $('.item-list-item-cost').addClass('editable');
                                             $('.item-list-retail').addClass('editable');
                                             $('.item-list-qty').addClass('editable');
+                                            i++;
                                         });
                                     } 
 
@@ -889,6 +897,7 @@
 
                                 if (result['data'].length > 0) {
                                     var costColHidden;
+                                    var i = 1;
 
                                     if($('#in_office').val() != 'yes'){
                                         costColHidden = 'style="display:none;"';
@@ -915,7 +924,7 @@
                                             }
                                
                                         $('.item-list tbody').append(
-                                            '<tr>'
+                                            '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
@@ -938,6 +947,7 @@
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-retail').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
+                                        i++;
                                     });
                                 } 
 
@@ -1018,6 +1028,7 @@
                                 if (result['data'].length > 0) {
                                     
                                     var costColHidden;
+                                    var i = 1;
 
                                     if($('#in_office').val() != 'yes'){
                                         costColHidden = 'style="display:none;"';
@@ -1044,7 +1055,7 @@
                                         }
 
                                         $('.item-list tbody').append(
-                                            '<tr>'
+                                            '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
@@ -1067,6 +1078,7 @@
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-retail').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
+                                        i++;
                                     });
                                 } 
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
@@ -1115,6 +1127,7 @@
 
                                     if (result['data'].length > 0) {
                                         var costColHidden;
+                                        var i = 1;
 
                                         if($('#in_office').val() != 'yes'){
                                             costColHidden = 'style="display:none;"';
@@ -1141,7 +1154,7 @@
                                             }
 
                                             $('.item-list tbody').append(
-                                                '<tr>'
+                                                '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
@@ -1164,6 +1177,7 @@
                                             $('.item-list-item-cost').addClass('editable');
                                             $('.item-list-retail').addClass('editable');
                                             $('.item-list-qty').addClass('editable');
+                                            i++;
 
                                         });
                                     } 
@@ -1243,5 +1257,51 @@
                 });
             }
         </script>
+        <!--Rearrange table rows-->
+        <script>
+            $(function() {
+                // gettableRowOrder();
+
+                $("#sortable-table tbody").sortable({
+                    helper: fixHelper,
+                    update: function(event, ui) {
+                        // Get the sorted rows
+                        var sortedRows = $("#sortable-table tbody tr");
+                        // Loop through the sorted rows to update their order ID
+                        sortedRows.each(function(index) {
+                            $(this).attr("data-id", index + 1);
+                        });
+                    },
+                    stop: function() {
+                        var selectedData = new Array();
+                        $('#sortable-table tbody tr').each(function() {
+                            selectedData.push($(this).attr("id"));
+                        });
+                        $('#row_order').removeAttr('value');
+                        $('#row_order').val(selectedData);
+                    }
+                }).disableSelection();
+            });
+
+        function fixHelper(e, ui) {
+            ui.children().each(function() {
+                $(this).width($(this).width());
+            });
+            return ui;
+        }
+
+        function gettableRowOrder(){
+
+            var selectedData = new Array();
+            $('#sortable-table tbody tr').each(function() {
+                selectedData.push($(this).attr("id"));
+            });
+            
+            $('#row_order').removeAttr('value');
+            $('#row_order').val(selectedData);
+
+        }
+
+        </script>
     @endsection
 </x-admin>
