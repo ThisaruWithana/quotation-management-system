@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('mode')->default('dark');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->index(['name', 'email']);
         });
     }
 
