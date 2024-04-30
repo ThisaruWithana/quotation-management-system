@@ -19,6 +19,8 @@ return new class extends Migration
             $table->integer('updated_by');
             $table->tinyInteger('status')->default(1)->comment('1-active,0-deactive');
             $table->timestamps();
+
+            $table->index(['name']);
         });
     }
 

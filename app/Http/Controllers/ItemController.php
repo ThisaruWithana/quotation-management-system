@@ -322,12 +322,28 @@ class ItemController extends Controller
                         'updated_by' => Auth::user()->id,
                     ]);
 
-                DB::commit();
-
                 if($updateItemDetails){
-                    $response['code'] = 1;
-                    $response['msg'] = "Success";
-                    $response['data'] = $id;
+
+                    // Update new price to bundle item price
+                    
+                    $updateBundleItemDetails = BundleItem::where('item_id', $id)->update([
+                        'actual_cost' => $request->input('cost_price'),
+                        'retail' => $request->input('retail_price'),
+                        'updated_by' => Auth::user()->id,
+                    ]);
+
+                    if($updateBundleItemDetails){
+
+                        DB::commit();
+                        $response['code'] = 1;
+                        $response['msg'] = "Success";
+                        $response['data'] = $id;
+                    }else{
+                        DB::rollback();
+                        $response['code'] = 0;
+                        $response['msg'] = 'Something went wrong !';
+                        $response['data'] = '';
+                    }
                 }else{
                     DB::rollback();
                     $response['code'] = 0;

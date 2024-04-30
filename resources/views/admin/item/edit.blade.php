@@ -362,7 +362,7 @@
                           </div>
 
                             <div class="text-left">
-                              <button class="btn btn-primary" type="submit">Save</button>
+                              <button class="btn btn-primary col-lg-1" type="submit">Save</button>
                               <!-- <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button> -->
                             </div>
                   <!-- </form> -->
