@@ -21,8 +21,20 @@
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="row">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group text-left">
+                                                        <label for="status" class="form-label">Status</label>
+                                                        <select id="status" name="status" class="selectpicker">        
+                                                        <option value="0" @if($data->status == 0) selected @endif>Deactivated</option>         
+                                                        <option value="1" @if($data->status == 1) selected @endif>New</option> 
+                                                        <option value="2" @if($data->status == 2) selected @endif>Accepted</option>
+                                                        <option value="3" @if($data->status == 3) selected @endif>Installed</option>
+                                                        <option value="4" @if($data->status == 4) selected @endif>Old</option>
+                                                    </select>
+                                                    </div>
+                                                </div>
                                                 
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-6" style="margin-left:100px;">
                                                     <div class="form-group text-left">
                                                         <label for="ref" class="form-label">Quot. Ref</label>
                                                         <input type="text" class="form-control" id="ref" name="ref" value="{{ $data->ref }}" readonly>
@@ -156,7 +168,7 @@
 
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <div class="col-lg-2">
+                                            <div class="col-lg-2" style="float:right;">
                                                 <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                                     <i class="fa fa-search-plus"></i> 
                                                     Find Items
@@ -278,9 +290,22 @@
                                         </div>
                                     </div>
                                     <br>
+                                    
+                                <div class="row">
+                                    @if($data->status == 2)
+                                    <div class="col-lg-1">
+                                        <a href="{{ url('admin/opf',encrypt($data['id'])) }}" class="btn btn-primary btn-block" id="opfBtn" target="_blank">
+                                            OPF
+                                        </a>
+                                    </div>
+                                    @endif
+                                    <div class="col-lg-1">
+                                        <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
+                                    </div>
                                     <div class="col-lg-2">
                                         <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Changes</button>
                                     </div>
+                                </div>
                             </div>
 
                         </div>
@@ -572,7 +597,8 @@
                                     "price": $('#price').val(),
                                     "price_after_discount":  $("#quot-price-lbl").text(),
                                     "discount": $('#discount').val(),
-                                    "row_order": $('#row_order').val(),     
+                                    "row_order": $('#row_order').val(),  
+                                    "status": $('#status').val(),    
                                     "vat": $("#vat-lbl").text(),
                                     "total_vat": $("#quot-vat-lbl").text(),
                                     "total_cost": $("#total-cost-lbl").text(),
