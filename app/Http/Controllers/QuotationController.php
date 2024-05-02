@@ -16,6 +16,8 @@ use App\Models\QuotationItem;
 use App\Models\BundleItem;
 use App\Models\Item;
 use App\Models\SubItem;
+use App\Models\Opf;
+use App\Models\OpfItems;
 use DB;
 
 class QuotationController extends Controller
@@ -99,6 +101,7 @@ class QuotationController extends Controller
                      'price' => $request->input('price'),
                      'created_by' => Auth::user()->id,
                      'updated_by' => Auth::user()->id,
+                     'status' => $request->input('status')
                  ]
              );
  
@@ -106,7 +109,7 @@ class QuotationController extends Controller
                  $id = $request->input('quotation_id');
                  $referenceNo = '';
 
-                 $this->updatePriceInfo($request);
+                $this->updatePriceInfo($request);
 
                  if($request->input('row_order') != ''){
                     $this->updateQuotationItemOrder($request);
@@ -139,7 +142,7 @@ class QuotationController extends Controller
          }catch(\Exception $e){
              DB::rollback();
              $response['code'] = 0;
-             $response['msg'] = $e->getMessage();
+             $response['msg'] = $e->getLine() . " – " . $e->getFile();
              return json_encode($response);
         } 
     }
@@ -322,7 +325,7 @@ class QuotationController extends Controller
 
     public function getQuotationCost($quotation_id)
     {
-        return $query = Quotation::where('id', $quotation_id)->where('status', 1)->pluck('price');
+        return $query = Quotation::where('id', $quotation_id)->pluck('price');
     }
 
     public function getVATAmt($quotation_cost)
@@ -334,7 +337,7 @@ class QuotationController extends Controller
 
     public function getPriceAfterDiscount($quotation_id)
     {
-         $query = Quotation::where('id', $quotation_id)->where('status', 1)->first();
+         $query = Quotation::where('id', $quotation_id)->first();
 
         if($query){
              $quotationPrice = $query['price'];
@@ -347,7 +350,7 @@ class QuotationController extends Controller
     public function getQuotationMarginAmt($quotation_id, $quotation_cost)
     {
         $quotationCost = floatval($quotation_cost);
-        $total_cost = Quotation::where('id', $quotation_id)->where('status', 1)->pluck('total_cost');
+        $total_cost = Quotation::where('id', $quotation_id)->pluck('total_cost');
         $margin =  floatval($quotation_cost) - floatval($total_cost[0]);
 
         return $margin;
@@ -867,6 +870,702 @@ class QuotationController extends Controller
                     $response['msg'] = 'Something went wrong !';
                 }
  
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
+
+    public function opf($quotationId)
+    {
+        $id = decrypt($quotationId);
+        $title = 'OPF Details';
+        $data = Quotation::with('customer')->where('id',$id)->first();
+        $bundles = Bundle::where('status', 1)->orderBy('id','DESC')->get();
+        $vat_rate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+        
+        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
+        $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
+        $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
+
+        $opfDetails = Opf::where('quotation_id', $id)->first();
+
+        if(!$opfDetails){
+            // Create OPF
+            $opf = $this->createOpfForm($id);
+        }else{
+            $opf = $opfDetails['id'];
+        }
+        
+         $quotationItems = $this->getOpfItems($opf);
+
+        $total_cost = $this->getTotalCost($id);
+        $total_retail = $this->getTotalRetail($id);
+        $quotation_cost = $this->getQuotationCost($id);
+        $total_opf_cost = $this->getOpfTotalCost($opf);
+      
+        return view('admin.quotation.opf', compact(
+            'title', 'data', 'bundles', 'quotationItems', 'vat_rate', 'suppliers', 'departments', 'sub_departments',
+            'total_cost', 'total_retail', 'quotation_cost', 'opfDetails', 'total_opf_cost'
+        ));
+    }
+
+    public function createOpfForm($quotationId)
+    {
+        try{
+            DB::beginTransaction();
+            
+             $quotation = Quotation::with('customer')->where('id',$quotationId)->first();
+
+            if($quotation){
+                $cost = $quotation['total_cost'];
+                $margin = $quotation['margin'];
+
+                $addOpf = Opf::create([
+                    'quotation_id' => $quotationId,
+                    'cost' => $cost,
+                    'margin' => $margin,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
+                ]);
+
+                $opfId = $addOpf->id;
+
+                if($addOpf){
+
+                 $quotationItems = QuotationItem::where('quotation_id',$quotationId)->where('status', 1)->get();
+
+                    foreach($quotationItems as $value)
+                    {
+            
+                        $addItems = OpfItems::create([
+                            'opf_id' => $opfId,
+                            'item_id' => $value['item_id'],
+                            'item_cost' => $value['item_cost'],
+                            'retail' => $value['retail'],
+                            'qty' => $value['qty'],
+                            'total_cost' => $value['total_cost'],
+                            'total_retail' => $value['total_retail'],
+                            'actual_cost' => $value['actual_cost'],
+                            'actual_retail' => $value['actual_retail'],
+                            'type' => $value['type'],
+                            'order' => $value['order'],
+                            'created_by' => Auth::user()->id,
+                            'updated_by' => Auth::user()->id,
+                        ]);
+                    }
+                }
+
+                DB::commit(); 
+                return $opfId;
+            }
+
+        }catch(\Exception $e){
+            DB::rollback();
+            return $e->getMessage();
+       } 
+    }
+
+    public function getOpfItems($opfId)
+    {
+        $itemList = OpfItems::with('item', 'item.suppliers.suppliername')
+        ->where('opf_id', $opfId)->where('status', 1)
+        ->orderBy('order','ASC')->get();
+
+        $itemsArr = array();
+
+        foreach($itemList as $value){
+            $supplierList = array();
+
+            if($value['type'] != 'item'){
+
+                $bundle = Bundle::where('id', $value['item_id'])->where('status', 1)->first();
+
+                $name = $bundle['name'];
+                $item_id = $bundle['id'];
+                $actual_cost = $bundle['bundle_cost'];
+
+            }else{
+                foreach($value['item']['suppliers'] as $supplier){
+                    $supplier = $supplier['suppliername']['name'];
+                    array_push($supplierList, $supplier);
+                }
+
+                $name = $value['item']['name'];
+                $item_id = $value['item']['id'];
+                $actual_cost = $value['item']['cost_price'];
+            }
+                    
+                $data2 = ([
+                    'id' => $value['id'],
+                    'item_id' => $item_id,
+                    'opf_id' => $value['opf_id'],
+                    'name' => $name,
+                    'actual_cost' => $actual_cost,
+                    'item_cost' => $value['item_cost'],
+                    'retail' => $value['retail'],
+                    'qty' => $value['qty'],
+                    'total_cost' => $value['total_cost'],
+                    'total_retail' => $value['total_retail'],
+                    'type' => $value['type'],
+                    'supplier' => implode(" ",$supplierList)
+                    ]);
+
+            array_push($itemsArr, $data2);
+        }
+     return $itemsArr;
+    }
+
+    public function updateOpf(Request $request)
+    {
+        $response = array();
+        $id = $request->input('opf_id');
+        
+         try{
+             DB::beginTransaction();
+
+             if($request->input('is_installed') == 1){
+                $status = 2;
+             }else{
+                $status = 1;
+             }
+
+               $update = Opf::where('id', $id)->update([
+                    'symbol_group' => $request->input('symbol_group'),
+                    'installation_date' => $request->input('installation_date'),
+                    'status' => $status,
+                    'updated_by' => Auth::user()->id
+                ]);
+ 
+                if($id){
+                    $this->updateOpfPriceInfo($request);
+
+                    if($request->input('row_order') != ''){
+                        $this->updateQuotationItemOrder($request);
+                    }
+                }
+ 
+             DB::commit(); 
+ 
+             if($update){
+                 $response['code'] = 1;
+                 $response['msg'] = "Success";
+                 $response['data'] = $id;
+             }else{
+                 DB::rollback();
+                 $response['code'] = 0;
+                 $response['msg'] = 'Something went wrong !';
+                 $response['data'] = '';
+             }
+               
+             return json_encode($response);
+         }catch(\Exception $e){
+             DB::rollback();
+             $response['code'] = 0;
+             $response['msg'] = $e->getLine() . " – " . $e->getFile();
+             return json_encode($response);
+        } 
+    }
+
+    public function updateOpfPriceInfo(Request $request)
+    {
+        $response = array();
+        $opf_id = $request->input('opf_id');
+        $margin_amount = $this->getOpfMarginAmt($opf_id, $request->input('price_after_discount'));
+        // $margin_rate = $this->getOpfMarginRate($request->input('price_after_discount'), $margin_amount);
+
+            try{
+                DB::beginTransaction();
+
+                $update = Opf::where('id', $opf_id)->update([
+                    'margin' => $margin_rate,
+                    'cost' => floatval($request->input('total_cost')),
+                    'updated_by' => Auth::user()->id
+                ]);
+                
+                if($request->input('row_order') != ''){
+                    $this->updateQuotationItemOrder($request);
+                }
+
+                if($update){
+                    DB::commit(); 
+
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                  
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                }
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function getOpfMarginAmt($opf_id, $quotation_cost)
+    {
+        $quotationCost = floatval($quotation_cost);
+        $total_cost = Opf::where('id', $opf_id)->pluck('cost');
+        $margin =  floatval($quotation_cost) - floatval($total_cost[0]);
+
+        return $margin;
+    }
+
+    public function getOpfMarginRate($quotation_cost, $quotation_margin)
+    {
+       return $margin_rate = round(($quotation_margin/floatval($quotation_cost)) * 100, 2);
+    }
+
+    public function opfAddItems(Request $request)
+    {
+        $response = array();
+        $ischecked = $request->input('ischecked');
+        $id = $request->input('id');
+        $opf_id = $request->input('opf_id');
+
+        try{
+            DB::beginTransaction();
+
+            $itemDetails = Item::where('id',$id)->first();
+            $actual_cost = $itemDetails['cost_price'];
+            $retail = $itemDetails['retail_price'];
+
+            if($ischecked === 'true'){
+                $is_checked = 1;
+   
+                $qty = 1;
+                $total_cost = $actual_cost * $qty;
+                $total_retail = $retail * $qty;
+
+                $getLastInsert = OpfItems::where('opf_id', $opf_id)->where('status', 1)->orderBy('id', 'desc')->first();
+     
+            if(empty($getLastInsert)){
+                        $order = 1;
+            }else{
+                $lastInsertOrder = $getLastInsert['order'];
+                $order = $lastInsertOrder + 1;
+            }
+
+                $store = OpfItems::create([
+                    'opf_id' => $opf_id,
+                    'item_id' => $id,
+                    'item_cost' => $actual_cost,
+                    'actual_cost' => $actual_cost,
+                    'retail' => $retail,
+                    'actual_retail' => $retail,
+                    'qty' => 1,
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail,
+                    'order' => $order,
+                    'status' => $is_checked,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
+                ]);
+                
+                if($request->input('type') === 'main'){
+
+                    $checkSubItems = SubItem::where('parent_id',$id)->where('status', 1)->get();
+
+                    if(count($checkSubItems) > 0){
+    
+                        foreach($checkSubItems as $value){
+                            $is_mandatory = $value['is_mandatory'];
+    
+                            if($is_mandatory == 1){
+                                $lastInsert = OpfItems::where('opf_id', $opf_id)->where('status', 1)->orderBy('id', 'desc')->first();
+         
+                                if(empty($lastInsert)){
+                                    $subItemOrder = 1;
+                                }else{
+                                    $lastInsert = $lastInsert['order'];
+                                    $subItemOrder = $lastInsert + 1;
+                                }
+                    
+                                $store = OpfItems::create([
+                                    'opf_id' => $opf_id,
+                                    'item_id' => $value['subitem']['id'],
+                                    'item_cost' => $value['subitem']['cost_price'],
+                                    'actual_cost' => $value['subitem']['cost_price'],
+                                    'retail' => $value['subitem']['retail_price'],
+                                    'actual_retail' => $value['subitem']['retail_price'],
+                                    'qty' => 1,
+                                    'total_cost' => $value['subitem']['cost_price'],
+                                    'total_retail' => $value['subitem']['retail_price'],
+                                    'order' => $subItemOrder,
+                                    'status' => 1,
+                                    'created_by' => Auth::user()->id,
+                                    'updated_by' => Auth::user()->id,
+                                ]);
+                            }
+                        }
+                    }
+
+                }
+            }else{
+
+                $is_checked = 0;
+
+                $store = OpfItems::where('opf_id', $opf_id)
+                            ->where('item_id', $id)->where('status', 1)->update([
+                                'status' => $is_checked,
+                                'updated_by' => Auth::user()->id
+                            ]);
+            }
+
+            DB::commit(); 
+            $total_cost = $this->getOpfTotalCost($opf_id);
+            $total_retail = $this->getOpfTotalRetail($opf_id);
+            $cost = $this->getOpfCost($opf_id);
+
+            if($store){
+
+                $request->request->add([
+                    'price' => $cost,
+                    'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail,
+                ]);
+
+                $updatePriceInfo = $this->updateOpfPriceInfo($request);
+                $getItemList = $this->getOpfItems($opf_id);
+
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+                $response['data'] = $getItemList;
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $cost;
+            }else{
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = 'Something went wrong !';
+                $response['data'] = '';
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $cost;
+            }
+              
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
+
+    public function getOpfTotalCost($opf_id)
+    {
+       return $query = OpfItems::where('opf_id', $opf_id)->where('status', 1)->sum('total_cost');
+    }
+
+    public function getOpfTotalRetail($opf_id)
+    {
+        return $query = OpfItems::where('opf_id', $opf_id)->where('status', 1)->sum('total_retail');
+    }   
+    
+    public function getOpfCost($opf_id)
+    {
+        return $query = Opf::where('id', $opf_id)->pluck('cost');
+    }
+
+    public function geOpfPriceAfterDiscount($opf_id)
+    {
+         $query = Opf::where('id', $opf_id)->first();
+
+        if($query){
+             $quotationPrice = $query['cost'];
+             $discount = $query['discount'];
+
+             return $priceAfterDiscount = $quotationPrice - ((floatval($quotationPrice) * $discount)/100);
+        }
+    }
+
+    public function opfDeleteItem(Request $request)
+    {
+        $response = array();
+        $id = $request->input('id');
+        $opf_id = $request->input('opf_id');
+
+            try{
+                DB::beginTransaction();
+
+                $update = OpfItems::where('id', $id)->update([
+                    'status' => 0,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $total_cost = $this->getOpfTotalCost($opf_id);
+                $total_retail = $this->getOpfTotalRetail($opf_id);
+                $cost = $this->getOpfCost($opf_id);    
+
+                DB::commit(); 
+
+                if($update){
+
+                    $request->request->add([
+                        'price' => $cost,
+                        'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                        'total_cost' => $total_cost,
+                        'total_retail' => $total_retail
+                    ]);
+    
+                    $updatePriceInfo = $this->updateOpfPriceInfo($request);
+                    $getItemList = $this->getOpfItems($opf_id);
+
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                    $response['data'] = $getItemList;
+                    $response['total_cost'] = $total_cost;
+                    $response['total_retail'] = $total_retail;
+                    $response['quotation_cost'] = $cost;
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                    $response['data'] = '';
+                }
+
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function opfItemUpdate(Request $request)
+    {
+        $response = array();
+        $item_id = $request->input('item_id');
+        $actual_cost = $request->input('actual_cost');
+        $qty = $request->input('qty');
+        $opf_id = $request->input('opf_id');
+        $retail = $request->input('retail');
+
+            try{
+                DB::beginTransaction();
+                $item_total_cost = $actual_cost * $qty;
+                $item_total_retail = $retail * $qty;
+
+                $update = OpfItems::where('id', $item_id)->update([
+                    'item_cost' => $actual_cost,
+                    'qty' => $qty,
+                    'total_cost' => $item_total_cost,
+                    'total_retail' => $item_total_retail,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                if($update){
+
+                    $total_cost = $this->getOpfTotalCost($opf_id);
+                    $total_retail = $this->getOpfTotalRetail($opf_id);
+                    $cost = $this->getOpfCost($opf_id);   
+                    
+                    $request->request->add([
+                        'price' => $cost,
+                        'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                        'total_cost' => $total_cost,
+                        'total_retail' => $total_retail
+                    ]);
+
+                    $updatePriceInfo = $this->updateOpfPriceInfo($request);
+                    $getItemList = $this->getOpfItems($opf_id);
+                    
+                    if($updatePriceInfo){
+                        DB::commit(); 
+
+                        $response['code'] = 1;
+                        $response['msg'] = "Success";
+                        $response['data'] = $getItemList;
+                        $response['total_cost'] = $total_cost;
+                        $response['total_retail'] = $total_retail;
+                        $response['quotation_cost'] = $cost;
+                    }else{
+                        DB::rollback();
+                        $response['code'] = 0;
+                        $response['msg'] = 'Something went wrong !';
+                        $response['data'] = '';
+                    }
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                    $response['data'] = '';
+                }
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function opfAddBundle(Request $request)
+    {
+        $response = array();
+        $bundle = $request->input('bundle');
+        $opf_id = $request->input('opf_id');
+
+        try{
+            DB::beginTransaction();
+
+            $bundleDetails = Bundle::where('id',$bundle)->first();
+            $total_cost = $bundleDetails['total_cost'];
+            $total_retail = $bundleDetails['total_retail'];
+            $bundle_cost = $bundleDetails['bundle_cost'];
+
+            $getLastInsert = OpfItems::where('opf_id', $opf_id)->where('status', 1)->orderBy('id', 'desc')->first();
+     
+            if(empty($getLastInsert)){
+                $order = 1;
+            }else{
+                $lastInsertOrder = $getLastInsert['order'];
+                $order = $lastInsertOrder + 1;
+            }
+            $store = OpfItems::create([
+                'opf_id' => $opf_id,
+                'item_id' => $bundle,
+                'item_cost' => $bundle_cost,
+                'actual_cost' => $bundle_cost,
+                'retail' => $total_retail,
+                'actual_retail' => $total_retail,
+                'qty' => 1,
+                'total_cost' => $bundle_cost,
+                'total_retail' => $total_retail,
+                'order' => $order,
+                'status' => 1,
+                'type' => 'bundle',
+                'created_by' => Auth::user()->id,
+                'updated_by' => Auth::user()->id,
+            ]);
+
+            DB::commit(); 
+
+            $total_cost = $this->getOpfTotalCost($opf_id);
+            $total_retail = $this->getOpfTotalRetail($opf_id);
+            $cost = $this->getOpfCost($opf_id);   
+
+            if($store){
+                $request->request->add([
+                    'price' => $cost,
+                    'total_cost' => $total_cost,
+                    'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                    'total_retail' => $total_retail
+                ]);
+
+                $updatePriceInfo = $this->updateOpfPriceInfo($request);
+                $getItemList = $this->getOpfItems($opf_id);
+
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+                $response['data'] = $getItemList;
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $cost;
+                $response['bundle_cost'] = $bundle_cost;
+            }else{
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = 'Something went wrong !';
+                $response['data'] = '';
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $cost;
+            }
+              
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
+    
+    public function opfEditBundle(Request $request)
+    {
+        $response = array();
+        $bundle_id = $request->input('bundle_id');
+        $opf_id = $request->input('opf_id');
+
+        try{
+            DB::beginTransaction();
+            
+            // Disable existing bundle
+            $update = OpfItems::where('opf_id', $opf_id)->where('item_id', $bundle_id)->update([
+                'status' => 0,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            if($update){
+
+                $bundleItemList = BundleItem::with('item', 'item.suppliers.suppliername')->where('bundle_id',$bundle_id)->where('status',1)->get();
+
+                foreach($bundleItemList as $value){
+                    
+                    // Add bundle items to quotation
+                    $store = OpfItems::create([
+                        'opf_id' => $opf_id,
+                        'item_id' => $value['item']['id'],
+                        'item_cost' => $value['item_cost'],
+                        'actual_cost' => $value['actual_cost'],
+                        'retail' => $value['total_retail'],
+                        'actual_retail' => $value['retail'],
+                        'qty' => $value['qty'],
+                        'total_cost' => $value['total_cost'],
+                        'total_retail' => $value['total_retail'],
+                        'order' => $value['order'],
+                        'display_report' => $value['display_report'],
+                        'status' => 1,
+                        'created_by' => Auth::user()->id,
+                        'updated_by' => Auth::user()->id,
+                    ]);
+                }
+            }
+
+            DB::commit(); 
+            $total_cost = $this->getOpfTotalCost($opf_id);
+            $total_retail = $this->getOpfTotalRetail($opf_id);
+            $cost = $this->getOpfCost($opf_id);   
+
+            if($store){
+                $request->request->add([
+                    'price' => $cost,
+                    'total_cost' => $total_cost,
+                    'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                    'total_retail' => $total_retail
+                ]);
+
+                $updatePriceInfo = $this->updateOpfPriceInfo($request);
+                $getItemList = $this->getOpfItems($opf_id);
+
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+                $response['data'] = $getItemList;
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $cost;
+            }else{
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = 'Something went wrong !';
+                $response['data'] = '';
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['quotation_cost'] = $cost;
+            }
+              
             return json_encode($response);
         }catch(\Exception $e){
             DB::rollback();

@@ -18,6 +18,18 @@
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="row">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group text-left">
+                                                        <label for="status" class="form-label">Status</label>
+                                                        <select id="status" name="status" class="selectpicker">        
+                                                        <option value="0">Deactivated</option>         
+                                                        <option value="1">New</option> 
+                                                        <option value="2">Accepted</option>
+                                                        <option value="3">Installed</option>
+                                                        <option value="4">Old</option>
+                                                    </select>
+                                                    </div>
+                                                </div>
                                                 
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">

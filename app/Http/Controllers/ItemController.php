@@ -14,6 +14,7 @@ use App\Models\Location;
 use App\Models\SubItem;
 use App\Models\BundleItem;
 use App\Models\QuotationItem;
+use App\Models\OpfItems;
 use DB;
 use Auth;
 use PDF;
@@ -597,6 +598,13 @@ class ItemController extends Controller
 
             $quotation_id = $request->input('quotation');
             $getExistItems = QuotationItem::select('item_id')->where('quotation_id', $quotation_id)->where('status', 1)->get();
+
+            $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->whereNotIn('id', $getExistItems)->orderBy('id','desc');
+        
+        } else if($search_type === 'opf'){
+
+            $opf_id = $request->input('opf');
+            $getExistItems = OpfItems::select('item_id')->where('opf_id', $opf_id)->where('status', 1)->get();
 
             $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->whereNotIn('id', $getExistItems)->orderBy('id','desc');
         

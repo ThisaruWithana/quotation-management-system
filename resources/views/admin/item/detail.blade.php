@@ -3,14 +3,7 @@
       <section class="content">
         <div class="card ">
           <div class="card-header">
-            <!-- <h3 class="card-title">Projects Detail</h3> -->
             <div class="card-tools">
-              <!-- <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                <i class="fas fa-minus"></i>
-              </button>
-              <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                <i class="fas fa-times"></i>
-              </button> -->
                 <a href="{{ route('admin.item.edit',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="far fa-edit"></i>  Edit Item</a>
                 <a href="{{ route('admin.item.download-barcode',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="fa fa-print"></i>   Barcode</a>
             </div>

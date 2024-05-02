@@ -116,6 +116,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('update-quotation-item-order', [QuotationController::class, 'updateQuotationItemOrder'])->name('quotation.update-quotation-item-order');
 
     });
+
+    Route::prefix('opf')->group(function(){
+
+        Route::get('{id}', [QuotationController::class, 'opf'])->name('opf');
+
+        Route::post('update', [QuotationController::class, 'updateOpf'])->name('opf.update');
+        Route::post('add-items', [QuotationController::class, 'opfAddItems'])->name('opf.add-items');
+        Route::post('delete-item', [QuotationController::class, 'opfDeleteItem'])->name('opf.delete-item');
+        Route::post('item-update', [QuotationController::class, 'opfItemUpdate'])->name('opf.item-update');
+        Route::post('add-bundle', [QuotationController::class, 'opfAddBundle'])->name('opf.add-bundle');
+        Route::post('edit-bundle', [QuotationController::class, 'opfEditBundle'])->name('opf.edit-bundle');
+
+    });
 });
 
 Route::get('/barcode', [VatController::class, 'barcode']);
