@@ -13,7 +13,7 @@ class OpfItems extends Model
 
     protected $fillable = [
         'id','opf_id', 'item_id', 'item_cost','retail','qty', 'total_cost', 'total_retail', 'status', 'created_at', 
-        'updated_at', 'created_by', 'updated_by', 'actual_cost', 'actual_retail', 'type', 'order'
+        'updated_at', 'created_by', 'updated_by', 'actual_cost', 'actual_retail', 'type', 'order', 'on_order', 'order_qty'
     ];
 
     public $sortable = [ 'id'];

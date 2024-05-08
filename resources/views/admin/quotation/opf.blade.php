@@ -67,7 +67,7 @@
                                         <div class="col-lg-6">
                                             <div class="form-group text-left">
                                                 <label for="symbol_group" class="form-label">Symbol Group</label>
-                                                <input type="text" class="form-control" id="symbol_group" name="symbol_group" value="">
+                                                <input type="text" class="form-control" id="symbol_group" name="symbol_group" value="{{ $opfDetails->symbol_group }}">
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -84,12 +84,6 @@
                                     </div>
                                     
                                     <div class="row">
-                                        <!-- <div class="col-lg-6">
-                                            <div class="form-group text-left">
-                                                <label for="price" class="form-label">OPF Cost</label>
-                                                <input type="text" class="form-control" id="price" name="price" value="{{ $data->price }}">
-                                            </div>
-                                        </div> -->
                                         <div class="col-lg-6">
                                             <div class="form-group text-left">
                                                 <label for="is_installed" class="form-label">Mark As Installed</label> &nbsp;&nbsp; &nbsp;&nbsp;
@@ -152,9 +146,8 @@
                                                     <td class="item-list-qty">{{ $value['qty'] }}</td>
                                                     <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
                                                     <td></td>
-                                                    <td class="item-list-on-order"></td>
-                                                    <td class="item-list-order-qty">
-                                                        
+                                                    <td class="item-list-on-order">{{ $value['on_order'] }}</td>
+                                                    <td class="item-list-order-qty">{{ $value['order_qty'] }}
                                                     </td>
                                                     <td>
                                                         <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['opf_id'] }})">
@@ -163,7 +156,7 @@
                                                     </td>
                                                     <td>
                                                         @if($value['type'] != 'bundle')
-                                                            <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})">
+                                                            <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, '{{ $value['on_order'] }}', {{ $value['order_qty'] }})">
                                                                 <i class="fas fa-edit"></i>
                                                             </a>
                                                         @endif
@@ -186,7 +179,7 @@
                                         <tr>
                                             <td style="width:150px;"><p class="text-sm"><b class="d-block info-lb">Quot. Price </b></p></td>
                                             <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($quotation_cost[0], 2) }}</span></b></p></td>
+                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($price_after_discount, 2) }}</span></b></p></td>
                                         </tr>
                                         <tr id="lbl-cost-details">
                                             <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Quot. Cost </b></p></td>
@@ -197,6 +190,11 @@
                                             <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">OPF Cost </b></p></td>
                                             <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
                                             <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="opf-cost-lbl">{{ number_format($total_opf_cost, 2) }}</span></b></p></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Gross Profit </b></p></td>
+                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
+                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="profit-lbl">{{ number_format($quotation_cost[0] - $total_opf_cost, 2) }}</span></b></p></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -211,7 +209,7 @@
                                         <tr>
                                             <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb">OPF Margin (%)</b></p></td>
                                             <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="opf-margin-lbl"> {{ $data->margin }}</span></b></p></td>
+                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="opf-margin-lbl"> {{ $opfDetails->margin }}</span></b></p></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -335,11 +333,6 @@
                     <div class="form-group" id="actual_cost_edit">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>
                         <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
-                            required="" value="" autocomplete="off">
-                    </div>
-                    <div class="form-group" style="display:none;">
-                        <label for="retail" class="col-form-label">Item Retail</label>
-                        <input type="text" class="form-control" id="retail" name="retail"  
                             required="" value="" autocomplete="off">
                     </div>
                     <div class="form-group">
@@ -483,7 +476,7 @@
                                             name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['opf_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                         }else{
                                             name = val['name'];
-                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', \'' + val['on_order'] + '\', '+ val['order_qty'] +' )"><i class="fas fa-edit"></i></a>';
                                         }
 
                                         $('.item-list tbody').append(
@@ -495,8 +488,8 @@
                                                 +'<td class="item-list-qty">'+ val['qty'] +'</td>'
                                                 +'<td class="item-list-total-cost">'+ val['total_cost'] +'</td>'
                                                 +'<td></td>'
-                                                +'<td class="item-list-on-order"></td>'
-                                                +'<td class="item-list-order-qty"></td>'
+                                                +'<td class="item-list-on-order">'+ val['on_order'] +'</td>'
+                                                +'<td class="item-list-order-qty">'+ val['order_qty'] +'</td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['opf_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                                 +'</td>'
@@ -512,9 +505,7 @@
                                             $('.item-list-order-qty').addClass('editable');
                                     });
                                 } 
-
-                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], 0);
-
+                                calculatePrices(result['price_after_discount'], result['total_cost']);
                             }, error: function (data) {
         
                         }
@@ -552,13 +543,13 @@
 
                                             var type = val['type'];
                                             var name;
-                                            var editBtn;
+                                            var editBtn = ' ';
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['opf_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                             }else{
                                                 name = val['name'];
-                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                editBtn = '<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', \'' + val['on_order'] + '\', '+ val['order_qty'] +' )"><i class="fas fa-edit"></i></a>';
                                             }
 
                                             $('.item-list tbody').append(
@@ -570,8 +561,8 @@
                                                 +'<td class="item-list-qty">'+ val['qty'] +'</td>'
                                                 +'<td class="item-list-total-cost">'+ val['total_cost'] +'</td>'
                                                 +'<td></td>'
-                                                +'<td class="item-list-on-order"></td>'
-                                                +'<td class="item-list-order-qty"></td>'
+                                                +'<td class="item-list-on-order">'+ val['on_order'] +'</td>'
+                                                +'<td class="item-list-order-qty">'+ val['order_qty'] +'</td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['opf_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                                 +'</td>'
@@ -602,8 +593,7 @@
                                         }
                                     );
                                 }
-                                calculatePrices($('#price').val(), result['total_retail'], result['total_cost'], result['discount']);
-                                
+                                calculatePrices(result['price_after_discount'], result['total_cost']);
                                 $("#editDetails").modal('hide');
                             }, error: function (data) {
                                         
@@ -728,7 +718,7 @@
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['opf_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                             }else{
                                                 name = val['name'];
-                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', \'' + val['on_order'] + '\', '+ val['order_qty'] +' )"><i class="fas fa-edit"></i></a>';
                                             }
 
                                             $('.item-list tbody').append(
@@ -740,8 +730,8 @@
                                             +'<td class="item-list-qty">'+ val['qty'] +'</td>'
                                             +'<td class="item-list-total-cost">'+ val['total_cost'] +'</td>'
                                             +'<td></td>'
-                                            +'<td class="item-list-on-order"></td>'
-                                            +'<td class="item-list-order-qty"></td>'
+                                            +'<td class="item-list-on-order">'+ val['on_order'] +'</td>'
+                                            +'<td class="item-list-order-qty">'+ val['order_qty'] +'</td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['opf_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
@@ -758,7 +748,7 @@
                                     });
                                 } 
 
-                                calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], 0);
+                                calculatePrices(result['price_after_discount'], result['total_cost']);
 
                                 if(Itemtype == 'main'){
                                     displaySubItemList(isChecked.value);
@@ -769,25 +759,15 @@
                 });
             }
 
-            function calculatePrices(quotationCost, totalRetail, totalCost, discount){
+            function calculatePrices(priceAfterDiscount, totalCost){
 
-                // if(typeof discount == "undefined"){
-                //     discount = 0;
-                // }else{
-                //     discount = parseFloat(discount);
-                // }
-
-                // var quotationPriceAfterDiscount = quotationCost - ((quotationCost * discount)/100);
-
-                // var quotationMargin = quotationPriceAfterDiscount - totalCost;
-                // var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
-                // var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
-
-                // var vat_rate = $("#vat_rate").val();
+                var margin = priceAfterDiscount - totalCost;
+                var marginRate = Number((margin / priceAfterDiscount) * 100).toFixed(2);
 
                 $("#opf-cost-lbl").text(Number(totalCost).toFixed(2));
-
-                // $("#quot-margin-lbl").text(quotationMarginVal);
+                $("#profit-lbl").text(Number(priceAfterDiscount - totalCost).toFixed(2));
+                
+                $("#opf-margin-lbl").text(marginRate);
             }
 
             function changeStatus(id, opfId){
@@ -816,7 +796,7 @@
                                             name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['opf_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                         }else{
                                             name = val['name'];
-                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', \'' + val['on_order'] + '\', '+ val['order_qty'] +' )"><i class="fas fa-edit"></i></a>';
                                         }
                                     
                                         $('.item-list tbody').append(
@@ -828,8 +808,8 @@
                                             +'<td class="item-list-qty">'+ val['qty'] +'</td>'
                                             +'<td class="item-list-total-cost">'+ val['total_cost'] +'</td>'
                                             +'<td></td>'
-                                            +'<td class="item-list-on-order"></td>'
-                                            +'<td class="item-list-order-qty"></td>'
+                                            +'<td class="item-list-on-order">'+ val['on_order'] +'</td>'
+                                            +'<td class="item-list-order-qty">'+ val['order_qty'] +'</td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['opf_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
@@ -845,18 +825,19 @@
                                         $('.item-list-order-qty').addClass('editable');
                                     });
                                 } 
-                                calculatePrices($('#price').val(), result['total_retail'], result['total_cost'], 0);
+                                calculatePrices(result['price_after_discount'], result['total_cost']);
                             }, error: function (data) {
                                         
                         }
                 });
             }
 
-            function editDetails(id, actual_cost, qty, retail){
+            function editDetails(id, actual_cost, qty, on_order, order_qty){
                 $("#actual_cost").val(actual_cost);
                 $("#qty").val(qty);
                 $("#item_id").val(id);
-                $("#retail").val(retail);
+                $("#on_order").val(on_order);
+                $("#order_qty").val(order_qty);
                 $("#editDetails").modal('show');
             }
 
@@ -889,13 +870,13 @@
 
                                             var type = val['type'];
                                             var name;
-                                            var editBtn;
+                                            var editBtn = ' ';
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['opf_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                             }else{
                                                 name = val['name'];
-                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', \'' + val['on_order'] + '\', '+ val['order_qty'] +' )"><i class="fas fa-edit"></i></a>';
                                             }
 
                                              $('.item-list tbody').append(
@@ -907,8 +888,8 @@
                                                 +'<td class="item-list-qty">'+ val['qty'] +'</td>'
                                                 +'<td class="item-list-total-cost">'+ val['total_cost'] +'</td>'
                                                 +'<td></td>'
-                                                +'<td class="item-list-on-order"></td>'
-                                                +'<td class="item-list-order-qty"></td>'
+                                                +'<td class="item-list-on-order">'+ val['on_order'] +'</td>'
+                                                +'<td class="item-list-order-qty">'+ val['order_qty'] +'</td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['opf_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                                 +'</td>'
@@ -925,7 +906,7 @@
                                         });
                                     } 
 
-                                    calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], 0);
+                                    calculatePrices(result['price_after_discount'], result['total_cost']);
 
                                 }, error: function (data) {
                                         toastr.error(

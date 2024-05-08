@@ -896,20 +896,22 @@ class QuotationController extends Controller
         if(!$opfDetails){
             // Create OPF
             $opf = $this->createOpfForm($id);
+            $opfDetails = Opf::where('id', $opf)->first();
         }else{
             $opf = $opfDetails['id'];
         }
-        
-         $quotationItems = $this->getOpfItems($opf);
+        $quotationItems = $this->getOpfItems($opf);
 
         $total_cost = $this->getTotalCost($id);
         $total_retail = $this->getTotalRetail($id);
         $quotation_cost = $this->getQuotationCost($id);
         $total_opf_cost = $this->getOpfTotalCost($opf);
+
+        $price_after_discount = $this->getPriceAfterDiscount($id);
       
         return view('admin.quotation.opf', compact(
             'title', 'data', 'bundles', 'quotationItems', 'vat_rate', 'suppliers', 'departments', 'sub_departments',
-            'total_cost', 'total_retail', 'quotation_cost', 'opfDetails', 'total_opf_cost'
+            'total_cost', 'total_retail', 'quotation_cost', 'opfDetails', 'total_opf_cost', 'price_after_discount'
         ));
     }
 
@@ -1011,7 +1013,9 @@ class QuotationController extends Controller
                     'total_cost' => $value['total_cost'],
                     'total_retail' => $value['total_retail'],
                     'type' => $value['type'],
-                    'supplier' => implode(" ",$supplierList)
+                    'supplier' => implode(" ",$supplierList),
+                    'on_order' => $value['on_order'],
+                    'order_qty' => $value['order_qty']
                     ]);
 
             array_push($itemsArr, $data2);
@@ -1074,14 +1078,13 @@ class QuotationController extends Controller
     {
         $response = array();
         $opf_id = $request->input('opf_id');
-        $margin_amount = $this->getOpfMarginAmt($opf_id, $request->input('price_after_discount'));
-        // $margin_rate = $this->getOpfMarginRate($request->input('price_after_discount'), $margin_amount);
+        $margin = $this->getOpfMargin($opf_id, $request->input('price_after_discount'));
 
             try{
                 DB::beginTransaction();
 
                 $update = Opf::where('id', $opf_id)->update([
-                    'margin' => $margin_rate,
+                    'margin' => $margin,
                     'cost' => floatval($request->input('total_cost')),
                     'updated_by' => Auth::user()->id
                 ]);
@@ -1110,18 +1113,13 @@ class QuotationController extends Controller
             } 
     }
 
-    public function getOpfMarginAmt($opf_id, $quotation_cost)
+    public function getOpfMargin($opf_id, $QuotationPrice)
     {
-        $quotationCost = floatval($quotation_cost);
-        $total_cost = Opf::where('id', $opf_id)->pluck('cost');
-        $margin =  floatval($quotation_cost) - floatval($total_cost[0]);
+        $total_cost = $this->getOpfTotalCost($opf_id);
+        $margin =  floatval($QuotationPrice) - floatval($total_cost);
+        $margin_rate = (($margin/floatval($QuotationPrice)) * 100);
 
-        return $margin;
-    }
-
-    public function getOpfMarginRate($quotation_cost, $quotation_margin)
-    {
-       return $margin_rate = round(($quotation_margin/floatval($quotation_cost)) * 100, 2);
+        return  round($margin_rate, 2);
     }
 
     public function opfAddItems(Request $request)
@@ -1133,6 +1131,8 @@ class QuotationController extends Controller
 
         try{
             DB::beginTransaction();
+
+            $opf = Opf::where('id',$opf_id)->first();
 
             $itemDetails = Item::where('id',$id)->first();
             $actual_cost = $itemDetails['cost_price'];
@@ -1229,7 +1229,7 @@ class QuotationController extends Controller
 
                 $request->request->add([
                     'price' => $cost,
-                    'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                    'price_after_discount' => $this->getPriceAfterDiscount($opf['quotation_id']),
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
                 ]);
@@ -1243,6 +1243,7 @@ class QuotationController extends Controller
                 $response['total_cost'] = $total_cost;
                 $response['total_retail'] = $total_retail;
                 $response['quotation_cost'] = $cost;
+                $response['price_after_discount'] = $this->getPriceAfterDiscount($opf['quotation_id']);
             }else{
                 DB::rollback();
                 $response['code'] = 0;
@@ -1298,6 +1299,8 @@ class QuotationController extends Controller
             try{
                 DB::beginTransaction();
 
+                $opf = Opf::where('id',$opf_id)->first();
+
                 $update = OpfItems::where('id', $id)->update([
                     'status' => 0,
                     'updated_by' => Auth::user()->id
@@ -1313,7 +1316,7 @@ class QuotationController extends Controller
 
                     $request->request->add([
                         'price' => $cost,
-                        'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                        'price_after_discount' => $this->getPriceAfterDiscount($opf['quotation_id']),
                         'total_cost' => $total_cost,
                         'total_retail' => $total_retail
                     ]);
@@ -1327,6 +1330,7 @@ class QuotationController extends Controller
                     $response['total_cost'] = $total_cost;
                     $response['total_retail'] = $total_retail;
                     $response['quotation_cost'] = $cost;
+                    $response['price_after_discount'] = $this->getPriceAfterDiscount($opf['quotation_id']);
                 }else{
                     DB::rollback();
                     $response['code'] = 0;
@@ -1357,9 +1361,13 @@ class QuotationController extends Controller
                 $item_total_cost = $actual_cost * $qty;
                 $item_total_retail = $retail * $qty;
 
+                $opf = Opf::where('id',$opf_id)->first();
+
                 $update = OpfItems::where('id', $item_id)->update([
                     'item_cost' => $actual_cost,
                     'qty' => $qty,
+                    'on_order' => $request->input('on_order'),
+                    'order_qty' => $request->input('order_qty'),
                     'total_cost' => $item_total_cost,
                     'total_retail' => $item_total_retail,
                     'updated_by' => Auth::user()->id
@@ -1373,7 +1381,7 @@ class QuotationController extends Controller
                     
                     $request->request->add([
                         'price' => $cost,
-                        'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                        'price_after_discount' => $this->getPriceAfterDiscount($opf['quotation_id']),
                         'total_cost' => $total_cost,
                         'total_retail' => $total_retail
                     ]);
@@ -1390,6 +1398,7 @@ class QuotationController extends Controller
                         $response['total_cost'] = $total_cost;
                         $response['total_retail'] = $total_retail;
                         $response['quotation_cost'] = $cost;
+                        $response['price_after_discount'] = $this->getPriceAfterDiscount($opf['quotation_id']);
                     }else{
                         DB::rollback();
                         $response['code'] = 0;
@@ -1419,6 +1428,8 @@ class QuotationController extends Controller
 
         try{
             DB::beginTransaction();
+
+            $opf = Opf::where('id',$opf_id)->first();
 
             $bundleDetails = Bundle::where('id',$bundle)->first();
             $total_cost = $bundleDetails['total_cost'];
@@ -1460,7 +1471,7 @@ class QuotationController extends Controller
                 $request->request->add([
                     'price' => $cost,
                     'total_cost' => $total_cost,
-                    'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                    'price_after_discount' => $this->getPriceAfterDiscount($opf['quotation_id']),
                     'total_retail' => $total_retail
                 ]);
 
@@ -1474,6 +1485,7 @@ class QuotationController extends Controller
                 $response['total_retail'] = $total_retail;
                 $response['quotation_cost'] = $cost;
                 $response['bundle_cost'] = $bundle_cost;
+                $response['price_after_discount'] = $this->getPriceAfterDiscount($opf['quotation_id']);
             }else{
                 DB::rollback();
                 $response['code'] = 0;
@@ -1482,6 +1494,7 @@ class QuotationController extends Controller
                 $response['total_cost'] = $total_cost;
                 $response['total_retail'] = $total_retail;
                 $response['quotation_cost'] = $cost;
+                $response['price_after_discount'] = $this->getPriceAfterDiscount($opf['quotation_id']);
             }
               
             return json_encode($response);
@@ -1501,6 +1514,8 @@ class QuotationController extends Controller
 
         try{
             DB::beginTransaction();
+
+            $opf = Opf::where('id',$opf_id)->first();
             
             // Disable existing bundle
             $update = OpfItems::where('opf_id', $opf_id)->where('item_id', $bundle_id)->update([
@@ -1543,7 +1558,7 @@ class QuotationController extends Controller
                 $request->request->add([
                     'price' => $cost,
                     'total_cost' => $total_cost,
-                    'price_after_discount' => $this->geOpfPriceAfterDiscount($opf_id),
+                    'price_after_discount' => $this->getPriceAfterDiscount($opf['quotation_id']),
                     'total_retail' => $total_retail
                 ]);
 
@@ -1556,6 +1571,7 @@ class QuotationController extends Controller
                 $response['total_cost'] = $total_cost;
                 $response['total_retail'] = $total_retail;
                 $response['quotation_cost'] = $cost;
+                $response['price_after_discount'] = $this->getPriceAfterDiscount($opf['quotation_id']);
             }else{
                 DB::rollback();
                 $response['code'] = 0;
@@ -1564,6 +1580,7 @@ class QuotationController extends Controller
                 $response['total_cost'] = $total_cost;
                 $response['total_retail'] = $total_retail;
                 $response['quotation_cost'] = $cost;
+                $response['price_after_discount'] = $this->getPriceAfterDiscount($opf['quotation_id']);
             }
               
             return json_encode($response);
