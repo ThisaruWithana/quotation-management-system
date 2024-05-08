@@ -45,7 +45,7 @@
                                                     <div class="form-group text-left">
                                                         <label for="customer" class="form-label">Client</label>
                                                         <span class="required"> * </span><br>
-                                                        <select id="customer" name="customer" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
+                                                        <select id="customer" name="customer" class="selectpicker show-tick col-lg-12" data-live-search="true" @if($data->status != 1) disabled @endif>
                                                             <option value="">Select Client</option>
                                                             @foreach ($customers as $value)
                                                             <option value="{{ $value->id }}" 
@@ -61,9 +61,9 @@
                                                         <span class="required"> * </span><br>
                                
                                                         <textarea class="form-control" name="description" id="description" rows="4"
-                                                            required>{{ $data->description }}</textarea><br>
+                                                            required @if($data->status != 1) disabled @endif>{{ $data->description }}</textarea><br>
                                                             
-                                                        <button class="btn btn-default add-description" type="button" style="float:right; margin-top:-20px;"><i class="fa fa-plus"> Add</i></button><br>
+                                                        <button class="btn btn-default add-description" type="button" style="float:right; margin-top:-20px;" @if($data->status != 1) disabled @endif><i class="fa fa-plus"> Add</i></button><br>
                                                     
                                                         <div style="display:none;" class="add-description-history">
                                                             <select id="description_dropdown" name="description_dropdown" class="selectpicker show-tick col-lg-12" data-live-search="true">
@@ -129,7 +129,7 @@
                                         <div class="col-lg-4">
                                             <div class="form-group text-left">
                                                 <label for="bundle" class="form-label">Bundle</label>
-                                                <select id="bundle" name="bundle" class="selectpicker show-tick col-lg-12" data-live-search="true">
+                                                <select id="bundle" name="bundle" class="selectpicker show-tick col-lg-12" data-live-search="true" @if($data->status != 1) disabled @endif>
                                                     <option value="">Select Bundle</option>
                                                     @foreach ($bundles as $value)
                                                     <option value="{{ $value->id }}">{{ number_format($value->bundle_cost, 2) }} - {{ $value->name }}</option>
@@ -149,13 +149,13 @@
                                             <div class="form-group text-left">
                                                 <label for="price" class="form-label">Quotation Price</label>
                                                 <span class="required"> * </span><br>
-                                                <input type="text" class="form-control" id="price" name="price" value="{{ $data['price'] }}" autocomplete="off">
+                                                <input type="text" class="form-control" id="price" name="price" value="{{ $data['price'] }}" autocomplete="off" @if($data->status != 1) readonly @endif>
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="form-group text-left">
                                                 <label for="discount" class="form-label">Discount</label>
-                                                <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['discount'] ?: 0 }}" autocomplete="off">
+                                                <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['discount'] ?: 0 }}" autocomplete="off" @if($data->status != 1) readonly @endif>
                                             </div>
                                         </div>  
                                         <div class="col-lg-3">
@@ -169,7 +169,7 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="col-lg-2" style="float:right;">
-                                                <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                                <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal" @if($data->status != 1) disabled @endif>
                                                     <i class="fa fa-search-plus"></i> 
                                                     Find Items
                                                 </button>
@@ -218,16 +218,19 @@
                                                                 <td class="item-list-display-report">
                                                                         <input type="checkbox" id="item" name="item" 
                                                                         onclick="updateDisplayStatus(this)" value="{{ $value['id'] }}" class="form-check-label" 
-                                                                        @if($value['display_report'] == 1) checked @endif>
+                                                                        @if($value['display_report'] == 1) checked @endif 
+                                                                            @if($data->status != 1) disabled @endif>
                                                                 </td>
                                                                 <td>
-                                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['quotation_id'] }})">
+                                                                    <a class="btn btn-sm btn-secondary @if($data->status != 1) disabled @endif" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['quotation_id'] }})"
+                                                                        >
                                                                         <i class="fas fa-trash-alt"></i>
                                                                     </a>
                                                                 </td>
                                                                 <td>
                                                                     @if($value['type'] != 'bundle')
-                                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})">
+                                                                    <a class="btn btn-sm btn-secondary @if($data->status != 1) disabled @endif" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})" 
+                                                                        >
                                                                         <i class="fas fa-edit"></i>
                                                                     </a>
                                                                     @endif
@@ -1309,25 +1312,25 @@
                 }).disableSelection();
             });
 
-        function fixHelper(e, ui) {
-            ui.children().each(function() {
-                $(this).width($(this).width());
-            });
-            return ui;
-        }
+            function fixHelper(e, ui) {
+                ui.children().each(function() {
+                    $(this).width($(this).width());
+                });
+                return ui;
+            }
 
-        function gettableRowOrder(){
+            function gettableRowOrder(){
 
-            var selectedData = new Array();
-            $('#sortable-table tbody tr').each(function() {
-                selectedData.push($(this).attr("id"));
-            });
-            
-            $('#row_order').removeAttr('value');
-            $('#row_order').val(selectedData);
+                var selectedData = new Array();
+                $('#sortable-table tbody tr').each(function() {
+                    selectedData.push($(this).attr("id"));
+                });
+                
+                $('#row_order').removeAttr('value');
+                $('#row_order').val(selectedData);
 
-        }
+            }
 
-        </script>
+        </script>
     @endsection
 </x-admin>

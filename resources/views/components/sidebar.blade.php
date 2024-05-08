@@ -43,7 +43,7 @@
             <li class="nav-item">
                 <a href="{{ route('admin.bundle.index') }}"
                     class="nav-link {{ Route::is('admin.bundle.index') ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-list"></i>
+                    <i class="nav-icon fas fa-boxes"></i>
                     <p>Bundle Management
                         <!-- <span class="badge badge-secondary right">{{ $SubCategoryCount }}</span> -->
                     </p>
@@ -62,6 +62,31 @@
                     <i class="nav-icon fas fa-print"></i>
                     <p>Reports</p>
                 </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('admin.role.index') }}"
+                    class="nav-link {{ Route::is('admin.config.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-dolly"></i>
+                    <!-- <i class="fas fa-warehouse-alt"></i> -->
+                    <p>Stock Management
+                    <i class="right fas fa-angle-down"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url('admin/po') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Purchse Order</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/po/deliveries') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Purchse Deliveries</p>
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             <li class="nav-item">

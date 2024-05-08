@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->integer('quotation_id');
             $table->double('cost')->nullable();
-            $table->double('discount')->default(0);
             $table->double('margin')->nullable();
             $table->string('symbol_group')->nullable();
             $table->datetime('installation_date')->nullable();

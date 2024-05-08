@@ -1,13 +1,13 @@
 <x-admin>
-   @section('title')  {{ 'Quotation Management' }} @endsection
+   @section('title')  {{ 'Purchase Deliveries' }} @endsection
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                <a href="{{ url('admin/quotation/create') }}" class="btn btn-sm btn-primary">Add New</a>
+                <a href="{{ url('admin/po/create') }}" class="btn btn-sm btn-primary">Add New</a>
             </div>
         </div>
         <div class="card-body table-responsive">
-        <form method="GET" action="{{ url('admin/quotation') }}" id="frm-list">
+        <form method="GET" action="{{ url('admin/po') }}" id="frm-list">
 
             <div class="row">
                 <div class="form-group" style="margin-left:10px;">
@@ -25,20 +25,20 @@
                         </select>
                 </div>
                     
-                <div class="form-group" style="margin-left:10px;">
-                    <select id="customer" name="customer" class="selectpicker show-tick" data-live-search="true">
-                        <option value="">Customer</option>        
-                        @foreach ($customers as $value)
-                            <option value="{{ $value->id }}" @if(Request()->customer == $value->id) selected @endif>{{ $value->name }}</option>
-                        @endforeach 
-                    </select>
-                </div>
+                    <div class="form-group" style="margin-left:10px;">
+                        <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true">
+                            <option value="">Suppliers</option>        
+                            @foreach ($suppliers as $value)
+                                <option value="{{ $value->id }}" @if(Request()->supplier == $value->id) selected @endif>{{ $value->name }}</option>
+                            @endforeach 
+                        </select>
+                    </div>
                     
-                <input type="hidden" name="form_action" value="search">
-
-                <div class="form-group text-right" style="margin-left:10px;">
-                    <button class="btn btn-primary" type="submit">Filter</button>
-                </div>
+                    <input type="hidden" name="form_action" value="search">
+                    
+                    <div class="form-group text-right" style="margin-left:10px;">
+                        <button class="btn btn-primary" type="submit">Filter</button>
+                    </div>
                 </div>
             </form>
             <br>
@@ -47,50 +47,36 @@
                     <thead>
                         <tr>
                             <th class="th-sm">#</th>
-                            <th class="th-sm">Quot.Ref</th>
-                            <th class="th-sm" style="width:200px;">Customer Name</th>
-                            <th class="th-sm">Description</th>
-                            <th class="th-sm" style="width:150px;">Quotation Price</th>
-                            <th class="th-sm">Discount</th>
+                            <th class="th-sm">Supplier</th>
+                            <th class="th-sm">Reference</th>
+                            <th class="th-sm">Total Cost</th>
+                            <th class="th-sm">Created At</th>
                             <th class="th-sm">Status</th>
-                            <th class="th-sm" style="width:80px;"></th>
+                            <th class="th-sm"></th>
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach ($listData as $value)
-                            <tr>
-                                <td>{{ $value->id }}</td>
-                                <td>{{ $value->ref }}</td>
-                                <td>{{ $value->customer->name }}</td>
-                                <td>{{ $value->description }}</td>
-                                <td>{{ number_format($value->price, 2) }}</td>
-                                <td>{{ $value->discount }}</td>
-                                <td>
-                                    @if($value->status == 1)
-                                    <span class="badge badge-success">Active</span>
-                                    @elseif($value->status == 2)
-                                    <span class="badge badge-success">Accepted</span>
-                                    @else 
-                                    <span class="badge badge-warning">Deactive</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <a href="{{ url('admin/quotation/edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                                        <i class="far fa-edit"></i>
-                                    </a>
-                                    
-                                    @if($value->status === 1)
-                                        <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
-                                    @else
-                                        <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                            <i class="fas fa-check-circle"></i>
-                                        </a>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
+                @foreach ($listData as $value)
+                        <tr>
+                            <td>{{ $value->id }}</td>
+                            <td>{{ $value->supplier['name'] }}</td>
+                            <td>{{ $value->reference }}</td>
+                            <td>{{ number_format($value->total_cost, 2) }}</td>
+                            <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
+                            <td>
+                                @if($value->status == 2)
+                                <span class="badge badge-success">Order Sent</span>
+                                @else 
+                                <span class="badge badge-warning">Partial Delivery</span>
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('admin.po.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
             </div>
@@ -106,10 +92,10 @@
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
-                    "scrollX": true,
+                    // "scrollX": false,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 7 ]},
+                        { "bSortable": false, "aTargets": [ 8 ]},
                     ],
                     "order": [0,'desc'],
                 });
@@ -126,7 +112,7 @@
                 }).then((e)=>{
                 if ( e == ("confirm")){
                         $.ajax({
-                            url: "{{ url('admin/quotation/change-status') }}",
+                            url: "{{ url('admin/po/change-status') }}",
                             type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",

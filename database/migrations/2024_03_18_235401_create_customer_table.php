@@ -28,7 +28,10 @@ return new class extends Migration
             $table->integer('updated_by');
             $table->timestamps();
             
-            $table->index(['name', 'code', 'postal_code', 'email']);
+            $table->index(['name']);
+            $table->index(['code']);
+            $table->index(['postal_code']);
+            $table->index(['email']);
         });
     }
 

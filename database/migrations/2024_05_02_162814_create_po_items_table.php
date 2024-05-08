@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('po', function (Blueprint $table) {
+        Schema::create('po_items', function (Blueprint $table) {
             $table->id();
-            $table->integer('supplier_id');
-            $table->text('reference')->nullable();
+            $table->integer('po_id');
+            $table->integer('item_id');
+            $table->double('item_cost')->nullable();
+            $table->integer('qty');
             $table->double('total_cost')->nullable();
-            $table->tinyInteger('status')->default(1)->comment('1-active,0-deactive, 2-sent order');
+            $table->tinyInteger('status')->default(1)->comment('1-active,0-deactive');
             $table->integer('created_by');
             $table->integer('updated_by');
             $table->timestamps();
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('po');
+        Schema::dropIfExists('po_items');
     }
 };

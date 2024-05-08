@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Kyslik\ColumnSortable\Sortable;
 
-class OpfItems extends Model
+class PoItems extends Model
 {
     use Sortable;
-    protected $table = 'opf_items';
+    protected $table = 'po_items';
 
     protected $fillable = [
-        'id','opf_id', 'item_id', 'item_cost','retail','qty', 'total_cost', 'total_retail', 'status', 'created_at', 
-        'updated_at', 'created_by', 'updated_by', 'actual_cost', 'actual_retail', 'type', 'order', 'on_order', 'order_qty'
+        'id','po_id', 'item_id', 'item_cost','qty', 'total_cost', 'status', 'created_at', 
+        'updated_at', 'created_by', 'updated_by'
     ];
 
     public $sortable = [ 'id'];
@@ -23,9 +23,9 @@ class OpfItems extends Model
         return $this->belongsTo('App\Models\User', 'created_by','id');
     }
 
-    public function opf()
+    public function po()
     {
-        return $this->belongsTo('App\Models\Opf', 'opf_id','id');
+        return $this->belongsTo('App\Models\Po', 'opf_id','id');
     }
 
     public function item()
