@@ -69,6 +69,9 @@ class StockController extends Controller
                  ],[
                      'supplier_id' => $request->input('supplier'),
                      'reference' => $request->input('remark'),
+                     'type' => $request->input('type'),
+                     'order_date' => $request->input('order_date'),
+                     'expected_date' => $request->input('expected_date'),
                      'created_by' => Auth::user()->id,
                      'updated_by' => Auth::user()->id
                  ]
@@ -140,7 +143,7 @@ class StockController extends Controller
 
     public function getPoItems($poId)
     {
-        $itemList = PoItems::with('item', 'item.suppliers.suppliername')
+        $itemList = PoItems::with('item', 'item.suppliers.suppliername', 'item.department', 'item.subdepartment')
         ->where('po_id', $poId)->where('status', 1)->get();
 
         $itemsArr = array();
@@ -168,7 +171,9 @@ class StockController extends Controller
                     'qty' => $value['qty'],
                     'total_cost' => $value['total_cost'],
                     'total_retail' => $value['total_retail'],
-                    'supplier' => implode(" ",$supplierList)
+                    'supplier' => implode(" ",$supplierList),
+                    'department' => $value['item']['department']['name'],
+                    'sub_department' => $value['item']['subdepartment']['name']
                     ]);
 
             array_push($itemsArr, $data2);
@@ -397,12 +402,15 @@ class StockController extends Controller
                     ]);
 
                     $updatePriceInfo = $this->updatePriceInfo($request);
+                    $getItemList = $this->getPoItems($po_id);
                     
                     if($updatePriceInfo){
                         DB::commit(); 
 
                         $response['code'] = 1;
                         $response['msg'] = "Success";
+                        $response['data'] = $getItemList;
+                        $response['total_cost'] = $total_cost;
                     }else{
                         DB::rollback();
                         $response['code'] = 0;

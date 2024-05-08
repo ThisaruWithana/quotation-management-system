@@ -10,7 +10,7 @@ class Po extends Model
     protected $table = 'po';
 
     protected $fillable = [
-        'id','supplier_id','cost', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'discount'
+        'id','supplier_id','cost', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'order_date', 'expected_date'
     ];
 
     public function created_user()

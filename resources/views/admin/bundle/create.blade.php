@@ -1,12 +1,6 @@
 <x-admin>
    @section('title')  {{ 'Bundle Management' }} @endsection
 
-   <style>
-        tr td:nth-child(2),
-        tr td:nth-child(3) {
-        background: #ccc;
-        }
-    </style>
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
