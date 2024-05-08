@@ -29,7 +29,8 @@ return new class extends Migration
             $table->integer('updated_by');
             $table->timestamps();
 
-            $table->index(['ref', 'description']);
+            $table->index(['ref']);
+            $table->index(['description']);
         });
     }
 
