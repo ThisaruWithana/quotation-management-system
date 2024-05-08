@@ -16,7 +16,7 @@ class OpfItems extends Model
         'updated_at', 'created_by', 'updated_by', 'actual_cost', 'actual_retail', 'type', 'order'
     ];
 
-    public $sortable = [ 'id', 'description'];
+    public $sortable = [ 'id'];
 
     public function created_user()
     {

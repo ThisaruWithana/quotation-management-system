@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('po', function (Blueprint $table) {
             $table->id();
+            $table->integer('supplier_id');
+            $table->text('reference')->nullable();
+            $table->double('total_cost')->nullable();
+            $table->tinyInteger('status')->default(1)->comment('1-active,0-deactive, 2-sent order');
+            $table->integer('created_by');
+            $table->integer('updated_by');
             $table->timestamps();
         });
     }
