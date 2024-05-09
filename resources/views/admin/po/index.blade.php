@@ -71,7 +71,10 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.po.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                <a href="#" class="btn btn-sm btn-secondary" title="Send Order"  onclick="sendOrder({{ $value->id }})">
+                                    <i class="fa fa-paper-plane"></i>
+                                </a>
+                                <a href="{{ route('admin.po.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
                                     <i class="far fa-edit"></i>
                                 </a>
                                 @if($value->status === 1)
@@ -172,7 +175,70 @@
                 }
             });
         }
-
+            
+        function sendOrder(id) {
+    
+            cuteAlert({
+                type: "question",
+                title: "Are you sure",
+                message: "You want to send this order to deliveries ?",
+                confirmText: "Yes",
+                cancelText: "Cancel"
+                }).then((e)=>{
+                    if ( e == ("confirm")){
+                            $.ajax({
+                                url: "{{ url('admin/po/send-order') }}",
+                                type: 'POST',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    "po_id": id
+                                },
+                                success: function (data) {
+                                    var result = JSON.parse(data);
+                                    
+                                    if (result['code'] == 1) {
+                                        toastr.success(
+                                            'Success',
+                                            'Successfully Updated !',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
+                                            });
+                                    } else {
+                                        toastr.error(
+                                            'Error',
+                                            'Something Went Wrong!',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
+                                            }
+                                        );
+                                    }
+                                }, error: function (data) {
+                                        toastr.error(
+                                            'Error',
+                                            'Something Went Wrong!',
+                                            {
+                                                timeOut: 1500,
+                                                fadeOut: 1500,
+                                                onHidden: function () {
+                                                    window.location.reload();
+                                                }
+                                            }
+                                        );
+                                }
+                            });
+                    } else {
+                }
+            });
+        }
+        
         function selectPageSize(pageSize) {
             document.getElementById('frm-list').submit();
         }

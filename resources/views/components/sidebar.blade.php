@@ -56,13 +56,6 @@
                     <p>Quotation Management</p>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="{{ route('admin.collection.index') }}"
-                    class="nav-link {{ Route::is('admin.collection.index') ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-print"></i>
-                    <p>Reports</p>
-                </a>
-            </li>
 
             <li class="nav-item">
                 <a href="{{ route('admin.role.index') }}"
@@ -114,6 +107,28 @@
                         <a href="{{ route('admin.permission.index') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
                             <p>Permissions</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            
+            <li class="nav-item">
+                <a href="{{ route('admin.collection.index') }}"
+                    class="nav-link {{ Route::is('admin.collection.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-print"></i>
+                    <p>Reports<i class="right fas fa-angle-down"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ url('admin/po') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Print Labels</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/po/deliveries') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Item Order History</p>
                         </a>
                     </li>
                 </ul>
