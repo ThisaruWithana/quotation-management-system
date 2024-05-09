@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('po', function (Blueprint $table) {
-            $table->enum('type', ['Manual', 'Automatic']);
+            $table->enum('type', ['Manual', 'Automatic', 'type']);
             $table->datetime('order_date')->nullable();
             $table->datetime('expected_date')->nullable();
         });

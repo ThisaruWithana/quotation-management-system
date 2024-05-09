@@ -12,6 +12,8 @@ use App\Models\Department;
 use App\Models\SubDepartment;
 use App\Models\Bundle;
 use App\Models\SubItem;
+use App\Imports\PoImport;
+use Maatwebsite\Excel\Facades\Excel;
 use DB;
 
 class StockController extends Controller
@@ -59,6 +61,7 @@ class StockController extends Controller
     public function store(Request $request)
     {
         $response = array();
+        $type = $request->input('type');
 
          try{
              DB::beginTransaction();
@@ -69,20 +72,65 @@ class StockController extends Controller
                  ],[
                      'supplier_id' => $request->input('supplier'),
                      'reference' => $request->input('remark'),
-                     'type' => $request->input('type'),
+                     'type' => $type,
                      'order_date' => $request->input('order_date'),
                      'expected_date' => $request->input('expected_date'),
                      'created_by' => Auth::user()->id,
                      'updated_by' => Auth::user()->id
                  ]
              );
- 
-             DB::commit(); 
+
+            $po_id = $store->id;
  
              if($store){
-                 $response['code'] = 1;
-                 $response['msg'] = "Success";
-                 $response['data'] = $store->id;
+                    $request->request->add([
+                            'po_id' => $po_id
+                        ]);
+
+                    if($type === 'Automatic'){
+                        $query = $this->createAutoOrder($request);
+
+                        if($query){
+                            DB::commit(); 
+                            $response['code'] = 1;
+                            $response['msg'] = "Success";
+                            $response['data'] = $po_id;
+                        }else{
+                            DB::rollback();
+                            $response['code'] = 0;
+                            $response['msg'] = 'Something went wrong !';
+                            $response['data'] = '';
+                        }
+
+                    }else if($type === 'Import'){
+                        $query = $this->importPo($request);
+
+                        if($query){
+                            DB::commit(); 
+                            $response['code'] = 1;
+                            $response['msg'] = "Success";
+                        }else{
+                            DB::rollback();
+                            $response['code'] = 0;
+                            $response['msg'] = 'Something went wrong !';
+                        }
+                    }else{
+                        DB::commit(); 
+                        $response['code'] = 1;
+                        $response['msg'] = "Success";
+                    }
+                    
+                    $total_cost = $this->getPoTotalCost($po_id);
+                    $request->request->add([
+                        'total_cost' => $total_cost
+                    ]);
+    
+                    $updatePriceInfo = $this->updatePriceInfo($request);
+                    $getItemList = $this->getPoItems($po_id);
+                    
+                    $response['data'] = $getItemList;
+                    $response['po_id'] = $po_id;
+                    $response['total_cost'] = $total_cost;
              }else{
                  DB::rollback();
                  $response['code'] = 0;
@@ -491,4 +539,40 @@ class StockController extends Controller
 
         return view('admin.po.delivery',compact('listData', 'pageSize', 'suppliers'));
     }
+
+    public function createAutoOrder(Request $request)
+    {
+        $response = array();
+
+         try{
+             DB::beginTransaction();
+
+ 
+             DB::commit(); 
+ 
+             if($store){
+                 $response['code'] = 1;
+                 $response['msg'] = "Success";
+                 $response['data'] = $po_id;
+             }else{
+                 DB::rollback();
+                 $response['code'] = 0;
+                 $response['msg'] = 'Something went wrong !';
+                 $response['data'] = '';
+             }
+               
+             return json_encode($response);
+         }catch(\Exception $e){
+             DB::rollback();
+             $response['code'] = 0;
+             $response['msg'] =  $e->getMessage();
+             return json_encode($response);
+        } 
+    }
+
+    public function importPo(Request $request)
+    {
+       return Excel::import(new PoImport,request()->file('file'));
+    }
+    
 }

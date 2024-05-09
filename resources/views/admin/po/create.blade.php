@@ -24,6 +24,7 @@
                                                         <option value=""></option>
                                                         <option value="Manual">Manual</option>
                                                         <option value="Automatic">Automatic</option>
+                                                        <option value="Import">Import</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -41,7 +42,7 @@
                                             </div>
                                         </div>
                                        
-                                        <div id="manual_form_fields" style="display:none;"> 
+                                        <div id="manual_form" style="display:none;"> 
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div class="form-group text-left">
@@ -64,6 +65,17 @@
                                                     <input type="date" class="form-control datepicker" id="expected_date" name="expected_date" value="">
                                                 </div>
                                             </div>
+                                            </div>
+                                        </div>
+                                       
+                                        <div id="import_form" style="display:none;"> 
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="form-group text-left">
+                                                        <label for="file" class="form-label">Upload File</label>
+                                                        <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         
@@ -125,15 +137,6 @@
 
                             </div>
                             <br>
-<!--                                     
-                                <div class="row">
-                                    <div class="col-lg-1">
-                                        <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <button class="btn btn-primary btn-block" type="button" id="btnSaveChanges">Save Changes</button>
-                                    </div>
-                                </div> -->
                         </div>
                         </form>
                 </div> 
@@ -370,10 +373,39 @@
                                     $("#order_date").prop('disabled', true);
                                     $("#expected_date").prop('disabled', true);
                                     
-                                    $("#po_id").val(result['data']);
-                                    $("#poId").val(result['data']);
+                                    $("#po_id").val(result['po_id']);
+                                    $("#poId").val(result['po_id']);
                                     $("#btnUpdate").show();
-                                    
+
+                                    if (result['data'].length > 0) {
+
+                                        $('.item-list tbody').empty();
+
+                                        $.each(result['data'], function (count, val) {
+
+                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+
+                                            $('.item-list tbody').append(
+                                                '<tr>'
+                                                +'<td>'+ val['item_id'] +'</td>'
+                                                +'<td>'+ val['name'] +'</td>'
+                                                +'<td>'+ val['supplier'] +'</td>'
+                                                +'<td>'+ val['department'] +'</td>'
+                                                +'<td>'+ val['sub_department'] +'</td>'
+                                                +'<td>'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-qty">'+ val['qty'] +'</td>'
+                                                +'<td>'+ val['total_cost'] +'</td>'
+                                                +'<td>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'</td>'
+                                                +'<td>'
+                                                +editBtn
+                                                +'</td>'
+                                                +'</tr>'
+                                            );
+                                        $('.item-list-qty').addClass('editable');             
+                                        });
+                                    } 
                                 } else {
                                     toastr.error(
                                         'Error',
@@ -395,9 +427,16 @@
                 $('#type').on('change', function() {
 
                     if(this.value === 'Manual'){
-                        $('#manual_form_fields').show();
+                        $('#manual_form').show();
+                        $('#import_form').hide();
+
+                    }else if(this.value === 'Import'){
+                        $('#manual_form').hide();
+                        $('#import_form').show();
+                        
                     }else{
-                        $('#manual_form_fields').hide();
+                        $('#manual_form').hide();
+                        $('#import_form').hide();
                     }
                 });
                 

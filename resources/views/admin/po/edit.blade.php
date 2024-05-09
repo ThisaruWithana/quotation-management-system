@@ -1,42 +1,88 @@
 <x-admin>
-@section('title')  {{ 'Purchase Order' }} @endsection
+   @section('title')  {{ 'Order Processing Form' }} @endsection
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-lg-12">
                 <div class="card card-primary">
                 <h5 class="card-header  white-text text-left py-3">
                     {{ $title }}
                 </h5>
                     <!-- /.card-header -->
-                    <!-- form start -->
-                    <form action="{{ route('admin.bundle.store') }}" method="PUT"
-                    class="text-center border border-light pt-4 pb-4 pl-3 pr-3" id="bundleCreate">
-                        @csrf
+                            <!-- form start -->
+                    <form action="{{ route('admin.po.store') }}" method="PUT" class="text-center border border-light p-5" id="poCreate">
+                         @csrf
                         <div class="card-body px-lg-2 pt-0">
-
                                 <div class="row">
-                                    <div class="col-lg-8 p-0">
-                                        <div class="col-lg-12">
-                                            <div class="form-group text-left">
-                                                <label for="supplier" class="form-label">Supplier</label>
-                                                <span class="required"> * </span>
-                                                <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
-                                                    <option value="">Select Supplier</option>
-                                                    @foreach ($suppliers as $value)
-                                                    <option value="{{ $value->id }}"
-                                                        {{ $data->supplier_id === $value->id ? 'selected' : '' }}>{{ $value->name }}</option>
-                                                    @endforeach
-                                                </select>
+                                    <div class="col-lg-8">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group text-left">
+                                                    <label for="type" class="form-label">PO Type</label>
+                                                    <span class="required"> * </span>
+                                                    <select id="type" name="type" class="selectpicker col-lg-12" disabled>
+                                                        <option value=""></option>
+                                                        <option value="Manual" {{ $data->type === 'Manual' ? 'selected' : '' }}>Manual</option>
+                                                        <option value="Automatic" {{ $data->type === 'Automatic' ? 'selected' : '' }}>Automatic</option>
+                                                        <option value="Import" {{ $data->type === 'Import' ? 'selected' : '' }}>Import</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group text-left">
+                                                    <label for="supplier" class="form-label">Supplier</label>
+                                                    <span class="required"> * </span>
+                                                    <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
+                                                        <option value="">Select Client</option>
+                                                        @foreach ($suppliers as $value)
+                                                        <option value="{{ $value->id }}" 
+                                                            {{ $data->supplier_id === $value->id ? 'selected' : '' }}>{{ $value->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-12">
-                                            <div class="form-group text-left">
-                                                <label for="remark" class="form-label">Remark</label>
-                                                <textarea class="form-control" name="remark" id="remark">{{ $data->remark }}</textarea>
-
+                                       
+                                        @if($data->type === 'Manual')
+                                            <div id="manual_form"> 
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group text-left">
+                                                            <label for="remark" class="form-label">Remark</label>
+                                                            <textarea class="form-control" name="remark" id="remark">{{ $data->remark }}</textarea>
+                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row"> 
+                                                <div class="col-lg-6">
+                                                    <div class="form-group text-left">
+                                                        <label for="order_date" class="form-label">Order Date</label>
+                                                        <input type="date" class="form-control datepicker" id="order_date" name="order_date" value=""> 
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <div class="form-group text-left">
+                                                        <label for="expected_date" class="form-label">Expected Date</label>
+                                                        <input type="date" class="form-control datepicker" id="expected_date" name="expected_date" value="">
+                                                    </div>
+                                                </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        @endif
+                                       
+                                        @if($data->type === 'Import')
+                                            <div id="import_form" style="display:none;"> 
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group text-left">
+                                                            <label for="file" class="form-label">Upload File</label>
+                                                            <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="col-lg-4 pricing-details">
                                         <div class="text-left" style="margin-left:100px;margin-top: 25px;">
@@ -49,80 +95,76 @@
                                             </table>
                                         </div>
                                     </div>
-                                </div>
-
+                                </div><br>
+                                
                                 <input type="hidden" class="form-control" name="po_id" id="po_id" value="{{ $data->id }}">
                         </div>
-                        <!-- /.card-body -->
 
-                    <div class="row add-items" style="display:block;">
-                        <div class="col-lg-12">
-                            <div class="col-lg-2" style="float:right;">
-                                <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
-                                    <i class="fa fa-search-plus"></i>
-                                    Find Items
-                                </button>
-                            </div><br>
+                            <div class="row add-items" style="display:block;">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-2" style="float:right;">
+                                        <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                            <i class="fa fa-search-plus"></i>
+                                            Find Items
+                                        </button>
+                                    </div><br><br>
 
-                            <div class="table-responsive">
-                                <table class="table bundle-item-list table-bordered" id="sortable-table" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th class="th-sm">Code</th>
-                                            <th class="th-sm">Name</th>
-                                            <th class="th-sm">Supplier</th>
-                                            <th class="th-sm item-list-cost">Item Cost</th>
-                                            <th class="th-sm item-list-qty">Qty</th>
-                                            <th class="th-sm item-list-total-cost">Total Cost</th>
-                                            <th class="th-sm"></th>
-                                            <th class="th-sm"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                            <?php $i = 1; ?>
-                                                @foreach ($itemList as $value)
-                                                    <tr id="{{ $value['id'] }}">
-                                                        <td>{{ $value['item_id'] }}</td>
-                                                        <td>{{ $value['name'] }}</td>
-                                                        <td>{{ $value['supplier'] }}</td>
-                                                        <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
-                                                        <td class="item-list-qty">{{ $value['qty'] }}</td>
-                                                        <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
-                                                        <td>
-                                                            <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['po_id'] }})">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['qty'] }}, {{ $value['item_cost'] }})">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                <?php $i++; ?>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                    <div class="table-responsive">
+                                        <table class="table item-list table-bordered" id="sortable-table" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="th-sm">Code</th>
+                                                    <th class="th-sm">Name</th>
+                                                    <th class="th-sm">Supplier</th>
+                                                    <th class="th-sm">Department</th>
+                                                    <th class="th-sm">Sub Department</th>
+                                                    <th class="th-sm">Item Cost</th>
+                                                    <th class="th-sm item-list-qty">Qty</th>
+                                                    <th class="th-sm">Total Cost</th>
+                                                    <th class="th-sm"></th>
+                                                    <th class="th-sm"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <?php $i = 1; ?>
+                                                        @foreach ($itemList as $value)
+                                                            <tr id="{{ $value['id'] }}">
+                                                                <td>{{ $value['item_id'] }}</td>
+                                                                <td>{{ $value['name'] }}</td>
+                                                                <td>{{ $value['supplier'] }}</td>
+                                                                <td>{{ $value['department'] }}</td>
+                                                                <td>{{ $value['sub_department'] }}</td>
+                                                                <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
+                                                                <td class="item-list-qty">{{ $value['qty'] }}</td>
+                                                                <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
+                                                                <td>
+                                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['po_id'] }})">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </a>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }})">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        <?php $i++; ?>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                    </div>
+
+                                </div>
                             </div>
+                            <br>
+                        </div>
+                        </form>
+                </div> 
 
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-lg-1">
-                            <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
-                        </div>
-                        <div class="col-lg-2">
-                            <button class="btn btn-primary btn-block" type="button" id="sendBtn">Send Order</button>
-                        </div>
-                        <div class="col-lg-2">
-                            <button class="btn btn-primary btn-block" type="submit" id="btnSave">Save Changes</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <!-- /.card -->
+        
         <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
@@ -143,8 +185,8 @@
                                 <input type="text" class="form-control" name="keyword" id="keyword"
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
-                            <input type="hidden" value="bundle_search" id="search_type" name="search_type">
-                            <input type="hidden" value="{{ $data->id }}" id="po" name="po">
+                            <input type="hidden" value="po" id="search_type" name="search_type">
+                            <input type="hidden" value="" id="bundle" name="bundle">
 
                             <div class="form-group mr-1">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
@@ -202,14 +244,14 @@
                 </div>
                 </div>
             </div>
-        </div>
-
+        </div>    
+        
         <!-- Edit Detail -->
         <div class="modal fade" id="editDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Bundle Item</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Quotation Item</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -219,12 +261,16 @@
                 <div class="modal-body">
                         @csrf
                     <input type="hidden" name="item_id" value="" id="item_id">
-                    <input type="hidden" name="actual_cost" value="" id="actual_cost">
-                    <!-- <input type="text" name="poId" value="" id="poId"> -->
-
+                    <input type="hidden" name="poId" value="" id="poId">
+          
+                    <div class="form-group" id="actual_cost_edit">
+                        <label for="actual_cost" class="col-form-label">Actual Cost</label>
+                        <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
+                            required="" value="" autocomplete="off">
+                    </div>
                     <div class="form-group">
                         <label for="qty" class="col-form-label">Qty</label>
-                        <input type="text" class="form-control" id="qty" name="qty"
+                        <input type="text" class="form-control" id="qty" name="qty"  
                             required="" value="" autocomplete="off">
                     </div>
                 </div>
@@ -237,7 +283,6 @@
                 </div>
             </div>
         </div>
-        
         <!-- Sub Items Model -->
         <div class="modal fade bd-example-modal-lg" id="subItemList" tabindex="-1" role="dialog" aria-labelledby="subItemList" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -281,11 +326,13 @@
                 </div>
             </div>
         </div>
-    </section>
 
+    </section>
+    
     @section('js')
         <script>
             $(function() {
+
                 $('#sortable-table').DataTable({
                     "bPaginate": false,
                     "searching": false,
@@ -294,6 +341,10 @@
                     "scrollX": true,
                     "autoWidth":true,
                     "fixedHeader": true,
+                    "paging": false,
+                    "scrollCollapse": true,
+                    "scrollY": '50vh',
+                    "bInfo" : false,
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 8,9 ]},
                     ]
@@ -317,13 +368,34 @@
 
                 $('.item-list-qty').addClass('editable');
                 
-                $("#bundleCreate").submit(function(event) {
+                $('#type').on('change', function() {
+
+                    if(this.value === 'Manual'){
+                        $('#manual_form').show();
+                        $('#import_form').hide();
+
+                    }else if(this.value === 'Import'){
+                        $('#manual_form').hide();
+                        $('#import_form').show();
+                        
+                    }else{
+                        $('#manual_form').hide();
+                        $('#import_form').hide();
+                    }
+                });
+                
+                $('#itemSearchBtn').click(function(){
+                    $('.table-item-search tbody').empty();
+                });
+
+                $('#formEditBundleItem').submit(function(event){
                     event.preventDefault();
 
                     var formData = new FormData(this);
-
+                    formData.append('po_id', $('#po_id').val());
+                
                     $.ajax({
-                        url: "{{ route('admin.po.store') }}",
+                        url: "{{ url('admin/po/item-update') }}",
                         type: 'POST',
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                             data: formData,
@@ -333,9 +405,37 @@
                             processData: false,
                             success: function (data) {
                                 var result = data;
+                                $('.item-list tbody').empty();
 
                                 if (result['code'] == 1) {
-                                    window.location = '{{ url("admin/po") }}';
+
+                                    if (result['data'].length > 0) {
+
+                                        $.each(result['data'], function (count, val) {
+
+                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+                                        
+                                            $('.item-list tbody').append(
+                                                '<tr>'
+                                                +'<td>'+ val['item_id'] +'</td>'
+                                                +'<td>'+ val['name'] +'</td>'
+                                                +'<td>'+ val['supplier'] +'</td>'
+                                                +'<td>'+ val['department'] +'</td>'
+                                                +'<td>'+ val['sub_department'] +'</td>'
+                                                +'<td>'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-qty">'+ val['qty'] +'</td>'
+                                                +'<td>'+ val['total_cost'] +'</td>'
+                                                +'<td>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'</td>'
+                                                +'<td>'
+                                                +editBtn
+                                                +'</td>'
+                                                +'</tr>'
+                                            );
+                                        $('.item-list-qty').addClass('editable');             
+                                        });
+                                    } 
                                 } else {
                                     toastr.error(
                                         'Error',
@@ -344,54 +444,19 @@
                                             timeOut: 1500,
                                             fadeOut: 1500,
                                             onHidden: function () {
-                                                window.location.reload();
+                                                // window.location.reload();
                                             }
                                         }
                                     );
                                 }
+                                calculatePrices(result['total_cost']);
+                                $("#editDetails").modal('hide');
                             }, error: function (data) {
-
+                                        
                         }
                     });
                 });
-            });
 
-            $('#itemSearchBtn').click(function(){
-                $('.table-item-search tbody').empty();
-            });
-
-            $('#sendBtn').click(function(){
-                
-                $.ajax({
-                    url: "{{ url('admin/po/send-order') }}",
-                    type: 'POST',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "po_id":$('#po_id').val(),
-                        },
-                        success: function (data) {
-                            var result = JSON.parse(data);
-              
-                            if (result['code'] == 1) {
-                                window.location = '{{ url("admin/po") }}';
-
-                            } else {
-                                toastr.error(
-                                    'Error',
-                                    'Something Went Wrong!',
-                                    {
-                                        timeOut: 1500,
-                                        fadeOut: 1500,
-                                        onHidden: function () {
-                                            window.location.reload();
-                                        }
-                                    }
-                                );
-                            }
-                        }, error: function (data) {
-
-                    }
-                });
             });
 
             function searchItem(form){
@@ -407,12 +472,6 @@
                         $('.table-item-search tbody').empty();
 
                             if (result.length > 0) {
-                                    
-                                var costColHidden;
-
-                                if($('#in_office').val() != 'yes'){
-                                    costColHidden = 'style="display:none;"';
-                                }
 
                                 $.each(result, function (count, val) {
                                     var type = 'main';
@@ -423,7 +482,7 @@
                                         +'<td>' + val['name'] + '</td>'
                                         +'<td>' + val['department']+ '</td>'
                                         +'<td>' + val['supplier'] + '</td>'
-                                        +'<td class="item-search-cost" '+ costColHidden +'>' + val['cost_price'] + '</td>'
+                                        +'<td class="item-search-cost">' + val['cost_price'] + '</td>'
                                         +'<td>' + val['retail_price'] + '</td>'
                                         +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this, \'' + type + '\')" value="' + val['id'] + '" class="form-check-label"></td>'
                                         +'</tr>'
@@ -437,7 +496,7 @@
             }
 
             function selectItem(isChecked, Itemtype){
-            var ischecked = isChecked.checked;
+              var ischecked = isChecked.checked;
 
                 $.ajax({
                         url: "{{ url('admin/po/add-items') }}",
@@ -452,40 +511,44 @@
                             success: function (data) {
                                 var result = JSON.parse(data);
 
-                                $('.bundle-item-list tbody').empty();
-                                  
+                                $('.item-list tbody').empty();
+
                                 if (result['data'].length > 0) {
-                                   
+
                                     $.each(result['data'], function (count, val) {
 
-                                        $('.bundle-item-list tbody').append(
-                                            '<tr ' + val['id'] + '">'
-                                            +'<td>' + val['item_id'] + '</td>'
-                                            +'<td>' + val['name'] + '</td>'
-                                            +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-item-cost" >' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            +'<td class="item-list-total-cost">' + val['total_cost'] + '</td>'
+                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+                                        
+                                        $('.item-list tbody').append(
+                                            '<tr>'
+                                            +'<td>'+ val['item_id'] +'</td>'
+                                            +'<td>'+ val['name'] +'</td>'
+                                            +'<td>'+ val['supplier'] +'</td>'
+                                            +'<td>'+ val['department'] +'</td>'
+                                            +'<td>'+ val['sub_department'] +'</td>'
+                                            +'<td>'+ val['item_cost'] +'</td>'
+                                            +'<td class="item-list-qty">'+ val['qty'] +'</td>'
+                                            +'<td>'+ val['total_cost'] +'</td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
                                             +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['qty'] +', ' + val['item_cost'] + ')"><i class="fas fa-edit"></i></a>'
+                                            +editBtn
                                             +'</td>'
                                             +'</tr>'
                                         );
-
+                                        
                                         $('.item-list-qty').addClass('editable');
                                     });
-                                }
+                                } 
 
                                 calculatePrices(result['total_cost']);
-                                        
+
                                 if(Itemtype == 'main'){
                                     displaySubItemList(isChecked.value);
                                 }
                             }, error: function (data) {
-
+                                        
                         }
                 });
             }
@@ -506,85 +569,49 @@
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
-                                $('.bundle-item-list tbody').empty();
+                                $('.item-list tbody').empty();
 
                                 if (result['data'].length > 0) {
                                     
                                     $.each(result['data'], function (count, val) {
-                                        $('.bundle-item-list tbody').append(
-                                            '<tr ' + val['id'] + '">'
-                                            +'<td>' + val['item_id'] + '</td>'
-                                            +'<td>' + val['name'] + '</td>'
-                                            +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-item-cost" >' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            +'<td class="item-list-total-cost">' + val['total_cost'] + '</td>'
+
+                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+                                        
+                                        $('.item-list tbody').append(
+                                            '<tr>'
+                                            +'<td>'+ val['item_id'] +'</td>'
+                                            +'<td>'+ val['name'] +'</td>'
+                                            +'<td>'+ val['supplier'] +'</td>'
+                                            +'<td>'+ val['department'] +'</td>'
+                                            +'<td>'+ val['sub_department'] +'</td>'
+                                            +'<td>'+ val['item_cost'] +'</td>'
+                                            +'<td class="item-list-qty">'+ val['qty'] +'</td>'
+                                            +'<td>'+ val['total_cost'] +'</td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
                                             +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['qty'] +', ' + val['item_cost'] + ')"><i class="fas fa-edit"></i></a>'
+                                            +editBtn
                                             +'</td>'
                                             +'</tr>'
                                         );
 
                                         $('.item-list-qty').addClass('editable');
                                     });
-                                }
+                                } 
                                 calculatePrices(result['total_cost']);
                             }, error: function (data) {
-
+                                        
                         }
                 });
             }
 
-            function editDetails(id, qty, actualCost){
+            function editDetails(id, actual_cost, qty){
+                $("#actual_cost").val(actual_cost);
                 $("#qty").val(qty);
                 $("#item_id").val(id);
-                $("#actual_cost").val(actualCost);
                 $("#editDetails").modal('show');
-                
             }
-
-            $('#formEditBundleItem').submit(function(event){
-                event.preventDefault();
-
-                var formData = new FormData(this);
-                formData.append('po_id', $('#po_id').val());
-
-                $.ajax({
-                    url: "{{ url('admin/po/item-update') }}",
-                    type: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        data: formData,
-                        dataType:'JSON',
-                        contentType: false,
-                        cache: false,
-                        processData: false,
-                        success: function (data) {
-                            var result = data;
-
-                            if (result['code'] == 1) {
-                                window.location.reload();
-
-                            } else {
-                                toastr.error(
-                                    'Error',
-                                    'Something Went Wrong!',
-                                    {
-                                        timeOut: 1500,
-                                        fadeOut: 1500,
-                                        onHidden: function () {
-                                            window.location.reload();
-                                        }
-                                    }
-                                );
-                            }
-                        }, error: function (data) {
-
-                    }
-                });
-            });
 
             function displaySubItemList(ItemId){
                 
@@ -602,12 +629,7 @@
 
                         if (result.length > 0) {
                             $("#subItemList").modal('show');
-                            var costColHidden;
-                    
-                            if($('#in_office').val() != 'yes'){
-                                costColHidden = 'style="display:none;"';
-                            }
-                    
+                           
                             $.each(result, function (count, val) {
                                 var isMandatory = val['is_mandatory'];
                                 var selected;
@@ -625,7 +647,7 @@
                                     +'<td>' + val['name'] + '</td>'
                                     +'<td>' + val['department']+ '</td>'
                                     +'<td>' + val['supplier'] + '</td>'
-                                    +'<td class="item-search-cost" '+ costColHidden +'>' + val['cost_price'] + '</td>'
+                                    +'<td class="item-search-cost">' + val['cost_price'] + '</td>'
                                     +'<td>' + val['retail_price'] + '</td>'
                                     +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this, \'' + type + '\')" value="' + val['id'] + '" class="form-check-label" '+ selected +'></td>'
                                     +'</tr>'
@@ -639,6 +661,8 @@
                     }
                 });
             }
+
         </script>
+ 
     @endsection
 </x-admin>
