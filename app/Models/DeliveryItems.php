@@ -4,15 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
-use Kyslik\ColumnSortable\Sortable;
 
-class PoItems extends Model
+class DeliveryItems extends Model
 {
-    use Sortable;
-    protected $table = 'po_items';
+    protected $table = 'delivery_items';
 
     protected $fillable = [
-        'id','po_id', 'item_id', 'item_cost','qty', 'total_cost', 'status', 'created_at', 
+        'id','delivery_id', 'item_id', 'item_cost','qty', 'total_cost', 'item_retail', 'total_retail', 'status', 'created_at', 
         'updated_at', 'created_by', 'updated_by'
     ];
 
@@ -23,9 +21,9 @@ class PoItems extends Model
         return $this->belongsTo('App\Models\User', 'created_by','id');
     }
 
-    public function po()
+    public function delivery()
     {
-        return $this->belongsTo('App\Models\Po', 'po_id','id');
+        return $this->belongsTo('App\Models\Deliveries', 'delivery_id','id');
     }
 
     public function item()

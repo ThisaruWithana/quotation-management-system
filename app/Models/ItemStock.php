@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
-class Po extends Model
+class ItemStock extends Model
 {
-    protected $table = 'po';
+    protected $table = 'item_stock';
 
     protected $fillable = [
-        'id','supplier_id','total_cost', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by',
-         'order_date', 'expected_date', 'type', 'reference'
+        'id', 'item_id', 'qty','status', 'created_at', 'updated_at', 'created_by', 'updated_by', 
     ];
 
     public function created_user()

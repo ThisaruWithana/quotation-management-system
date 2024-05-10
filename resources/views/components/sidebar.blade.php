@@ -58,15 +58,17 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.role.index') }}"
-                    class="nav-link {{ Route::is('admin.config.index') ? 'active' : '' }}">
+                <a href="#"
+                    class="nav-link {{  (Route::is('admin.po')) ? 'active' : (Route::is('admin.deliveries') ? 'active' : '') }}">
                     <i class="nav-icon fas fa-dolly"></i>
-                    <!-- <i class="fas fa-warehouse-alt"></i> -->
+                    <!-- <i class="fas fa-warehouse-alt"></i> style="display: none;" -->
                     <p>Stock Management
                     <i class="right fas fa-angle-down"></i>
                     </p>
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview" 
+                    @if(Route::is('admin.po')) style='display: block;' 
+                    @elseif(Route::is('admin.deliveries'))  style='display: block;' @else @endif>
                     <li class="nav-item">
                         <a href="{{ url('admin/po') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
@@ -74,7 +76,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url('admin/po/deliveries') }}" class="nav-link" id="level2item">
+                        <a href="{{ url('admin/deliveries') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
                             <p>Purchse Deliveries</p>
                         </a>
@@ -111,7 +113,7 @@
                     </li>
                 </ul>
             </li>
-            
+
             <li class="nav-item">
                 <a href="{{ route('admin.collection.index') }}"
                     class="nav-link {{ Route::is('admin.collection.index') ? 'active' : '' }}">

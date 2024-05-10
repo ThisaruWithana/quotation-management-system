@@ -1,30 +1,42 @@
 <x-admin>
-   @section('title')  {{ 'Purchase Order' }} @endsection
+@section('title')  {{ 'Purchase Deliveries' }} @endsection
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-lg-12">
                 <div class="card card-primary">
                 <h5 class="card-header  white-text text-left py-3">
                     {{ $title }}
                 </h5>
                     <!-- /.card-header -->
                             <!-- form start -->
-                    <form action="{{ route('admin.po.store') }}" method="PUT" class="text-center border border-light p-5" id="poCreate">
+                    <form action="{{ URL('admin/deliveries/update') }}" method="POST" class="text-center border border-light p-5" id="formCreate">
                          @csrf
                         <div class="card-body px-lg-2 pt-0">
                                 <div class="row">
                                     <div class="col-lg-8">
                                         <div class="row">
-                                            <div class="col-lg-6">
+                                            <div class="col-lg-3">
                                                 <div class="form-group text-left">
-                                                    <label for="type" class="form-label">PO Type</label>
+                                                    <label for="type" class="form-label">Type</label>
                                                     <span class="required"> * </span>
-                                                    <select id="type" name="type" class="selectpicker col-lg-12" required>
+                                                    <select id="type" name="type" class="selectpicker col-lg-12" disabled>
                                                         <option value=""></option>
-                                                        <option value="Manual">Manual</option>
-                                                        <option value="Automatic">Automatic</option>
-                                                        <option value="Import">Import</option>
+                                                        <option value="Manual" {{ $data->type === 'Manual' ? 'selected' : '' }}>Manual</option>
+                                                        <option value="Import" {{ $data->type === 'Import' ? 'selected' : '' }}>Import</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group text-left">
+                                                    <label for="status" class="form-label">Delivery Status</label>
+                                                    <span class="required"> * </span>
+                                                    <select id="status" name="status" class="selectpicker col-lg-12">
+                                                        <option value=""></option>
+                                                        <option value="0" {{ $data->status === 0 ? 'selected' : '' }}>Suspended</option>
+                                                        <option value="1" {{ $data->status === 1 ? 'selected' : '' }}>Awaiting Delivery</option>
+                                                        <option value="4" {{ $data->status === 4 ? 'selected' : '' }}>Full Delivery</option>
+                                                        <option value="3" {{ $data->status === 3 ? 'selected' : '' }}>Part Delivery</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -35,50 +47,53 @@
                                                     <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
                                                         <option value="">Select Client</option>
                                                         @foreach ($suppliers as $value)
-                                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                        <option value="{{ $value->id }}" 
+                                                            {{ $data->supplier_id === $value->id ? 'selected' : '' }}>{{ $value->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                        
-                                        <div id="manual_form" style="display:none;"> 
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div class="form-group text-left">
-                                                        <label for="remark" class="form-label">Remark</label>
-                                                        <textarea class="form-control" name="remark" id="remark"></textarea>
-                                        
+                                        @if($data->type === 'Manual')
+                                            <div id="manual_form"> 
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group text-left">
+                                                            <label for="remark" class="form-label">Remark</label>
+                                                            <textarea class="form-control" name="remark" id="remark">{{ $data->reference }}</textarea>
+                                            
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row"> 
-                                            <div class="col-lg-6">
-                                                <div class="form-group text-left">
-                                                    <label for="order_date" class="form-label">Order Date</label>
-                                                    <input type="date" class="form-control datepicker" id="order_date" name="order_date" value=""> 
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group text-left">
-                                                    <label for="expected_date" class="form-label">Expected Date</label>
-                                                    <input type="date" class="form-control datepicker" id="expected_date" name="expected_date" value="">
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                       
-                                        <div id="import_form" style="display:none;"> 
-                                            <div class="row">
+                                                <div class="row"> 
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">
-                                                        <label for="file" class="form-label">Upload File</label>
-                                                        <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                        <label for="delivery_date" class="form-label">Delivery Date</label>
+                                                        
+                                                        @if(isset($data->delivery_date)) 
+                                                            <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="{{ date('Y-m-d', strtotime($data->delivery_date)) }}">
+                                                        @else
+                                                            <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="">
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                       
+                                        @if($data->type === 'Import')
+                                            <div id="import_form" style="display:none;"> 
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group text-left">
+                                                            <label for="file" class="form-label">Upload File</label>
+                                                            <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        
+                                        @endif
                                     </div>
                                     <div class="col-lg-4 pricing-details">
                                         <div class="text-left" style="margin-left:100px;margin-top: 25px;">
@@ -86,57 +101,96 @@
                                                 <tr class="bundle-item-cost">
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($data->total_cost, 2) }}</span></b></p></td>
+                                                </tr>
+                                                <tr class="bundle-item-cost">
+                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-retail-lbl">{{ number_format($data->total_retail, 2) }}</span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
                                     </div>
                                 </div><br>
                                 
-                            <input type="hidden" class="form-control" name="po_id" id="po_id" value="">
-                            <div class="col-lg-2">
-                                <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
-                            </div><br>
+                                <input type="hidden" class="form-control" name="delivery_id" id="delivery_id" value="{{ $data->id }}">
                         </div>
 
-                            <div class="add-items">
+                            <div class="row add-items" style="display:block;">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-2" style="float:right;">
+                                        <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                            <i class="fa fa-search-plus"></i>
+                                            Find Items
+                                        </button>
+                                    </div><br><br>
 
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-2" style="float:right;">
-                                            <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
-                                                <i class="fa fa-search-plus"></i> 
-                                                Find Items
-                                            </button>
-                                        </div>
+                                    <div class="table-responsive">
+                                        <table class="table item-list table-bordered" id="sortable-table" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="th-sm">Code</th>
+                                                    <th class="th-sm">Name</th>
+                                                    <th class="th-sm">Supplier</th>
+                                                    <th class="th-sm">Department</th>
+                                                    <th class="th-sm">Sub Department</th>
+                                                    <th class="th-sm item-list-item-cost">Item Cost</th>
+                                                    <th class="th-sm item-list-item-retail">Item Retail</th>
+                                                    <th class="th-sm item-list-qty">Qty</th>
+                                                    <th class="th-sm">Total Cost</th>
+                                                    <th class="th-sm">Total Retail</th>
+                                                    <th class="th-sm"></th>
+                                                    <th class="th-sm"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <?php $i = 1; ?>
+                                                        @foreach ($itemList as $value)
+                                                            <tr id="{{ $value['id'] }}">
+                                                                <td>{{ $value['item_id'] }}</td>
+                                                                <td>{{ $value['name'] }}</td>
+                                                                <td>{{ $value['supplier'] }}</td>
+                                                                <td>{{ $value['department'] }}</td>
+                                                                <td>{{ $value['sub_department'] }}</td>
+                                                                <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
+                                                                <td class="item-list-item-retail">{{ $value['retail'] }}</td>
+                                                                <td class="item-list-qty">{{ $value['qty'] }}</td>
+                                                                <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
+                                                                <td class="item-list-total-cost">{{ $value['total_retail'] }}</td>
+                                                                <td>
+                                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['delivery_id'] }})">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </a>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        <?php $i++; ?>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                     </div>
-                                </div><br>
-                                    
-                                <div class="table-responsiv">
-                                    <table class="table item-list table-bordered" id="sortable-table" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th class="th-sm">Code</th>
-                                                <th class="th-sm">Name</th>
-                                                <th class="th-sm">Supplier</th>
-                                                <th class="th-sm">Department</th>
-                                                <th class="th-sm">Sub Department</th>
-                                                <th class="th-sm">Item Cost</th>
-                                                <th class="th-sm item-list-qty">Qty</th>
-                                                <th class="th-sm">Total Cost</th>
-                                                <th class="th-sm"></th>
-                                                <th class="th-sm"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                         
-                                        
-                                        </tbody>
-                                    </table>
-                                </div>
 
+                                </div>
                             </div>
-                            <br>
+                                <br>
+                                    
+                                <div class="row">
+                                    @if($data->status != 0)
+                                        <div class="col-lg-1">
+                                            <button class="btn btn-warning btn-block" type="button" id="btnSuspend">Suspend</button>
+                                        </div>
+                                    @endif
+                                    <div class="col-lg-2">
+                                        <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Details</button>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <button class="btn btn-primary btn-block" type="button" id="btnStockUpdate">Update Stock</button>
+                                    </div>
+                                </div>
                         </div>
                         </form>
                 </div> 
@@ -165,8 +219,8 @@
                                 <input type="text" class="form-control" name="keyword" id="keyword"
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
-                            <input type="hidden" value="po" id="search_type" name="search_type">
-                            <input type="hidden" value="" id="bundle" name="bundle">
+                            <input type="hidden" value="delivery" id="search_type" name="search_type">
+                            <input type="hidden" value="{{ $data->id }}" id="deliveryId" name="deliveryId">
 
                             <div class="form-group mr-1">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
@@ -241,11 +295,16 @@
                 <div class="modal-body">
                         @csrf
                     <input type="hidden" name="item_id" value="" id="item_id">
-                    <input type="hidden" name="poId" value="" id="poId">
+                    <input type="hidden" name="delivery_id" value="" id="delivery_id">
           
-                    <div class="form-group" id="actual_cost_edit">
+                    <div class="form-group">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>
                         <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
+                            required="" value="" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="actual_retail" class="col-form-label">Retail Price</label>
+                        <input type="text" class="form-control" id="actual_retail" name="actual_retail"  
                             required="" value="" autocomplete="off">
                     </div>
                     <div class="form-group">
@@ -347,96 +406,18 @@
             $(document).ready(function() {
 
                 $('.item-list-qty').addClass('editable');
+                $('.item-list-item-cost').addClass('editable');
+                $('.item-list-item-retail').addClass('editable');
                 
-                $("#poCreate").submit(function(event) {
-                    event.preventDefault();
-
-                    var formData = new FormData(this);
-
-                    $.ajax({
-                        url: "{{ route('admin.po.store') }}",
-                        type: 'POST',
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            data: formData,
-                            dataType:'JSON',
-                            contentType: false,
-                            cache: false,
-                            processData: false,
-                            success: function (data) {
-                                var result = data;
-
-                                if (result['code'] == 1) {
-                                    $(".add-items").show();
-                                    $("#btnSave").hide();
-                                    $("#supplier").prop('disabled', true);
-                                    $("#remark").prop('disabled', true);
-                                    $("#order_date").prop('disabled', true);
-                                    $("#expected_date").prop('disabled', true);
-                                    
-                                    $("#po_id").val(result['po_id']);
-                                    $("#poId").val(result['po_id']);
-                                    $("#btnUpdate").show();
-
-                                    if (result['data'].length > 0) {
-
-                                        $('.item-list tbody').empty();
-
-                                        $.each(result['data'], function (count, val) {
-
-                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
-
-                                            $('.item-list tbody').append(
-                                                '<tr>'
-                                                +'<td>'+ val['item_id'] +'</td>'
-                                                +'<td>'+ val['name'] +'</td>'
-                                                +'<td>'+ val['supplier'] +'</td>'
-                                                +'<td>'+ val['department'] +'</td>'
-                                                +'<td>'+ val['sub_department'] +'</td>'
-                                                +'<td>'+ val['item_cost'] +'</td>'
-                                                +'<td class="item-list-qty">'+ val['qty'] +'</td>'
-                                                +'<td>'+ val['total_cost'] +'</td>'
-                                                +'<td>'
-                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
-                                                +'</td>'
-                                                +'<td>'
-                                                +editBtn
-                                                +'</td>'
-                                                +'</tr>'
-                                            );
-                                        $('.item-list-qty').addClass('editable');             
-                                        });
-                                    } 
-                                } else {
-                                    toastr.error(
-                                        'Error',
-                                        'Something Went Wrong!',
-                                        {
-                                            timeOut: 1500,
-                                            fadeOut: 1500,
-                                            onHidden: function () {
-                                            }
-                                        }
-                                    );
-                                }
-                            }, error: function (data) {
-                                        
-                        }
-                    });
-                });
-
                 $('#type').on('change', function() {
 
                     if(this.value === 'Manual'){
                         $('#manual_form').show();
                         $('#import_form').hide();
 
-                    }else if(this.value === 'Import'){
-                        $('#manual_form').hide();
-                        $('#import_form').show();
-                        
                     }else{
                         $('#manual_form').hide();
-                        $('#import_form').hide();
+                        $('#import_form').show();
                     }
                 });
                 
@@ -448,10 +429,10 @@
                     event.preventDefault();
 
                     var formData = new FormData(this);
-                    formData.append('po_id', $('#po_id').val());
+                    formData.append('delivery_id', $('#delivery_id').val());
                 
                     $.ajax({
-                        url: "{{ url('admin/po/item-update') }}",
+                        url: "{{ url('admin/deliveries/item-update') }}",
                         type: 'POST',
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                             data: formData,
@@ -469,7 +450,7 @@
 
                                         $.each(result['data'], function (count, val) {
 
-                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+', '+ val['retail']+' )"><i class="fas fa-edit"></i></a>';
                                         
                                             $('.item-list tbody').append(
                                                 '<tr>'
@@ -478,18 +459,26 @@
                                                 +'<td>'+ val['supplier'] +'</td>'
                                                 +'<td>'+ val['department'] +'</td>'
                                                 +'<td>'+ val['sub_department'] +'</td>'
-                                                +'<td>'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-item-cost">'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-item-retail">'+ val['retail'] +'</td>'
                                                 +'<td class="item-list-qty">'+ val['qty'] +'</td>'
                                                 +'<td>'+ val['total_cost'] +'</td>'
+                                                +'<td>'+ val['total_retail'] +'</td>'
                                                 +'<td>'
-                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['delivery_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                                 +'</td>'
                                                 +'<td>'
                                                 +editBtn
                                                 +'</td>'
                                                 +'</tr>'
                                             );
-                                        $('.item-list-qty').addClass('editable');             
+                                            
+                                            $('.item-list-qty').addClass('editable');
+                                            $('.item-list-item-cost').addClass('editable');
+                                            $('.item-list-item-retail').addClass('editable');
+
+                                            $("#editDetails").modal('hide');         
+                                            calculatePrices(result['total_cost'], result['total_retail']);
                                         });
                                     } 
                                 } else {
@@ -505,10 +494,89 @@
                                         }
                                     );
                                 }
-                                calculatePrices(result['total_cost']);
-                                $("#editDetails").modal('hide');
                             }, error: function (data) {
                                         
+                        }
+                    });
+                });
+
+                $('#btnSuspend').click(function(){
+
+                    $.ajax({
+                        url: "{{ url('admin/deliveries/suspend') }}",
+                        type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "delivery_id":$('#delivery_id').val()
+                            },
+                            success: function (data) {
+                                var result = JSON.parse(data);
+
+                                if (result['code'] == 1) {
+                                    toastr.success(
+                                        'Success',
+                                        'Successfully Updated !',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location = '{{ url("admin/deliveries") }}';
+                                            }
+                                        });
+                                } else {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                            }
+                                        }
+                                    );
+                                    }
+                            }, error: function (data) {                
+                        }
+                    });
+                });
+
+                $('#btnStockUpdate').click(function(){
+
+                    $.ajax({
+                        url: "{{ url('admin/deliveries/update-stock') }}",
+                        type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "delivery_id":$('#delivery_id').val(),
+                                "type":'delivery'
+                            },
+                            success: function (data) {
+                                var result = JSON.parse(data);
+
+                                if (result['code'] == 1) {
+                                    toastr.success(
+                                        'Success',
+                                        'Successfully Updated !',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location = '{{ url("admin/deliveries") }}';
+                                            }
+                                        });
+                                } else {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                            }
+                                        }
+                                    );
+                                    }
+                            }, error: function (data) {                
                         }
                     });
                 });
@@ -555,13 +623,13 @@
               var ischecked = isChecked.checked;
 
                 $.ajax({
-                        url: "{{ url('admin/po/add-items') }}",
+                        url: "{{ url('admin/deliveries/add-items') }}",
                         type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
                                 "id": isChecked.value,
                                 "ischecked": ischecked,
-                                "po_id":$('#po_id').val(),
+                                "delivery_id":$('#delivery_id').val(),
                                 "type": Itemtype
                             },
                             success: function (data) {
@@ -573,32 +641,36 @@
 
                                     $.each(result['data'], function (count, val) {
 
-                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+', '+ val['retail']+' )"><i class="fas fa-edit"></i></a>';
                                         
                                         $('.item-list tbody').append(
-                                            '<tr>'
-                                            +'<td>'+ val['item_id'] +'</td>'
-                                            +'<td>'+ val['name'] +'</td>'
-                                            +'<td>'+ val['supplier'] +'</td>'
-                                            +'<td>'+ val['department'] +'</td>'
-                                            +'<td>'+ val['sub_department'] +'</td>'
-                                            +'<td>'+ val['item_cost'] +'</td>'
-                                            +'<td class="item-list-qty">'+ val['qty'] +'</td>'
-                                            +'<td>'+ val['total_cost'] +'</td>'
-                                            +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
-                                            +'</td>'
-                                            +'<td>'
-                                            +editBtn
-                                            +'</td>'
-                                            +'</tr>'
+                                                '<tr>'
+                                                +'<td>'+ val['item_id'] +'</td>'
+                                                +'<td>'+ val['name'] +'</td>'
+                                                +'<td>'+ val['supplier'] +'</td>'
+                                                +'<td>'+ val['department'] +'</td>'
+                                                +'<td>'+ val['sub_department'] +'</td>'
+                                                +'<td class="item-list-item-cost">'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-item-retail">'+ val['retail'] +'</td>'
+                                                +'<td class="item-list-qty">'+ val['qty'] +'</td>'
+                                                +'<td>'+ val['total_cost'] +'</td>'
+                                                +'<td>'+ val['total_retail'] +'</td>'
+                                                +'<td>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['delivery_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'</td>'
+                                                +'<td>'
+                                                +editBtn
+                                                +'</td>'
+                                                +'</tr>'
                                         );
-                                        
-                                        $('.item-list-qty').addClass('editable');
+                                            
+                                            $('.item-list-qty').addClass('editable');
+                                            $('.item-list-item-cost').addClass('editable');
+                                            $('.item-list-item-retail').addClass('editable');
                                     });
                                 } 
 
-                                calculatePrices(result['total_cost']);
+                                calculatePrices(result['total_cost'], result['total_retail']);
 
                                 if(Itemtype == 'main'){
                                     displaySubItemList(isChecked.value);
@@ -609,19 +681,20 @@
                 });
             }
 
-            function calculatePrices(totalCost){
+            function calculatePrices(totalCost, totalRetail){
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
+                $("#total-retail-lbl").text(Number(totalRetail).toFixed(2));
             }
 
-            function changeStatus(id, poId){
+            function changeStatus(id, delivery_id){
 
                 $.ajax({
-                        url: "{{ url('admin/po/delete-item') }}",
+                        url: "{{ url('admin/deliveries/delete-item') }}",
                         type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
                                 "id": id,
-                                "po_id": poId
+                                "delivery_id": delivery_id
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
@@ -630,40 +703,45 @@
                                 if (result['data'].length > 0) {
                                     
                                     $.each(result['data'], function (count, val) {
-
-                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+                                        
+                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+', '+ val['retail']+' )"><i class="fas fa-edit"></i></a>';
                                         
                                         $('.item-list tbody').append(
-                                            '<tr>'
-                                            +'<td>'+ val['item_id'] +'</td>'
-                                            +'<td>'+ val['name'] +'</td>'
-                                            +'<td>'+ val['supplier'] +'</td>'
-                                            +'<td>'+ val['department'] +'</td>'
-                                            +'<td>'+ val['sub_department'] +'</td>'
-                                            +'<td>'+ val['item_cost'] +'</td>'
-                                            +'<td class="item-list-qty">'+ val['qty'] +'</td>'
-                                            +'<td>'+ val['total_cost'] +'</td>'
-                                            +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
-                                            +'</td>'
-                                            +'<td>'
-                                            +editBtn
-                                            +'</td>'
-                                            +'</tr>'
+                                                '<tr>'
+                                                +'<td>'+ val['item_id'] +'</td>'
+                                                +'<td>'+ val['name'] +'</td>'
+                                                +'<td>'+ val['supplier'] +'</td>'
+                                                +'<td>'+ val['department'] +'</td>'
+                                                +'<td>'+ val['sub_department'] +'</td>'
+                                                +'<td class="item-list-item-cost">'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-item-retail">'+ val['retail'] +'</td>'
+                                                +'<td class="item-list-qty">'+ val['qty'] +'</td>'
+                                                +'<td>'+ val['total_cost'] +'</td>'
+                                                +'<td>'+ val['total_retail'] +'</td>'
+                                                +'<td>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['delivery_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'</td>'
+                                                +'<td>'
+                                                +editBtn
+                                                +'</td>'
+                                                +'</tr>'
                                         );
-
-                                        $('.item-list-qty').addClass('editable');
+                                            
+                                            $('.item-list-qty').addClass('editable');
+                                            $('.item-list-item-cost').addClass('editable');
+                                            $('.item-list-item-retail').addClass('editable');
                                     });
                                 } 
-                                calculatePrices(result['total_cost']);
+                                calculatePrices(result['total_cost'], result['total_retail']);
                             }, error: function (data) {
                                         
                         }
                 });
             }
 
-            function editDetails(id, actual_cost, qty){
+            function editDetails(id, actual_cost, qty, actual_retail){
                 $("#actual_cost").val(actual_cost);
+                $("#actual_retail").val(actual_retail);
                 $("#qty").val(qty);
                 $("#item_id").val(id);
                 $("#editDetails").modal('show');

@@ -3,26 +3,26 @@
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                <a href="{{ url('admin/po/create') }}" class="btn btn-sm btn-primary">Add New</a>
+                <a href="{{ url('admin/deliveries/create') }}" class="btn btn-sm btn-primary">Import</a>
             </div>
         </div>
         <div class="card-body table-responsive">
-        <form method="GET" action="{{ url('admin/po') }}" id="frm-list">
+        <form method="GET" action="{{ url('admin/deliveries') }}" id="frm-list">
 
             <div class="row">
                 <div class="form-group" style="margin-left:10px;">
 
-                        <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
-                            onchange="selectPageSize(this.value)">
-                                <option value="10" {{ $pageSize == '10' ? 'selected="selected"' : '' }}>10
-                                </option>
-                                <option value="25" {{ $pageSize == '25' ? 'selected="selected"' : '' }}>25
-                                </option>
-                                <option value="50" {{ $pageSize == '50' ? 'selected="selected"' : '' }}>50
-                                </option>
-                                <option value="100" {{ $pageSize == '100' ? 'selected="selected"' : '' }}>100
-                                </option>
-                        </select>
+                    <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
+                        onchange="selectPageSize(this.value)">
+                            <option value="10" {{ $pageSize == '10' ? 'selected="selected"' : '' }}>10
+                            </option>
+                            <option value="25" {{ $pageSize == '25' ? 'selected="selected"' : '' }}>25
+                            </option>
+                            <option value="50" {{ $pageSize == '50' ? 'selected="selected"' : '' }}>50
+                            </option>
+                            <option value="100" {{ $pageSize == '100' ? 'selected="selected"' : '' }}>100
+                            </option>
+                    </select>
                 </div>
                     
                     <div class="form-group" style="margin-left:10px;">
@@ -47,6 +47,7 @@
                     <thead>
                         <tr>
                             <th class="th-sm">#</th>
+                            <th class="th-sm">Type</th>
                             <th class="th-sm">Supplier</th>
                             <th class="th-sm">Reference</th>
                             <th class="th-sm">Total Cost</th>
@@ -59,19 +60,24 @@
                 @foreach ($listData as $value)
                         <tr>
                             <td>{{ $value->id }}</td>
+                            <td>{{ $value->type }}</td>
                             <td>{{ $value->supplier['name'] }}</td>
                             <td>{{ $value->reference }}</td>
                             <td>{{ number_format($value->total_cost, 2) }}</td>
                             <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                             <td>
-                                @if($value->status == 2)
-                                <span class="badge badge-success">Order Sent</span>
+                                @if($value->status === 1)
+                                    <span class="badge badge-warning">Awaiting Delivery</span>
+                                @elseif($value->status === 0)
+                                    <span class="badge badge-danger">Suspended</span>
+                                @elseif($value->status === 3)
+                                    <span class="badge badge-warning">Partial Delivery</span>
                                 @else 
-                                <span class="badge badge-warning">Partial Delivery</span>
+                                    <span class="badge badge-success">Full Delivery</span>
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.po.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('admin.deliveries.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
                             </td>
@@ -95,7 +101,7 @@
                     // "scrollX": false,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 8 ]},
+                        { "bSortable": false, "aTargets": [ 6 ]},
                     ],
                     "order": [0,'desc'],
                 });
@@ -112,7 +118,7 @@
                 }).then((e)=>{
                 if ( e == ("confirm")){
                         $.ajax({
-                            url: "{{ url('admin/po/change-status') }}",
+                            url: "{{ url('admin/deliveries/change-status') }}",
                             type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
@@ -140,7 +146,6 @@
                                             timeOut: 1500,
                                             fadeOut: 1500,
                                             onHidden: function () {
-                                                window.location.reload();
                                             }
                                         }
                                     );
@@ -153,7 +158,6 @@
                                             timeOut: 1500,
                                             fadeOut: 1500,
                                             onHidden: function () {
-                                                window.location.reload();
                                             }
                                         }
                                     );

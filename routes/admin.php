@@ -137,14 +137,30 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::get('create', [StockController::class, 'create'])->name('po.create');
         Route::get('edit/{id}', [StockController::class, 'edit'])->name('po.edit');
 
-        Route::get('deliveries', [StockController::class, 'purchaseDelivery'])->name('po.deliveries');
-
         Route::post('store', [StockController::class, 'store'])->name('po.store');
+        Route::post('update', [StockController::class, 'update'])->name('po.update');
         Route::post('add-items', [StockController::class, 'addItems'])->name('po.add-items');
         Route::post('delete-item', [StockController::class, 'deleteItem'])->name('po.delete-item');
         Route::post('item-update', [StockController::class, 'itemUpdate'])->name('po.item-update');
         Route::post('change-status', [StockController::class, 'changeStatus'])->name('po.change-status');
         Route::post('send-order', [StockController::class, 'sendOrder'])->name('po.send-order');
+        
+    });
+
+    Route::prefix('deliveries')->group(function(){
+
+        Route::get('/', [StockController::class, 'purchaseDelivery'])->name('deliveries');
+        Route::get('edit/{id}', [StockController::class, 'editDelivery'])->name('deliveries.edit');
+        Route::get('create', [StockController::class, 'createDeliveryView'])->name('deliveries.create');
+
+        Route::post('store', [StockController::class, 'storeDelivery'])->name('deliveries.store');
+        Route::post('update', [StockController::class, 'updateDelivery'])->name('deliveries.update');
+        Route::post('add-items', [StockController::class, 'addDeliveryItems'])->name('deliveries.add-items');
+        Route::post('delete-item', [StockController::class, 'deleteDeliveryItem'])->name('deliveries.delete-item');
+        Route::post('item-update', [StockController::class, 'deliveryItemUpdate'])->name('deliveries.item-update');
+        Route::post('change-status', [StockController::class, 'changeStatusDeliveries'])->name('deliveries.change-status');
+        Route::post('suspend', [StockController::class, 'suspend'])->name('deliveries.suspend');
+        Route::post('update-stock', [StockController::class, 'updateStock'])->name('deliveries.update-stock');
         
     });
 
