@@ -1160,4 +1160,93 @@ class StockController extends Controller
              return json_encode($response);
         } 
     }
+    
+    public function createDeliveryView()
+    {
+        $title = 'Add New Purchase Delivery';
+
+        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
+        $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
+        $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
+
+        return view('admin.po.create-delivery', compact(
+            'title', 'suppliers', 'departments', 'sub_departments'));
+    }
+
+    public function storeDelivery(Request $request)
+    {
+        $response = array();
+        $type = $request->input('type');
+
+         try{
+             DB::beginTransaction();
+
+             $store = Po::updateOrCreate(
+                 [
+                     'id'=>$request->input('po_id')
+                 ],[
+                     'supplier_id' => $request->input('supplier'),
+                     'type' => $type,
+                     'created_by' => Auth::user()->id,
+                     'updated_by' => Auth::user()->id
+                 ]
+             );
+
+            $delivery_id = $store->id;
+ 
+             if($store){
+                    $request->request->add([
+                            'delivery_id' => $delivery_id
+                        ]);
+
+                    if($type === 'Import'){
+                        $query = $this->importDelivery($request);
+
+                        if($query){
+                            DB::commit(); 
+                            $response['code'] = 1;
+                            $response['msg'] = "Success";
+                        }else{
+                            DB::rollback();
+                            $response['code'] = 0;
+                            $response['msg'] = 'Something went wrong !';
+                        }
+                    }else{
+                        DB::commit(); 
+                        $response['code'] = 1;
+                        $response['msg'] = "Success";
+                    }
+                    
+                    $total_cost = $this->getTotalCost($delivery_id);
+                    $total_retail = $this->getTotalRetail($delivery_id);
+
+                    $request->request->add([
+                        'total_cost' => $total_cost,
+                        'total_retail' => $total_retail
+                    ]);
+    
+                    $updatePriceInfo = $this->updateDeliveryPriceInfo($request);
+                    $getItemList = $this->getDeliveryItems($delivery_id);
+                    
+                    $response['data'] = $getItemList;
+                    $response['delivery_id'] = $delivery_id;
+                    $response['total_cost'] = $total_cost;
+             }else{
+                 DB::rollback();
+                 $response['code'] = 0;
+             }
+               
+             return json_encode($response);
+         }catch(\Exception $e){
+             DB::rollback();
+             $response['code'] = 0;
+             $response['msg'] =  $e->getMessage();
+             return json_encode($response);
+        } 
+    }
+
+    public function importDelivery(Request $request)
+    {
+       return Excel::import(new DeliveryImport,request()->file('file'));
+    }
 }

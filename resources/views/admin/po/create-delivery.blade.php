@@ -20,26 +20,14 @@
                                                 <div class="form-group text-left">
                                                     <label for="type" class="form-label">Type</label>
                                                     <span class="required"> * </span>
-                                                    <select id="type" name="type" class="selectpicker col-lg-12" disabled>
-                                                        <option value=""></option>
-                                                        <option value="Manual" {{ $data->type === 'Manual' ? 'selected' : '' }}>Manual</option>
-                                                        <option value="Import" {{ $data->type === 'Import' ? 'selected' : '' }}>Import</option>
+                                                    <select id="type" name="type" class="selectpicker col-lg-12">
+                                                        <!-- <option value=""></option> -->
+                                                        <!-- <option value="Manual">Manual</option> -->
+                                                        <option value="Import">Import</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3">
-                                                <div class="form-group text-left">
-                                                    <label for="status" class="form-label">Delivery Status</label>
-                                                    <span class="required"> * </span>
-                                                    <select id="status" name="status" class="selectpicker col-lg-12">
-                                                        <option value=""></option>
-                                                        <option value="0" {{ $data->status === 0 ? 'selected' : '' }}>Suspended</option>
-                                                        <option value="1" {{ $data->status === 1 ? 'selected' : '' }}>Awaiting Delivery</option>
-                                                        <option value="4" {{ $data->status === 4 ? 'selected' : '' }}>Full Delivery</option>
-                                                        <option value="3" {{ $data->status === 3 ? 'selected' : '' }}>Part Delivery</option>
-                                                    </select>
-                                                </div>
-                                            </div>
+                    
                                             <div class="col-lg-6">
                                                 <div class="form-group text-left">
                                                     <label for="supplier" class="form-label">Supplier</label>
@@ -47,53 +35,23 @@
                                                     <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
                                                         <option value="">Select Client</option>
                                                         @foreach ($suppliers as $value)
-                                                        <option value="{{ $value->id }}" 
-                                                            {{ $data->supplier_id === $value->id ? 'selected' : '' }}>{{ $value->name }}</option>
+                                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
-                                       
-                                        @if($data->type === 'Manual')
-                                            <div id="manual_form"> 
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="form-group text-left">
-                                                            <label for="remark" class="form-label">Remark</label>
-                                                            <textarea class="form-control" name="remark" id="remark">{{ $data->reference }}</textarea>
-                                            
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row"> 
+
+                                        <div id="import_form" style="display:block;"> 
+                                            <div class="row">
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">
-                                                        <label for="delivery_date" class="form-label">Delivery Date</label>
-                                                        
-                                                        @if(isset($data->delivery_date)) 
-                                                            <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="{{ date('Y-m-d', strtotime($data->delivery_date)) }}">
-                                                        @else
-                                                            <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="">
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                       
-                                        @if($data->type === 'Import')
-                                            <div id="import_form" style="display:none;"> 
-                                                <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="form-group text-left">
-                                                            <label for="file" class="form-label">Upload File</label>
-                                                            <input type="file" class="form-control" id="file" name="file" value=""> 
-                                                        </div>
+                                                        <label for="file" class="form-label">Upload File</label>
+                                                        <input type="file" class="form-control" id="file" name="file" value=""> 
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endif
+                                        </div>
                                     </div>
                                     <div class="col-lg-4 pricing-details">
                                         <div class="text-left" style="margin-left:100px;margin-top: 25px;">
@@ -101,22 +59,26 @@
                                                 <tr class="bundle-item-cost">
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($data->total_cost, 2) }}</span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
                                                 </tr>
                                                 <tr class="bundle-item-cost">
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-retail-lbl">{{ number_format($data->total_retail, 2) }}</span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-retail-lbl"></span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
                                     </div>
                                 </div><br>
                                 
-                                <input type="hidden" class="form-control" name="delivery_id" id="delivery_id" value="{{ $data->id }}">
+                                <input type="hidden" class="form-control" name="delivery_id" id="delivery_id" value="">
+                                
+                                <div class="col-lg-2">
+                                    <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
+                                </div>
                         </div>
 
-                            <div class="row add-items" style="display:block;">
+                            <div class="row add-items" style="display:none;">
                                 <div class="col-lg-12">
                                     <div class="col-lg-2" style="float:right;">
                                         <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
@@ -144,34 +106,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                    <?php $i = 1; ?>
-                                                        @foreach ($itemList as $value)
-                                                            <tr id="{{ $value['id'] }}">
-                                                                <td>{{ $value['item_id'] }}</td>
-                                                                <td>{{ $value['name'] }}</td>
-                                                                <td>{{ $value['supplier'] }}</td>
-                                                                <td>{{ $value['department'] }}</td>
-                                                                <td>{{ $value['sub_department'] }}</td>
-                                                                <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
-                                                                <td class="item-list-item-retail">{{ $value['retail'] }}</td>
-                                                                <td class="item-list-qty">{{ $value['qty'] }}</td>
-                                                                <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
-                                                                <td class="item-list-total-cost">{{ $value['total_retail'] }}</td>
-                                                                <td>
-                                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['delivery_id'] }})">
-                                                                        <i class="fas fa-trash-alt"></i>
-                                                                    </a>
-                                                                </td>
-                                                                <td>
-                                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})">
-                                                                        <i class="fas fa-edit"></i>
-                                                                    </a>
-                                                                </td>
-                                                            </tr>
-                                                        <?php $i++; ?>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
+                                                   
+                                            </tbody>
+                                        </table>
                                     </div>
 
                                 </div>
@@ -179,16 +116,8 @@
                                 <br>
                                     
                                 <div class="row">
-                                    @if($data->status != 0)
-                                        <div class="col-lg-1">
-                                            <button class="btn btn-warning btn-block" type="button" id="btnSuspend">Suspend</button>
-                                        </div>
-                                    @endif
                                     <div class="col-lg-2">
                                         <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Details</button>
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <button class="btn btn-primary btn-block" type="button" id="btnStockUpdate">Update Stock</button>
                                     </div>
                                 </div>
                         </div>
@@ -220,7 +149,7 @@
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
                             <input type="hidden" value="delivery" id="search_type" name="search_type">
-                            <input type="hidden" value="{{ $data->id }}" id="deliveryId" name="deliveryId">
+                            <input type="hidden" value="" id="deliveryId" name="deliveryId">
 
                             <div class="form-group mr-1">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
@@ -424,6 +353,8 @@
                 $('#itemSearchBtn').click(function(){
                     $('.table-item-search tbody').empty();
                 });
+
+                // deliveryId
 
                 $('#formEditBundleItem').submit(function(event){
                     event.preventDefault();

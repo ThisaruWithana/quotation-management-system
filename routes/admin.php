@@ -151,7 +151,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
 
         Route::get('/', [StockController::class, 'purchaseDelivery'])->name('deliveries');
         Route::get('edit/{id}', [StockController::class, 'editDelivery'])->name('deliveries.edit');
+        Route::get('create', [StockController::class, 'createDeliveryView'])->name('deliveries.create');
 
+        Route::post('store', [StockController::class, 'storeDelivery'])->name('deliveries.store');
         Route::post('update', [StockController::class, 'updateDelivery'])->name('deliveries.update');
         Route::post('add-items', [StockController::class, 'addDeliveryItems'])->name('deliveries.add-items');
         Route::post('delete-item', [StockController::class, 'deleteDeliveryItem'])->name('deliveries.delete-item');
