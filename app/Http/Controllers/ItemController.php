@@ -17,6 +17,7 @@ use App\Models\QuotationItem;
 use App\Models\OpfItems;
 use App\Models\PoItems;
 use App\Models\DeliveryItems;
+use App\Models\ItemStock;
 use DB;
 use Auth;
 use PDF;
@@ -105,9 +106,11 @@ class ItemController extends Controller
 
         $selectedOptionalItems = SubItem::where('parent_id', decrypt($id))->where('status', 1)->pluck('sub_item_id')->toArray();
 
+        $inStock = $this->getCurrentStockCount(decrypt($id));
+
         return view('admin.item.edit',compact(
             'data', 'title', 'page', 'suppliers', 'departments', 'sub_departments', 'locations',
-            'selectedSuppliers', 'itemList', 'selectedOptionalItems', 'optionalItems'
+            'selectedSuppliers', 'itemList', 'selectedOptionalItems', 'optionalItems', 'inStock'
         ));
     }
 
@@ -486,11 +489,6 @@ class ItemController extends Controller
             try{
                 DB::beginTransaction();
 
-                    // $disableSuppliers = SubItem::where('parent_id', $parent_id)->update([
-                    //     'status' => 0,
-                    //     'updated_by' => Auth::user()->id
-                    // ]);
-
                     $addItems = SubItem::create([
                         'parent_id' => $parent_id,
                         'sub_item_id' => $item,
@@ -733,4 +731,11 @@ class ItemController extends Controller
 
         return json_encode($response);
     }
+
+    public function getCurrentStockCount($id)
+    {
+        $query = ItemStock::where('item_id', $id)->where('status', 1)->pluck('qty');
+        return $query[0];
+    }
+
 }

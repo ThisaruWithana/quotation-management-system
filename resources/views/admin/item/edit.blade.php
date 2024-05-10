@@ -228,7 +228,7 @@
                                 <div class="form-group text-left">
                                     <label for="in_stock" class="form-label">In Stock</label>
                                     <input type="text" class="form-control" name="in_stock" id="in_stock"
-                                    value="" autocomplete="off"  placeholder="" readonly>
+                                    value="{{ $inStock }}" autocomplete="off"  placeholder="" readonly>
                                 </div>
                             </div>
                           </div>

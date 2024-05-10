@@ -994,8 +994,6 @@ class StockController extends Controller
                 $total_cost = $this->getTotalCost($delivery_id);
                 $total_retail = $this->getTotalRetail($delivery_id);
 
-                DB::commit(); 
-
                 if($update){
 
                     $request->request->add([
@@ -1005,6 +1003,8 @@ class StockController extends Controller
     
                     $updatePriceInfo = $this->updateDeliveryPriceInfo($request);
                     $getItemList = $this->getDeliveryItems($delivery_id);
+
+                    DB::commit(); 
 
                     $response['code'] = 1;
                     $response['msg'] = "Success";
@@ -1106,44 +1106,43 @@ class StockController extends Controller
 
                             $checkExistingStock = ItemStock::where('item_id', $item_id)->where('status', 1)->first();
 
-                            if($checkExistingStock){
+                            if($checkExistingStock['qty'] != $qty){
 
                                 $updateStock = ItemStock::where('item_id', $item_id)->update([
-                                    'qty' => $qty,
+                                    'status' => 0,
                                     'updated_by' => Auth::user()->id
-                                ]);        
-                            }else{
+                                ]);   
+                              
                                 $updateStock = ItemStock::create([
                                     'item_id' => $item_id,
                                     'qty' => $qty,
                                     'created_by' => Auth::user()->id,
                                     'updated_by' => Auth::user()->id,
                                 ]);
-                            }
-                            
-                            if($updateStock){
-
-                                if($cost_price != $delivery_item_cost || $retail_price != $delivery_item_retail){
-
-                                    $addLog = PriceChangeLog::create([
-                                        'item_id' => $item_id,
-                                        'old_cost_price' => $cost_price,
-                                        'new_cost_price' => $delivery_item_cost,
-                                        'old_retail_price' => $retail_price,
-                                        'new_retail_price' => $delivery_item_retail,
-                                        'created_by' => Auth::user()->id,
-                                        'updated_by' => Auth::user()->id,
-                                    ]);
-                                    $notification = 'Item price has been changed. Please go and check the more details.';
-                                    $addNotification = app('App\Http\Controllers\NotificationController')->store(1, $item_id, $notification);
+                                
+                                if(!$updateStock){
+                                    DB::rollback();
+                                    $response['code'] = 0;
                                 }
-                                DB::commit(); 
-                                $response['code'] = 1;
-                                $response['msg'] = "Success";
-                            }else{
-                                DB::rollback();
-                                $response['code'] = 0;
                             }
+
+                            if($cost_price != $delivery_item_cost || $retail_price != $delivery_item_retail){
+
+                                $addLog = PriceChangeLog::create([
+                                    'item_id' => $item_id,
+                                    'old_cost_price' => $cost_price,
+                                    'new_cost_price' => $delivery_item_cost,
+                                    'old_retail_price' => $retail_price,
+                                    'new_retail_price' => $delivery_item_retail,
+                                    'created_by' => Auth::user()->id,
+                                    'updated_by' => Auth::user()->id,
+                                ]);
+                                $notification = 'Item price has been changed. Please go and check the more details.';
+                                $addNotification = app('App\Http\Controllers\NotificationController')->store(1, $item_id, $notification);
+                            }
+
+                            DB::commit(); 
+                            $response['code'] = 1;
                         }else{
                             DB::rollback();
                             $response['code'] = 0;
