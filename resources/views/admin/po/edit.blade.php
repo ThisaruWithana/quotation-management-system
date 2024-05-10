@@ -49,7 +49,7 @@
                                                     <div class="col-lg-12">
                                                         <div class="form-group text-left">
                                                             <label for="remark" class="form-label">Remark</label>
-                                                            <textarea class="form-control" name="remark" id="remark">{{ $data->remark }}</textarea>
+                                                            <textarea class="form-control" name="remark" id="remark">{{ $data->reference }}</textarea>
                                             
                                                         </div>
                                                     </div>
@@ -58,7 +58,11 @@
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">
                                                         <label for="order_date" class="form-label">Order Date</label>
-                                                        <input type="date" class="form-control datepicker" id="order_date" name="order_date" value="{{ date('Y-m-d', strtotime($data->order_date)) }}"> 
+                                                        @if(isset($data->order_date)) 
+                                                            <input type="date" class="form-control datepicker" id="order_date" name="order_date" value="{{ date('Y-m-d', strtotime($data->order_date)) }}">
+                                                        @else
+                                                            <input type="date" class="form-control datepicker" id="order_date" name="order_date" value="">
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
@@ -199,7 +203,7 @@
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
                             <input type="hidden" value="po" id="search_type" name="search_type">
-                            <input type="hidden" value="" id="bundle" name="bundle">
+                            <input type="hidden" name="poId" value="{{ $data->id }}" id="poId">
 
                             <div class="form-group mr-1">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
@@ -274,7 +278,7 @@
                 <div class="modal-body">
                         @csrf
                     <input type="hidden" name="item_id" value="" id="item_id">
-                    <input type="hidden" name="poId" value="" id="poId">
+                    <input type="hidden" name="poId" value="{{ $data->id }}" id="poId">
           
                     <div class="form-group" id="actual_cost_edit">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>

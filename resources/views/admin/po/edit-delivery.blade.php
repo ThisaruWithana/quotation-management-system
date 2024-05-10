@@ -10,13 +10,13 @@
                 </h5>
                     <!-- /.card-header -->
                             <!-- form start -->
-                    <form action="{{ route('admin.po.store') }}" method="PUT" class="text-center border border-light p-5" id="poCreate">
+                    <form action="{{ URL('admin/deliveries/update') }}" method="POST" class="text-center border border-light p-5" id="formCreate">
                          @csrf
                         <div class="card-body px-lg-2 pt-0">
                                 <div class="row">
                                     <div class="col-lg-8">
                                         <div class="row">
-                                            <div class="col-lg-6">
+                                            <div class="col-lg-3">
                                                 <div class="form-group text-left">
                                                     <label for="type" class="form-label">Type</label>
                                                     <span class="required"> * </span>
@@ -24,6 +24,19 @@
                                                         <option value=""></option>
                                                         <option value="Manual" {{ $data->type === 'Manual' ? 'selected' : '' }}>Manual</option>
                                                         <option value="Import" {{ $data->type === 'Import' ? 'selected' : '' }}>Import</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group text-left">
+                                                    <label for="status" class="form-label">Delivery Status</label>
+                                                    <span class="required"> * </span>
+                                                    <select id="status" name="status" class="selectpicker col-lg-12">
+                                                        <option value=""></option>
+                                                        <option value="0" {{ $data->status === 0 ? 'selected' : '' }}>Suspended</option>
+                                                        <option value="1" {{ $data->status === 1 ? 'selected' : '' }}>Awaiting Delivery</option>
+                                                        <option value="4" {{ $data->status === 4 ? 'selected' : '' }}>Full Delivery</option>
+                                                        <option value="3" {{ $data->status === 3 ? 'selected' : '' }}>Part Delivery</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -48,7 +61,7 @@
                                                     <div class="col-lg-12">
                                                         <div class="form-group text-left">
                                                             <label for="remark" class="form-label">Remark</label>
-                                                            <textarea class="form-control" name="remark" id="remark">{{ $data->remark }}</textarea>
+                                                            <textarea class="form-control" name="remark" id="remark">{{ $data->reference }}</textarea>
                                             
                                                         </div>
                                                     </div>
@@ -57,7 +70,12 @@
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">
                                                         <label for="delivery_date" class="form-label">Delivery Date</label>
-                                                        <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="{{ $data->delivery_date }}"> 
+                                                        
+                                                        @if(isset($data->delivery_date)) 
+                                                            <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="{{ date('Y-m-d', strtotime($data->delivery_date)) }}">
+                                                        @else
+                                                            <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="">
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 </div>
@@ -95,7 +113,7 @@
                                     </div>
                                 </div><br>
                                 
-                                <input type="hidden" class="form-control" name="po_id" id="po_id" value="{{ $data->id }}">
+                                <input type="hidden" class="form-control" name="delivery_id" id="delivery_id" value="{{ $data->id }}">
                         </div>
 
                             <div class="row add-items" style="display:block;">
@@ -116,8 +134,8 @@
                                                     <th class="th-sm">Supplier</th>
                                                     <th class="th-sm">Department</th>
                                                     <th class="th-sm">Sub Department</th>
-                                                    <th class="th-sm">Item Cost</th>
-                                                    <th class="th-sm">Item Retail</th>
+                                                    <th class="th-sm item-list-item-cost">Item Cost</th>
+                                                    <th class="th-sm item-list-item-retail">Item Retail</th>
                                                     <th class="th-sm item-list-qty">Qty</th>
                                                     <th class="th-sm">Total Cost</th>
                                                     <th class="th-sm">Total Retail</th>
@@ -135,17 +153,17 @@
                                                                 <td>{{ $value['department'] }}</td>
                                                                 <td>{{ $value['sub_department'] }}</td>
                                                                 <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
-                                                                <td class="item-list-item-cost">{{ $value['retail'] }}</td>
+                                                                <td class="item-list-item-retail">{{ $value['retail'] }}</td>
                                                                 <td class="item-list-qty">{{ $value['qty'] }}</td>
                                                                 <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
                                                                 <td class="item-list-total-cost">{{ $value['total_retail'] }}</td>
                                                                 <td>
-                                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['po_id'] }})">
+                                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['delivery_id'] }})">
                                                                         <i class="fas fa-trash-alt"></i>
                                                                     </a>
                                                                 </td>
                                                                 <td>
-                                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }})">
+                                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})">
                                                                         <i class="fas fa-edit"></i>
                                                                     </a>
                                                                 </td>
@@ -158,7 +176,21 @@
 
                                 </div>
                             </div>
-                            <br>
+                                <br>
+                                    
+                                <div class="row">
+                                    @if($data->status != 0)
+                                        <div class="col-lg-1">
+                                            <button class="btn btn-warning btn-block" type="button" id="btnSuspend">Suspend</button>
+                                        </div>
+                                    @endif
+                                    <div class="col-lg-2">
+                                        <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Details</button>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <button class="btn btn-primary btn-block" type="button" id="btnStockUpdate">Update Stock</button>
+                                    </div>
+                                </div>
                         </div>
                         </form>
                 </div> 
@@ -187,8 +219,8 @@
                                 <input type="text" class="form-control" name="keyword" id="keyword"
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
-                            <input type="hidden" value="po" id="search_type" name="search_type">
-                            <input type="hidden" value="" id="bundle" name="bundle">
+                            <input type="hidden" value="delivery" id="search_type" name="search_type">
+                            <input type="hidden" value="{{ $data->id }}" id="deliveryId" name="deliveryId">
 
                             <div class="form-group mr-1">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
@@ -263,11 +295,16 @@
                 <div class="modal-body">
                         @csrf
                     <input type="hidden" name="item_id" value="" id="item_id">
-                    <input type="hidden" name="poId" value="" id="poId">
+                    <input type="hidden" name="$delivery_id" value="" id="$delivery_id">
           
-                    <div class="form-group" id="actual_cost_edit">
+                    <div class="form-group">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>
                         <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
+                            required="" value="" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="actual_retail" class="col-form-label">Retail Price</label>
+                        <input type="text" class="form-control" id="actual_retail" name="actual_retail"  
                             required="" value="" autocomplete="off">
                     </div>
                     <div class="form-group">
@@ -369,6 +406,8 @@
             $(document).ready(function() {
 
                 $('.item-list-qty').addClass('editable');
+                $('.item-list-item-cost').addClass('editable');
+                $('.item-list-item-retail').addClass('editable');
                 
                 $('#type').on('change', function() {
 
@@ -376,13 +415,9 @@
                         $('#manual_form').show();
                         $('#import_form').hide();
 
-                    }else if(this.value === 'Import'){
-                        $('#manual_form').hide();
-                        $('#import_form').show();
-                        
                     }else{
                         $('#manual_form').hide();
-                        $('#import_form').hide();
+                        $('#import_form').show();
                     }
                 });
                 
@@ -394,10 +429,10 @@
                     event.preventDefault();
 
                     var formData = new FormData(this);
-                    formData.append('po_id', $('#po_id').val());
+                    formData.append('delivery_id', $('#delivery_id').val());
                 
                     $.ajax({
-                        url: "{{ url('admin/po/item-update') }}",
+                        url: "{{ url('admin/deliveries/item-update') }}",
                         type: 'POST',
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                             data: formData,
@@ -415,7 +450,7 @@
 
                                         $.each(result['data'], function (count, val) {
 
-                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+', '+ val['retail']+' )"><i class="fas fa-edit"></i></a>';
                                         
                                             $('.item-list tbody').append(
                                                 '<tr>'
@@ -424,18 +459,26 @@
                                                 +'<td>'+ val['supplier'] +'</td>'
                                                 +'<td>'+ val['department'] +'</td>'
                                                 +'<td>'+ val['sub_department'] +'</td>'
-                                                +'<td>'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-item-cost">'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-item-retail">'+ val['retail'] +'</td>'
                                                 +'<td class="item-list-qty">'+ val['qty'] +'</td>'
                                                 +'<td>'+ val['total_cost'] +'</td>'
+                                                +'<td>'+ val['total_retail'] +'</td>'
                                                 +'<td>'
-                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['delivery_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                                 +'</td>'
                                                 +'<td>'
                                                 +editBtn
                                                 +'</td>'
                                                 +'</tr>'
                                             );
-                                        $('.item-list-qty').addClass('editable');             
+                                            
+                                            $('.item-list-qty').addClass('editable');
+                                            $('.item-list-item-cost').addClass('editable');
+                                            $('.item-list-item-retail').addClass('editable');
+
+                                            $("#editDetails").modal('hide');         
+                                            calculatePrices(result['total_cost'], result['total_retail']);
                                         });
                                     } 
                                 } else {
@@ -451,10 +494,89 @@
                                         }
                                     );
                                 }
-                                calculatePrices(result['total_cost']);
-                                $("#editDetails").modal('hide');
                             }, error: function (data) {
                                         
+                        }
+                    });
+                });
+
+                $('#btnSuspend').click(function(){
+
+                    $.ajax({
+                        url: "{{ url('admin/deliveries/suspend') }}",
+                        type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "delivery_id":$('#delivery_id').val()
+                            },
+                            success: function (data) {
+                                var result = JSON.parse(data);
+
+                                if (result['code'] == 1) {
+                                    toastr.success(
+                                        'Success',
+                                        'Successfully Updated !',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location = '{{ url("admin/deliveries") }}';
+                                            }
+                                        });
+                                } else {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                            }
+                                        }
+                                    );
+                                    }
+                            }, error: function (data) {                
+                        }
+                    });
+                });
+
+                $('#btnStockUpdate').click(function(){
+
+                    $.ajax({
+                        url: "{{ url('admin/deliveries/update-stock') }}",
+                        type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "delivery_id":$('#delivery_id').val(),
+                                "type":'delivery'
+                            },
+                            success: function (data) {
+                                var result = JSON.parse(data);
+
+                                if (result['code'] == 1) {
+                                    toastr.success(
+                                        'Success',
+                                        'Successfully Updated !',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location = '{{ url("admin/deliveries") }}';
+                                            }
+                                        });
+                                } else {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                            }
+                                        }
+                                    );
+                                    }
+                            }, error: function (data) {                
                         }
                     });
                 });
@@ -501,13 +623,13 @@
               var ischecked = isChecked.checked;
 
                 $.ajax({
-                        url: "{{ url('admin/po/add-items') }}",
+                        url: "{{ url('admin/deliveries/add-items') }}",
                         type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
                                 "id": isChecked.value,
                                 "ischecked": ischecked,
-                                "po_id":$('#po_id').val(),
+                                "delivery_id":$('#delivery_id').val(),
                                 "type": Itemtype
                             },
                             success: function (data) {
@@ -519,32 +641,36 @@
 
                                     $.each(result['data'], function (count, val) {
 
-                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+', '+ val['retail']+' )"><i class="fas fa-edit"></i></a>';
                                         
                                         $('.item-list tbody').append(
-                                            '<tr>'
-                                            +'<td>'+ val['item_id'] +'</td>'
-                                            +'<td>'+ val['name'] +'</td>'
-                                            +'<td>'+ val['supplier'] +'</td>'
-                                            +'<td>'+ val['department'] +'</td>'
-                                            +'<td>'+ val['sub_department'] +'</td>'
-                                            +'<td>'+ val['item_cost'] +'</td>'
-                                            +'<td class="item-list-qty">'+ val['qty'] +'</td>'
-                                            +'<td>'+ val['total_cost'] +'</td>'
-                                            +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
-                                            +'</td>'
-                                            +'<td>'
-                                            +editBtn
-                                            +'</td>'
-                                            +'</tr>'
+                                                '<tr>'
+                                                +'<td>'+ val['item_id'] +'</td>'
+                                                +'<td>'+ val['name'] +'</td>'
+                                                +'<td>'+ val['supplier'] +'</td>'
+                                                +'<td>'+ val['department'] +'</td>'
+                                                +'<td>'+ val['sub_department'] +'</td>'
+                                                +'<td class="item-list-item-cost">'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-item-retail">'+ val['retail'] +'</td>'
+                                                +'<td class="item-list-qty">'+ val['qty'] +'</td>'
+                                                +'<td>'+ val['total_cost'] +'</td>'
+                                                +'<td>'+ val['total_retail'] +'</td>'
+                                                +'<td>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['delivery_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'</td>'
+                                                +'<td>'
+                                                +editBtn
+                                                +'</td>'
+                                                +'</tr>'
                                         );
-                                        
-                                        $('.item-list-qty').addClass('editable');
+                                            
+                                            $('.item-list-qty').addClass('editable');
+                                            $('.item-list-item-cost').addClass('editable');
+                                            $('.item-list-item-retail').addClass('editable');
                                     });
                                 } 
 
-                                calculatePrices(result['total_cost']);
+                                calculatePrices(result['total_cost'], result['total_retail']);
 
                                 if(Itemtype == 'main'){
                                     displaySubItemList(isChecked.value);
@@ -555,19 +681,20 @@
                 });
             }
 
-            function calculatePrices(totalCost){
+            function calculatePrices(totalCost, totalRetail){
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
+                $("#total-retail-lbl").text(Number(totalRetail).toFixed(2));
             }
 
-            function changeStatus(id, poId){
+            function changeStatus(id, delivery_id){
 
                 $.ajax({
-                        url: "{{ url('admin/po/delete-item') }}",
+                        url: "{{ url('admin/deliveries/delete-item') }}",
                         type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
                                 "id": id,
-                                "po_id": poId
+                                "delivery_id": delivery_id
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
@@ -576,40 +703,45 @@
                                 if (result['data'].length > 0) {
                                     
                                     $.each(result['data'], function (count, val) {
-
-                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
+                                        
+                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+', '+ val['retail']+' )"><i class="fas fa-edit"></i></a>';
                                         
                                         $('.item-list tbody').append(
-                                            '<tr>'
-                                            +'<td>'+ val['item_id'] +'</td>'
-                                            +'<td>'+ val['name'] +'</td>'
-                                            +'<td>'+ val['supplier'] +'</td>'
-                                            +'<td>'+ val['department'] +'</td>'
-                                            +'<td>'+ val['sub_department'] +'</td>'
-                                            +'<td>'+ val['item_cost'] +'</td>'
-                                            +'<td class="item-list-qty">'+ val['qty'] +'</td>'
-                                            +'<td>'+ val['total_cost'] +'</td>'
-                                            +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
-                                            +'</td>'
-                                            +'<td>'
-                                            +editBtn
-                                            +'</td>'
-                                            +'</tr>'
+                                                '<tr>'
+                                                +'<td>'+ val['item_id'] +'</td>'
+                                                +'<td>'+ val['name'] +'</td>'
+                                                +'<td>'+ val['supplier'] +'</td>'
+                                                +'<td>'+ val['department'] +'</td>'
+                                                +'<td>'+ val['sub_department'] +'</td>'
+                                                +'<td class="item-list-item-cost">'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-item-retail">'+ val['retail'] +'</td>'
+                                                +'<td class="item-list-qty">'+ val['qty'] +'</td>'
+                                                +'<td>'+ val['total_cost'] +'</td>'
+                                                +'<td>'+ val['total_retail'] +'</td>'
+                                                +'<td>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['delivery_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'</td>'
+                                                +'<td>'
+                                                +editBtn
+                                                +'</td>'
+                                                +'</tr>'
                                         );
-
-                                        $('.item-list-qty').addClass('editable');
+                                            
+                                            $('.item-list-qty').addClass('editable');
+                                            $('.item-list-item-cost').addClass('editable');
+                                            $('.item-list-item-retail').addClass('editable');
                                     });
                                 } 
-                                calculatePrices(result['total_cost']);
+                                calculatePrices(result['total_cost'], result['total_retail']);
                             }, error: function (data) {
                                         
                         }
                 });
             }
 
-            function editDetails(id, actual_cost, qty){
+            function editDetails(id, actual_cost, qty, actual_retail){
                 $("#actual_cost").val(actual_cost);
+                $("#actual_retail").val(actual_retail);
                 $("#qty").val(qty);
                 $("#item_id").val(id);
                 $("#editDetails").modal('show');

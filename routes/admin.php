@@ -152,13 +152,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::get('/', [StockController::class, 'purchaseDelivery'])->name('deliveries');
         Route::get('edit/{id}', [StockController::class, 'editDelivery'])->name('deliveries.edit');
 
-
-        // Route::post('store', [StockController::class, 'store'])->name('po.store');
-        // Route::post('add-items', [StockController::class, 'addItems'])->name('po.add-items');
-        // Route::post('delete-item', [StockController::class, 'deleteItem'])->name('po.delete-item');
-        // Route::post('item-update', [StockController::class, 'itemUpdate'])->name('po.item-update');
+        Route::post('update', [StockController::class, 'updateDelivery'])->name('deliveries.update');
+        Route::post('add-items', [StockController::class, 'addDeliveryItems'])->name('deliveries.add-items');
+        Route::post('delete-item', [StockController::class, 'deleteDeliveryItem'])->name('deliveries.delete-item');
+        Route::post('item-update', [StockController::class, 'deliveryItemUpdate'])->name('deliveries.item-update');
         Route::post('change-status', [StockController::class, 'changeStatusDeliveries'])->name('deliveries.change-status');
-        // Route::post('send-order', [StockController::class, 'sendOrder'])->name('po.send-order');
+        Route::post('suspend', [StockController::class, 'suspend'])->name('deliveries.suspend');
+        Route::post('update-stock', [StockController::class, 'updateStock'])->name('deliveries.update-stock');
         
     });
 

@@ -67,9 +67,13 @@
                             <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                             <td>
                                 @if($value->status === 1)
-                                <span class="badge badge-success">Awaiting Delivery</span>
+                                    <span class="badge badge-warning">Awaiting Delivery</span>
+                                @elseif($value->status === 0)
+                                    <span class="badge badge-danger">Suspended</span>
+                                @elseif($value->status === 3)
+                                    <span class="badge badge-warning">Partial Delivery</span>
                                 @else 
-                                <span class="badge badge-warning">Partial Delivery</span>
+                                    <span class="badge badge-success">Full Delivery</span>
                                 @endif
                             </td>
                             <td>

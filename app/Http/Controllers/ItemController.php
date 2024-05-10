@@ -16,6 +16,7 @@ use App\Models\BundleItem;
 use App\Models\QuotationItem;
 use App\Models\OpfItems;
 use App\Models\PoItems;
+use App\Models\DeliveryItems;
 use DB;
 use Auth;
 use PDF;
@@ -613,6 +614,13 @@ class ItemController extends Controller
 
             $po_id = $request->input('poId');
             $getExistItems = PoItems::select('item_id')->where('po_id', $po_id)->where('status', 1)->get();
+
+            $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->whereNotIn('id', $getExistItems)->orderBy('id','desc');
+        
+        }else if($search_type === 'delivery'){
+
+            $delivery_id = $request->input('deliveryId');
+            $getExistItems = DeliveryItems::select('item_id')->where('delivery_id', $delivery_id)->where('status', 1)->get();
 
             $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->whereNotIn('id', $getExistItems)->orderBy('id','desc');
         
