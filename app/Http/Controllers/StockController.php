@@ -12,6 +12,8 @@ use App\Models\Department;
 use App\Models\SubDepartment;
 use App\Models\Bundle;
 use App\Models\SubItem;
+use App\Models\Deliveries;
+use App\Models\DeliveryItems;
 use App\Imports\PoImport;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
@@ -144,6 +146,29 @@ class StockController extends Controller
              $response['code'] = 0;
              $response['msg'] =  $e->getMessage();
              return json_encode($response);
+        } 
+    }
+
+    public function update(Request $request)
+    {
+        $response = array();
+
+         try{
+             DB::beginTransaction();
+             
+             $update = Po::where('id', $request->input('po_id'))->update([
+                'order_date' => $request->input('order_date'),
+                'expected_date' => $request->input('expected_date'),
+                'supplier_id' => $request->input('supplier'),
+                'reference' => $request->input('remark'),
+                'updated_by' => Auth::user()->id,
+            ]);
+            DB::commit(); 
+            
+            return redirect()->route('admin.po')->with('success','Updated successfully!');
+         }catch(\Exception $e){
+             DB::rollback();
+             return redirect()->route('admin.po')->with('error','Something went wrong!');
         } 
     }
 
@@ -480,66 +505,6 @@ class StockController extends Controller
             } 
     }
 
-    public function sendOrder(Request $request)
-    {
-        $response = array();
-        $po_id = $request->input('po_id');
-
-            try{
-                DB::beginTransaction();
-
-                $update = Po::where('id', $po_id)->update([
-                    'status' =>2,
-                    'updated_by' => Auth::user()->id
-                ]);
-
-                if($update){
-                    DB::commit();
-                    $response['code'] = 1;
-                    $response['msg'] = "Success";
-                }else{
-                    DB::rollback();
-                    $response['code'] = 0;
-                    $response['msg'] = 'Something went wrong !';
-                    $response['data'] = '';
-                }
-                return json_encode($response);
-            }catch(\Exception $e){
-                DB::rollback();
-                $response['code'] = 0;
-                $response['msg'] = $e->getMessage();
-                return json_encode($response);
-            } 
-    }
-
-    public function purchaseDelivery(Request $request)
-    {
-        $pageSize;
-
-        if (!isset($request->pagesize)) {
-            $new = 10;
-        }else{
-            $new = $request->pagesize;
-        }
-
-        $pageSize = $new;
-        $supplier_id = $request->input('supplier');
-
-        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
-        $data = Po::query()->with('supplier')->whereIn('status', [2])->orderBy('id','DESC');
-
-        if($request->query('form_action') === 'search'){
-
-            if(!is_null($supplier_id)) {
-                $data->where('supplier_id',  $supplier_id);
-            }
-        }
-
-        $listData = $data->paginate($pageSize);  
-
-        return view('admin.po.delivery',compact('listData', 'pageSize', 'suppliers'));
-    }
-
     public function createAutoOrder(Request $request)
     {
         $response = array();
@@ -573,6 +538,206 @@ class StockController extends Controller
     public function importPo(Request $request)
     {
        return Excel::import(new PoImport,request()->file('file'));
+    }
+
+    public function sendOrder(Request $request)
+    {
+        $response = array();
+        $po_id = $request->input('po_id');
+
+            try{
+                DB::beginTransaction();
+
+                $update = Po::where('id', $po_id)->update([
+                    'status' =>2,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                if($update){
+
+                     $store = $this->createDelivery($po_id);
+
+                    if($store){
+                        DB::commit();
+                        $response['code'] = 1;
+                        $response['msg'] = "Success";
+                    }else{
+                        DB::rollback();
+                        $response['code'] = 0;
+                        $response['msg'] = 'Something went wrong !';
+                    }
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                }
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = 'Something went wrong !';
+                return json_encode($response);
+            } 
+    }
+
+    public function createDelivery($po_id)
+    {
+         try{
+             DB::beginTransaction();
+
+            $po = Po::where('id',$po_id)->first();
+
+            $store = Deliveries::create([
+                'po_id' => $po_id,
+                'supplier_id' => $po['supplier_id'],
+                'reference' => $po['reference'],
+                'total_cost' => $po['total_cost'],
+                'created_by' => Auth::user()->id,
+                'updated_by' => Auth::user()->id,
+            ]);
+ 
+             if($store){
+
+                $poItems = PoItems::where('po_id',$po_id)->where('status', 1)->get();
+
+                foreach($poItems as $value){
+                    $retail_price = $this->getItemRetailPrice($value['item_id']);
+                    $total_retail = $retail_price * $value['qty'];
+
+                    $delivery_items = DeliveryItems::create([
+                        'delivery_id' => $store->id,
+                        'item_id' => $value['item_id'],
+                        'item_cost' => $value['item_cost'],
+                        'item_retail' => $retail_price,
+                        'qty' => $value['qty'],
+                        'total_cost' => $value['total_cost'],
+                        'total_retail' => $total_retail,
+                        'created_by' => Auth::user()->id,
+                        'updated_by' => Auth::user()->id,
+                    ]);
+                }
+
+                $update = Deliveries::where('id', $store->id)->update([
+                    'total_retail' => $this->getTotalRetail($store->id),
+                    'updated_by' => Auth::user()->id,
+                ]);
+
+                if($update){
+                    DB::commit(); 
+                    return 1;
+                }else{
+                    DB::rollback();
+                    return 0;
+                }
+             }else{
+                 DB::rollback();
+                 return 0;
+             }
+         }catch(\Exception $e){
+             DB::rollback();
+             return 0;
+        } 
+    }
+
+    public function getItemRetailPrice($item_id)
+    {
+           $item = Item::where('id',$item_id)->pluck('retail_price');
+           return $item[0];
+    }
+
+    public function purchaseDelivery(Request $request)
+    {
+        $pageSize;
+
+        if (!isset($request->pagesize)) {
+            $new = 10;
+        }else{
+            $new = $request->pagesize;
+        }
+
+        $pageSize = $new;
+        $supplier_id = $request->input('supplier');
+
+        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
+        $data = Deliveries::query()->with('supplier')->whereIn('status', [1,0,3,4,5])->orderBy('id','DESC');
+
+        if($request->query('form_action') === 'search'){
+
+            if(!is_null($supplier_id)) {
+                $data->where('supplier_id',  $supplier_id);
+            }
+        }
+
+        $listData = $data->paginate($pageSize);  
+
+        return view('admin.po.delivery',compact('listData', 'pageSize', 'suppliers'));
+    }
+    
+    public function getTotalCost($delivery_id)
+    {
+       return $query = DeliveryItems::where('delivery_id', $delivery_id)->where('status', 1)->sum('total_cost');
+    }
+
+    public function getTotalRetail($delivery_id)
+    {
+        return $query = DeliveryItems::where('delivery_id', $delivery_id)->where('status', 1)->sum('total_retail');
+    }  
+
+    public function editDelivery($id)
+    {
+        $title = 'Edit Delivery';
+
+        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
+        $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
+        $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
+        
+        $data = Deliveries::where('id',decrypt($id))->first();
+
+        $itemList = $this->getDeliveryItems(decrypt($id));
+     
+        return view('admin.po.edit-delivery',compact('data', 'title', 'itemList',
+                'departments', 'sub_departments', 'suppliers'));
+    }
+
+    
+    public function getDeliveryItems($delivery_id)
+    {
+        $itemList = DeliveryItems::with('item', 'item.suppliers.suppliername', 'item.department', 'item.subdepartment')
+        ->where('delivery_id', $delivery_id)->where('status', 1)->get();
+
+        $itemsArr = array();
+
+        foreach($itemList as $value){
+            $supplierList = array();
+
+                foreach($value['item']['suppliers'] as $supplier){
+                    $supplier = $supplier['suppliername']['name'];
+                    array_push($supplierList, $supplier);
+                }
+
+                $name = $value['item']['name'];
+                $item_id = $value['item']['id'];
+                $actual_cost = $value['item']['cost_price'];
+       
+                    
+                $data2 = ([
+                    'id' => $value['id'],
+                    'item_id' => $item_id,
+                    'po_id' => $value['po_id'],
+                    'name' => $name,
+                    'item_cost' => $value['item_cost'],
+                    'retail' => $value['item_retail'],
+                    'qty' => $value['qty'],
+                    'total_cost' => $value['total_cost'],
+                    'total_retail' => $value['total_retail'],
+                    'supplier' => implode(" ",$supplierList),
+                    'department' => $value['item']['department']['name'],
+                    'sub_department' => $value['item']['subdepartment']['name']
+                    ]);
+
+            array_push($itemsArr, $data2);
+        }
+     return $itemsArr;
     }
     
 }

@@ -1,5 +1,5 @@
 <x-admin>
-   @section('title')  {{ 'Order Processing Form' }} @endsection
+@section('title')  {{ 'Purchase Order' }} @endsection
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
@@ -10,7 +10,7 @@
                 </h5>
                     <!-- /.card-header -->
                             <!-- form start -->
-                    <form action="{{ route('admin.po.store') }}" method="PUT" class="text-center border border-light p-5" id="poCreate">
+                    <form action="{{ URL('admin/po/update') }}" method="POST" class="text-center border border-light p-5" id="poCreate">
                          @csrf
                         <div class="card-body px-lg-2 pt-0">
                                 <div class="row">
@@ -58,13 +58,17 @@
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">
                                                         <label for="order_date" class="form-label">Order Date</label>
-                                                        <input type="date" class="form-control datepicker" id="order_date" name="order_date" value=""> 
+                                                        <input type="date" class="form-control datepicker" id="order_date" name="order_date" value="{{ date('Y-m-d', strtotime($data->order_date)) }}"> 
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">
                                                         <label for="expected_date" class="form-label">Expected Date</label>
-                                                        <input type="date" class="form-control datepicker" id="expected_date" name="expected_date" value="">
+                                                        @if(isset($data->expected_date)) 
+                                                            <input type="date" class="form-control datepicker" id="expected_date" name="expected_date" value="{{ date('Y-m-d', strtotime($data->expected_date)) }}">
+                                                        @else
+                                                            <input type="date" class="form-control datepicker" id="expected_date" name="expected_date" value="">
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 </div>
@@ -156,7 +160,16 @@
 
                                 </div>
                             </div>
-                            <br>
+                                <br>
+                                    
+                                <div class="row">
+                                    <div class="col-lg-1">
+                                        <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Changes</button>
+                                    </div>
+                                </div>
                         </div>
                         </form>
                 </div> 

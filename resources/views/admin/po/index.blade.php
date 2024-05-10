@@ -47,8 +47,9 @@
                     <thead>
                         <tr>
                             <th class="th-sm">#</th>
+                            <th class="th-sm">Type</th>
                             <th class="th-sm">Supplier</th>
-                            <th class="th-sm">Reference</th>
+                            <th class="th-sm">Order Date</th>
                             <th class="th-sm">Total Cost</th>
                             <th class="th-sm">Created At</th>
                             <th class="th-sm">Status</th>
@@ -59,8 +60,9 @@
                 @foreach ($listData as $value)
                         <tr>
                             <td>{{ $value->id }}</td>
+                            <td>{{ $value->type }}</td>
                             <td>{{ $value->supplier['name'] }}</td>
-                            <td>{{ $value->reference }}</td>
+                            <td>{{  $value->order_date != "" ? date('Y-m-d H:i:s', strtotime($value->order_date)) :  " " }}</td>
                             <td>{{ number_format($value->total_cost, 2) }}</td>
                             <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                             <td>
@@ -71,9 +73,6 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="#" class="btn btn-sm btn-secondary" title="Send Order"  onclick="sendOrder({{ $value->id }})">
-                                    <i class="fa fa-paper-plane"></i>
-                                </a>
                                 <a href="{{ route('admin.po.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
                                     <i class="far fa-edit"></i>
                                 </a>
@@ -84,6 +83,12 @@
                                 @else
                                     <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-check-circle"></i>
+                                    </a>
+                                @endif
+                                
+                                @if($value->status == 1)
+                                    <a href="#" class="btn btn-sm btn-secondary" title="Send Order"  onclick="sendOrder({{ $value->id }})">
+                                        <i class="fa fa-paper-plane"></i>
                                     </a>
                                 @endif
                             </td>
@@ -107,7 +112,7 @@
                     // "scrollX": false,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 8 ]},
+                        { "bSortable": false, "aTargets": [ 6 ]},
                     ],
                     "order": [0,'desc'],
                 });
@@ -215,7 +220,7 @@
                                                 timeOut: 1500,
                                                 fadeOut: 1500,
                                                 onHidden: function () {
-                                                    window.location.reload();
+                                                    // window.location.reload();
                                                 }
                                             }
                                         );
@@ -228,7 +233,6 @@
                                                 timeOut: 1500,
                                                 fadeOut: 1500,
                                                 onHidden: function () {
-                                                    window.location.reload();
                                                 }
                                             }
                                         );

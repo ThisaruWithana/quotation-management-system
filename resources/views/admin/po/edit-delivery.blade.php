@@ -1,9 +1,9 @@
 <x-admin>
-   @section('title')  {{ 'Purchase Order' }} @endsection
+@section('title')  {{ 'Purchase Deliveries' }} @endsection
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-lg-12">
                 <div class="card card-primary">
                 <h5 class="card-header  white-text text-left py-3">
                     {{ $title }}
@@ -18,13 +18,12 @@
                                         <div class="row">
                                             <div class="col-lg-6">
                                                 <div class="form-group text-left">
-                                                    <label for="type" class="form-label">PO Type</label>
+                                                    <label for="type" class="form-label">Type</label>
                                                     <span class="required"> * </span>
-                                                    <select id="type" name="type" class="selectpicker col-lg-12" required>
+                                                    <select id="type" name="type" class="selectpicker col-lg-12" disabled>
                                                         <option value=""></option>
-                                                        <option value="Manual">Manual</option>
-                                                        <option value="Automatic">Automatic</option>
-                                                        <option value="Import">Import</option>
+                                                        <option value="Manual" {{ $data->type === 'Manual' ? 'selected' : '' }}>Manual</option>
+                                                        <option value="Import" {{ $data->type === 'Import' ? 'selected' : '' }}>Import</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -35,50 +34,48 @@
                                                     <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
                                                         <option value="">Select Client</option>
                                                         @foreach ($suppliers as $value)
-                                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                        <option value="{{ $value->id }}" 
+                                                            {{ $data->supplier_id === $value->id ? 'selected' : '' }}>{{ $value->name }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                        
-                                        <div id="manual_form" style="display:none;"> 
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div class="form-group text-left">
-                                                        <label for="remark" class="form-label">Remark</label>
-                                                        <textarea class="form-control" name="remark" id="remark"></textarea>
-                                        
+                                        @if($data->type === 'Manual')
+                                            <div id="manual_form"> 
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group text-left">
+                                                            <label for="remark" class="form-label">Remark</label>
+                                                            <textarea class="form-control" name="remark" id="remark">{{ $data->remark }}</textarea>
+                                            
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="row"> 
-                                            <div class="col-lg-6">
-                                                <div class="form-group text-left">
-                                                    <label for="order_date" class="form-label">Order Date</label>
-                                                    <input type="date" class="form-control datepicker" id="order_date" name="order_date" value=""> 
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group text-left">
-                                                    <label for="expected_date" class="form-label">Expected Date</label>
-                                                    <input type="date" class="form-control datepicker" id="expected_date" name="expected_date" value="">
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                       
-                                        <div id="import_form" style="display:none;"> 
-                                            <div class="row">
+                                                <div class="row"> 
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">
-                                                        <label for="file" class="form-label">Upload File</label>
-                                                        <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                        <label for="delivery_date" class="form-label">Delivery Date</label>
+                                                        <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="{{ $data->delivery_date }}"> 
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                       
+                                        @if($data->type === 'Import')
+                                            <div id="import_form" style="display:none;"> 
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group text-left">
+                                                            <label for="file" class="form-label">Upload File</label>
+                                                            <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        
+                                        @endif
                                     </div>
                                     <div class="col-lg-4 pricing-details">
                                         <div class="text-left" style="margin-left:100px;margin-top: 25px;">
@@ -86,55 +83,80 @@
                                                 <tr class="bundle-item-cost">
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($data->total_cost, 2) }}</span></b></p></td>
+                                                </tr>
+                                                <tr class="bundle-item-cost">
+                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-retail-lbl">{{ number_format($data->total_retail, 2) }}</span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
                                     </div>
                                 </div><br>
                                 
-                            <input type="hidden" class="form-control" name="po_id" id="po_id" value="">
-                            <div class="col-lg-2">
-                                <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
-                            </div><br>
+                                <input type="hidden" class="form-control" name="po_id" id="po_id" value="{{ $data->id }}">
                         </div>
 
-                            <div class="add-items">
+                            <div class="row add-items" style="display:block;">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-2" style="float:right;">
+                                        <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                            <i class="fa fa-search-plus"></i>
+                                            Find Items
+                                        </button>
+                                    </div><br><br>
 
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-2" style="float:right;">
-                                            <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
-                                                <i class="fa fa-search-plus"></i> 
-                                                Find Items
-                                            </button>
-                                        </div>
+                                    <div class="table-responsive">
+                                        <table class="table item-list table-bordered" id="sortable-table" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="th-sm">Code</th>
+                                                    <th class="th-sm">Name</th>
+                                                    <th class="th-sm">Supplier</th>
+                                                    <th class="th-sm">Department</th>
+                                                    <th class="th-sm">Sub Department</th>
+                                                    <th class="th-sm">Item Cost</th>
+                                                    <th class="th-sm">Item Retail</th>
+                                                    <th class="th-sm item-list-qty">Qty</th>
+                                                    <th class="th-sm">Total Cost</th>
+                                                    <th class="th-sm">Total Retail</th>
+                                                    <th class="th-sm"></th>
+                                                    <th class="th-sm"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <?php $i = 1; ?>
+                                                        @foreach ($itemList as $value)
+                                                            <tr id="{{ $value['id'] }}">
+                                                                <td>{{ $value['item_id'] }}</td>
+                                                                <td>{{ $value['name'] }}</td>
+                                                                <td>{{ $value['supplier'] }}</td>
+                                                                <td>{{ $value['department'] }}</td>
+                                                                <td>{{ $value['sub_department'] }}</td>
+                                                                <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
+                                                                <td class="item-list-item-cost">{{ $value['retail'] }}</td>
+                                                                <td class="item-list-qty">{{ $value['qty'] }}</td>
+                                                                <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
+                                                                <td class="item-list-total-cost">{{ $value['total_retail'] }}</td>
+                                                                <td>
+                                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['po_id'] }})">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </a>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }})">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        <?php $i++; ?>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
                                     </div>
-                                </div><br>
-                                    
-                                <div class="table-responsiv">
-                                    <table class="table item-list table-bordered" id="sortable-table" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th class="th-sm">Code</th>
-                                                <th class="th-sm">Name</th>
-                                                <th class="th-sm">Supplier</th>
-                                                <th class="th-sm">Department</th>
-                                                <th class="th-sm">Sub Department</th>
-                                                <th class="th-sm">Item Cost</th>
-                                                <th class="th-sm item-list-qty">Qty</th>
-                                                <th class="th-sm">Total Cost</th>
-                                                <th class="th-sm"></th>
-                                                <th class="th-sm"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                         
-                                        
-                                        </tbody>
-                                    </table>
-                                </div>
 
+                                </div>
                             </div>
                             <br>
                         </div>
@@ -348,82 +370,6 @@
 
                 $('.item-list-qty').addClass('editable');
                 
-                $("#poCreate").submit(function(event) {
-                    event.preventDefault();
-
-                    var formData = new FormData(this);
-
-                    $.ajax({
-                        url: "{{ route('admin.po.store') }}",
-                        type: 'POST',
-                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                            data: formData,
-                            dataType:'JSON',
-                            contentType: false,
-                            cache: false,
-                            processData: false,
-                            success: function (data) {
-                                var result = data;
-
-                                if (result['code'] == 1) {
-                                    $(".add-items").show();
-                                    $("#btnSave").hide();
-                                    $("#supplier").prop('disabled', true);
-                                    $("#remark").prop('disabled', true);
-                                    $("#order_date").prop('disabled', true);
-                                    $("#expected_date").prop('disabled', true);
-                                    
-                                    $("#po_id").val(result['po_id']);
-                                    $("#poId").val(result['po_id']);
-                                    $("#btnUpdate").show();
-
-                                    if (result['data'].length > 0) {
-
-                                        $('.item-list tbody').empty();
-
-                                        $.each(result['data'], function (count, val) {
-
-                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+' )"><i class="fas fa-edit"></i></a>';
-
-                                            $('.item-list tbody').append(
-                                                '<tr>'
-                                                +'<td>'+ val['item_id'] +'</td>'
-                                                +'<td>'+ val['name'] +'</td>'
-                                                +'<td>'+ val['supplier'] +'</td>'
-                                                +'<td>'+ val['department'] +'</td>'
-                                                +'<td>'+ val['sub_department'] +'</td>'
-                                                +'<td>'+ val['item_cost'] +'</td>'
-                                                +'<td class="item-list-qty">'+ val['qty'] +'</td>'
-                                                +'<td>'+ val['total_cost'] +'</td>'
-                                                +'<td>'
-                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['po_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
-                                                +'</td>'
-                                                +'<td>'
-                                                +editBtn
-                                                +'</td>'
-                                                +'</tr>'
-                                            );
-                                        $('.item-list-qty').addClass('editable');             
-                                        });
-                                    } 
-                                } else {
-                                    toastr.error(
-                                        'Error',
-                                        'Something Went Wrong!',
-                                        {
-                                            timeOut: 1500,
-                                            fadeOut: 1500,
-                                            onHidden: function () {
-                                            }
-                                        }
-                                    );
-                                }
-                            }, error: function (data) {
-                                        
-                        }
-                    });
-                });
-
                 $('#type').on('change', function() {
 
                     if(this.value === 'Manual'){
