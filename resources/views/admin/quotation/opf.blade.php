@@ -194,7 +194,7 @@
                                         <tr>
                                             <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Gross Profit </b></p></td>
                                             <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="profit-lbl">{{ number_format($quotation_cost[0] - $total_opf_cost, 2) }}</span></b></p></td>
+                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="profit-lbl">{{ number_format($quotation_cost - $total_opf_cost, 2) }}</span></b></p></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -218,7 +218,9 @@
                                     
                                 <div class="row">
                                     <div class="col-lg-1">
-                                        <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
+                                        <a href="{{ url('admin/opf/print',encrypt($data->id)) }}">
+                                            <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
+                                        </a>
                                     </div>
                                     <div class="col-lg-2">
                                         <button class="btn btn-primary btn-block" type="button" id="btnSaveChanges">Save Changes</button>

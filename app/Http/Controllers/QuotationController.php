@@ -1630,13 +1630,34 @@ class QuotationController extends Controller
             'price' => $quotation['price'],
             'discount' => $quotation['discount'],
             'price_after_discount' => $discountAmt,
-
-            
         ]; 
 
-            
         $pdf = PDF::loadView('print.quotation', $data);
         return $pdf->download('Quotation and Order Contract');
+    
+    }
+
+    public function printOpf($id)
+    {
+        $opf = Opf::with('quotation', 'created_user')->where('quotation_id',decrypt($id))->first();
+        $itemList = $this->getOpfItems($opf->id);
+    //    $inStock = $this->getCurrentStockCount(decrypt($id));
+    //    $inStock = app('App\Http\Controllers\ItemController')->getCurrentStockCount();
+
+    //    item_id
+        $data = [
+            'opf' => $opf,
+            'customer' => $opf['quotation']['customer']['name'],
+            'created_by' => $opf['created_user']['name'],
+            // 'customer_postal_code' => $quotation['customer']['postal_code'],
+            // 'customer_tel' => $quotation['customer']['tel'],
+            // 'customer_email' => $quotation['customer']['email'],
+            'date' => date('m-d-Y'),
+            'itemList' => $itemList,
+        ]; 
+
+        $pdf = PDF::loadView('print.opf', $data);
+        return $pdf->download('Order Processing Form');
     
     }
 }

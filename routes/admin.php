@@ -123,6 +123,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::prefix('opf')->group(function(){
 
         Route::get('{id}', [QuotationController::class, 'opf'])->name('opf');
+        Route::get('print/{id}', [QuotationController::class, 'printOpf'])->name('opf.print');
 
         Route::post('update', [QuotationController::class, 'updateOpf'])->name('opf.update');
         Route::post('add-items', [QuotationController::class, 'opfAddItems'])->name('opf.add-items');
