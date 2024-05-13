@@ -18,4 +18,8 @@ class Opf extends Model
         return $this->belongsTo('App\Models\User', 'created_by','id');
     }
 
+    public function quotation()
+    {
+        return $this->belongsTo('App\Models\Quotation', 'quotation_id','id');
+    }
 }

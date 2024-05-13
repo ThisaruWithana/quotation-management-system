@@ -19,6 +19,7 @@ use App\Models\SubItem;
 use App\Models\Opf;
 use App\Models\OpfItems;
 use DB;
+use PDF;
 
 class QuotationController extends Controller
 {
@@ -74,6 +75,7 @@ class QuotationController extends Controller
     {
         $response = array();
         $description = $request->input('description');
+        $status = $request->input('status');
 
          try{
              DB::beginTransaction();
@@ -88,6 +90,11 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->id,
                 ]);
              }
+             if(isset($status)){
+                $status = $request->input('status');
+             }else{
+                $status = 1;
+             }
 
              $store = Quotation::updateOrCreate(
                  [
@@ -101,7 +108,7 @@ class QuotationController extends Controller
                      'price' => $request->input('price'),
                      'created_by' => Auth::user()->id,
                      'updated_by' => Auth::user()->id,
-                     'status' => $request->input('status')
+                     'status' => $status
                  ]
              );
  
@@ -164,15 +171,20 @@ class QuotationController extends Controller
         $total_retail = $this->getTotalRetail(decrypt($id));
         $quotation_cost = $this->getQuotationCost(decrypt($id));
        
-        $vatAmt = $this->getVATAmt($quotation_cost[0]);
+        // $vatAmt = $this->getVATAmt($quotation_cost[0]);
         
         $data = Quotation::where('id',decrypt($id))->first();
 
         $quotationItems = $this->getQuotationItems(decrypt($id));
+
+        $quotationPriceAfterDiscount = $this->getPriceAfterDiscount(decrypt($id));
+
+        $quotationMargin = $data['quotation_margin'];
+        $quotationMarginRate = $data['margin'];
      
         return view('admin.quotation.edit',compact('data', 'title', 'customers', 'quotationItems',
                 'departments', 'sub_departments', 'suppliers', 'bundles', 'descriptions',
-                'total_cost', 'total_retail', 'quotation_cost', 'vatAmt'));
+                'total_cost', 'total_retail', 'quotation_cost', 'quotationMargin', 'quotationMarginRate', 'quotationPriceAfterDiscount'));
     }
 
     public function addItems(Request $request)
@@ -274,15 +286,15 @@ class QuotationController extends Controller
             DB::commit(); 
             $total_cost = $this->getTotalCost($quotation_id);
             $total_retail = $this->getTotalRetail($quotation_id);
-            $quotation_cost = $this->getQuotationCost($quotation_id);
+            $discount = $this->getQuotationDiscountAmt($quotation_id);
 
             if($store){
 
                 $request->request->add([
-                    'price' => $quotation_cost,
                     'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
+                    'discount' => $discount
                 ]);
 
                 $updatePriceInfo = $this->updatePriceInfo($request);
@@ -293,15 +305,11 @@ class QuotationController extends Controller
                 $response['data'] = $getQuotationItemList;
                 $response['total_cost'] = $total_cost;
                 $response['total_retail'] = $total_retail;
-                $response['quotation_cost'] = $quotation_cost;
+                $response['discount'] = $discount;
+                $response['quotation_cost'] = $this->getPriceAfterDiscount($quotation_id);
             }else{
                 DB::rollback();
                 $response['code'] = 0;
-                $response['msg'] = 'Something went wrong !';
-                $response['data'] = '';
-                $response['total_cost'] = $total_cost;
-                $response['total_retail'] = $total_retail;
-                $response['quotation_cost'] = $quotation_cost;
             }
               
             return json_encode($response);
@@ -325,7 +333,8 @@ class QuotationController extends Controller
 
     public function getQuotationCost($quotation_id)
     {
-        return $query = Quotation::where('id', $quotation_id)->pluck('price');
+         $query = Quotation::where('id', $quotation_id)->pluck('price');
+         return $query[0];
     }
 
     public function getVATAmt($quotation_cost)
@@ -472,27 +481,29 @@ class QuotationController extends Controller
                 $total_cost = $this->getTotalCost($quotation_id);
                 $total_retail = $this->getTotalRetail($quotation_id);
                 $quotation_cost = $this->getQuotationCost($quotation_id);
+                $discount = $this->getQuotationDiscountAmt($quotation_id);
 
                 DB::commit(); 
 
                 if($update){
 
                     $request->request->add([
-                        'price' => $quotation_cost,
                         'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                         'total_cost' => $total_cost,
-                        'total_retail' => $total_retail
+                        'total_retail' => $total_retail,
+                        'discount' => $discount
                     ]);
     
                     $queryUpdate = $this->updatePriceInfo($request);
-                    $getQuotationItemList = $this->getQuotationItems($quotation_id);
+                     $getQuotationItemList = $this->getQuotationItems($quotation_id);
 
                     $response['code'] = 1;
                     $response['msg'] = "Success";
                     $response['data'] = $getQuotationItemList;
                     $response['total_cost'] = $total_cost;
                     $response['total_retail'] = $total_retail;
-                    $response['quotation_cost'] = $quotation_cost;
+                    $response['discount'] = $discount;
+                    $response['quotation_cost'] = $this->getPriceAfterDiscount($quotation_id);
                 }else{
                     DB::rollback();
                     $response['code'] = 0;
@@ -561,16 +572,16 @@ class QuotationController extends Controller
 
                     $total_cost = $this->getTotalCost($quotation_id);
                     $total_retail = $this->getTotalRetail($quotation_id);
-                    $quotation_cost = $this->getQuotationCost($quotation_id);
+                    $discount = $this->getQuotationDiscountAmt($quotation_id);
                     
                     $request->request->add([
-                        'price' => $quotation_cost,
                         'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                         'total_cost' => $total_cost,
-                        'total_retail' => $total_retail
+                        'total_retail' => $total_retail,
+                        'discount' => $discount
                     ]);
 
-                    $queryUpdate = $this->updatePriceInfo($request);
+                     $queryUpdate = $this->updatePriceInfo($request);
                     
                     if($queryUpdate){
                         DB::commit(); 
@@ -582,7 +593,8 @@ class QuotationController extends Controller
                         $response['data'] = $getItemList;
                         $response['total_cost'] = $total_cost;
                         $response['total_retail'] = $total_retail;
-                        $response['quotation_cost'] = $quotation_cost;
+                        $response['discount'] = $discount;
+                        $response['quotation_cost'] = $this->getPriceAfterDiscount($quotation_id);
                     }else{
                         DB::rollback();
                         $response['code'] = 0;
@@ -602,6 +614,12 @@ class QuotationController extends Controller
                 $response['msg'] = $e->getMessage();
                 return json_encode($response);
             } 
+    }
+
+    public function getQuotationDiscountAmt($quotation_id)
+    {
+        $query = Quotation::where('id', $quotation_id)->where('status', 1)->pluck('discount');
+        return $query[0];
     }
 
     public function generateQuotationReference($quotation_id, $customer_id)
@@ -626,22 +644,24 @@ class QuotationController extends Controller
         $quotation_id = $request->input('quotation_id');
         $margin_amount = $this->getQuotationMarginAmt($quotation_id, $request->input('price_after_discount'));
         $margin_rate = $this->getQuotationMarginRate($request->input('price_after_discount'), $margin_amount);
+        $quotation_cost = $this->getQuotationCost($quotation_id);
 
             try{
                 DB::beginTransaction();
                 $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+                $vat_amt = ($request->input('price_after_discount') * $vatRate[0])/100;
 
-                $update = Quotation::where('id', $quotation_id)->update([
-                    'price' => $request->input('price'),
+                 $update = Quotation::where('id', $quotation_id)->update([
+                    'price' => floatval($quotation_cost),
                     'discount' => $request->input('discount'),
                     'margin' => $margin_rate,
                     'vat_rate' => floatval($vatRate[0]),
-                    'vat_amt' => floatval($request->input('vat')),
                     'total_cost' => floatval($request->input('total_cost')),
                     'total_retail' => floatval($request->input('total_retail')),
                     'quotation_vat' => floatval($request->input('quotation_vat')),
                     'quotation_margin' => $margin_amount,
                     'final_price' => floatval($request->input('quotation_vat')),
+                    'vat_amt' => floatval($vat_amt),
                     'updated_by' => Auth::user()->id
                 ]);
 
@@ -667,7 +687,7 @@ class QuotationController extends Controller
             }catch(\Exception $e){
                 DB::rollback();
                 $response['code'] = 0;
-                $response['msg'] = $e->getMessage();
+                $response['msg'] = $e->getMessage().' '.$e->getLine();
                 return json_encode($response);
             } 
     }
@@ -716,6 +736,7 @@ class QuotationController extends Controller
             $total_cost = $this->getTotalCost($quotation_id);
             $total_retail = $this->getTotalRetail($quotation_id);
             $quotation_cost = $this->getQuotationCost($quotation_id);
+            $discount = $this->getQuotationDiscountAmt($quotation_id);
 
             if($store){
 
@@ -723,7 +744,8 @@ class QuotationController extends Controller
                     'price' => $quotation_cost,
                     'total_cost' => $total_cost,
                     'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
-                    'total_retail' => $total_retail
+                    'total_retail' => $total_retail,
+                    'discount' => $discount
                 ]);
 
                 $updatePriceInfo = $this->updatePriceInfo($request);
@@ -735,16 +757,12 @@ class QuotationController extends Controller
                 $response['data'] = $getQuotationItemList;
                 $response['total_cost'] = $total_cost;
                 $response['total_retail'] = $total_retail;
-                $response['quotation_cost'] = $quotation_cost;
+                $response['discount'] = $discount;
+                $response['quotation_cost'] = $this->getPriceAfterDiscount($quotation_id);
                 $response['bundle_cost'] = $bundle_cost;
             }else{
                 DB::rollback();
                 $response['code'] = 0;
-                $response['msg'] = 'Something went wrong !';
-                $response['data'] = '';
-                $response['total_cost'] = $total_cost;
-                $response['total_retail'] = $total_retail;
-                $response['quotation_cost'] = $quotation_cost;
             }
               
             return json_encode($response);
@@ -802,6 +820,7 @@ class QuotationController extends Controller
             $total_cost = $this->getTotalCost($quotation_id);
             $total_retail = $this->getTotalRetail($quotation_id);
             $quotation_cost = $this->getQuotationCost($quotation_id);
+            $discount = $this->getQuotationDiscountAmt($quotation_id);
 
             if($store){
 
@@ -809,7 +828,8 @@ class QuotationController extends Controller
                     'price' => $quotation_cost,
                     'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                     'total_cost' => $total_cost,
-                    'total_retail' => $total_retail
+                    'total_retail' => $total_retail,
+                    'discount' => $discount
                 ]);
 
                 $updatePriceInfo = $this->updatePriceInfo($request);
@@ -820,15 +840,11 @@ class QuotationController extends Controller
                 $response['data'] = $getQuotationItemList;
                 $response['total_cost'] = $total_cost;
                 $response['total_retail'] = $total_retail;
-                $response['quotation_cost'] = $quotation_cost;
+                $response['discount'] = $discount;
+                $response['quotation_cost'] = $this->getPriceAfterDiscount($quotation_id);
             }else{
                 DB::rollback();
                 $response['code'] = 0;
-                $response['msg'] = 'Something went wrong !';
-                $response['data'] = '';
-                $response['total_cost'] = $total_cost;
-                $response['total_retail'] = $total_retail;
-                $response['quotation_cost'] = $quotation_cost;
             }
               
             return json_encode($response);
@@ -1590,5 +1606,58 @@ class QuotationController extends Controller
             $response['msg'] = $e->getMessage();
             return json_encode($response);
         } 
+    }
+
+    public function printQuotation($id)
+    {
+        $quotation = Quotation::with('customer')->where('id',decrypt($id))->first();
+        $quotationItems = $this->getQuotationItems(decrypt($id));
+
+        $discountAmt = ($quotation['price'] * $quotation['discount'])/100;
+
+        $data = [
+            'ref' => $quotation['ref'],
+            'customer' => $quotation['customer']['name'],
+            'customer_address' => $quotation['customer']['address'],
+            'customer_postal_code' => $quotation['customer']['postal_code'],
+            'customer_tel' => $quotation['customer']['tel'],
+            'customer_email' => $quotation['customer']['email'],
+            'date' => date('m-d-Y'),
+            'quotationItems' => $quotationItems,
+            'vat_amt' => $quotation['vat_amt'],
+            'vat_rate' => $quotation['vat_rate'],
+            'final_price' => $quotation['final_price'],
+            'price' => $quotation['price'],
+            'discount' => $quotation['discount'],
+            'price_after_discount' => $discountAmt,
+        ]; 
+
+        $pdf = PDF::loadView('print.quotation', $data);
+        return $pdf->download('Quotation and Order Contract');
+    
+    }
+
+    public function printOpf($id)
+    {
+        $opf = Opf::with('quotation', 'created_user')->where('quotation_id',decrypt($id))->first();
+        $itemList = $this->getOpfItems($opf->id);
+    //    $inStock = $this->getCurrentStockCount(decrypt($id));
+    //    $inStock = app('App\Http\Controllers\ItemController')->getCurrentStockCount();
+
+    //    item_id
+        $data = [
+            'opf' => $opf,
+            'customer' => $opf['quotation']['customer']['name'],
+            'created_by' => $opf['created_user']['name'],
+            // 'customer_postal_code' => $quotation['customer']['postal_code'],
+            // 'customer_tel' => $quotation['customer']['tel'],
+            // 'customer_email' => $quotation['customer']['email'],
+            'date' => date('m-d-Y'),
+            'itemList' => $itemList,
+        ]; 
+
+        $pdf = PDF::loadView('print.opf', $data);
+        return $pdf->download('Order Processing Form');
+    
     }
 }

@@ -21,17 +21,17 @@
                                                 <div class="col-lg-3">
                                                     <div class="form-group text-left">
                                                         <label for="status" class="form-label">Status</label>
-                                                        <select id="status" name="status" class="selectpicker">        
-                                                        <option value="0">Deactivated</option>         
+                                                        <select id="status" name="status" class="selectpicker" disabled>      
                                                         <option value="1">New</option> 
                                                         <option value="2">Accepted</option>
                                                         <option value="3">Installed</option>
-                                                        <option value="4">Old</option>
+                                                        <option value="4">Old</option>    
+                                                        <option value="0">Deactivated</option>       
                                                     </select>
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-6" style="margin-left:100px;">
                                                     <div class="form-group text-left">
                                                         <label for="ref" class="form-label">Quot. Ref</label>
                                                         <input type="text" class="form-control" id="ref" name="ref" value="" readonly>
@@ -514,8 +514,11 @@
                     var totalCost = parseFloat($("#total-cost-lbl").text());
                     var totalRetail = parseFloat($("#retail-lbl").text());
                     var quotationCost = parseFloat($('#price').val());
+                    var quotationPriceAfterDiscount = quotationCost - ((quotationCost * discount)/100);
 
-                    calculatePrices(quotationCost, totalRetail, totalCost, discount);
+                    calculatePrices(quotationPriceAfterDiscount, totalRetail, totalCost, discount);
+                    
+                    $("#discount-lbl").text(discount);
 
                 });
 
@@ -977,7 +980,8 @@
                     discount = parseFloat(discount);
                 }
 
-                var quotationPriceAfterDiscount = quotationCost - ((quotationCost * discount)/100);
+                // - ((quotationCost * discount)/100)
+                var quotationPriceAfterDiscount = quotationCost;
 
                 var quotationMargin = quotationPriceAfterDiscount - totalCost;
                 var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
