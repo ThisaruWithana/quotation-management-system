@@ -259,7 +259,8 @@ class StockController extends Controller
 
     public function getPoTotalCost($poId)
     {
-       return $query = PoItems::where('po_id', $poId)->where('status', 1)->sum('total_cost');
+        $query = PoItems::where('po_id', $poId)->where('status', 1)->sum('total_cost');
+        return $query;
     }
 
     public function addItems(Request $request)

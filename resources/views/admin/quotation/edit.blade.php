@@ -262,12 +262,12 @@
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Discount (%)</b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="discount-lbl">{{ $data->discount, 2 }}</span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="discount-lbl">{{ $data->discount }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:150px;"><p class="text-sm"><b class="d-block info-lb">Quot. Price </b></p></td>
+                                                    <td style="width:150px;"><p class="text-sm"><b class="d-block info-lb">Quot. Price After Discount</b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($quotation_cost[0], 2) }}</span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($quotationPriceAfterDiscount, 2) }}</span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -277,17 +277,17 @@
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Quot. Margin </b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-margin-lbl"></span></b></p></td>
+                                                    <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-margin-lbl">{{ number_format($quotationMargin, 2) }} ({{ number_format($quotationMarginRate, 2) }}%)</span></b></p></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">VAT</b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="vat-lbl">{{ number_format($vatAmt, 2) }}</span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="vat-lbl">{{ number_format($data['vat_amt'], 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb">Quot. + VAT</b></p></td>
                                                     <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-vat-lbl"></span></b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-vat-lbl">{{ number_format($data['vat_amt'] + $quotationPriceAfterDiscount, 2) }}</span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -303,7 +303,9 @@
                                     </div>
                                     @endif
                                     <div class="col-lg-1">
-                                        <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
+                                        <a href="{{ url('admin/quotation/print',encrypt($data->id)) }}">
+                                            <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
+                                        </a>
                                     </div>
                                     <div class="col-lg-2">
                                         <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Changes</button>
@@ -560,7 +562,7 @@
                 var quotationCost = parseFloat($('#price').val());
                 var discount = $('#discount').val();
        
-                calculatePrices(quotationCost, totalRetail, totalCost, discount);
+                // calculatePrices(quotationCost, totalRetail, totalCost, discount);
 
                 $("#discount").on("keyup", function() {
 
@@ -818,7 +820,7 @@
                                             timeOut: 1500,
                                             fadeOut: 1500,
                                             onHidden: function () {
-                                                window.location.reload();
+                                                // window.location.reload();
                                             }
                                         }
                                     );
@@ -999,7 +1001,7 @@
                     discount = parseFloat(discount);
                 }
 
-                var quotationPriceAfterDiscount = quotationCost - ((quotationCost * discount)/100);
+                var quotationPriceAfterDiscount = quotationCost;
 
                 var quotationMargin = quotationPriceAfterDiscount - totalCost;
                 var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
