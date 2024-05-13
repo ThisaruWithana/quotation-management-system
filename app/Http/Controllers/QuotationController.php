@@ -488,7 +488,6 @@ class QuotationController extends Controller
                 if($update){
 
                     $request->request->add([
-                        'price' => $quotation_cost[0],
                         'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                         'total_cost' => $total_cost,
                         'total_retail' => $total_retail,
@@ -496,7 +495,7 @@ class QuotationController extends Controller
                     ]);
     
                     $queryUpdate = $this->updatePriceInfo($request);
-                    $getQuotationItemList = $this->getQuotationItems($quotation_id);
+                     $getQuotationItemList = $this->getQuotationItems($quotation_id);
 
                     $response['code'] = 1;
                     $response['msg'] = "Success";
