@@ -204,16 +204,25 @@
                                                                             Total Amount Inc. VAT
                                                                         </td>
                                                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
-                                                                            1140.00
+                                                                            {{ number_format($price, 2) }}
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <td colspan="3"
                                                                             style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
-                                                                            VAT 20%
+                                                                            DISCOUNT   
                                                                         </td>
                                                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
-                                                                            190.00
+                                                                            {{ number_format($discount, 2) }}%
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td colspan="3"
+                                                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                                                            VAT   {{ number_format($vat_rate, 2) }}%
+                                                                        </td>
+                                                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                                                                            {{ number_format($vat_amt, 2) }}
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -222,7 +231,7 @@
                                                                             Total Amount Inc. VAT
                                                                         </td>
                                                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
-                                                                            1140.00
+                                                                            {{ number_format($final_price, 2) }}
                                                                         </td>
                                                                     </tr>
 
@@ -240,7 +249,7 @@
                                                                             Balance Due
                                                                         </td>
                                                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
-                                                                            1140.00
+                                                                            {{ number_format($final_price, 2) }}
                                                                         </td>
                                                                     </tr>
 

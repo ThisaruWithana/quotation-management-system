@@ -1611,7 +1611,9 @@ class QuotationController extends Controller
     public function printQuotation($id)
     {
         $quotation = Quotation::with('customer')->where('id',decrypt($id))->first();
-         $quotationItems = $this->getQuotationItems(decrypt($id));
+        $quotationItems = $this->getQuotationItems(decrypt($id));
+
+        $discountAmt = ($quotation['price'] * $quotation['discount'])/100;
 
         $data = [
             'ref' => $quotation['ref'],
@@ -1621,7 +1623,15 @@ class QuotationController extends Controller
             'customer_tel' => $quotation['customer']['tel'],
             'customer_email' => $quotation['customer']['email'],
             'date' => date('m-d-Y'),
-            'quotationItems' => $quotationItems
+            'quotationItems' => $quotationItems,
+            'vat_amt' => $quotation['vat_amt'],
+            'vat_rate' => $quotation['vat_rate'],
+            'final_price' => $quotation['final_price'],
+            'price' => $quotation['price'],
+            'discount' => $quotation['discount'],
+            'price_after_discount' => $discountAmt,
+
+            
         ]; 
 
             
