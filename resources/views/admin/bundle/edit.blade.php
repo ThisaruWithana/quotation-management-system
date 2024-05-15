@@ -1,5 +1,18 @@
 <x-admin>
    @section('title')  {{ 'Bundle Management' }} @endsection
+       <style>
+           .dataTables_scrollHeadInner{
+               width: 100% !important;
+           }
+           .dataTables_scrollHeadInner  .table{
+               width: 100% !important;
+           }
+           div.dataTables_wrapper div.dataTables_info {
+               padding-top: .85em;
+               text-align: left;
+               padding-bottom: 30px;
+           }
+       </style>
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
@@ -17,7 +30,7 @@
                         <div class="card-body px-lg-2 pt-0">
 
                                 <div class="row">
-                                    <div class="col-lg-8 p-0">
+                                    <div class="col-lg-7 p-0">
                                         <div class="col-lg-12">
                                             <div class="form-group text-left">
                                                 <label for="name" class="form-label">Bundle Name</label>
@@ -50,28 +63,24 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 pricing-details">
-                                        <div class="text-left" style="margin-left:100px;margin-top: 25px;">
-                                            <table>
+                                    <div class="col-lg-5 pricing-details">
+                                        <div class="text-left" style="padding-left:100px;margin-top: 25px;">
+                                            <table class="table table-bordered">
                                                 <tr class="bundle-item-cost">
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($data->total_cost, 2) }}</span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Cost :</b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($data->total_cost, 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="retail-lbl">{{ number_format($data->total_retail, 2) }}</span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Retail :</b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl">{{ number_format($data->total_retail, 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Difference</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="diff-lbl">{{ number_format($data->bundle_cost - $data->total_cost, 2) }}</span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Difference :</b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="diff-lbl">{{ number_format($data->bundle_cost - $data->total_cost, 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Bundle Cost</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="bundle-cost-lbl">{{ number_format($data->bundle_cost, 2) }}</span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Bundle Cost :</b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="bundle-cost-lbl">{{ number_format($data->bundle_cost, 2) }}</span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -277,7 +286,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Sub Items Model -->
         <div class="modal fade bd-example-modal-lg" id="subItemList" tabindex="-1" role="dialog" aria-labelledby="subItemList" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -381,13 +390,13 @@
                         $('.item-list-cost').show();
                         $('.item-search-cost').show();
                         $('.item-list-display-report').show();
-                        
+
                     } else {
                         $('#in_office').val('no');
                     }
                 });
 
-                
+
                 $("#bundleCreate").submit(function(event) {
                     event.preventDefault();
 
@@ -448,7 +457,7 @@
                         $('.table-item-search tbody').empty();
 
                             if (result.length > 0) {
-                                    
+
                                 var costColHidden;
 
                                 if($('#in_office').val() != 'yes'){
@@ -457,7 +466,7 @@
 
                                 $.each(result, function (count, val) {
                                     var type = 'main';
-                    
+
                                     $('.table-item-search tbody').append(
                                         '<tr>'
                                         +'<td>' + val['id'] + '</td>'
@@ -470,9 +479,9 @@
                                         +'</tr>'
                                     );
                                 });
-                            } 
+                            }
                         }, error: function (data) {
-                                    
+
                     }
                 });
             }
@@ -494,7 +503,7 @@
                                 var result = JSON.parse(data);
 
                                 $('.bundle-item-list tbody').empty();
-                                    
+
                                     var costColHidden;
 
                                     if($('#in_office').val() != 'yes'){
@@ -537,12 +546,12 @@
                                         $('.item-list-qty').addClass('editable');
                                         i++;
                                     });
-                                    
+
                                 }
 
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
                                 // gettableRowOrder();
-                                        
+
                                 if(Itemtype == 'main'){
                                     displaySubItemList(isChecked.value);
                                 }
@@ -596,7 +605,7 @@
                                 $('.bundle-item-list tbody').empty();
 
                                 if (result['data'].length > 0) {
-                                    
+
                                     var costColHidden;
                                     var i = 1;
 
@@ -652,7 +661,7 @@
                 $("#bundle_item_id").val(id);
                 $("#retail").val(retail);
                 $("#editDetails").modal('show');
-                
+
                 if($('#in_office').val() != 'yes'){
                     $("#actual_cost_edit").hide();
                 }
@@ -699,7 +708,7 @@
             });
 
             function displaySubItemList(ItemId){
-                
+
                 $.ajax({
                     url: "{{ url('admin/item/get-sub-items') }}",
                     type: 'POST',
@@ -715,11 +724,11 @@
                         if (result.length > 0) {
                             $("#subItemList").modal('show');
                             var costColHidden;
-                    
+
                             if($('#in_office').val() != 'yes'){
                                 costColHidden = 'style="display:none;"';
                             }
-                    
+
                             $.each(result, function (count, val) {
                                 var isMandatory = val['is_mandatory'];
                                 var selected;
@@ -730,7 +739,7 @@
                                 }else{
                                     selected = '';
                                 }
-                                            
+
                                 $('.table-sub-items tbody').append(
                                     '<tr>'
                                     +'<td>' + val['id'] + '</td>'
@@ -747,7 +756,7 @@
 
                         }
                     }, error: function (data) {
-                                                        
+
                     }
                 });
             }
@@ -792,7 +801,7 @@
             $('#sortable-table tbody tr').each(function() {
                 selectedData.push($(this).attr("id"));
             });
-            
+
             $('#row_order').removeAttr('value');
             $('#row_order').val(selectedData);
 

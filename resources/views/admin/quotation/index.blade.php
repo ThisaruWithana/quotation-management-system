@@ -24,16 +24,16 @@
                                 </option>
                         </select>
                 </div>
-                    
+
                 <div class="form-group" style="margin-left:10px;">
                     <select id="customer" name="customer" class="selectpicker show-tick" data-live-search="true">
-                        <option value="">Customer</option>        
+                        <option value="">Customer</option>
                         @foreach ($customers as $value)
                             <option value="{{ $value->id }}" @if(Request()->customer == $value->id) selected @endif>{{ $value->name }}</option>
-                        @endforeach 
+                        @endforeach
                     </select>
                 </div>
-                    
+
                 <input type="hidden" name="form_action" value="search">
 
                 <div class="form-group text-right" style="margin-left:10px;">
@@ -43,7 +43,7 @@
             </form>
             <br>
             <div>
-                <table class="table" id="dataTable" width="100%">
+                <table class="table table-bordered" id="dataTable" width="100%">
                     <thead>
                         <tr>
                             <th class="th-sm">#</th>
@@ -70,7 +70,7 @@
                                     <span class="badge badge-success">Active</span>
                                     @elseif($value->status == 2)
                                     <span class="badge badge-success">Accepted</span>
-                                    @else 
+                                    @else
                                     <span class="badge badge-warning">Deactive</span>
                                     @endif
                                 </td>
@@ -78,7 +78,7 @@
                                     <a href="{{ url('admin/quotation/edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                         <i class="far fa-edit"></i>
                                     </a>
-                                    
+
                                     @if($value->status === 1)
                                         <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                             <i class="fas fa-trash-alt"></i>
@@ -114,7 +114,7 @@
                     "order": [0,'desc'],
                 });
             });
-            
+
         function changeStatus(id, status) {
 
             cuteAlert({
