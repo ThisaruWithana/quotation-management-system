@@ -81,12 +81,11 @@
                                         
                                     </div>
                                     <div class="col-lg-4 pricing-details">
-                                        <div class="text-left" style="margin-left:100px;margin-top: 25px;">
-                                            <table>
+                                        <div class="text-left" style="margin-top: 25px;padding-left: 50px;">
+                                            <table class="table table-bordered ">
                                                 <tr class="bundle-item-cost">
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
+                                                    <td style="width:120px;"><p class="text-sm mb-0 text-bold"><b class="d-block info-lb">Total Cost :</b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>

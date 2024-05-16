@@ -1617,19 +1617,10 @@ class QuotationController extends Controller
 
         $data = [
             'ref' => $quotation['ref'],
-            'customer' => $quotation['customer']['name'],
-            'customer_address' => $quotation['customer']['address'],
-            'customer_postal_code' => $quotation['customer']['postal_code'],
-            'customer_tel' => $quotation['customer']['tel'],
-            'customer_email' => $quotation['customer']['email'],
-            'date' => date('m-d-Y'),
+            'date' => date('d/m/Y'),
             'quotationItems' => $quotationItems,
-            'vat_amt' => $quotation['vat_amt'],
-            'vat_rate' => $quotation['vat_rate'],
-            'final_price' => $quotation['final_price'],
-            'price' => $quotation['price'],
-            'discount' => $quotation['discount'],
             'price_after_discount' => $discountAmt,
+            'quotation' => $quotation,
         ]; 
 
         $pdf = PDF::loadView('print.quotation', $data);
@@ -1649,10 +1640,7 @@ class QuotationController extends Controller
             'opf' => $opf,
             'customer' => $opf['quotation']['customer']['name'],
             'created_by' => $opf['created_user']['name'],
-            // 'customer_postal_code' => $quotation['customer']['postal_code'],
-            // 'customer_tel' => $quotation['customer']['tel'],
-            // 'customer_email' => $quotation['customer']['email'],
-            'date' => date('m-d-Y'),
+            'date' => date('d-m-Y'),
             'itemList' => $itemList,
         ]; 
 
