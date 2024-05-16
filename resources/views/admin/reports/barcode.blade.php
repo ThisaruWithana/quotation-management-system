@@ -30,11 +30,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div><br>
                                 
-                            <div class="col-lg-2">
-                                <button class="btn btn-primary btn-block" type="submit">Download</button>
-                            </div>
+                                <div class="col-lg-2">
+                                    <button class="btn btn-primary btn-block" type="submit">Download</button>
+                                </div>
+                                </div><br>
                         </div>
                         </div>
                         </form>

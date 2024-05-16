@@ -170,7 +170,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::prefix('report')->group(function(){
 
         Route::get('barcode', [ReportController::class, 'barcode'])->name('report.barcode');
+        Route::get('order-history', [ReportController::class, 'itemOrderHistory'])->name('report.order-history');
+
         Route::post('print-label', [ReportController::class, 'printLabels'])->name('report.print-label');
+        // Route::post('order-history', [ReportController::class, 'getItemOrderHistory'])->name('report.order-history');
 
     });
 

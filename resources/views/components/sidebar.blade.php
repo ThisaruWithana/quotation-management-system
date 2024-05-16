@@ -122,7 +122,7 @@
                 </a>
                 <ul class="nav nav-treeview" 
                     @if(Route::is('admin.report.barcode')) style='display: block;' 
-                    @elseif(Route::is('admin.report.item-history'))  style='display: block;' @else @endif>
+                    @elseif(Route::is('admin.report.order-history'))  style='display: block;' @else @endif>
                     <li class="nav-item">
                         <a href="{{ url('admin/report/barcode') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
@@ -130,7 +130,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ url('admin/po/deliveries') }}" class="nav-link" id="level2item">
+                        <a href="{{ url('admin/report/order-history') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
                             <p>Item Order History</p>
                         </a>
