@@ -65,7 +65,7 @@
                                                     <p style="margin: 0px"><strong style="width: 120px;display: inline-block">OPF Date  :</strong>
                                                         {{ date('d-m-Y', strtotime($opf->created_at)) }}</p>
                                                     <p style="margin: 0px"><strong style="width: 120px;display: inline-block">Client :</strong>
-                                                        {{ $customer }}</p>
+                                                        {{ $opf['quotation']['customer']['name'] }}</p>
                                                     <p style="margin: 0px"><strong style="width: 120px;display: inline-block">Quot. Date :</strong>
                                                     {{ date('d-m-Y', strtotime($opf->quotation->created_at)) }}</p>
                                                 </td>
@@ -79,10 +79,10 @@
                                         <table style="float: left">
                                             <tbody style="font-size: 13px">
                                             <tr>
-                                                <td><p style="margin: 0px"><strong style="width: 120px;display: inline-block">Created By  :</strong> {{ $created_by }}</p>
+                                                <td><p style="margin: 0px"><strong style="width: 120px;display: inline-block">Created By  :</strong> {{ $opf['created_user']['name'] }}</p>
                                                     <p style="margin: 0px"><strong style="width: 120px;display: inline-block">Symbol Group :</strong> {{ $opf->symbol_group }}</p>
                                                     <p style="margin: 0px"><strong style="width: 120px;display: inline-block">Installation Date :</strong> {{ date('d-m-Y', strtotime($opf->installation_date)) }}</p>
-                                                    <p style="margin: 0px"><strong style="width: 120px;display: inline-block">OPF Price :</strong> {{ number_format($opf->cost, 2) }}</p>
+                                                    <p style="margin: 0px"><strong style="width: 120px;display: inline-block">OPF Price :</strong> £{{ number_format($price_after_discount, 2) }}</p>
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -173,13 +173,19 @@
                                                                     </thead>
                                                                     <tbody style="font-size: 9px;text-align: center;">
 
+                                                                    <?php
+                                                                        $total_qty = 0;
+                                                                        $total_stock = 0;
+                                                                        $total_order_qty = 0;
+                                                                        $total_cost = 0;
+                                                                    ?>
                                                                     @foreach($itemList as $value)
                                                                         <tr>
                                                                             <td style="padding: 10px;border-right: 1px solid #000000;border-left:1px solid #000000 ;border-bottom: 1px solid #000000">
                                                                                 {{ $value['supplier'] }}
                                                                             </td>
                                                                             <td style="padding: 10px;text-align: left;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
-                                                                           
+                                                                                {{ $value['barcode'] }}
                                                                             </td>
                                                                             <td style="text-align: right;padding: 4px;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
                                                                                 {{ $value['name'] }}
@@ -194,12 +200,19 @@
                                                                                 {{ number_format($value['total_cost'], 2) }}
                                                                             </td>
                                                                             <td style="text-align: right;padding: 4px;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
-                                                                           
+                                                                                {{ $value['in_stock'] }}
                                                                             </td>
                                                                             <td style="text-align: right;padding: 4px;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
                                                                                 {{ $value['order_qty'] }}
                                                                             </td>
                                                                         </tr>
+
+                                                                        <?php 
+                                                                            $total_qty = $total_qty + $value['qty'];
+                                                                            $total_stock = $total_stock + $value['in_stock'];
+                                                                            $total_order_qty = $total_order_qty + $value['order_qty'];
+                                                                            $total_cost = $total_cost + $value['total_cost'];
+                                                                        ?>
                                                                     @endforeach
 
                                                                     </tbody>
@@ -212,7 +225,7 @@
                                                                             Qty
                                                                         </td>
                                                                         <td style="padding: 5px 10px; border: 1px solid black;text-align: right;background: #f3f3f3;">
-                                                                            1140.00
+                                                                            {{ $total_qty }}
                                                                         </td>
                                                                     </tr>
 
@@ -222,7 +235,7 @@
                                                                             Stock
                                                                         </td>
                                                                         <td style="padding: 5px 10px; border: 1px solid black;text-align: right;background: #f3f3f3;">
-                                                                            1140.00
+                                                                            {{ $total_stock }}
                                                                         </td>
                                                                     </tr>
 
@@ -232,28 +245,27 @@
                                                                             Order Qty
                                                                         </td>
                                                                         <td style="padding: 5px 10px; border: 1px solid black;text-align: right;background: #f3f3f3;">
-                                                                            1140.00
-                                                                        </td>
-                                                                    </tr>
-
-
-                                                                    <tr>
-                                                                        <td colspan="7"
-                                                                            style="text-align: right; padding: 5px 10px; border: 1px solid black;background: #f3f3f3;font-weight: bold">
-                                                                            Stock
-                                                                        </td>
-                                                                        <td style="padding: 5px 10px; border: 1px solid black;text-align: right;background: #f3f3f3;">
-                                                                            1140.00
+                                                                            {{ $total_order_qty }}
                                                                         </td>
                                                                     </tr>
 
                                                                     <tr>
                                                                         <td colspan="7"
                                                                             style="text-align: right; padding:5px 10px; border: 1px solid black;background: #f3f3f3;font-weight: bold">
+                                                                            Item Cost
+                                                                        </td>
+                                                                        <td style="padding:5px 10px; border: 1px solid black;text-align: right;background: #f3f3f3;">
+                                                                            £{{ number_format($total_cost, 2) }}
+                                                                        </td>
+                                                                    </tr>
+                                                                    
+                                                                    <tr>
+                                                                        <td colspan="7"
+                                                                            style="text-align: right; padding:5px 10px; border: 1px solid black;background: #f3f3f3;font-weight: bold">
                                                                             Total
                                                                         </td>
                                                                         <td style="padding:5px 10px; border: 1px solid black;text-align: right;background: #f3f3f3;">
-                                                                            1140.00
+                                                                            £{{ number_format($total_cost, 2) }}
                                                                         </td>
                                                                     </tr>
 
@@ -263,7 +275,7 @@
                                                                             Gross Profit
                                                                         </td>
                                                                         <td style="padding: 5px 10px; border: 1px solid black;text-align: right;background: #f3f3f3;">
-                                                                            1140.00
+                                                                            £{{ number_format($price_after_discount - $total_cost, 2) }}
                                                                         </td>
                                                                     </tr>
 
@@ -273,7 +285,7 @@
                                                                             Margin %
                                                                         </td>
                                                                         <td style="padding:5px 10px; border: 1px solid black;text-align: right;background: #f3f3f3;">
-                                                                            1140.00
+                                                                            {{ number_format($opf->margin, 2) }}
                                                                         </td>
                                                                     </tr>
 

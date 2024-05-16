@@ -958,7 +958,6 @@ class QuotationController extends Controller
 
                     foreach($quotationItems as $value)
                     {
-            
                         $addItems = OpfItems::create([
                             'opf_id' => $opfId,
                             'item_id' => $value['item_id'],
@@ -976,6 +975,13 @@ class QuotationController extends Controller
                         ]);
                     }
                 }
+
+                $code = $this->generateOpfCode($quotationId);
+
+                $queryUpdate = Opf::where('id', $opfId)->update([
+                    'code' => $code,
+                    'updated_by' => Auth::user()->id
+                ]);
 
                 DB::commit(); 
                 return $opfId;
@@ -1017,7 +1023,7 @@ class QuotationController extends Controller
                 $actual_cost = $value['item']['cost_price'];
             }
                     
-                $data2 = ([
+              $data2 = ([
                     'id' => $value['id'],
                     'item_id' => $item_id,
                     'opf_id' => $value['opf_id'],
@@ -1031,7 +1037,9 @@ class QuotationController extends Controller
                     'type' => $value['type'],
                     'supplier' => implode(" ",$supplierList),
                     'on_order' => $value['on_order'],
-                    'order_qty' => $value['order_qty']
+                    'order_qty' => $value['order_qty'],
+                    'barcode' => $value['item']['barcode']['barcode'],
+                    'in_stock' => app('App\Http\Controllers\ItemController')->getCurrentStockCount($item_id)
                     ]);
 
             array_push($itemsArr, $data2);
@@ -1632,20 +1640,27 @@ class QuotationController extends Controller
     {
         $opf = Opf::with('quotation', 'created_user')->where('quotation_id',decrypt($id))->first();
         $itemList = $this->getOpfItems($opf->id);
-    //    $inStock = $this->getCurrentStockCount(decrypt($id));
-    //    $inStock = app('App\Http\Controllers\ItemController')->getCurrentStockCount();
+        $price_after_discount = $this->getPriceAfterDiscount(decrypt($id));
 
-    //    item_id
         $data = [
             'opf' => $opf,
-            'customer' => $opf['quotation']['customer']['name'],
-            'created_by' => $opf['created_user']['name'],
             'date' => date('d-m-Y'),
             'itemList' => $itemList,
+            'price_after_discount' => $price_after_discount
         ]; 
 
         $pdf = PDF::loadView('print.opf', $data);
         return $pdf->download('Order Processing Form');
     
     }
+
+    public function generateOpfCode($quotation_id)
+    {
+        $query = Opf::where('quotation_id', $quotation_id)->where('status', 1)->first();
+        $opf_id = $query['id'];
+
+        $code = $opf_id.'-'.$quotation_id.'-'.date('Ymd');
+
+        return $code;
+    }   
 }

@@ -141,7 +141,7 @@
                                                     <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
                                                     <td class="item-list-qty">{{ $value['qty'] }}</td>
                                                     <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
-                                                    <td></td>
+                                                    <td>{{ $value['in_stock'] }}</td>
                                                     <td class="item-list-on-order">{{ $value['on_order'] }}</td>
                                                     <td class="item-list-order-qty">{{ $value['order_qty'] }}
                                                     </td>
@@ -186,7 +186,7 @@
                                         </tr>
                                         <tr>
                                             <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">Gross Profit :</b></p></td>
-                                            <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="profit-lbl">{{ number_format($quotation_cost - $total_opf_cost, 2) }}</span></b></p></td>
+                                            <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="profit-lbl">{{ number_format($price_after_discount - $total_opf_cost, 2) }}</span></b></p></td>
                                         </tr>
                                     </table>
                                 </div>
