@@ -19,6 +19,7 @@ use App\Imports\PoImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\VAT;
 use App\Models\ItemStock;
+use App\Models\ItemSupplier;
 use DB;
 
 class StockController extends Controller
@@ -297,31 +298,33 @@ class StockController extends Controller
 
                     $checkSubItems = SubItem::where('parent_id',$id)->where('status', 1)->get();
 
-                    if(count($checkSubItems) > 0){
+                    if(!isset($po_id)){
+                        if(count($checkSubItems) > 0){
     
-                        foreach($checkSubItems as $value){
-                            $is_mandatory = $value['is_mandatory'];
-    
-                            if($is_mandatory == 1){
-                                $lastInsert = PoItems::where('po_id', $po_id)->where('status', 1)->orderBy('id', 'desc')->first();
-         
-                                if(empty($lastInsert)){
-                                    $subItemOrder = 1;
-                                }else{
-                                    $lastInsert = $lastInsert['order'];
-                                    $subItemOrder = $lastInsert + 1;
+                            foreach($checkSubItems as $value){
+                                $is_mandatory = $value['is_mandatory'];
+        
+                                if($is_mandatory == 1){
+                                    $lastInsert = PoItems::where('po_id', $po_id)->where('status', 1)->orderBy('id', 'desc')->first();
+             
+                                    if(empty($lastInsert)){
+                                        $subItemOrder = 1;
+                                    }else{
+                                        $lastInsert = $lastInsert['order'];
+                                        $subItemOrder = $lastInsert + 1;
+                                    }
+                        
+                                    $store = PoItems::create([
+                                        'po_id' => $po_id,
+                                        'item_id' => $value['subitem']['id'],
+                                        'item_cost' => $value['subitem']['cost_price'],
+                                        'qty' => 1,
+                                        'total_cost' => $value['subitem']['cost_price'],
+                                        'status' => 1,
+                                        'created_by' => Auth::user()->id,
+                                        'updated_by' => Auth::user()->id,
+                                    ]);
                                 }
-                    
-                                $store = PoItems::create([
-                                    'po_id' => $po_id,
-                                    'item_id' => $value['subitem']['id'],
-                                    'item_cost' => $value['subitem']['cost_price'],
-                                    'qty' => 1,
-                                    'total_cost' => $value['subitem']['cost_price'],
-                                    'status' => 1,
-                                    'created_by' => Auth::user()->id,
-                                    'updated_by' => Auth::user()->id,
-                                ]);
                             }
                         }
                     }
@@ -356,10 +359,7 @@ class StockController extends Controller
                 $response['total_cost'] = $total_cost;
             }else{
                 DB::rollback();
-                $response['code'] = 0;
-                $response['msg'] = 'Something went wrong !';
-                $response['data'] = '';
-                $response['total_cost'] = $total_cost;
+                $response['code'] = 66;
             }
               
             return json_encode($response);
@@ -511,24 +511,45 @@ class StockController extends Controller
 
     public function createAutoOrder(Request $request)
     {
+        $supplier_id = $request->input('supplier');
+        $po_id = $request->input('po_id');
         $response = array();
 
          try{
              DB::beginTransaction();
 
- 
-             DB::commit(); 
- 
-             if($store){
-                 $response['code'] = 1;
-                 $response['msg'] = "Success";
-                 $response['data'] = $po_id;
-             }else{
-                 DB::rollback();
-                 $response['code'] = 0;
-                 $response['msg'] = 'Something went wrong !';
-                 $response['data'] = '';
+             $itemsList = ItemSupplier::where('supplier_id', $supplier_id)->where('status', 1)->get();
+
+             foreach($itemsList as $value){
+
+                $item_id = $value['item_id'];
+
+                $checkItemInfo = Item::where('id', $item_id)->where('status', 1)->first();
+
+                if($checkItemInfo){
+                    $auto_order = $checkItemInfo['auto_order'];
+
+                    if($auto_order === 1){
+                        $min_stock = $checkItemInfo['min_stock'];
+                        $current_stock = app('App\Http\Controllers\ItemController')->getCurrentStockCount($item_id);
+
+                        if($current_stock < $min_stock){
+                            // Create auto order PO
+                            $request->request->add([
+                                'ischecked' => 'true',
+                                'id' => $item_id,
+                            ]);
+
+                             $addItem = $this->addItems($request);
+                        }
+
+                    }
+                }
              }
+             DB::commit(); 
+             $response['code'] = 1;
+             $response['msg'] = "Success";
+             $response['data'] = $po_id;
                
              return json_encode($response);
          }catch(\Exception $e){
