@@ -20,6 +20,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\VAT;
 use App\Models\ItemStock;
 use App\Models\ItemSupplier;
+use App\Models\StockAdjustment;
+use App\Models\StockAdjustmentItems;
 use DB;
 
 class StockController extends Controller
