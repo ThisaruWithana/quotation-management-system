@@ -99,7 +99,7 @@
                             </div><br>
                         </div>
 
-                            <div class="add-items">
+                            <div class="add-items" style="display:none;">
 
                                 <div class="row">
                                     <div class="col-lg-12">

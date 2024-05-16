@@ -205,12 +205,12 @@
 
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <div class="col-lg-2 mt-3 mb-5 p-0" style="float:left;">
+                                            <div class="col-lg-2 mt-3 mb-3 p-0" style="float:right;">
                                                 <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal" @if($data->status != 1) disabled @endif>
                                                     <i class="fa fa-search-plus"></i>
                                                     Find Items
                                                 </button>
-                                            </div><br>
+                                            </div>
 
                                             <div class="table-responsive">
                                                 <table class="table item-list table-bordered" id="sortable-table" width="100%">
