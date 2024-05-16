@@ -51,7 +51,7 @@
             </li>
             <li class="nav-item">
                 <a href="{{ url('admin/quotation') }}"
-                    class="nav-link {{ Route::is('admin.quotation.index') ? 'active' : '' }}">
+                    class="nav-link {{ Route::is('admin.quotation') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-gavel"></i>
                     <p>Quotation Management</p>
                 </a>
@@ -86,13 +86,15 @@
 
             <li class="nav-item">
                 <a href="{{ route('admin.role.index') }}"
-                    class="nav-link {{ Route::is('admin.config.index') ? 'active' : '' }}">
+                    class="nav-link {{  (Route::is('admin.role.index')) ? 'active' : (Route::is('admin.user.index') ? 'active' : '') }}">
                     <i class="nav-icon fas fa-user"></i>
                     <p>User Management
                     <i class="right fas fa-angle-down"></i>
                     </p>
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview" @if(Route::is('admin.role.index')) style='display: block;' 
+                    @elseif(Route::is('admin.permission.index'))  style='display: block;'  
+                    @elseif(Route::is('admin.user.index'))  style='display: block;' @else @endif>
                     <li class="nav-item {{ Route::is('admin.user.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.user.index') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>

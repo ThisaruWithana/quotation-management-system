@@ -682,6 +682,8 @@ class StockController extends Controller
 
         $pageSize = $new;
         $supplier_id = $request->input('supplier');
+        $from_date = $request->input('from_date');
+        $to_date = $request->input('to_date');
 
         $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
         $data = Deliveries::query()->with('supplier')->whereIn('status', [1,0,3,4,5])->orderBy('id','DESC');
@@ -690,6 +692,10 @@ class StockController extends Controller
 
             if(!is_null($supplier_id)) {
                 $data->where('supplier_id',  $supplier_id);
+            }
+
+            if(!is_null($from_date) && !is_null($to_date)) {
+                $data->whereBetween('created_at', [$from_date, $to_date]);
             }
         }
 
