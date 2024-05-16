@@ -33,6 +33,22 @@
                             @endforeach 
                         </select>
                     </div>
+
+                    <div class="form-group" style="margin-left:10px;">
+                        @if(Request()->from_date != '') 
+                            <input type="date" class="form-control datepicker" id="from_date" name="from_date" value="{{ date('d/m/Y', strtotime(Request()->from_date)) }}">
+                        @else
+                            <input type="date" class="form-control datepicker" id="from_date" name="from_date" value="">
+                        @endif
+                    </div>
+                        
+                    <div class="form-group" style="margin-left:10px;">
+                        @if(isset(Request()->to_date)) 
+                            <input type="date" class="form-control datepicker" id="to_date" name="to_date" value="{{ date('d/m/Y', strtotime(Request()->to_date)) }}">
+                        @else
+                            <input type="date" class="form-control datepicker" id="to_date" name="to_date" value="">
+                        @endif
+                    </div>
                     
                     <input type="hidden" name="form_action" value="search">
                     

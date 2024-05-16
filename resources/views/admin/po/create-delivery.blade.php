@@ -112,7 +112,6 @@
                                     </div>
 
                                 </div>
-                            </div>
                                 <br>
                                     
                                 <div class="row">
@@ -120,6 +119,7 @@
                                         <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Details</button>
                                     </div>
                                 </div>
+                            </div>
                         </div>
                         </form>
                 </div> 
