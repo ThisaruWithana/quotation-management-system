@@ -5,9 +5,8 @@
     <title>Quotation and Order Contract</title>
 </head>
 <body>
-    <div class="row">
         @foreach($itemList as $value)
-            <table style="width: 200px; border-collapse: collapse; margin: 20px;">
+            <table style="width: 200px;">
                 <tr style="width: 100%">
                     <td colspan="4" style=" padding: 8px; text-align: center; font-weight: bold;">{{ $value['name'] }}</td>
                 </tr>
@@ -25,7 +24,6 @@
                 </tr>
             </table>
         @endforeach
-    </div>
 
 </body>
 
