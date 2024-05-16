@@ -14,34 +14,6 @@
                          @csrf
                         <div class="card-body px-lg-2 pt-0">
                             <div class="row text-left">
-                                <div class="col-lg-6">
-                                    <table>
-                                        <tr>
-                                            <td style="width:120px;"><p class="text-sm">Customer Name</p></td>
-                                            <td style="width:100px;"><p class="text-sm">:</p></td>
-                                            <td style="width:200px;"><p class="text-sm"><span id="cus-name-lbl">{{ $data['customer']['name'] }}</span></p></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width:120px;"><p class="text-sm">Quot. Date</p></td>
-                                            <td style="width:100px;"><p class="text-sm">:</p></td>
-                                            <td style="width:50px;"><p class="text-sm"><span id="cus-address-lbl">{{ date('d-m-Y', strtotime($data['created_at'])) }}</span></p></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width:120px;"><p class="text-sm">Quot. Ref</p></td>
-                                            <td style="width:100px;"><p class="text-sm">:</p></td>
-                                            <td style="width:50px;"><p class="text-sm"><span id="cus-tel-lbl">{{ $data['ref'] }}</span></p></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="width:120px;"><p class="text-sm">Description</p></td>
-                                            <td style="width:100px;"><p class="text-sm">:</p></td>
-                                            <td style="width:50px;"><p class="text-sm"><span id="cus-email-lbl">{{ $data['description'] }}</span></p></td>
-                                        </tr>
-                                    </table>
-
-                                    <input type="hidden" name="opf_id" id="opf_id" value="{{ $opfDetails['id'] }}">
-                                    <input type="hidden" name="vat_rate" id="vat_rate" value="{{ $vat_rate[0] }}">
-                                    <input type="hidden" name="row_order" id="row_order" value="">
-                                </div>
                                 
                                 <div class="col-lg-6">
                                     <div class="row">
@@ -94,6 +66,30 @@
                                     </div>
                                     
                                 </div>
+                                <div class="col-lg-6">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td style="width:150px;"><p class="text-sm mb-0 text-bold">Customer Name :</p></td>
+                                            <td style="width:auto;"><p class="text-sm  mb-0"><span id="cus-name-lbl">{{ $data['customer']['name'] }}</span></p></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">Quot. Date :</p></td>
+                                            <td style="width:auto;"><p class="text-sm  mb-0"><span id="cus-address-lbl">{{ date('d-m-Y', strtotime($data['created_at'])) }}</span></p></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold">Quot. Ref :</p></td>
+                                            <td style="width:auto;"><p class="text-sm  mb-0"><span id="cus-tel-lbl">{{ $data['ref'] }}</span></p></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold">Description :</p></td>
+                                            <td style="width:auto;"><p class="text-sm  mb-0"><span id="cus-email-lbl">{{ $data['description'] }}</span></p></td>
+                                        </tr>
+                                    </table>
+
+                                    <input type="hidden" name="opf_id" id="opf_id" value="{{ $opfDetails['id'] }}">
+                                    <input type="hidden" name="vat_rate" id="vat_rate" value="{{ $vat_rate[0] }}">
+                                    <input type="hidden" name="row_order" id="row_order" value="">
+                                </div>
 
                             </div>
                             <hr>
@@ -109,7 +105,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                </div>
+                                </div><br>
                                     
                                 <div class="table-responsiv">
                                     <table class="table item-list table-bordered" id="sortable-table" width="100%">
@@ -145,7 +141,7 @@
                                                     <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
                                                     <td class="item-list-qty">{{ $value['qty'] }}</td>
                                                     <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
-                                                    <td></td>
+                                                    <td>{{ $value['in_stock'] }}</td>
                                                     <td class="item-list-on-order">{{ $value['on_order'] }}</td>
                                                     <td class="item-list-order-qty">{{ $value['order_qty'] }}
                                                     </td>
@@ -174,42 +170,36 @@
 
                             <div class="row">
                     
-                                <div class="col-lg-6 text-left">
-                                    <table>
+                                <div class="col-lg-4 text-left">
+                                    <table class="table table-bordered">
                                         <tr>
-                                            <td style="width:150px;"><p class="text-sm"><b class="d-block info-lb">Quot. Price </b></p></td>
-                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($price_after_discount, 2) }}</span></b></p></td>
+                                            <td style="width: 150px;;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Price :</b></p></td>
+                                            <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($price_after_discount, 2) }}</span></b></p></td>
                                         </tr>
                                         <tr id="lbl-cost-details">
-                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Quot. Cost </b></p></td>
-                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($total_cost, 2) }}</span></b></p></td>
+                                            <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Cost :</b></p></td>
+                                            <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($total_cost, 2) }}</span></b></p></td>
                                         </tr>
                                         <tr>
-                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">OPF Cost </b></p></td>
-                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="opf-cost-lbl">{{ number_format($total_opf_cost, 2) }}</span></b></p></td>
+                                            <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">OPF Cost :</b></p></td>
+                                            <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="opf-cost-lbl">{{ number_format($total_opf_cost, 2) }}</span></b></p></td>
                                         </tr>
                                         <tr>
-                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Gross Profit </b></p></td>
-                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="profit-lbl">{{ number_format($quotation_cost - $total_opf_cost, 2) }}</span></b></p></td>
+                                            <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">Gross Profit :</b></p></td>
+                                            <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="profit-lbl">{{ number_format($price_after_discount - $total_opf_cost, 2) }}</span></b></p></td>
                                         </tr>
                                     </table>
                                 </div>
 
-                                <div class="col-lg-6 text-left">
-                                    <table>
+                                <div class="col-lg-4 text-left">
+                                    <table class="table table-bordered">
                                         <tr>
-                                            <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb">Quot. Margin (%)</b></p></td>
-                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-margin-lbl"> {{ $data->margin }}</span></b></p></td>
+                                            <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin (%) :</b></p></td>
+                                            <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl"> {{ $data->margin }}</span></b></p></td>
                                         </tr>
                                         <tr>
-                                            <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb">OPF Margin (%)</b></p></td>
-                                            <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                            <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="opf-margin-lbl"> {{ $opfDetails->margin }}</span></b></p></td>
+                                            <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">OPF Margin (%) :</b></p></td>
+                                            <td style="width: 100px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="opf-margin-lbl"> {{ $opfDetails->margin }}</span></b></p></td>
                                         </tr>
                                     </table>
                                 </div>

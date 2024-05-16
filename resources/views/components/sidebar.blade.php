@@ -115,14 +115,16 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.collection.index') }}"
+                <a href="{{ route('admin.report.barcode') }}"
                     class="nav-link {{ Route::is('admin.collection.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-print"></i>
                     <p>Reports<i class="right fas fa-angle-down"></i></p>
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview" 
+                    @if(Route::is('admin.report.barcode')) style='display: block;' 
+                    @elseif(Route::is('admin.report.item-history'))  style='display: block;' @else @endif>
                     <li class="nav-item">
-                        <a href="{{ url('admin/po') }}" class="nav-link" id="level2item">
+                        <a href="{{ url('admin/report/barcode') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
                             <p>Print Labels</p>
                         </a>

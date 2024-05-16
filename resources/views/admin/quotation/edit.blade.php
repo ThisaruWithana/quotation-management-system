@@ -1,5 +1,44 @@
 <x-admin>
    @section('title')  {{ 'Quotation Management' }} @endsection
+
+       <style>
+           .dataTables_scrollHeadInner{
+               width: 100% !important;
+           }
+           .dataTables_scrollHeadInner  .table{
+               width: 100% !important;
+           }
+           div.dataTables_wrapper div.dataTables_info {
+               padding-top: .85em;
+               text-align: left;
+               padding-bottom: 30px;
+           }
+
+           .card-dark{
+               background: #FDFDFD;
+               padding: 15px;
+               border: 1px solid #ddd;
+               box-shadow: none;
+           }
+
+           .form-control:disabled, .form-control[readonly] {
+               background-color: #e9ecef;
+               opacity: 1;
+               border: 1px solid #ced4da !important;
+           }
+           .bootstrap-select.disabled, .bootstrap-select > .disabled {
+               cursor: not-allowed;
+               border: 1px solid #ced4da !important;
+               border-radius: 10px;
+           }
+
+           .bootstrap-select > .dropdown-toggle{
+               border: 1px solid #ced4da !important;
+           }
+           .form-group .bootstrap-select, .form-horizontal .bootstrap-select, .form-inline .bootstrap-select {
+               padding: 0;
+           }
+       </style>
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
@@ -9,7 +48,7 @@
                     {{ $title }}
                 </h5>
                     <!-- /.card-header -->
-                    
+
                             <!-- form start -->
                     <form action="{{ url('admin/quotation/store') }}" method="PUT"
                         class="text-center border border-light p-5" id="formCreate">
@@ -20,27 +59,30 @@
                                 <div>
                                     <div class="row">
                                         <div class="col-lg-6">
-                                            <div class="row">
+                                            <div class="row card card-dark">
+                                                <div class="row">
+
+
                                                 <div class="col-lg-3">
                                                     <div class="form-group text-left">
                                                         <label for="status" class="form-label">Status</label>
-                                                        <select id="status" name="status" class="selectpicker">        
-                                                        <option value="0" @if($data->status == 0) selected @endif>Deactivated</option>         
-                                                        <option value="1" @if($data->status == 1) selected @endif>New</option> 
+                                                        <select id="status" name="status" class="selectpicker">
+                                                        <option value="0" @if($data->status == 0) selected @endif>Deactivated</option>
+                                                        <option value="1" @if($data->status == 1) selected @endif>New</option>
                                                         <option value="2" @if($data->status == 2) selected @endif>Accepted</option>
                                                         <option value="3" @if($data->status == 3) selected @endif>Installed</option>
                                                         <option value="4" @if($data->status == 4) selected @endif>Old</option>
                                                     </select>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="col-lg-6" style="margin-left:100px;">
                                                     <div class="form-group text-left">
                                                         <label for="ref" class="form-label">Quot. Ref</label>
                                                         <input type="text" class="form-control" id="ref" name="ref" value="{{ $data->ref }}" readonly>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="col-lg-12">
                                                     <div class="form-group text-left">
                                                         <label for="customer" class="form-label">Client</label>
@@ -48,23 +90,23 @@
                                                         <select id="customer" name="customer" class="selectpicker show-tick col-lg-12" data-live-search="true" @if($data->status != 1) disabled @endif>
                                                             <option value="">Select Client</option>
                                                             @foreach ($customers as $value)
-                                                            <option value="{{ $value->id }}" 
+                                                            <option value="{{ $value->id }}"
                                                                 {{ $value->id === $data->customer_id ? 'selected' : '' }}>{{ $value->code }} - {{  $value->postal_code }} - {{ $value->name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="col-lg-12">
                                                     <div class="form-group text-left">
                                                         <label for="description" class="form-label">Description</label>
                                                         <span class="required"> * </span><br>
-                               
+
                                                         <textarea class="form-control" name="description" id="description" rows="4"
                                                             required @if($data->status != 1) disabled @endif>{{ $data->description }}</textarea><br>
-                                                            
+
                                                         <button class="btn btn-default add-description" type="button" style="float:right; margin-top:-20px;" @if($data->status != 1) disabled @endif><i class="fa fa-plus"> Add</i></button><br>
-                                                    
+
                                                         <div style="display:none;" class="add-description-history">
                                                             <select id="description_dropdown" name="description_dropdown" class="selectpicker show-tick col-lg-12" data-live-search="true">
                                                                 <option value="">Select Description</option>
@@ -73,42 +115,37 @@
                                                                 @endforeach
                                                             </select>
                                                         </div>
-                                                            
+
                                                     </div>
                                                 </div>
-                                                
+                                                </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="col-lg-6">
                                             <div class="row">
-                                                <div class="col-lg-12 customer-details" style="display:block;margin-top: 25px;margin-left:100px;">
+                                                <div class="col-lg-12 customer-details" style="display:block;margin-top: 0px;padding-left:100px;">
                                                     <div class="text-left">
-                                                        <table>
+                                                        <table class="table table-bordered">
                                                             <tr>
-                                                                <td style="width:120px;"><p class="text-sm">Name</p></td>
-                                                                <td style="width:100px;"><p class="text-sm">:</p></td>
-                                                                <td style="width:50px;"><p class="text-sm"><span id="cus-name-lbl"></span></p></td>
+                                                                <td style="width:120px;"><p class="text-sm mb-0 text-bold">Name :</p></td>
+                                                                <td style="width:50px;"><p class="text-sm  mb-0"><span id="cus-name-lbl"></span></p></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style="width:120px;"><p class="text-sm">Address</p></td>
-                                                                <td style="width:100px;"><p class="text-sm">:</p></td>
-                                                                <td style="width:50px;"><p class="text-sm"><span id="cus-address-lbl"></span></p></td>
+                                                                <td style="width:120px;"><p class="text-sm  mb-0 text-bold">Address :</p></td>
+                                                                <td style="width:50px;"><p class="text-sm  mb-0"><span id="cus-address-lbl"></span></p></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style="width:120px;"><p class="text-sm">Contact Number</p></td>
-                                                                <td style="width:100px;"><p class="text-sm">:</p></td>
-                                                                <td style="width:50px;"><p class="text-sm"><span id="cus-tel-lbl"></span></p></td>
+                                                                <td style="width:120px;"><p class="text-sm  mb-0 text-bold">Contact Number :</p></td>
+                                                                <td style="width:50px;"><p class="text-sm  mb-0"><span id="cus-tel-lbl"></span></p></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style="width:120px;"><p class="text-sm">Email</p></td>
-                                                                <td style="width:100px;"><p class="text-sm">:</p></td>
-                                                                <td style="width:50px;"><p class="text-sm"><span id="cus-email-lbl"></span></p></td>
+                                                                <td style="width:120px;"><p class="text-sm  mb-0 text-bold">Email :</p></td>
+                                                                <td style="width:50px;"><p class="text-sm  mb-0"><span id="cus-email-lbl"></span></p></td>
                                                             </tr>
                                                             <tr>
-                                                                <td style="width:120px;"><p class="text-sm">Code</p></td>
-                                                                <td style="width:100px;"><p class="text-sm">:</p></td>
-                                                                <td style="width:50px;"><p class="text-sm"><span id="cus-code-lbl"></span></p></td>
+                                                                <td style="width:120px;"><p class="text-sm  mb-0 text-bold">Code :</p></td>
+                                                                <td style="width:50px;"><p class="text-sm  mb-0"><span id="cus-code-lbl"></span></p></td>
                                                             </tr>
                                                         </table>
                                                     </div>
@@ -121,7 +158,7 @@
                                     <input type="hidden" name="vat_rate" id="vat_rate" value="{{ $data['vat_rate'] }}">
                                     <input type="hidden" name="row_order" id="row_order" value="">
                                 </div>
-                            
+
                             <hr>
                             <div class="add-items" style="display:block;">
 
@@ -142,7 +179,7 @@
                                                 <label for="bundle_cost" class="form-label">Bundle Cost</label>
                                                 <input type="text" class="form-control" id="bundle_cost" name="bundle_cost" readonly>
                                             </div>
-                                        </div>                                
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-3">
@@ -157,28 +194,28 @@
                                                 <label for="discount" class="form-label">Discount</label>
                                                 <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['discount'] ?: 0 }}" autocomplete="off" @if($data->status != 1) readonly @endif>
                                             </div>
-                                        </div>  
+                                        </div>
                                         <div class="col-lg-3">
                                             <div class="form-group text-left">
                                                 <label for="margin" class="form-label">Quotation Margin</label>
                                                 <input type="text" class="form-control" id="margin" name="margin" value="{{ $data['margin'] }}" readonly>
                                             </div>
-                                        </div>                               
+                                        </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <div class="col-lg-2" style="float:right;">
+                                            <div class="col-lg-2 mt-3 mb-3 p-0" style="float:right;">
                                                 <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal" @if($data->status != 1) disabled @endif>
-                                                    <i class="fa fa-search-plus"></i> 
+                                                    <i class="fa fa-search-plus"></i>
                                                     Find Items
                                                 </button>
-                                            </div><br>
+                                            </div>
 
                                             <div class="table-responsive">
                                                 <table class="table item-list table-bordered" id="sortable-table" width="100%">
                                                     <thead>
-                                                
+
                                                         <tr>
                                                             <th class="th-sm">Code</th>
                                                             <th class="th-sm">Name</th>
@@ -216,9 +253,9 @@
                                                                 <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
                                                                 <td>{{ $value['total_retail'] }}</td>
                                                                 <td class="item-list-display-report">
-                                                                        <input type="checkbox" id="item" name="item" 
-                                                                        onclick="updateDisplayStatus(this)" value="{{ $value['id'] }}" class="form-check-label" 
-                                                                        @if($value['display_report'] == 1) checked @endif 
+                                                                        <input type="checkbox" id="item" name="item"
+                                                                        onclick="updateDisplayStatus(this)" value="{{ $value['id'] }}" class="form-check-label"
+                                                                        @if($value['display_report'] == 1) checked @endif
                                                                             @if($data->status != 1) disabled @endif>
                                                                 </td>
                                                                 <td>
@@ -229,7 +266,7 @@
                                                                 </td>
                                                                 <td>
                                                                     @if($value['type'] != 'bundle')
-                                                                    <a class="btn btn-sm btn-secondary @if($data->status != 1) disabled @endif" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})" 
+                                                                    <a class="btn btn-sm btn-secondary @if($data->status != 1) disabled @endif" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['qty'] }}, {{ $value['retail'] }})"
                                                                         >
                                                                         <i class="fas fa-edit"></i>
                                                                     </a>
@@ -244,56 +281,49 @@
 
                                         </div>
                                     </div>
-                                    <br><hr>
+                                    <hr>
                                     <div class="row text-left">
 
                                         <div class="col-lg-4">
-                                            <table>
+                                            <table class="table table-bordered">
                                                 <tr id="lbl-cost-details" style="display:none;">
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($total_cost, 2) }}</span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Cost :</b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($total_cost, 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="retail-lbl">{{ number_format($total_retail, 2) }}</span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Retail :</b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl">{{ number_format($total_retail, 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Discount (%)</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="discount-lbl">{{ $data->discount }}</span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Discount (%) :</b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="discount-lbl">{{ $data->discount }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:150px;"><p class="text-sm"><b class="d-block info-lb">Quot. Price After Discount</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($quotationPriceAfterDiscount, 2) }}</span></b></p></td>
+                                                    <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Price After Discount :</b></p></td>
+                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($quotationPriceAfterDiscount, 2) }}</span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
 
-                                        <div class="col-lg-6">
-                                            <table>
+                                        <div class="col-lg-4">
+                                            <table class="table table-bordered">
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Quot. Margin </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-margin-lbl">{{ number_format($quotationMargin, 2) }} ({{ number_format($quotationMarginRate, 2) }}%)</span></b></p></td>
+                                                    <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin :</b></p></td>
+                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl">{{ number_format($quotationMargin, 2) }} ({{ number_format($quotationMarginRate, 2) }}%)</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">VAT</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="vat-lbl">{{ number_format($data['vat_amt'], 2) }}</span></b></p></td>
+                                                    <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">VAT :</b></p></td>
+                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="vat-lbl">{{ number_format($data['vat_amt'], 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:200px;"><p class="text-sm"><b class="d-block info-lb">Quot. + VAT</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="quot-vat-lbl">{{ number_format($data['vat_amt'] + $quotationPriceAfterDiscount, 2) }}</span></b></p></td>
+                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. + VAT :</b></p></td>
+                                                    <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-vat-lbl">{{ number_format($data['vat_amt'] + $quotationPriceAfterDiscount, 2) }}</span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
                                     </div>
                                     <br>
-                                    
+
                                 <div class="row">
                                     @if($data->status == 2)
                                     <div class="col-lg-1">
@@ -315,7 +345,7 @@
 
                         </div>
                     </form>
-                </div> 
+                </div>
 
             </div>
         </div>
@@ -416,20 +446,20 @@
                 <div class="modal-body">
                         @csrf
                     <input type="hidden" name="quotation_item_id" value="" id="quotation_item_id">
-                   
+
                     <div class="form-group" id="actual_cost_edit">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>
-                        <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
+                        <input type="text" class="form-control" id="actual_cost" name="actual_cost"
                             required="" value="" autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label for="retail" class="col-form-label">Item Retail</label>
-                        <input type="text" class="form-control" id="retail" name="retail"  
+                        <input type="text" class="form-control" id="retail" name="retail"
                             required="" value="" autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label for="qty" class="col-form-label">Qty</label>
-                        <input type="text" class="form-control" id="qty" name="qty"  
+                        <input type="text" class="form-control" id="qty" name="qty"
                             required="" value="" autocomplete="off">
                     </div>
                 </div>
@@ -488,7 +518,7 @@
         </div>
 
     </section>
-    
+
     @section('js')
         <script>
             $(function() {
@@ -535,7 +565,7 @@
                 $('.item-list-cost').hide();
                 $('.item-search-cost').hide();
                 $('.item-list-display-report').hide();
-                
+
                 cuteAlert({
                     type: "question",
                     title: "Are you in the office",
@@ -551,7 +581,7 @@
                         $('.item-list-cost').show();
                         $('.item-search-cost').show();
                         $('.item-list-display-report').show();
-                        
+
                     } else {
                         $('#in_office').val('no');
                     }
@@ -561,7 +591,7 @@
                 var totalRetail = parseFloat($("#retail-lbl").text());
                 var quotationCost = parseFloat($('#price').val());
                 var discount = $('#discount').val();
-       
+
                 // calculatePrices(quotationCost, totalRetail, totalCost, discount);
 
                 $("#discount").on("keyup", function() {
@@ -602,21 +632,21 @@
                                     "price": $('#price').val(),
                                     "price_after_discount":  $("#quot-price-lbl").text(),
                                     "discount": $('#discount').val(),
-                                    "row_order": $('#row_order').val(),  
-                                    "status": $('#status').val(),    
+                                    "row_order": $('#row_order').val(),
+                                    "status": $('#status').val(),
                                     "vat": $("#vat-lbl").text(),
                                     "total_vat": $("#quot-vat-lbl").text(),
                                     "total_cost": $("#total-cost-lbl").text(),
                                     "total_retail": $("#retail-lbl").text(),
                                     "quotation_vat": $("#quot-vat-lbl").text(),
-                                    "quotation_margin": $("#quot-margin-lbl").text()                            
+                                    "quotation_margin": $("#quot-margin-lbl").text()
                                 },
                                 success: function (data) {
                                     var result = JSON.parse(data);
 
                                     if (result['code'] == 1) {
                                         window.location.reload();
-                                    
+
                                     } else {
                                         toastr.error(
                                             'Error',
@@ -630,7 +660,7 @@
                                         );
                                     }
                                 }, error: function (data) {
-                                            
+
                             }
                     });
                 });
@@ -656,7 +686,7 @@
                                 $('.item-list tbody').empty();
 
                                 if (result['data'].length > 0) {
-                                    
+
                                     var costColHidden;
                                     var i = 1;
 
@@ -704,22 +734,22 @@
                                             +'</td>'
                                             +'</tr>'
                                         );
-                                        
+
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-retail').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
                                         i++;
                                     });
-                                } 
+                                }
 
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
                             }, error: function (data) {
-        
+
                         }
                     });
                 });
-                
+
                 $('#itemSearchBtn').click(function(){
                     $('.table-item-search tbody').empty();
                 });
@@ -739,7 +769,7 @@
 
                     var formData = new FormData(this);
                     formData.append('quotation_id', $('#quotation_id').val());
-                
+
                     $.ajax({
                         url: "{{ url('admin/quotation/item-update') }}",
                         type: 'POST',
@@ -756,7 +786,7 @@
                                 if (result['code'] == 1) {
 
                                     if (result['data'].length > 0) {
-                                    
+
                                         var i = 1;
                                         var costColHidden;
 
@@ -803,13 +833,13 @@
                                                 +'<td>' + editBtn +'</td>'
                                                 +'</tr>'
                                             );
-                                        
+
                                             $('.item-list-item-cost').addClass('editable');
                                             $('.item-list-retail').addClass('editable');
                                             $('.item-list-qty').addClass('editable');
                                             i++;
                                         });
-                                    } 
+                                    }
 
                                     $("#editDetails").modal('hide');
                                 } else {
@@ -827,10 +857,10 @@
                                 }
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
-                                
+
                                 $("#editDetails").modal('hide');
                             }, error: function (data) {
-                                        
+
                         }
                     });
                 });
@@ -838,7 +868,7 @@
             });
 
             function getCustomerInfo(customerId){
-                
+
                 $.ajax({
                         url: "{{ url('admin/customer/get-details') }}",
                         type: 'POST',
@@ -861,7 +891,7 @@
                                 $("#cus-tel-lbl").text(result['tel']);
 
                             }, error: function (data) {
-        
+
                         }
                 });
             }
@@ -879,7 +909,7 @@
                         $('.table-item-search tbody').empty();
 
                             if (result.length > 0) {
-                                    
+
                                 var costColHidden;
 
                                 if($('#in_office').val() != 'yes'){
@@ -888,7 +918,7 @@
 
                                 $.each(result, function (count, val) {
                                     var type = 'main';
-                    
+
                                     $('.table-item-search tbody').append(
                                         '<tr>'
                                         +'<td>' + val['id'] + '</td>'
@@ -901,9 +931,9 @@
                                         +'</tr>'
                                     );
                                 });
-                            } 
+                            }
                         }, error: function (data) {
-                                    
+
                     }
                 });
             }
@@ -953,7 +983,7 @@
                                                 name = val['name'];
                                                 editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
                                             }
-                               
+
                                         $('.item-list tbody').append(
                                             '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
@@ -974,13 +1004,13 @@
                                             +'</td>'
                                             +'</tr>'
                                         );
-                                        
+
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-retail').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
                                         i++;
                                     });
-                                } 
+                                }
 
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
@@ -988,7 +1018,7 @@
                                     displaySubItemList(isChecked.value);
                                 }
                             }, error: function (data) {
-                                        
+
                         }
                 });
             }
@@ -1037,7 +1067,7 @@
                                 var result = JSON.parse(data);
 
                             }, error: function (data) {
-                                        
+
                         }
                 });
             }
@@ -1057,7 +1087,7 @@
                                 $('.item-list tbody').empty();
 
                                 if (result['data'].length > 0) {
-                                    
+
                                     var costColHidden;
                                     var i = 1;
 
@@ -1105,17 +1135,17 @@
                                             +'</td>'
                                             +'</tr>'
                                         );
-                                    
+
                                         $('.item-list-item-cost').addClass('editable');
                                         $('.item-list-retail').addClass('editable');
                                         $('.item-list-qty').addClass('editable');
                                         i++;
                                     });
-                                } 
+                                }
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
                             }, error: function (data) {
-                                        
+
                         }
                 });
             }
@@ -1130,7 +1160,7 @@
                 if($('#in_office').val() != 'yes'){
                     $("#actual_cost_edit").hide();
                 }
-                
+
             }
 
             function editBundle(quotationId, ItemId) {
@@ -1211,7 +1241,7 @@
                                             i++;
 
                                         });
-                                    } 
+                                    }
 
                                     calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
@@ -1235,7 +1265,7 @@
             }
 
             function displaySubItemList(ItemId){
-                
+
                 $.ajax({
                     url: "{{ url('admin/item/get-sub-items') }}",
                     type: 'POST',
@@ -1251,11 +1281,11 @@
                         if (result.length > 0) {
                             $("#subItemList").modal('show');
                             var costColHidden;
-                    
+
                             if($('#in_office').val() != 'yes'){
                                 costColHidden = 'style="display:none;"';
                             }
-                    
+
                             $.each(result, function (count, val) {
                                 var isMandatory = val['is_mandatory'];
                                 var selected;
@@ -1266,7 +1296,7 @@
                                 }else{
                                     selected = '';
                                 }
-                                            
+
                                 $('.table-sub-items tbody').append(
                                     '<tr>'
                                     +'<td>' + val['id'] + '</td>'
@@ -1283,7 +1313,7 @@
 
                         }
                     }, error: function (data) {
-                                                        
+
                     }
                 });
             }
@@ -1327,7 +1357,7 @@
                 $('#sortable-table tbody tr').each(function() {
                     selectedData.push($(this).attr("id"));
                 });
-                
+
                 $('#row_order').removeAttr('value');
                 $('#row_order').val(selectedData);
 

@@ -1,13 +1,26 @@
 <x-admin>
    @section('title')  {{ 'Customers' }} @endsection
+       <style>
+           .dataTables_scrollHeadInner{
+               width: 100% !important;
+           }
+           .dataTables_scrollHeadInner  .table{
+               width: 100% !important;
+           }
+           div.dataTables_wrapper div.dataTables_info {
+               padding-top: .85em;
+               text-align: left;
+               padding-bottom: 30px;
+           }
+       </style>
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
                 <a href="{{ route('admin.customer.create') }}" class="btn btn-sm btn-primary">Add New</a>
             </div>
         </div>
-        <div class="card-body table-responsive">
-            <table class="table" id="dataTable">
+        <div class="card-body">
+            <table class="table table-bordered" id="dataTable" width="100%">
                 <thead>
                     <tr>
                         <th class="th-sm">Code</th>
@@ -38,7 +51,7 @@
                             <td>
                                 @if($value->status == 1)
                                 <span class="badge badge-success">Active</span>
-                                @else 
+                                @else
                                 <span class="badge badge-warning">Deactive</span>
                                 @endif
                             </td>
@@ -46,7 +59,7 @@
                                 <a href="{{ route('admin.customer.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
-                                
+
                                 @if($value->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -74,11 +87,11 @@
                     "scrollX": true,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 10] }, 
+                        { "bSortable": false, "aTargets": [ 10] },
                     ]
                 });
             });
-            
+
         function changeStatus(id, status) {
 
             cuteAlert({

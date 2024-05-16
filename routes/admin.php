@@ -17,6 +17,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\BundleController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\ReportController;
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard',[ProfileController::class,'dashboard'])->name('dashboard');
@@ -104,7 +105,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::get('/', [QuotationController::class, 'index'])->name('quotation');
         Route::get('create', [QuotationController::class, 'create'])->name('quotation.create');
         Route::get('edit/{id}', [QuotationController::class, 'edit'])->name('quotation.edit');
-
         Route::get('print/{id}', [QuotationController::class, 'printQuotation'])->name('quotation.print');
 
         Route::post('store', [QuotationController::class, 'store'])->name('quotation.store');
@@ -166,6 +166,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('update-stock', [StockController::class, 'updateStock'])->name('deliveries.update-stock');
         
     });
+
+    Route::prefix('report')->group(function(){
+
+        Route::get('barcode', [ReportController::class, 'barcode'])->name('report.barcode');
+        Route::post('print-label', [ReportController::class, 'printLabels'])->name('report.print-label');
+
+    });
+
 
 });
 

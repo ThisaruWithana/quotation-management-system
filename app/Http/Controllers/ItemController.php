@@ -735,7 +735,12 @@ class ItemController extends Controller
     public function getCurrentStockCount($id)
     {
         $query = ItemStock::where('item_id', $id)->where('status', 1)->pluck('qty');
-        return $query[0];
+
+        if(count($query) > 0){
+            return $query[0];
+        }else{
+            return 0;
+        }
     }
 
 }

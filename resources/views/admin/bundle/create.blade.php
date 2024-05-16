@@ -1,10 +1,24 @@
 <x-admin>
    @section('title')  {{ 'Bundle Management' }} @endsection
 
+    <style>
+        .dataTables_scrollHeadInner{
+            width: 100% !important;
+        }
+        .dataTables_scrollHeadInner  .table{
+            width: 100% !important;
+        }
+        div.dataTables_wrapper div.dataTables_info {
+            padding-top: .85em;
+            text-align: left;
+            padding-bottom: 30px;
+        }
+    </style>
+
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-lg-12">
                 <div class="card card-primary">
                 <h5 class="card-header  white-text text-left py-3">
                     <!-- <strong>{{ $title }}</strong> -->
@@ -16,7 +30,7 @@
                     class="text-center border border-light p-5" id="bundleCreate">
                         @csrf
                         <div class="card-body px-lg-2 pt-0">
-                                
+
                                 <div class="row">
                                     <div class="col-lg-8">
                                         <div class="col-lg-12">
@@ -47,38 +61,34 @@
                                             <div class="form-group text-left">
                                                 <label for="remark" class="form-label">Remark</label>
                                                 <textarea class="form-control" name="remark" id="remark"></textarea>
-                                
+
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 pricing-details">
                                         <div class="text-left" style="margin-left:100px;margin-top: 25px;">
-                                            <table>
+                                            <table class="table table-bordered">
                                                 <tr class="bundle-item-cost">
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Cost :</b></p></td>
+                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="retail-lbl"></span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Retail :</b></p></td>
+                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl"></span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Difference</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="diff-lbl"></span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Difference :</b></p></td>
+                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="diff-lbl"></span></b></p></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Bundle Cost</b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="bundle-cost-lbl"></span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Bundle Cost :</b></p></td>
+                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="bundle-cost-lbl"></span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
-                               
+
                                 <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="">
                                 <input type="hidden" name="in_office" id="in_office" value="">
                                 <input type="hidden" name="row_order" id="row_order" value="">
@@ -87,18 +97,18 @@
                      <div class="col-lg-2">
                         <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
                      </div><br>
-                            
+
                     <div class="row add-items" style="display:none;">
                         <div class="col-lg-12">
                             <div class="col-lg-2">
                                 <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
-                                    <i class="fa fa-search-plus"></i> 
+                                    <i class="fa fa-search-plus"></i>
                                     Find Items
                                 </button>
                             </div><br>
 
                             <div class="table-responsive">
-                            <table class="table bundle-item-list table-bordered" id="sortable-table" width="100%">
+                            <table class="table bundle-item-list table-bordered" id="sortable-table" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Code</th>
@@ -141,43 +151,43 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    
+
                     <form action="{{ route('admin.item.search') }}" method="POST"
                         class="text-center border border-light p-5" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
                             @csrf
-                            
+
                         <div class="row">
                             <div class="form-group">
-                                <input type="text" class="form-control" name="keyword" id="keyword" 
+                                <input type="text" class="form-control" name="keyword" id="keyword"
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
                             <input type="hidden" value="bundle_search" id="search_type" name="search_type">
                             <input type="hidden" value="" id="bundle" name="bundle">
-                            
+
                             <div class="form-group">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
-                                    <option value="">Supplier</option>        
+                                    <option value="">Supplier</option>
                                     @foreach ($suppliers as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                             </div>
-                            
+
                             <div class="form-group">
                                 <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
-                                    <option value="">Departments</option>        
+                                    <option value="">Departments</option>
                                     @foreach ($departments as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                             </div>
-                            
+
                             <div class="form-group">
                                 <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
-                                    <option value="">Sub Departments</option>        
+                                    <option value="">Sub Departments</option>
                                     @foreach ($sub_departments as $value)
                                         <option value="{{ $value->id }}" >{{ $value->name }}</option>
-                                    @endforeach 
+                                    @endforeach
                                 </select>
                             </div>
 
@@ -185,7 +195,7 @@
                         </div>
 
                         <div class="row">
-                            
+
                             <div class="col-lg-12 table-responsive">
                                 <table class="table table-item-search" id="dataTable">
                                     <thead>
@@ -213,8 +223,8 @@
                 </div>
                 </div>
             </div>
-        </div>        
-        
+        </div>
+
         <!-- Edit Detail -->
         <div class="modal fade" id="editDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -235,12 +245,12 @@
 
                     <div class="form-group" id="actual_cost_edit">
                         <label for="actual_cost" class="col-form-label">Actual Cost</label>
-                        <input type="text" class="form-control" id="actual_cost" name="actual_cost"  
+                        <input type="text" class="form-control" id="actual_cost" name="actual_cost"
                             required="" value="" autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label for="qty" class="col-form-label">Qty</label>
-                        <input type="text" class="form-control" id="qty" name="qty"  
+                        <input type="text" class="form-control" id="qty" name="qty"
                             required="" value="" autocomplete="off">
                     </div>
                 </div>
@@ -298,7 +308,7 @@
             </div>
         </div>
     </section>
-    
+
     @section('js')
         <script>
             $(function() {
@@ -357,7 +367,7 @@
                         $('.item-list-cost').show();
                         $('.item-search-cost').show();
                         $('.item-list-display-report').show();
-                        
+
                     } else {
                         $('#in_office').val('no');
                     }
@@ -386,11 +396,11 @@
                                     $("#name").prop('disabled', true);
                                     $("#bundle_cost").prop('disabled', true);
                                     $("#remark").prop('disabled', true);
-                                    
+
                                     $("#bundle_id").val(result['data']);
                                     $("#bundle").val(result['data']);
                                     $("#btnUpdate").show();
-                                    
+
                                 } else {
                                     toastr.error(
                                         'Error',
@@ -404,7 +414,7 @@
                                     );
                                 }
                             }, error: function (data) {
-                                        
+
                         }
                     });
                 });
@@ -419,7 +429,7 @@
             });
 
             $('#btnUpdate').click(function(){
-                
+
                 $.ajax({
                     url: "{{ url('admin/bundle/update-bundle-item-order') }}",
                     type: 'POST',
@@ -431,7 +441,7 @@
                     success: function (data) {
 
                         var result = JSON.parse(data);
-                        
+
                         if (result['code'] == 1) {
                             window.location = '{{ url("admin/bundle") }}';
                         } else {
@@ -448,7 +458,7 @@
                         );
                     }
                     }, error: function (data) {
-                                                        
+
                     }
                 });
             });
@@ -467,7 +477,7 @@
                         $('.table-item-search tbody').empty();
 
                             if (result.length > 0) {
-                                    
+
                                 var costColHidden;
 
                                 if($('#in_office').val() != 'yes'){
@@ -476,7 +486,7 @@
 
                                 $.each(result, function (count, val) {
                                     var type = 'main';
-                    
+
                                     $('.table-item-search tbody').append(
                                         '<tr>'
                                         +'<td>' + val['id'] + '</td>'
@@ -489,9 +499,9 @@
                                         +'</tr>'
                                     );
                                 });
-                            } 
+                            }
                         }, error: function (data) {
-                                    
+
                     }
                 });
             }
@@ -513,7 +523,7 @@
                                 var result = JSON.parse(data);
 
                                 $('.bundle-item-list tbody').empty();
-                                    
+
                                     var costColHidden;
 
                                     if($('#in_office').val() != 'yes'){
@@ -559,7 +569,7 @@
                                 }
 
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
-                                        
+
                                 if(Itemtype == 'main'){
                                     displaySubItemList(isChecked.value);
                                 }
@@ -593,7 +603,7 @@
                                 var result = JSON.parse(data);
 
                             }, error: function (data) {
-                                        
+
                         }
                 });
             }
@@ -613,7 +623,7 @@
                                 $('.bundle-item-list tbody').empty();
 
                                 if (result['data'].length > 0) {
-                                    
+
                                     var costColHidden;
                                     var i = 1;
 
@@ -669,7 +679,7 @@
                 $("#bundle_item_id").val(id);
                 $("#retail").val(retail);
                 $("#editDetails").modal('show');
-                
+
                 if($('#in_office').val() != 'yes'){
                     $("#actual_cost_edit").hide();
                 }
@@ -680,7 +690,7 @@
 
                 var formData = new FormData(this);
                 formData.append('bundle_id', $('#bundle_id').val());
-            
+
                 $.ajax({
                     url: "{{ url('admin/bundle/item-update') }}",
                     type: 'POST',
@@ -697,14 +707,14 @@
                             if (result['code'] == 1) {
 
                                 if (result['data'].length > 0) {
-                                    
+
                                     var costColHidden;
                                     var i = 1;
 
                                     if($('#in_office').val() != 'yes'){
                                         costColHidden = 'style="display:none;"';
                                     }
-                                    
+
                                     $.each(result['data'], function (count, val) {
 
                                         var displayReport = val['display_report'];
@@ -739,7 +749,7 @@
                                         $('.item-list-qty').addClass('editable');
                                         i++;
                                     });
-                                } 
+                                }
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
                             } else {
                                 toastr.error(
@@ -755,16 +765,16 @@
                                 );
                             }
                             calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
-                            
+
                             $("#editDetails").modal('hide');
                         }, error: function (data) {
-                                    
+
                     }
                 });
             });
 
             function displaySubItemList(ItemId){
-                
+
                 $.ajax({
                     url: "{{ url('admin/item/get-sub-items') }}",
                     type: 'POST',
@@ -780,11 +790,11 @@
                         if (result.length > 0) {
                             $("#subItemList").modal('show');
                             var costColHidden;
-                    
+
                             if($('#in_office').val() != 'yes'){
                                 costColHidden = 'style="display:none;"';
                             }
-                    
+
                             $.each(result, function (count, val) {
                                 var isMandatory = val['is_mandatory'];
                                 var selected;
@@ -795,7 +805,7 @@
                                 }else{
                                     selected = '';
                                 }
-                                            
+
                                 $('.table-sub-items tbody').append(
                                     '<tr>'
                                     +'<td>' + val['id'] + '</td>'
@@ -812,7 +822,7 @@
 
                         }
                     }, error: function (data) {
-                                                        
+
                     }
                 });
             }

@@ -24,13 +24,13 @@
                                 </option>
                         </select>
                 </div>
-                    
+
                 <input type="hidden" name="form_action" value="search">
                 </div>
             </form>
             <br>
             <div>
-                <table class="table" id="dataTable" width="100%">
+                <table class="table table-bordered" id="dataTable" width="100%">
                     <thead>
                         <tr>
                             <th class="th-sm">#</th>
@@ -57,7 +57,7 @@
                             <td>
                                 @if($value->status == 1)
                                 <span class="badge badge-success">Active</span>
-                                @else 
+                                @else
                                 <span class="badge badge-warning">Deactive</span>
                                 @endif
                             </td>
@@ -65,7 +65,7 @@
                                 <a href="{{ route('admin.bundle.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                     <i class="far fa-edit"></i>
                                 </a>
-                                
+
                                 @if($value->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -101,7 +101,7 @@
                     "order": [0,'desc'],
                 });
             });
-            
+
         function changeStatus(id, status) {
 
             cuteAlert({

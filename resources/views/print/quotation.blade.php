@@ -45,11 +45,11 @@
                                             <tr>
                                                 <td><p style="margin: 0px"><strong>TO</strong></p>
                                                     <p style="margin: 0px">
-                                                        {{ $customer }}<br>
-                                                        {{ $customer_address }}<br>
-                                                        {{ $customer_postal_code }}<br>
-                                                        Tel: {{ $customer_tel }}<br>
-                                                        Email: {{ $customer_email }}
+                                                        {{ $quotation['customer']['name'] }}<br>
+                                                        {{ $quotation['customer']['address'] }}<br>
+                                                        {{ $quotation['customer']['postal_code'] }}<br>
+                                                        Tel: {{ $quotation['customer']['tel'] }}<br>
+                                                        Email: {{ $quotation['customer']['email'] }}
                                                     </p>
                                                 </td>
                                             </tr>
@@ -70,7 +70,7 @@
                                         </table>
                                     </td>
 
-                                    <td style="text-align: left;font-size: 10px;color:#393939;padding:5px 8px;width: 33.3%;vertical-align: top; ">
+                                    <td style="text-align: left;font-size: 10px;color:#393939;padding:0px 8px;width: 33.3%;vertical-align: top; ">
                                         <table style="float: right">
                                             <tbody style="font-size: 11px">
                                             <tr>
@@ -108,7 +108,7 @@
                                         <table style="float: right">
                                             <tbody style="font-size: 11px">
                                             <tr>
-                                                <td><p style="margin: 0px"><strong>Date :</strong> {{ $date }}</p>
+                                                <td><p style="margin-top: 30px; margin-left: -110px;"><strong>Date :</strong> {{ date('d/m/Y', strtotime($quotation->created_at)) }}</p>
                                                 </td>
                                             </tr>
                                             </tbody>
@@ -204,7 +204,7 @@
                                                                             Total Amount Inc. VAT
                                                                         </td>
                                                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
-                                                                            {{ number_format($price, 2) }}
+                                                                            £{{ number_format($quotation['price'], 2) }}
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -213,16 +213,16 @@
                                                                             DISCOUNT   
                                                                         </td>
                                                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
-                                                                            {{ number_format($discount, 2) }}%
+                                                                            {{ number_format($quotation['discount'], 2) }}%
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <td colspan="3"
                                                                             style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
-                                                                            VAT   {{ number_format($vat_rate, 2) }}%
+                                                                            VAT   {{ number_format($quotation['vat_rate'], 2) }}%
                                                                         </td>
                                                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
-                                                                            {{ number_format($vat_amt, 2) }}
+                                                                            £{{ number_format($quotation['vat_amt'], 2) }}
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -231,7 +231,7 @@
                                                                             Total Amount Inc. VAT
                                                                         </td>
                                                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
-                                                                            {{ number_format($final_price, 2) }}
+                                                                            £{{ number_format($quotation['final_price'], 2) }}
                                                                         </td>
                                                                     </tr>
 
@@ -249,7 +249,7 @@
                                                                             Balance Due
                                                                         </td>
                                                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
-                                                                            {{ number_format($final_price, 2) }}
+                                                                            £{{ number_format($quotation['final_price'], 2) }}
                                                                         </td>
                                                                     </tr>
 
