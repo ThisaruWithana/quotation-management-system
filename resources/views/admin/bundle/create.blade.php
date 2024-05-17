@@ -27,7 +27,7 @@
                     <!-- /.card-header -->
                     <!-- form start -->
                     <form action="{{ route('admin.bundle.store') }}" method="PUT"
-                    class="text-center border border-light p-5" id="bundleCreate">
+                    class="text-center border border-light p-2" id="bundleCreate">
                         @csrf
                         <div class="card-body px-lg-2 pt-0">
 
@@ -153,7 +153,7 @@
                 <div class="modal-body">
 
                     <form action="{{ route('admin.item.search') }}" method="POST"
-                        class="text-center border border-light p-5" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                        class="text-center border border-light p-3" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
                             @csrf
 
                         <div class="row">
@@ -197,7 +197,7 @@
                         <div class="row">
 
                             <div class="col-lg-12 table-responsive">
-                                <table class="table table-item-search" id="dataTable">
+                                <table class="table table-bordered table-item-search" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Item Code</th>
