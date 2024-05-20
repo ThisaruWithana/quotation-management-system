@@ -1,19 +1,43 @@
 <x-admin>
    @section('title')  {{ 'Bundle Management' }} @endsection
+        <style>
+           .dataTables_scrollHeadInner{
+               width: 100% !important;
+           }
+           .dataTables_scrollHeadInner  .table{
+               width: 100% !important;
+           }
+           div.dataTables_wrapper div.dataTables_info {
+               padding-top: .85em;
+               text-align: left;
+               padding-bottom: 30px;
+           }
 
-    <style>
-        .dataTables_scrollHeadInner{
-            width: 100% !important;
-        }
-        .dataTables_scrollHeadInner  .table{
-            width: 100% !important;
-        }
-        div.dataTables_wrapper div.dataTables_info {
-            padding-top: .85em;
-            text-align: left;
-            padding-bottom: 30px;
-        }
-    </style>
+           .card-dark{
+               background: #FDFDFD;
+               padding: 15px;
+               border: 1px solid #ddd;
+               box-shadow: none;
+           }
+
+           .form-control:disabled, .form-control[readonly] {
+               background-color: #e9ecef;
+               opacity: 1;
+               border: 1px solid #ced4da !important;
+           }
+           .bootstrap-select.disabled, .bootstrap-select > .disabled {
+               cursor: not-allowed;
+               border: 1px solid #ced4da !important;
+               border-radius: 10px;
+           }
+
+           .bootstrap-select > .dropdown-toggle{
+               border: 1px solid #ced4da !important;
+           }
+           .form-group .bootstrap-select, .form-horizontal .bootstrap-select, .form-inline .bootstrap-select {
+               padding: 0;
+           }
+       </style>
 
     <section class="content">
         <!-- Default box -->
@@ -27,41 +51,43 @@
                     <!-- /.card-header -->
                     <!-- form start -->
                     <form action="{{ route('admin.bundle.store') }}" method="PUT"
-                    class="text-center border border-light p-2" id="bundleCreate">
+                    class="text-center border border-light p-5" id="bundleCreate">
                         @csrf
                         <div class="card-body px-lg-2 pt-0">
 
                                 <div class="row">
-                                    <div class="col-lg-8">
-                                        <div class="col-lg-12">
-                                            <div class="form-group text-left">
-                                                <label for="name" class="form-label">Bundle Name</label>
-                                                <span class="required"> * </span>
-                                                <input type="text" class="form-control" name="name" id="name"
-                                                    required="" value="{{ old('name') }}" autocomplete="off">
-                                                    @error('name')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                <div class="invalid-feedback">Bundle Name is required.</div>
+                                    <div class="col-lg-7 ">
+                                        <div class="row card card-dark">
+                                            <div class="col-lg-12">
+                                                <div class="form-group text-left">
+                                                    <label for="name" class="form-label">Bundle Name</label>
+                                                    <span class="required"> * </span>
+                                                    <input type="text" class="form-control" name="name" id="name"
+                                                        required="" value="{{ old('name') }}" autocomplete="off">
+                                                        @error('name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    <div class="invalid-feedback">Bundle Name is required.</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-12">
-                                            <div class="form-group text-left">
-                                                <label for="bundle_cost" class="form-label">Bundle Cost</label>
-                                                <span class="required"> * </span>
-                                                <input type="text" class="form-control" name="bundle_cost" id="bundle_cost"
-                                                    required="" value="{{ old('bundle_cost') }}"  autocomplete="off">
-                                                    @error('bundle_cost')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                <div class="invalid-feedback">Bundle Cost is required.</div>
+                                            <div class="col-lg-12">
+                                                <div class="form-group text-left">
+                                                    <label for="bundle_cost" class="form-label">Bundle Cost</label>
+                                                    <span class="required"> * </span>
+                                                    <input type="text" class="form-control" name="bundle_cost" id="bundle_cost"
+                                                        required="" value="{{ old('bundle_cost') }}"  autocomplete="off">
+                                                        @error('bundle_cost')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    <div class="invalid-feedback">Bundle Cost is required.</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-12">
-                                            <div class="form-group text-left">
-                                                <label for="remark" class="form-label">Remark</label>
-                                                <textarea class="form-control" name="remark" id="remark"></textarea>
+                                            <div class="col-lg-12">
+                                                <div class="form-group text-left">
+                                                    <label for="remark" class="form-label">Remark</label>
+                                                    <textarea class="form-control" name="remark" id="remark"></textarea>
 
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -100,12 +126,12 @@
 
                     <div class="row add-items" style="display:none;">
                         <div class="col-lg-12">
-                            <div class="col-lg-2">
+                            <div class="col-lg-2" style="float:right;">
                                 <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                     <i class="fa fa-search-plus"></i>
                                     Find Items
                                 </button>
-                            </div><br>
+                            </div><br><br>
 
                             <div class="table-responsive">
                             <table class="table bundle-item-list table-bordered" id="sortable-table" style="width: 100%">
@@ -153,18 +179,18 @@
                 <div class="modal-body">
 
                     <form action="{{ route('admin.item.search') }}" method="POST"
-                        class="text-center border border-light p-3" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
                             @csrf
 
                         <div class="row">
-                            <div class="form-group">
+                            <div class="form-group mr-1">
                                 <input type="text" class="form-control" name="keyword" id="keyword"
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
                             <input type="hidden" value="bundle_search" id="search_type" name="search_type">
                             <input type="hidden" value="" id="bundle" name="bundle">
 
-                            <div class="form-group">
+                            <div class="form-group mr-1">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
                                     <option value="">Supplier</option>
                                     @foreach ($suppliers as $value)
@@ -173,7 +199,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mr-1">
                                 <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
                                     <option value="">Departments</option>
                                     @foreach ($departments as $value)
@@ -182,7 +208,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mr-1">
                                 <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
                                     <option value="">Sub Departments</option>
                                     @foreach ($sub_departments as $value)
@@ -195,9 +221,8 @@
                         </div>
 
                         <div class="row">
-
                             <div class="col-lg-12 table-responsive">
-                                <table class="table table-bordered table-item-search" id="dataTable" style="width: 100%">
+                                <table class="table table-item-search table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Item Code</th>
@@ -213,13 +238,11 @@
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <!-- <button type="button" class="btn btn-primary">Add</button> -->
                 </div>
                 </div>
             </div>
@@ -312,18 +335,6 @@
     @section('js')
         <script>
             $(function() {
-                $('#sortable-table').DataTable({
-                    "bPaginate": false,
-                    "searching": false,
-                    "ordering": false,
-                    "responsive": true,
-                    "scrollX": true,
-                    "autoWidth":true,
-                    "fixedHeader": true,
-                    "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 8,9 ]},
-                    ]
-                });
 
                 $('.table-item-search').DataTable({
                     "bPaginate": false,

@@ -1096,7 +1096,7 @@ class StockController extends Controller
          try{
             DB::beginTransaction();
 
-            if($type === 'delivery'){
+            // if($type === 'delivery'){
 
                 $deliveryItems = DeliveryItems::where('delivery_id', $delivery_id)->where('status', 1)->get();
 
@@ -1182,7 +1182,7 @@ class StockController extends Controller
                         $response['code'] = 0;
                     }
                 }
-            }
+            // }
             return json_encode($response);
          }catch(\Exception $e){
              DB::rollback();
@@ -1365,7 +1365,7 @@ class StockController extends Controller
                     'item_id' => $id,
                     'item_cost' => $actual_cost,
                     'item_retail' => $retail_price,
-                    'qty' => 1,
+                    'qty' => 0,
                     'stock_before' => app('App\Http\Controllers\ItemController')->getCurrentStockCount($id),
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
@@ -1434,6 +1434,15 @@ class StockController extends Controller
                 $name = $value['item']['name'];
                 $item_id = $value['item']['id'];
                 $actual_cost = $value['item']['cost_price'];
+                $type =  $value['adjustment']['type'];
+                $stock_after =  $value['stock_before'];
+
+                
+                if($type === 'Stock Adjustment (+)'){
+                    $stock_after = $value['stock_before'] +  $value['qty'];
+                }else{
+                    $stock_after = $value['stock_before'] -  $value['qty'];
+                }
        
                 $data2 = ([
                     'id' => $value['id'],
@@ -1449,7 +1458,9 @@ class StockController extends Controller
                     'total_retail' => $value['total_retail'],
                     'supplier' => implode(" ",$supplierList),
                     'department' => $value['item']['department']['name'],
-                    'sub_department' => $value['item']['subdepartment']['name']
+                    'sub_department' => $value['item']['subdepartment']['name'],
+                    'type' => $type,
+                    'stock_after' => $stock_after
                     ]);
 
             array_push($itemsArr, $data2);
@@ -1500,5 +1511,204 @@ class StockController extends Controller
                 $response['msg'] = $e->getMessage();
                 return json_encode($response);
             } 
+    }
+
+    public function deleteStockAdjustmentItem(Request $request)
+    {
+        $response = array();
+        $id = $request->input('id');
+        $stock_adjustment_id = $request->input('stock_adjustment_id');
+
+            try{
+                DB::beginTransaction();
+
+                $update = StockAdjustmentItems::where('id', $id)->update([
+                    'status' => 0,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $total_cost = $this->getAdjustmentTotalCost($stock_adjustment_id);
+                $total_retail = $this->getAdjustmentTotalRetail($stock_adjustment_id);    
+
+                if($update){
+
+                    $request->request->add([
+                        'total_cost' => $total_cost,
+                        'total_retail' => $total_retail
+                    ]);
+
+                    $updatePriceInfo = $this->updateAdjstmentPriceInfo($request);
+                    $getItemList = $this->getAdjustmentItems($stock_adjustment_id);
+                    
+                    DB::commit(); 
+
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                    $response['data'] = $getItemList;
+                    $response['total_cost'] = $total_cost;
+                    $response['total_retail'] = $total_retail;
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                    $response['data'] = '';
+                }
+
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function StockAdjustmentItemUpdate(Request $request)
+    {
+        $response = array();
+        $item_id = $request->input('item_id');
+        $qty = $request->input('qty');
+        $stock_adjustment_id = $request->input('stock_adjustment_id');
+        $actual_cost = $request->input('actual_cost');
+        $actual_retail = $request->input('retail');
+
+            try{
+                DB::beginTransaction();
+                $item_total_cost = $actual_cost * $qty;
+                $item_total_retail = $actual_retail * $qty;
+
+                $update = StockAdjustmentItems::where('id', $item_id)->update([
+                    'item_cost' => $actual_cost,
+                    'item_retail' => $actual_retail,
+                    'qty' => $qty,
+                    'total_cost' => $item_total_cost,
+                    'total_retail' => $item_total_retail,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                if($update){
+
+                    $total_cost = $this->getAdjustmentTotalCost($stock_adjustment_id);
+                    $total_retail = $this->getAdjustmentTotalRetail($stock_adjustment_id);   
+                    
+                    $request->request->add([
+                        'total_cost' => $total_cost,
+                        'total_retail' => $total_retail
+                    ]);
+
+                    $updatePriceInfo = $this->updateAdjstmentPriceInfo($request);
+                    $getItemList = $this->getAdjustmentItems($stock_adjustment_id);
+                    
+                    if($updatePriceInfo){
+                        DB::commit(); 
+
+                        $response['code'] = 1;
+                        $response['msg'] = "Success";
+                        $response['data'] = $getItemList;
+                        $response['total_retail'] = $total_retail;
+                        $response['total_cost'] = $total_cost;
+                    }else{
+                        DB::rollback();
+                        $response['code'] = 0;
+                        $response['msg'] = 'Something went wrong !';
+                    }
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                }
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function stockAdjustmentUpdateStock(Request $request)
+    {
+        $response = array();
+        $stock_adjustment_id = $request->input('stock_adjustment_id');
+
+         try{
+            DB::beginTransaction();
+
+                $items = StockAdjustmentItems::with('adjustment')->where('stock_adjustment_id', $stock_adjustment_id)->where('status', 1)->get();
+
+                foreach($items as $value)
+                {
+                    $item_id = $value['item_id'];
+                    $qty = $value['qty'];
+                    $stock_before = $value['stock_before'];
+                    $type =  $value['adjustment']['type'];
+
+                    $getItem = Item::with('department')->where('id', $item_id)->where('status', 1)->first();
+    
+                    if($getItem){
+                        $cost_price = $getItem['cost_price'];
+                        $retail_price = $getItem['retail_price'];
+                
+                        $checkExistingStock = ItemStock::where('item_id', $item_id)->where('status', 1)->first();
+
+                       if(!empty($checkExistingStock)){
+                        $existingStock = $checkExistingStock['qty'];
+
+                       }else{
+                        $existingStock = 0;
+                       }
+
+                        if($existingStock != $qty){
+                            
+                            $updateStock = ItemStock::where('item_id', $item_id)->update([
+                                'status' => 0,
+                                'updated_by' => Auth::user()->id
+                            ]);   
+
+                            $current_stock = $stock_before;
+
+                            if($type === 'Stock Adjustment (+)'){
+                                $current_stock = $stock_before +  $qty;
+                            }else{
+                                $current_stock = $stock_before -  $qty;
+                            }
+                              
+                            $updateStock = ItemStock::create([
+                                'item_id' => $item_id,
+                                'qty' => $current_stock,
+                                'created_by' => Auth::user()->id,
+                                'updated_by' => Auth::user()->id,
+                            ]);
+                                
+                            if(!$updateStock){
+                                DB::rollback();
+                                $response['code'] = 0;
+                            }
+                        }
+
+                        DB::commit(); 
+                        $response['code'] = 1;
+                    }else{
+                        DB::rollback();
+                        $response['code'] = 0;
+                    }
+                }
+            return json_encode($response);
+         }catch(\Exception $e){
+             DB::rollback();
+             $response['code'] = 0;
+             $response['msg'] = $e->getMessage();
+             return json_encode($response);
+        } 
+    }
+
+    public function viewStockAdjustment($id)
+    {
+        $title = 'Stock Adjustment Details';
+
+        $data = StockAdjustment::where('id',decrypt($id))->first();
+        $itemList = $this->getAdjustmentItems(decrypt($id));
+     
+        return view('admin.stock.detail',compact('data', 'title', 'itemList'));
     }
 }

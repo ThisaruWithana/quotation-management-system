@@ -82,6 +82,9 @@
         .editable {
         background-color: #f7dc6f;
         }
+        .modal-body{
+            overflow-y: auto;
+        }
     </style>
     @yield('css')
 </head>
