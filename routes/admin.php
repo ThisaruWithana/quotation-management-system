@@ -178,12 +178,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::prefix('stock')->group(function(){
 
         Route::get('/', [StockController::class, 'stockAdjustmentList'])->name('stock');
-        Route::get('edit/{id}', [StockController::class, 'editStockAdjustment'])->name('stock.edit');
+        Route::get('view/{id}', [StockController::class, 'viewStockAdjustment'])->name('stock.view');
         Route::get('create-adjustment', [StockController::class, 'createStockAdjustment'])->name('stock.create-adjustment');
 
         Route::post('adjustment', [StockController::class, 'storeStockAdjustment'])->name('stock.adjustment');
-
-        // Route::post('update', [StockController::class, 'updateDelivery'])->name('deliveries.update');
         Route::post('add-items', [StockController::class, 'addStockAdjustmentItems'])->name('stock.add-items');
         Route::post('delete-item', [StockController::class, 'deleteStockAdjustmentItem'])->name('stock.delete-item');
         Route::post('item-update', [StockController::class, 'StockAdjustmentItemUpdate'])->name('stock.item-update');

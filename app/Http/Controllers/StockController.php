@@ -1701,4 +1701,14 @@ class StockController extends Controller
              return json_encode($response);
         } 
     }
+
+    public function viewStockAdjustment($id)
+    {
+        $title = 'Stock Adjustment Details';
+
+        $data = StockAdjustment::where('id',decrypt($id))->first();
+        $itemList = $this->getAdjustmentItems(decrypt($id));
+     
+        return view('admin.stock.detail',compact('data', 'title', 'itemList'));
+    }
 }
