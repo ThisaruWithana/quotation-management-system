@@ -100,12 +100,12 @@
 
                     <div class="row add-items" style="display:none;">
                         <div class="col-lg-12">
-                            <div class="col-lg-2">
+                            <div class="col-lg-2" style="float:right;">
                                 <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                     <i class="fa fa-search-plus"></i>
                                     Find Items
                                 </button>
-                            </div><br>
+                            </div><br><br>
 
                             <div class="table-responsive">
                             <table class="table bundle-item-list table-bordered" id="sortable-table" style="width: 100%">
@@ -153,18 +153,18 @@
                 <div class="modal-body">
 
                     <form action="{{ route('admin.item.search') }}" method="POST"
-                        class="text-center border border-light p-3" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
                             @csrf
 
                         <div class="row">
-                            <div class="form-group">
+                            <div class="form-group mr-1">
                                 <input type="text" class="form-control" name="keyword" id="keyword"
                                     autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
                             </div>
                             <input type="hidden" value="bundle_search" id="search_type" name="search_type">
                             <input type="hidden" value="" id="bundle" name="bundle">
 
-                            <div class="form-group">
+                            <div class="form-group mr-1">
                                 <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
                                     <option value="">Supplier</option>
                                     @foreach ($suppliers as $value)
@@ -173,7 +173,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mr-1">
                                 <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
                                     <option value="">Departments</option>
                                     @foreach ($departments as $value)
@@ -182,7 +182,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mr-1">
                                 <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
                                     <option value="">Sub Departments</option>
                                     @foreach ($sub_departments as $value)
@@ -195,9 +195,8 @@
                         </div>
 
                         <div class="row">
-
                             <div class="col-lg-12 table-responsive">
-                                <table class="table table-bordered table-item-search" id="dataTable" style="width: 100%">
+                                <table class="table table-item-search table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Item Code</th>
@@ -213,13 +212,11 @@
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <!-- <button type="button" class="btn btn-primary">Add</button> -->
                 </div>
                 </div>
             </div>
@@ -312,18 +309,6 @@
     @section('js')
         <script>
             $(function() {
-                $('#sortable-table').DataTable({
-                    "bPaginate": false,
-                    "searching": false,
-                    "ordering": false,
-                    "responsive": true,
-                    "scrollX": true,
-                    "autoWidth":true,
-                    "fixedHeader": true,
-                    "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 8,9 ]},
-                    ]
-                });
 
                 $('.table-item-search').DataTable({
                     "bPaginate": false,
