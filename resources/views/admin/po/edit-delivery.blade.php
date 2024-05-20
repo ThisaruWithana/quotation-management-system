@@ -372,22 +372,22 @@
         <script>
             $(function() {
 
-                $('#sortable-table').DataTable({
-                    "bPaginate": false,
-                    "searching": false,
-                    "ordering": false,
-                    "responsive": true,
-                    "scrollX": true,
-                    "autoWidth":true,
-                    "fixedHeader": true,
-                    "paging": false,
-                    "scrollCollapse": true,
-                    "scrollY": '50vh',
-                    "bInfo" : false,
-                    "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 8,9 ]},
-                    ]
-                });
+                // $('#sortable-table').DataTable({
+                //     "bPaginate": false,
+                //     "searching": false,
+                //     "ordering": false,
+                //     "responsive": true,
+                //     "scrollX": true,
+                //     "autoWidth":true,
+                //     "fixedHeader": true,
+                //     "paging": false,
+                //     "scrollCollapse": true,
+                //     "scrollY": '50vh',
+                //     "bInfo" : false,
+                //     "aoColumnDefs": [
+                //         { "bSortable": false, "aTargets": [ 8,9 ]},
+                //     ]
+                // });
 
                 $('.table-item-search').DataTable({
                     "bPaginate": false,

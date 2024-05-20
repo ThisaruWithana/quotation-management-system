@@ -185,11 +185,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
 
         // Route::post('update', [StockController::class, 'updateDelivery'])->name('deliveries.update');
         Route::post('add-items', [StockController::class, 'addStockAdjustmentItems'])->name('stock.add-items');
-        // Route::post('delete-item', [StockController::class, 'deleteDeliveryItem'])->name('deliveries.delete-item');
-        // Route::post('item-update', [StockController::class, 'deliveryItemUpdate'])->name('deliveries.item-update');
-        // Route::post('change-status', [StockController::class, 'changeStatusDeliveries'])->name('deliveries.change-status');
-        // Route::post('suspend', [StockController::class, 'suspend'])->name('deliveries.suspend');
-        // Route::post('update-stock', [StockController::class, 'updateStock'])->name('deliveries.update-stock');
+        Route::post('delete-item', [StockController::class, 'deleteStockAdjustmentItem'])->name('stock.delete-item');
+        Route::post('item-update', [StockController::class, 'StockAdjustmentItemUpdate'])->name('stock.item-update');
+        Route::post('update-stock', [StockController::class, 'stockAdjustmentUpdateStock'])->name('stock.update-stock');
         
     });
 
