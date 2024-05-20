@@ -1279,4 +1279,226 @@ class StockController extends Controller
     {
        return Excel::import(new DeliveryImport,request()->file('file'));
     }
+
+    public function stockAdjustmentList(Request $request)
+    {
+        $listData = StockAdjustment::with('created_user')->where('status', 1)->orderBy('id','DESC')->get();
+        return view('admin.stock.index',compact('listData'));
+    }
+
+    public function createStockAdjustment()
+    {
+        $title = 'Add New Stock Adjustment';
+
+        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
+        $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
+        $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
+
+        return view('admin.stock.add', compact('title', 'suppliers', 'departments', 'sub_departments'));
+    }
+
+    public function storeStockAdjustment(Request $request)
+    {
+        $response = array();
+
+         try{
+             DB::beginTransaction();
+
+             $store = StockAdjustment::updateOrCreate(
+                 [
+                     'id'=>$request->input('stock_adjustment_id')
+                 ],[
+                     'type' => $request->input('type'),
+                     'comment' => $request->input('comment'),
+                     'created_by' => Auth::user()->id,
+                     'updated_by' => Auth::user()->id
+                 ]
+             );
+
+            $stock_adjustment_id = $store->id;
+ 
+             if($store){
+                  
+                DB::commit(); 
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+                $response['data'] = $stock_adjustment_id;
+             }else{
+                 DB::rollback();
+                 $response['code'] = 0;
+                 $response['msg'] = 'Something went wrong !';
+                 $response['data'] = '';
+             }
+               
+             return json_encode($response);
+         }catch(\Exception $e){
+             DB::rollback();
+             $response['code'] = 0;
+             $response['msg'] =  $e->getMessage();
+             return json_encode($response);
+        } 
+    }
+
+    public function addStockAdjustmentItems(Request $request)
+    {
+        $response = array();
+        $ischecked = $request->input('ischecked');
+        $id = $request->input('id');
+        $stock_adjustment_id = $request->input('stock_adjustment_id');
+
+        try{
+            DB::beginTransaction();
+
+            $itemDetails = Item::where('id',$id)->first();
+            $actual_cost = $itemDetails['cost_price'];
+            $retail_price = $itemDetails['retail_price'];
+
+            if($ischecked === 'true'){
+                $is_checked = 1;
+   
+                $qty = 1;
+                $total_cost = $actual_cost * $qty;
+                $total_retail = $retail_price * $qty;
+         
+                $store = StockAdjustmentItems::create([
+                    'stock_adjustment_id' => $stock_adjustment_id,
+                    'item_id' => $id,
+                    'item_cost' => $actual_cost,
+                    'item_retail' => $retail_price,
+                    'qty' => 1,
+                    'stock_before' => app('App\Http\Controllers\ItemController')->getCurrentStockCount($id),
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail,
+                    'status' => $is_checked,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
+                ]);
+            }else{
+
+                $is_checked = 0;
+
+                $store = StockAdjustmentItems::where('stock_adjustment_id', $stock_adjustment_id)
+                        ->where('item_id', $id)->where('status', 1)->update([
+                        'status' => $is_checked,
+                        'updated_by' => Auth::user()->id
+                    ]);
+            }
+
+            DB::commit(); 
+            $total_cost = $this->getAdjustmentTotalCost($stock_adjustment_id);
+            $total_retail = $this->getAdjustmentTotalRetail($stock_adjustment_id);
+
+            if($store){
+                $request->request->add([
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail
+                ]);
+
+                $updatePriceInfo = $this->updateAdjstmentPriceInfo($request);
+                $getItemList = $this->getAdjustmentItems($stock_adjustment_id);
+
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+                $response['data'] = $getItemList;
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+            }else{
+                DB::rollback();
+                $response['code'] = 66;
+            }
+              
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
+
+    public function getAdjustmentItems($stock_adjustment_id)
+    {
+        $itemList = StockAdjustmentItems::with('adjustment', 'item', 'item.suppliers.suppliername', 'item.department', 'item.subdepartment')
+        ->where('stock_adjustment_id', $stock_adjustment_id)->where('status', 1)->get();
+
+        $itemsArr = array();
+
+        foreach($itemList as $value){
+            $supplierList = array();
+
+                foreach($value['item']['suppliers'] as $supplier){
+                    $supplier = $supplier['suppliername']['name'];
+                    array_push($supplierList, $supplier);
+                }
+
+                $name = $value['item']['name'];
+                $item_id = $value['item']['id'];
+                $actual_cost = $value['item']['cost_price'];
+       
+                $data2 = ([
+                    'id' => $value['id'],
+                    'item_id' => $item_id,
+                    'stock_adjustment_id' => $value['stock_adjustment_id'],
+                    'name' => $name,
+                    'item_cost' => $value['item_cost'],
+                    'retail' => $value['item_retail'],
+                    'qty' => $value['qty'],
+                    'type' => $value['adjustment']['type'],
+                    'stock_before' => $value['stock_before'],
+                    'total_cost' => $value['total_cost'],
+                    'total_retail' => $value['total_retail'],
+                    'supplier' => implode(" ",$supplierList),
+                    'department' => $value['item']['department']['name'],
+                    'sub_department' => $value['item']['subdepartment']['name']
+                    ]);
+
+            array_push($itemsArr, $data2);
+        }
+     return $itemsArr;
+    }
+
+    public function getAdjustmentTotalCost($stock_adjustment_id)
+    {
+        $query = StockAdjustmentItems::where('stock_adjustment_id', $stock_adjustment_id)->where('status', 1)->sum('total_cost');
+        return $query;
+    }
+
+    public function getAdjustmentTotalRetail($stock_adjustment_id)
+    {
+        $query = StockAdjustmentItems::where('stock_adjustment_id', $stock_adjustment_id)->where('status', 1)->sum('total_retail');
+        return $query;
+    }
+
+    public function updateAdjstmentPriceInfo(Request $request)
+    {
+        $response = array();
+        $stock_adjustment_id = $request->input('stock_adjustment_id');
+
+            try{
+                DB::beginTransaction();
+
+                $update = StockAdjustment::where('id', $stock_adjustment_id)->update([
+                    'total_cost' => floatval($request->input('total_cost')),
+                    'total_retail' => floatval($request->input('total_retail')),
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                if($update){
+                    DB::commit(); 
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                  
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                }
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
 }

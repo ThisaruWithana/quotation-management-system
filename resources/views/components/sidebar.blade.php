@@ -69,6 +69,7 @@
                 <ul class="nav nav-treeview" 
                     @if(Route::is('admin.po')) style='display: block;' 
                     @elseif(Route::is('admin.deliveries'))  style='display: block;' @else @endif>
+
                     <li class="nav-item">
                         <a href="{{ url('admin/po') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
@@ -79,6 +80,12 @@
                         <a href="{{ url('admin/deliveries') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
                             <p>Purchse Deliveries</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/stock') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Stock Adjustment</p>
                         </a>
                     </li>
                 </ul>
