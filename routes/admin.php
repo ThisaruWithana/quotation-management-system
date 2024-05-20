@@ -173,10 +173,25 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::get('order-history', [ReportController::class, 'itemOrderHistory'])->name('report.order-history');
 
         Route::post('print-label', [ReportController::class, 'printLabels'])->name('report.print-label');
-        // Route::post('order-history', [ReportController::class, 'getItemOrderHistory'])->name('report.order-history');
-
     });
 
+    Route::prefix('stock')->group(function(){
+
+        Route::get('/', [StockController::class, 'stockAdjustmentList'])->name('stock');
+        Route::get('edit/{id}', [StockController::class, 'editStockAdjustment'])->name('stock.edit');
+        Route::get('create-adjustment', [StockController::class, 'createStockAdjustment'])->name('stock.create-adjustment');
+
+        Route::post('adjustment', [StockController::class, 'storeStockAdjustment'])->name('stock.adjustment');
+
+        // Route::post('update', [StockController::class, 'updateDelivery'])->name('deliveries.update');
+        Route::post('add-items', [StockController::class, 'addStockAdjustmentItems'])->name('stock.add-items');
+        // Route::post('delete-item', [StockController::class, 'deleteDeliveryItem'])->name('deliveries.delete-item');
+        // Route::post('item-update', [StockController::class, 'deliveryItemUpdate'])->name('deliveries.item-update');
+        // Route::post('change-status', [StockController::class, 'changeStatusDeliveries'])->name('deliveries.change-status');
+        // Route::post('suspend', [StockController::class, 'suspend'])->name('deliveries.suspend');
+        // Route::post('update-stock', [StockController::class, 'updateStock'])->name('deliveries.update-stock');
+        
+    });
 
 });
 
