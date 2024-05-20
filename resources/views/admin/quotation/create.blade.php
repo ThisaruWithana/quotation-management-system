@@ -237,14 +237,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <div class="col-lg-2">
+                                        <div class="col-lg-2" style="float:right;">
                                             <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn"
                                                     data-toggle="modal" data-target="#exampleModal">
                                                 <i class="fa fa-search-plus"></i>
                                                 Find Items
                                             </button>
                                         </div>
-                                        <br>
+                                        <br> <br>
 
                                         <div class="table-responsive">
                                             <table class="table item-list table-bordered" id="sortable-table"
@@ -535,21 +535,21 @@
         <script>
             $(function() {
 
-                $('#sortable-table').DataTable({
-                    "bPaginate": false,
-                    "searching": false,
-                    "ordering": false,
-                    "responsive": true,
-                    "scrollX": true,
-                    "autoWidth":true,
-                    "fixedHeader": true,
-                    "paging": false,
-                    "scrollCollapse": true,
-                    "scrollY": '50vh',
-                    "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 8,9 ]},
-                    ]
-                });
+                // $('#sortable-table').DataTable({
+                //     "bPaginate": false,
+                //     "searching": false,
+                //     "ordering": false,
+                //     "responsive": true,
+                //     "scrollX": true,
+                //     "autoWidth":true,
+                //     "fixedHeader": true,
+                //     "paging": false,
+                //     "scrollCollapse": true,
+                //     "scrollY": '50vh',
+                //     "aoColumnDefs": [
+                //         { "bSortable": false, "aTargets": [ 8,9 ]},
+                //     ]
+                // });
 
                 $('.table-item-search').DataTable({
                     "bPaginate": false,

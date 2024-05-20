@@ -83,7 +83,6 @@
         background-color: #f7dc6f;
         }
         .modal-body{
-            height: 75vh;
             overflow-y: auto;
         }
     </style>

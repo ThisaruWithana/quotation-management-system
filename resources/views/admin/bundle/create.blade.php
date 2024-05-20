@@ -1,19 +1,43 @@
 <x-admin>
    @section('title')  {{ 'Bundle Management' }} @endsection
+        <style>
+           .dataTables_scrollHeadInner{
+               width: 100% !important;
+           }
+           .dataTables_scrollHeadInner  .table{
+               width: 100% !important;
+           }
+           div.dataTables_wrapper div.dataTables_info {
+               padding-top: .85em;
+               text-align: left;
+               padding-bottom: 30px;
+           }
 
-    <style>
-        .dataTables_scrollHeadInner{
-            width: 100% !important;
-        }
-        .dataTables_scrollHeadInner  .table{
-            width: 100% !important;
-        }
-        div.dataTables_wrapper div.dataTables_info {
-            padding-top: .85em;
-            text-align: left;
-            padding-bottom: 30px;
-        }
-    </style>
+           .card-dark{
+               background: #FDFDFD;
+               padding: 15px;
+               border: 1px solid #ddd;
+               box-shadow: none;
+           }
+
+           .form-control:disabled, .form-control[readonly] {
+               background-color: #e9ecef;
+               opacity: 1;
+               border: 1px solid #ced4da !important;
+           }
+           .bootstrap-select.disabled, .bootstrap-select > .disabled {
+               cursor: not-allowed;
+               border: 1px solid #ced4da !important;
+               border-radius: 10px;
+           }
+
+           .bootstrap-select > .dropdown-toggle{
+               border: 1px solid #ced4da !important;
+           }
+           .form-group .bootstrap-select, .form-horizontal .bootstrap-select, .form-inline .bootstrap-select {
+               padding: 0;
+           }
+       </style>
 
     <section class="content">
         <!-- Default box -->
@@ -27,41 +51,43 @@
                     <!-- /.card-header -->
                     <!-- form start -->
                     <form action="{{ route('admin.bundle.store') }}" method="PUT"
-                    class="text-center border border-light p-2" id="bundleCreate">
+                    class="text-center border border-light p-5" id="bundleCreate">
                         @csrf
                         <div class="card-body px-lg-2 pt-0">
 
                                 <div class="row">
-                                    <div class="col-lg-8">
-                                        <div class="col-lg-12">
-                                            <div class="form-group text-left">
-                                                <label for="name" class="form-label">Bundle Name</label>
-                                                <span class="required"> * </span>
-                                                <input type="text" class="form-control" name="name" id="name"
-                                                    required="" value="{{ old('name') }}" autocomplete="off">
-                                                    @error('name')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                <div class="invalid-feedback">Bundle Name is required.</div>
+                                    <div class="col-lg-7 ">
+                                        <div class="row card card-dark">
+                                            <div class="col-lg-12">
+                                                <div class="form-group text-left">
+                                                    <label for="name" class="form-label">Bundle Name</label>
+                                                    <span class="required"> * </span>
+                                                    <input type="text" class="form-control" name="name" id="name"
+                                                        required="" value="{{ old('name') }}" autocomplete="off">
+                                                        @error('name')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    <div class="invalid-feedback">Bundle Name is required.</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-12">
-                                            <div class="form-group text-left">
-                                                <label for="bundle_cost" class="form-label">Bundle Cost</label>
-                                                <span class="required"> * </span>
-                                                <input type="text" class="form-control" name="bundle_cost" id="bundle_cost"
-                                                    required="" value="{{ old('bundle_cost') }}"  autocomplete="off">
-                                                    @error('bundle_cost')
-                                                        <span class="text-danger">{{ $message }}</span>
-                                                    @enderror
-                                                <div class="invalid-feedback">Bundle Cost is required.</div>
+                                            <div class="col-lg-12">
+                                                <div class="form-group text-left">
+                                                    <label for="bundle_cost" class="form-label">Bundle Cost</label>
+                                                    <span class="required"> * </span>
+                                                    <input type="text" class="form-control" name="bundle_cost" id="bundle_cost"
+                                                        required="" value="{{ old('bundle_cost') }}"  autocomplete="off">
+                                                        @error('bundle_cost')
+                                                            <span class="text-danger">{{ $message }}</span>
+                                                        @enderror
+                                                    <div class="invalid-feedback">Bundle Cost is required.</div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-12">
-                                            <div class="form-group text-left">
-                                                <label for="remark" class="form-label">Remark</label>
-                                                <textarea class="form-control" name="remark" id="remark"></textarea>
+                                            <div class="col-lg-12">
+                                                <div class="form-group text-left">
+                                                    <label for="remark" class="form-label">Remark</label>
+                                                    <textarea class="form-control" name="remark" id="remark"></textarea>
 
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
