@@ -186,6 +186,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('delete-item', [StockController::class, 'deleteStockAdjustmentItem'])->name('stock.delete-item');
         Route::post('item-update', [StockController::class, 'StockAdjustmentItemUpdate'])->name('stock.item-update');
         Route::post('update-stock', [StockController::class, 'stockAdjustmentUpdateStock'])->name('stock.update-stock');
+
+        
+        Route::get('take/', [StockController::class, 'stockTakeList'])->name('stock.take');
         
     });
 
