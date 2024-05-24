@@ -25,8 +25,8 @@ class StockTakeItems extends Model
         return $this->belongsTo('App\Models\Item', 'item_id','id');
     }
 
-    public function adjustment()
+    public function stockTake()
     {
-        return $this->belongsTo('App\Models\StockAdjustment', 'stock_adjustment_id','id');
+        return $this->belongsTo('App\Models\StockTake', 'stock_take_id','id');
     }
 }
