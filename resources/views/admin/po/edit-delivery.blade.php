@@ -15,98 +15,98 @@
                         <div class="card-body px-lg-2 pt-0">
                                 <div class="row">
                                     <div class="col-lg-8">
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                <div class="form-group text-left">
-                                                    <label for="type" class="form-label">Type</label>
-                                                    <span class="required"> * </span>
-                                                    <select id="type" name="type" class="selectpicker col-lg-12" disabled>
-                                                        <option value=""></option>
-                                                        <option value="Manual" {{ $data->type === 'Manual' ? 'selected' : '' }}>Manual</option>
-                                                        <option value="Import" {{ $data->type === 'Import' ? 'selected' : '' }}>Import</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3">
-                                                <div class="form-group text-left">
-                                                    <label for="status" class="form-label">Delivery Status</label>
-                                                    <span class="required"> * </span>
-                                                    <select id="status" name="status" class="selectpicker col-lg-12">
-                                                        <option value=""></option>
-                                                        <option value="0" {{ $data->status === 0 ? 'selected' : '' }}>Suspended</option>
-                                                        <option value="1" {{ $data->status === 1 ? 'selected' : '' }}>Awaiting Delivery</option>
-                                                        <option value="4" {{ $data->status === 4 ? 'selected' : '' }}>Full Delivery</option>
-                                                        <option value="3" {{ $data->status === 3 ? 'selected' : '' }}>Part Delivery</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <div class="form-group text-left">
-                                                    <label for="supplier" class="form-label">Supplier</label>
-                                                    <span class="required"> * </span>
-                                                    <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
-                                                        <option value="">Select Client</option>
-                                                        @foreach ($suppliers as $value)
-                                                        <option value="{{ $value->id }}" 
-                                                            {{ $data->supplier_id === $value->id ? 'selected' : '' }}>{{ $value->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                       
-                                        @if($data->type === 'Manual')
-                                            <div id="manual_form"> 
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="form-group text-left">
-                                                            <label for="remark" class="form-label">Remark</label>
-                                                            <textarea class="form-control" name="remark" id="remark">{{ $data->reference }}</textarea>
-                                            
-                                                        </div>
+                                        <div class="row card card-dark">
+                                            <div class="row">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group text-left">
+                                                        <label for="type" class="form-label">Type</label>
+                                                        <span class="required"> * </span>
+                                                        <select id="type" name="type" class="selectpicker col-lg-12" disabled>
+                                                            <option value=""></option>
+                                                            <option value="Manual" {{ $data->type === 'Manual' ? 'selected' : '' }}>Manual</option>
+                                                            <option value="Import" {{ $data->type === 'Import' ? 'selected' : '' }}>Import</option>
+                                                        </select>
                                                     </div>
                                                 </div>
-                                                <div class="row"> 
+                                                <div class="col-lg-3">
+                                                    <div class="form-group text-left">
+                                                        <label for="status" class="form-label">Delivery Status</label>
+                                                        <span class="required"> * </span>
+                                                        <select id="status" name="status" class="selectpicker col-lg-12">
+                                                            <option value=""></option>
+                                                            <option value="0" {{ $data->status === 0 ? 'selected' : '' }}>Suspended</option>
+                                                            <option value="1" {{ $data->status === 1 ? 'selected' : '' }}>Awaiting Delivery</option>
+                                                            <option value="4" {{ $data->status === 4 ? 'selected' : '' }}>Full Delivery</option>
+                                                            <option value="3" {{ $data->status === 3 ? 'selected' : '' }}>Part Delivery</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">
-                                                        <label for="delivery_date" class="form-label">Delivery Date</label>
-                                                        
-                                                        @if(isset($data->delivery_date)) 
-                                                            <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="{{ date('Y-m-d', strtotime($data->delivery_date)) }}">
-                                                        @else
-                                                            <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="">
-                                                        @endif
+                                                        <label for="supplier" class="form-label">Supplier</label>
+                                                        <span class="required"> * </span>
+                                                        <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
+                                                            <option value="">Select Client</option>
+                                                            @foreach ($suppliers as $value)
+                                                            <option value="{{ $value->id }}" 
+                                                                {{ $data->supplier_id === $value->id ? 'selected' : '' }}>{{ $value->name }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
-                                                </div>
                                             </div>
-                                        @endif
-                                       
-                                        @if($data->type === 'Import')
-                                            <div id="import_form" style="display:none;"> 
-                                                <div class="row">
+                                        
+                                            @if($data->type === 'Manual')
+                                                <div id="manual_form"> 
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="form-group text-left">
+                                                                <label for="remark" class="form-label">Remark</label>
+                                                                <textarea class="form-control" name="remark" id="remark">{{ $data->reference }}</textarea>
+                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row"> 
                                                     <div class="col-lg-6">
                                                         <div class="form-group text-left">
-                                                            <label for="file" class="form-label">Upload File</label>
-                                                            <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                            <label for="delivery_date" class="form-label">Delivery Date</label>
+                                                            
+                                                            @if(isset($data->delivery_date)) 
+                                                                <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="{{ date('Y-m-d', strtotime($data->delivery_date)) }}">
+                                                            @else
+                                                                <input type="date" class="form-control datepicker" id="delivery_date" name="delivery_date" value="">
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        
+                                            @if($data->type === 'Import')
+                                                <div id="import_form" style="display:none;"> 
+                                                    <div class="row">
+                                                        <div class="col-lg-6">
+                                                            <div class="form-group text-left">
+                                                                <label for="file" class="form-label">Upload File</label>
+                                                                <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endif
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="col-lg-4 pricing-details">
                                         <div class="text-left" style="margin-left:100px;margin-top: 25px;">
-                                            <table>
+                                            <table class="table table-bordered">
                                                 <tr class="bundle-item-cost">
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($data->total_cost, 2) }}</span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0 text-bold"><b class="d-block info-lb">Total Cost :</b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0 text-bold"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($data->total_cost, 2) }}</span></b></p></td>
                                                 </tr>
                                                 <tr class="bundle-item-cost">
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-retail-lbl">{{ number_format($data->total_retail, 2) }}</span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0 text-bold"><b class="d-block info-lb">Total Retail :</b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0 text-bold"><b class="d-block info-lb"><span id="total-retail-lbl">{{ number_format($data->total_retail, 2) }}</span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>

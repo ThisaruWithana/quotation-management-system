@@ -186,6 +186,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('delete-item', [StockController::class, 'deleteStockAdjustmentItem'])->name('stock.delete-item');
         Route::post('item-update', [StockController::class, 'StockAdjustmentItemUpdate'])->name('stock.item-update');
         Route::post('update-stock', [StockController::class, 'stockAdjustmentUpdateStock'])->name('stock.update-stock');
+
+        
+        Route::get('take/', [StockController::class, 'stockTakeList'])->name('stock.take');
+        Route::get('create-stock-take', [StockController::class, 'createStockTake'])->name('stock.create-stock-take');
+        Route::get('take-edit/{id}', [StockController::class, 'editStockTake'])->name('stock.take-edit');
+
+        Route::post('take-change-status', [StockController::class, 'changeStatusStockTake'])->name('stock.take-change-status');
+        Route::post('store-take', [StockController::class, 'storeStockTake'])->name('stock.store-take');
+        Route::post('add-stock-take-items', [StockController::class, 'addStockTakeItems'])->name('stock.add-stock-take-items');
+        Route::post('delete-stock-take-item', [StockController::class, 'deleteStockTakeItem'])->name('stock.delete-stock-take-item');
+        Route::post('take-item-update', [StockController::class, 'StockTakeItemUpdate'])->name('stock.take-item-update');
+        Route::post('stock-take-update-stock', [StockController::class, 'stockTakeUpdateStock'])->name('stock.stock-take-update-stock');
         
     });
 

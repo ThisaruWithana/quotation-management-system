@@ -3,44 +3,6 @@
         {{ 'Quotation Management' }}
     @endsection
 
-        <style>
-            .dataTables_scrollHeadInner{
-                width: 100% !important;
-            }
-            .dataTables_scrollHeadInner  .table{
-                width: 100% !important;
-            }
-            div.dataTables_wrapper div.dataTables_info {
-                padding-top: .85em;
-                text-align: left;
-                padding-bottom: 30px;
-            }
-
-            .card-dark{
-                background: #FDFDFD;
-                padding: 15px;
-                border: 1px solid #ddd;
-                box-shadow: none;
-            }
-
-            .form-control:disabled, .form-control[readonly] {
-                background-color: #e9ecef;
-                opacity: 1;
-                border: 1px solid #ced4da !important;
-            }
-            .bootstrap-select.disabled, .bootstrap-select > .disabled {
-                cursor: not-allowed;
-                border: 1px solid #ced4da !important;
-                border-radius: 10px;
-            }
-
-            .bootstrap-select > .dropdown-toggle{
-                border: 1px solid #ced4da !important;
-            }
-            .form-group .bootstrap-select, .form-horizontal .bootstrap-select, .form-inline .bootstrap-select {
-                padding: 0;
-            }
-        </style>
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">

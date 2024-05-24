@@ -14,7 +14,7 @@
                     </h5>
                     <!-- /.card-header -->
                     <!-- form start -->
-                    <form action="{{ route('admin.stock.adjustment') }}" method="POST"
+                    <form action="{{ route('admin.stock.store-take') }}" method="POST"
                           class="text-center border border-light p-5" id="formCreate">
                         @csrf
                         <div class="card-body px-lg-2 pt-0">
@@ -26,21 +26,20 @@
                                                 <div class="row">
                                                     <div class="col-lg-12">
                                                         <div class="form-group text-left">
-                                                            <label for="type" class="form-label">Type</label>
-                                                            <span class="required"> * </span><br>
-                                                            <select id="type" name="type"
-                                                                    class="selectpicker show-tick col-lg-12" required>
-                                                                <option value="Stock Adjustment (-)">Stock Adjustment (-)</option>
-                                                                <option value="Stock Adjustment (+)">Stock Adjustment (+)</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-lg-12">
-                                                        <div class="form-group text-left">
                                                             <label for="comment" class="form-label">Comment</label>
                                                             <span class="required"> * </span><br>
-                                                            <textarea class="form-control" name="comment" id="comment" rows="4" required></textarea><br>
+                                                            <textarea class="form-control" name="comment" id="comment" rows="4" required>{{ $data->comment }}</textarea><br>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group text-left">
+                                                            <label for="date" class="form-label">Date</label>
+                                                            
+                                                            @if(isset($data->created_at)) 
+                                                            <input type="date" class="form-control datepicker" id="date" name="date" value="{{ date('Y-m-d', strtotime($data->created_at)) }}" readonly>
+                                                            @else
+                                                                <input type="date" class="form-control datepicker" id="date" name="date" value="" readonly>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </div>
@@ -49,21 +48,24 @@
 
                                     <div class="col-lg-6">
                                         <div class="row">
-                                            <div class="col-lg-12 customer-details"
-                                                 style="display:block;margin-top: 0px;padding-left: 100px">
-                                                <div class="text-left">
+                                            <div class="col-lg-10 customer-details">
+                                                <div class="text-left" style="margin-left:100px;margin-top: 25px;">
                                                     <table class="table table-bordered ">
                                                         <tr>
-                                                            <td style="width:50px;"><p class="text-sm mb-0 text-bold">
-                                                                    Total Cost :</p></td>
-                                                            <td style="width:50px;"><p class="text-sm mb-0 text-bold"><span
-                                                                        id="total-cost-lbl"></span></p></td>
+                                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold">Total Cost :</p></td>
+                                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold"><span id="total-cost-lbl">{{ number_format($data->total_cost, 2) }}</span></p></td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="width:50px;"><p class="text-sm mb-0 text-bold">
-                                                                    Total Retail :</p></td>
-                                                            <td style="width:50px;"><p class="text-sm mb-0 text-bold"><span
-                                                                        id="total-retail-lbl"></span></p></td>
+                                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold">Total Retail :</p></td>
+                                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold"><span id="total-retail-lbl">{{ number_format($data->total_retail, 2) }}</span></p></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold">Total Cost Difference :</p></td>
+                                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold"><span id="total-cost-diff-lbl">{{ number_format($data->total_cost_diff, 2) }}</span></p></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold">Total Retail Difference :</p></td>
+                                                            <td style="width:100px;"><p class="text-sm mb-0 text-bold"><span id="total-retail-diff-lbl">{{ number_format($data->total_retail_diff, 2) }}</span></p></td>
                                                         </tr>
                                                     </table>
                                                 </div>
@@ -71,14 +73,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <input type="hidden" name="stock_adjustment_id" id="stock_adjustment_id" value="">
+                                <input type="hidden" name="stock_take_id" id="stock_take_id" value="{{ $data->id }}">
                             </div>
 
-                            <div class="col-lg-2 p-0">
-                                <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
-                            </div>
 
-                            <div class="add-items" style="display:none;">
+                            <div class="add-items" style="display:block;">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="col-lg-2" style="float:right;">
@@ -98,19 +97,42 @@
                                                     <th class="th-sm">Code</th>
                                                     <th class="th-sm">Name</th>
                                                     <th class="th-sm">Supplier</th>
-                                                    <th class="th-sm item-list-item-cost">Item Cost</th>
-                                                    <th class="th-sm item-list-retail">Item Retail</th>
-                                                    <th class="th-sm">Stock Before Adjustment</th>
-                                                    <th class="th-sm item-list-qty">Adjustment Qty</th>
-                                                    <th class="th-sm">Stock After Adjustment</th>
-                                                    <th class="th-sm item-list-total-cost">Adjustment Total Cost</th>
-                                                    <th class="th-sm">Adjustment Total Retail</th>
+                                                    <th class="th-sm">Item Cost</th>
+                                                    <th class="th-sm">Item Retail</th>
+                                                    <th class="th-sm">Book Stock</th>
+                                                    <th class="th-sm item-list-qty">Physical Stock</th>
+                                                    <th class="th-sm">Difference</th>
+                                                    <th class="th-sm">Cost Difference</th>
+                                                    <th class="th-sm">Retail Difference</th>
                                                     <th class="th-sm"></th>
                                                     <th class="th-sm"></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-
+                                                        @foreach ($itemList as $value)
+                                                            <tr id="{{ $value['id'] }}">
+                                                                <td>{{ $value['item_id'] }}</td>
+                                                                <td>{{ $value['name'] }}</td>
+                                                                <td>{{ $value['supplier'] }}</td>
+                                                                <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
+                                                                <td class="item-list-item-cost">{{ $value['retail'] }}</td>
+                                                                <td class="item-list-qty">{{ $value['book_stock'] }}</td>
+                                                                <td class="item-list-qty">{{ $value['physical_stock'] }}</td>
+                                                                <td class="item-list-qty">{{ $value['diff'] }}</td>
+                                                                <td class="item-list-total-cost">{{ $value['total_cost_diff'] }}</td>
+                                                                <td class="item-list-total-cost">{{ $value['total_retail_diff'] }}</td>
+                                                                <td>
+                                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value['id'] }}, {{ $value['stock_take_id'] }})">
+                                                                        <i class="fas fa-trash-alt"></i>
+                                                                    </a>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails({{ $value['id'] }}, {{ $value['item_cost'] }}, {{ $value['retail'] }}, {{ $value['physical_stock'] }}, {{ $value['book_stock'] }})">
+                                                                        <i class="fas fa-edit"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                    @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
@@ -119,8 +141,13 @@
                                 </div>
                         
                                 <br>
-                                <div class="col-lg-2">
-                                    <button class="btn btn-primary btn-block" type="button" id="btnStockUpdate">Update Stock</button>
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <button class="btn btn-primary btn-block" type="button" id="btnStockUpdate">Update Stock</button>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Changes</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -154,8 +181,8 @@
                                            autocomplete="off" placeholder="ID, Name, Description"
                                            onkeyup="searchItem(this.form)">
                                 </div>
-                                <input type="hidden" value="stock" id="search_type" name="search_type">
-                                <input type="hidden" value="" id="stock" name="stock">
+                                <input type="hidden" value="stock_take" id="search_type" name="search_type">
+                                <input type="hidden" value="{{ $data->id }}" id="stock" name="stock">
 
                                 <div class="form-group mr-1">
                                     <select id="supplier" name="supplier" class="selectpicker show-tick"
@@ -235,12 +262,12 @@
                         <div class="modal-body">
                             @csrf
                             <input type="hidden" name="item_id" value="" id="item_id">
-                            <input type="hidden" name="stock_before" value="" id="stock_before">
+                            <input type="hidden" name="book_stock" value="" id="book_stock">
                             <input type="hidden" name="actual_cost" value="" id="actual_cost">
                             <input type="hidden" name="retail" value="" id="retail">
 
                             <div class="form-group">
-                                <label for="qty" class="col-form-label">Adjustment Qty</label>
+                                <label for="qty" class="col-form-label">Physical Stock</label>
                                 <input type="text" class="form-control" id="qty" name="qty"
                                        required="" value="" autocomplete="off">
                             </div>
@@ -287,7 +314,7 @@
                     var formData = new FormData(this);
 
                     $.ajax({
-                        url: "{{ url('admin/stock/adjustment') }}",
+                        url: "{{ url('admin/stock/store-take') }}",
                         type: 'POST',
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                             data: formData,
@@ -299,17 +326,7 @@
                                 var result = data;
 
                                 if (result['code'] == 1) {
-                                    $(".add-items").show();
-                                    $("#btnSave").hide();
-
-                                    $("#comment").attr('disabled',true);
-
-                                    $("#type").attr('disabled',true);
-                                    $('#type').selectpicker('refresh');
-
-                                    $("#stock_adjustment_id").val(result['data']);
-                                    $("#stock").val(result['data']);
-
+                                        window.location = '{{ url("admin/stock/take") }}';
                                 } else {
                                     toastr.error(
                                         'Error',
@@ -332,50 +349,14 @@
                     $('.table-item-search tbody').empty();
                 });
 
-                $('#btnSaveChanges').click(function(){
-
-                    $.ajax({
-                            url: "{{ url('admin/stock/update-price-info') }}",
-                            type: 'POST',
-                                data: {
-                                    "_token": "{{ csrf_token() }}",
-                                    "stock_adjustment_id": $('#stock_adjustment_id').val(),
-                                    "total_cost": $("#total-cost-lbl").text(),
-                                    "total_retail": $("#total-retail-lbl").text()
-                                },
-                                success: function (data) {
-                                    var result = JSON.parse(data);
-
-                                    if (result['code'] == 1) {
-                                        window.location = '{{ url("admin/stock") }}';
-
-                                    } else {
-                                        toastr.error(
-                                            'Error',
-                                            'Something Went Wrong!',
-                                            {
-                                                timeOut: 1500,
-                                                fadeOut: 1500,
-                                                onHidden: function () {
-                                                }
-                                            }
-                                        );
-                                    }
-                                }, error: function (data) {
-
-                            }
-                    });
-
-                });
-
                 $('#formEditItem').submit(function(event){
                     event.preventDefault();
 
                     var formData = new FormData(this);
-                    formData.append('stock_adjustment_id', $('#stock_adjustment_id').val());
+                    formData.append('stock_take_id', $('#stock_take_id').val());
                 
                     $.ajax({
-                        url: "{{ url('admin/stock/item-update') }}",
+                        url: "{{ url('admin/stock/take-item-update') }}",
                         type: 'POST',
                             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                             data: formData,
@@ -393,7 +374,7 @@
 
                                         $.each(result['data'], function (count, val) {
 
-                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +','+ val['item_cost'] +','+ val['retail'] +','+ val['qty']+','+ val['stock_before']+')"><i class="fas fa-edit"></i></a>';
+                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +','+ val['item_cost'] +','+ val['retail'] +','+ val['physical_stock']+','+ val['book_stock']+')"><i class="fas fa-edit"></i></a>';
 
                                             $('.item-list tbody').append(
                                                 '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
@@ -402,13 +383,13 @@
                                                 +'<td>' + val['supplier'] + '</td>'
                                                 +'<td class="item-list-cost">' + val['item_cost'] + '</td>'
                                                 +'<td class="item-list-retail">' + val['retail'] + '</td>'
-                                                +'<td class="">' + val['stock_before'] + '</td>'
-                                                +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                                +'<td class="">' + val['stock_after'] + '</td>'
-                                                +'<td class="item-list-total-cost">' + val['total_cost'] + '</td>'
-                                                +'<td>' + val['total_retail'] + '</td>'
+                                                +'<td class="">' + val['book_stock'] + '</td>'
+                                                +'<td class="item-list-qty">' + val['physical_stock'] + '</td>'
+                                                +'<td class="">' + val['diff'] + '</td>'
+                                                +'<td class="item-list-total-cost">' + val['total_cost_diff'] + '</td>'
+                                                +'<td>' + val['total_retail_diff'] + '</td>'
                                                 +'<td>'
-                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['stock_adjustment_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['stock_take_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                                 +'</td>'
                                                 +'<td>'
                                                 +editBtn
@@ -431,7 +412,7 @@
                                     );
                                 }
 
-                                calculatePrices(result['total_retail'], result['total_cost']);
+                                calculatePrices(result['total_retail'], result['total_cost'], result['total_cost_diff'], result['total_retail_diff']);
                                 $("#editDetails").modal('hide');
                             }, error: function (data) {
                                         
@@ -442,11 +423,11 @@
                 $('#btnStockUpdate').click(function(){
 
                     $.ajax({
-                        url: "{{ url('admin/stock/update-stock') }}",
+                        url: "{{ url('admin/stock/stock-take-update-stock') }}",
                         type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
-                                "stock_adjustment_id":$('#stock_adjustment_id').val(),
+                                "stock_take_id":$('#stock_take_id').val(),
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
@@ -459,7 +440,7 @@
                                             timeOut: 1500,
                                             fadeOut: 1500,
                                             onHidden: function () {
-                                                window.location = '{{ url("admin/stock") }}';
+                                                window.location = '{{ url("admin/stock/take") }}';
                                             }
                                         });
                                 } else {
@@ -521,13 +502,13 @@
               var ischecked = isChecked.checked;
 
                 $.ajax({
-                        url: "{{ url('admin/stock/add-items') }}",
+                        url: "{{ url('admin/stock/add-stock-take-items') }}",
                         type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
                                 "id": isChecked.value,
                                 "ischecked": ischecked,
-                                "stock_adjustment_id":$('#stock_adjustment_id').val(),
+                                "stock_take_id":$('#stock_take_id').val(),
                                 "type": Itemtype
                             },
                             success: function (data) {
@@ -539,7 +520,7 @@
                                    
                                     $.each(result['data'], function (count, val) {
 
-                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +','+ val['item_cost'] +','+ val['retail'] +','+ val['qty']+','+ val['stock_before']+')"><i class="fas fa-edit"></i></a>';
+                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +','+ val['item_cost'] +','+ val['retail'] +','+ val['physical_stock']+','+ val['book_stock']+')"><i class="fas fa-edit"></i></a>';
 
                                         $('.item-list tbody').append(
                                             '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
@@ -548,13 +529,13 @@
                                             +'<td>' + val['supplier'] + '</td>'
                                             +'<td class="item-list-cost">' + val['item_cost'] + '</td>'
                                             +'<td class="item-list-retail">' + val['retail'] + '</td>'
-                                            +'<td class="">' + val['stock_before'] + '</td>'
-                                            +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            +'<td class="">' + val['stock_after'] + '</td>'
-                                            +'<td class="item-list-total-cost">' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td class="">' + val['book_stock'] + '</td>'
+                                            +'<td class="item-list-qty">' + val['physical_stock'] + '</td>'
+                                            +'<td class="">' + val['diff'] + '</td>'
+                                            +'<td class="item-list-total-cost">' + val['total_cost_diff'] + '</td>'
+                                            +'<td>' + val['total_retail_diff'] + '</td>'
                                             +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['stock_adjustment_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['stock_take_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
                                             +'<td>'
                                             +editBtn
@@ -565,27 +546,30 @@
                                     });
                                 }
 
-                                calculatePrices(result['total_retail'], result['total_cost']);
+                                calculatePrices(result['total_retail'], result['total_cost'], result['total_cost_diff'], result['total_retail_diff']);
+                                
                             }, error: function (data) {
 
                         }
                 });
             }
 
-            function calculatePrices(totalRetail, totalCost){
+            function calculatePrices(totalRetail, totalCost, totalCostDiff, totalRetailDiff){
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
                 $("#total-retail-lbl").text(Number(totalRetail).toFixed(2));
+                $("#total-cost-diff-lbl").text(Number(totalCostDiff).toFixed(2));
+                $("#total-retail-diff-lbl").text(Number(totalRetailDiff).toFixed(2));
             }
 
-            function changeStatus(id, stock_adjustment_id){
+            function changeStatus(id, stock_take_id){
 
                 $.ajax({
-                        url: "{{ url('admin/stock/delete-item') }}",
+                        url: "{{ url('admin/stock/delete-stock-take-item') }}",
                         type: 'POST',
                             data: {
                                 "_token": "{{ csrf_token() }}",
                                 "id": id,
-                                "stock_adjustment_id": stock_adjustment_id
+                                "stock_take_id": stock_take_id
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
@@ -594,8 +578,7 @@
                                 if (result['data'].length > 0) {
                                     
                                     $.each(result['data'], function (count, val) {
-
-                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +','+ val['item_cost'] +','+ val['retail'] +','+ val['qty']+','+ val['stock_before']+')"><i class="fas fa-edit"></i></a>';
+                                        var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +','+ val['item_cost'] +','+ val['retail'] +','+ val['physical_stock']+','+ val['book_stock']+')"><i class="fas fa-edit"></i></a>';
 
                                         $('.item-list tbody').append(
                                             '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
@@ -604,13 +587,13 @@
                                             +'<td>' + val['supplier'] + '</td>'
                                             +'<td class="item-list-cost">' + val['item_cost'] + '</td>'
                                             +'<td class="item-list-retail">' + val['retail'] + '</td>'
-                                            +'<td class="">' + val['stock_before'] + '</td>'
-                                            +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            +'<td class="">' + val['stock_after'] + '</td>'
-                                            +'<td class="item-list-total-cost">' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td class="">' + val['book_stock'] + '</td>'
+                                            +'<td class="item-list-qty">' + val['physical_stock'] + '</td>'
+                                            +'<td class="">' + val['diff'] + '</td>'
+                                            +'<td class="item-list-total-cost">' + val['total_cost_diff'] + '</td>'
+                                            +'<td>' + val['total_retail_diff'] + '</td>'
                                             +'<td>'
-                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['stock_adjustment_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['stock_take_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
                                             +'</td>'
                                             +'<td>'
                                             +editBtn
@@ -622,17 +605,18 @@
                                     });
                                 }
                                 
-                                calculatePrices(result['total_retail'], result['total_cost']);
+                                calculatePrices(result['total_retail'], result['total_cost'], result['total_cost_diff'], result['total_retail_diff']);
+                                
                             }, error: function (data) {
 
                         }
                 });
             }
 
-            function editDetails(id, cost, retail, qty,stock_before){
+            function editDetails(id, cost, retail, qty,book_stock){
                 $("#actual_cost").val(cost);
                 $("#qty").val(qty);
-                $("#stock_before").val(stock_before);
+                $("#book_stock").val(book_stock);
                 $("#item_id").val(id);
                 $("#retail").val(retail);
 

@@ -19,6 +19,7 @@ use App\Models\PoItems;
 use App\Models\DeliveryItems;
 use App\Models\ItemStock;
 use App\Models\StockAdjustmentItems;
+use App\Models\StockTakeItems;
 use DB;
 use Auth;
 use PDF;
@@ -633,6 +634,13 @@ class ItemController extends Controller
 
             $stock_adjustment_id = $request->input('stock');
             $getExistItems = StockAdjustmentItems::select('item_id')->where('stock_adjustment_id', $stock_adjustment_id)->where('status', 1)->get();
+
+            $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->whereNotIn('id', $getExistItems)->orderBy('id','desc');
+        
+        } else if($search_type === 'stock_take'){
+
+            $stock_take_id = $request->input('stock');
+            $getExistItems = StockTakeItems::select('item_id')->where('stock_take_id', $stock_take_id)->where('status', 1)->get();
 
             $data = Item::query()->with('suppliers.suppliername', 'department')->where('status', 1)->whereNotIn('id', $getExistItems)->orderBy('id','desc');
         

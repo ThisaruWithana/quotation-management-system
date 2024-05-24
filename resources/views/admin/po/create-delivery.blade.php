@@ -15,39 +15,42 @@
                         <div class="card-body px-lg-2 pt-0">
                                 <div class="row">
                                     <div class="col-lg-8">
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                <div class="form-group text-left">
-                                                    <label for="type" class="form-label">Type</label>
-                                                    <span class="required"> * </span>
-                                                    <select id="type" name="type" class="selectpicker col-lg-12">
-                                                        <!-- <option value=""></option> -->
-                                                        <!-- <option value="Manual">Manual</option> -->
-                                                        <option value="Import">Import</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                    
-                                            <div class="col-lg-6">
-                                                <div class="form-group text-left">
-                                                    <label for="supplier" class="form-label">Supplier</label>
-                                                    <span class="required"> * </span>
-                                                    <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
-                                                        <option value="">Select Client</option>
-                                                        @foreach ($suppliers as $value)
-                                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <div id="import_form" style="display:block;"> 
+                                        <div class="row card card-dark">
                                             <div class="row">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group text-left">
+                                                        <label for="type" class="form-label">Type</label>
+                                                        <span class="required"> * </span>
+                                                        <select id="type" name="type" class="selectpicker col-lg-12">
+                                                            <!-- <option value=""></option> -->
+                                                            <!-- <option value="Manual">Manual</option> -->
+                                                            <option value="Import">Import</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                        
                                                 <div class="col-lg-6">
                                                     <div class="form-group text-left">
-                                                        <label for="file" class="form-label">Upload File</label>
-                                                        <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                        <label for="supplier" class="form-label">Supplier</label>
+                                                        <span class="required"> * </span>
+                                                        <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
+                                                            <option value="">Select Client</option>
+                                                            @foreach ($suppliers as $value)
+                                                            <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="import_form" style="display:block;"> 
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <div class="form-group text-left">
+                                                            <label for="file" class="form-label">Upload File</label>
+                                                            <input type="file" class="form-control" id="file" name="file" value=""> 
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -55,16 +58,14 @@
                                     </div>
                                     <div class="col-lg-4 pricing-details">
                                         <div class="text-left" style="margin-left:100px;margin-top: 25px;">
-                                            <table>
+                                            <table class="table table-bordered">
                                                 <tr class="bundle-item-cost">
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Cost </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0 text-bold"><b class="d-block info-lb">Total Cost :</b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0 text-bold"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
                                                 </tr>
                                                 <tr class="bundle-item-cost">
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">Total Retail </b></p></td>
-                                                    <td style="width:100px;"><p class="text-sm"><b class="d-block info-lb">: </b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm"><b class="d-block info-lb"><span id="total-retail-lbl"></span></b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0 text-bold"><b class="d-block info-lb">Total Retail :</b></p></td>
+                                                    <td style="width:100px;"><p class="text-sm mb-0 text-bold"><b class="d-block info-lb"><span id="total-retail-lbl"></span></b></p></td>
                                                 </tr>
                                             </table>
                                         </div>

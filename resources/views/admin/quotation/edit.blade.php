@@ -1,7 +1,7 @@
 <x-admin>
    @section('title')  {{ 'Quotation Management' }} @endsection
 
-       <style>
+       <!-- <style>
            .dataTables_scrollHeadInner{
                width: 100% !important;
            }
@@ -38,7 +38,7 @@
            .form-group .bootstrap-select, .form-horizontal .bootstrap-select, .form-inline .bootstrap-select {
                padding: 0;
            }
-       </style>
+       </style> -->
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">

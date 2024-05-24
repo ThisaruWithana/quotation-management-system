@@ -22,6 +22,8 @@ use App\Models\ItemStock;
 use App\Models\ItemSupplier;
 use App\Models\StockAdjustment;
 use App\Models\StockAdjustmentItems;
+use App\Models\StockTake;
+use App\Models\StockTakeItems;
 use DB;
 
 class StockController extends Controller
@@ -1137,11 +1139,12 @@ class StockController extends Controller
                             $checkExistingStock = ItemStock::where('item_id', $item_id)->where('status', 1)->first();
 
                             if($checkExistingStock['qty'] != $qty){
-
-                                $updateStock = ItemStock::where('item_id', $item_id)->update([
-                                    'status' => 0,
-                                    'updated_by' => Auth::user()->id
-                                ]);   
+                                if($existingStock != 0){
+                                    $updateStock = ItemStock::where('item_id', $item_id)->update([
+                                        'status' => 0,
+                                        'updated_by' => Auth::user()->id
+                                    ]);  
+                                } 
                               
                                 $updateStock = ItemStock::create([
                                     'item_id' => $item_id,
@@ -1659,11 +1662,12 @@ class StockController extends Controller
                        }
 
                         if($existingStock != $qty){
-                            
-                            $updateStock = ItemStock::where('item_id', $item_id)->update([
-                                'status' => 0,
-                                'updated_by' => Auth::user()->id
-                            ]);   
+                            if($existingStock != 0){
+                                $updateStock = ItemStock::where('item_id', $item_id)->update([
+                                    'status' => 0,
+                                    'updated_by' => Auth::user()->id
+                                ]);  
+                            } 
 
                             $current_stock = $stock_before;
 
@@ -1711,4 +1715,504 @@ class StockController extends Controller
      
         return view('admin.stock.detail',compact('data', 'title', 'itemList'));
     }
+
+    public function stockTakeList()
+    {
+        $listData = StockTake::with('created_user')->whereIn('status', [1,0])->orderBy('id','DESC')->get();
+        return view('admin.stock.take-list',compact('listData'));
+    }
+
+    public function createStockTake()
+    {
+        $title = 'Add New Stock Take';
+
+        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
+        $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
+        $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
+
+        return view('admin.stock.add-stock-take', compact('title', 'suppliers', 'departments', 'sub_departments'));
+    }
+
+    public function storeStockTake(Request $request)
+    {
+        $response = array();
+
+         try{
+             DB::beginTransaction();
+
+             $store = StockTake::updateOrCreate(
+                 [
+                     'id'=>$request->input('stock_take_id')
+                 ],[
+                     'comment' => $request->input('comment'),
+                     'created_by' => Auth::user()->id,
+                     'updated_by' => Auth::user()->id
+                 ]
+             );
+
+            $stock_take_id = $store->id;
+ 
+             if($store){
+                  
+                DB::commit(); 
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+                $response['data'] = $stock_take_id;
+             }else{
+                 DB::rollback();
+                 $response['code'] = 0;
+                 $response['msg'] = 'Something went wrong !';
+                 $response['data'] = '';
+             }
+               
+             return json_encode($response);
+         }catch(\Exception $e){
+             DB::rollback();
+             $response['code'] = 0;
+             $response['msg'] =  $e->getMessage();
+             return json_encode($response);
+        } 
+    }
+
+    public function addStockTakeItems(Request $request)
+    {
+        $response = array();
+        $ischecked = $request->input('ischecked');
+        $id = $request->input('id');
+        $stock_take_id = $request->input('stock_take_id');
+
+        try{
+            DB::beginTransaction();
+
+            $itemDetails = Item::where('id',$id)->first();
+            $actual_cost = $itemDetails['cost_price'];
+            $retail_price = $itemDetails['retail_price'];
+
+            if($ischecked === 'true'){
+                $is_checked = 1;
+   
+                $physical_stock = 0;
+                $book_stock = app('App\Http\Controllers\ItemController')->getCurrentStockCount($id);
+
+                $diff = $book_stock - $physical_stock;
+
+                $total_cost = $actual_cost * $physical_stock;
+                $total_retail = $retail_price * $physical_stock;
+
+                $total_cost_diff = ($book_stock * $actual_cost) - $total_cost;
+                $total_retail_diff = ($book_stock * $retail_price) - $total_retail;
+         
+                $store = StockTakeItems::create([
+                    'stock_take_id' => $stock_take_id,
+                    'item_id' => $id,
+                    'item_cost' => $actual_cost,
+                    'item_retail' => $retail_price,
+                    'physical_stock' => 0,
+                    'book_stock' => app('App\Http\Controllers\ItemController')->getCurrentStockCount($id),
+                    'diff' => $diff,
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail,
+                    'total_cost_diff' => $total_cost_diff,
+                    'total_retail_diff' => $total_retail_diff,
+                    'status' => $is_checked,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
+                ]);
+            }else{
+
+                $is_checked = 0;
+
+                $store = StockTakeItems::where('stock_take_id', $stock_take_id)
+                        ->where('item_id', $id)->where('status', 1)->update([
+                        'status' => $is_checked,
+                        'updated_by' => Auth::user()->id
+                    ]);
+            }
+
+            DB::commit(); 
+            $total_cost = $this->getStockTakeTotalCost($stock_take_id);
+            $total_retail = $this->getStockTakeTotalRetail($stock_take_id);
+            $total_cost_diff = $this->getStockTakeTotalCostDiff($stock_take_id);
+            $total_retail_diff = $this->getStockTakeTotalRetailDiff($stock_take_id);
+
+            if($store){
+                $request->request->add([
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail,
+                    'total_cost_diff' => $total_cost_diff,
+                    'total_retail_diff' => $total_retail_diff
+                ]);
+
+                $updatePriceInfo = $this->updateStockTakePriceInfo($request);
+                $getItemList = $this->getStockTakeItems($stock_take_id);
+
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+                $response['data'] = $getItemList;
+                $response['total_cost'] = $total_cost;
+                $response['total_retail'] = $total_retail;
+                $response['total_cost_diff'] = $total_cost_diff;
+                $response['total_retail_diff'] = $total_retail_diff;
+            }else{
+                DB::rollback();
+                $response['code'] = 66;
+            }
+              
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
+
+    public function getStockTakeItems($stock_take_id)
+    {
+        $itemList = StockTakeItems::with('stockTake', 'item', 'item.suppliers.suppliername', 'item.department', 'item.subdepartment')
+        ->where('stock_take_id', $stock_take_id)->where('status', 1)->get();
+
+        $itemsArr = array();
+
+        foreach($itemList as $value){
+            $supplierList = array();
+
+                foreach($value['item']['suppliers'] as $supplier){
+                    $supplier = $supplier['suppliername']['name'];
+                    array_push($supplierList, $supplier);
+                }
+
+                $name = $value['item']['name'];
+                $item_id = $value['item']['id'];
+                $actual_cost = $value['item']['cost_price'];
+       
+                $data2 = ([
+                    'id' => $value['id'],
+                    'item_id' => $item_id,
+                    'stock_take_id' => $value['stock_take_id'],
+                    'name' => $name,
+                    'item_cost' => $value['item_cost'],
+                    'retail' => $value['item_retail'],
+                    'book_stock' => $value['book_stock'],
+                    'physical_stock' => $value['physical_stock'],
+                    'diff' => $value['diff'],
+                    'stock_before' => $value['stock_before'],
+                    'total_cost' => $value['total_cost'],
+                    'total_retail' => $value['total_retail'],
+                    'supplier' => implode(" ",$supplierList),
+                    'department' => $value['item']['department']['name'],
+                    'sub_department' => $value['item']['subdepartment']['name'],
+                    'total_cost_diff' => $value['total_cost_diff'],
+                    'total_retail_diff' => $value['total_retail_diff']
+                    ]);
+
+            array_push($itemsArr, $data2);
+        }
+     return $itemsArr;
+    }
+
+    public function getStockTakeTotalCost($stock_take_id)
+    {
+        $query = StockTakeItems::where('stock_take_id', $stock_take_id)->where('status', 1)->sum('total_cost');
+        return $query;
+    }
+
+    public function getStockTakeTotalRetail($stock_take_id)
+    {
+        $query = StockTakeItems::where('stock_take_id', $stock_take_id)->where('status', 1)->sum('total_retail');
+        return $query;
+    }
+
+    public function getStockTakeTotalCostDiff($stock_take_id)
+    {
+        $query = StockTakeItems::where('stock_take_id', $stock_take_id)->where('status', 1)->sum('total_cost_diff');
+        return $query;
+    }
+    
+    public function getStockTakeTotalRetailDiff($stock_take_id)
+    {
+        $query = StockTakeItems::where('stock_take_id', $stock_take_id)->where('status', 1)->sum('total_retail_diff');
+        return $query;
+    }
+
+    public function updateStockTakePriceInfo(Request $request)
+    {
+        $response = array();
+        $stock_take_id = $request->input('stock_take_id');
+
+            try{
+                DB::beginTransaction();
+
+                $update = StockTake::where('id', $stock_take_id)->update([
+                    'total_cost' => floatval($request->input('total_cost')),
+                    'total_retail' => floatval($request->input('total_retail')),
+                    'total_cost_diff' => floatval($request->input('total_cost_diff')),
+                    'total_retail_diff' => floatval($request->input('total_retail_diff')),
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                if($update){
+                    DB::commit(); 
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                  
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                }
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function StockTakeItemUpdate(Request $request)
+    {
+        $response = array();
+        $item_id = $request->input('item_id');
+        $physical_stock = $request->input('qty');
+        $stock_take_id = $request->input('stock_take_id');
+        $actual_cost = $request->input('actual_cost');
+        $actual_retail = $request->input('retail');
+        $book_stock = $request->input('book_stock');
+
+            try{
+                DB::beginTransaction();
+                $item_total_cost = $actual_cost * $physical_stock;
+                $item_total_retail = $actual_retail * $physical_stock;
+
+                $diff =  $physical_stock - $book_stock;
+
+                $total_cost_diff = ($book_stock * $actual_cost) - $item_total_cost;
+                $total_retail_diff = ($book_stock * $actual_retail) - $item_total_retail;
+
+                $update = StockTakeItems::where('id', $item_id)->update([
+                    'item_cost' => $actual_cost,
+                    'item_retail' => $actual_retail,
+                    'physical_stock' => $physical_stock,
+                    'diff' => $diff,
+                    'total_cost' => $item_total_cost,
+                    'total_retail' => $item_total_retail,
+                    'total_cost_diff' => $total_cost_diff,
+                    'total_retail_diff' => $total_retail_diff,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                if($update){
+                    $total_cost = $this->getStockTakeTotalCost($stock_take_id);
+                    $total_retail = $this->getStockTakeTotalRetail($stock_take_id);
+                    $total_cost_diff = $this->getStockTakeTotalCostDiff($stock_take_id);
+                    $total_retail_diff = $this->getStockTakeTotalRetailDiff($stock_take_id);         
+                    
+                    $request->request->add([
+                        'total_cost' => $total_cost,
+                        'total_retail' => $total_retail,
+                        'total_cost_diff' => $total_cost_diff,
+                        'total_retail_diff' => $total_retail_diff
+                    ]);
+
+                    $updatePriceInfo = $this->updateStockTakePriceInfo($request);
+                    $getItemList = $this->getStockTakeItems($stock_take_id);
+                    
+                    if($updatePriceInfo){
+                        DB::commit(); 
+
+                        $response['code'] = 1;
+                        $response['msg'] = "Success";
+                        $response['data'] = $getItemList;
+                        $response['total_retail'] = $total_retail;
+                        $response['total_cost'] = $total_cost;
+                        $response['total_cost_diff'] = $total_cost_diff;
+                        $response['total_retail_diff'] = $total_retail_diff;
+                    }else{
+                        DB::rollback();
+                        $response['code'] = 0;
+                        $response['msg'] = 'Something went wrong !';
+                    }
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                }
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function deleteStockTakeItem(Request $request)
+    {
+        $response = array();
+        $id = $request->input('id');
+        $stock_take_id = $request->input('stock_take_id');
+
+            try{
+                DB::beginTransaction();
+
+                $update = StockTakeItems::where('id', $id)->update([
+                    'status' => 0,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $total_cost = $this->getStockTakeTotalCost($stock_take_id);
+                $total_retail = $this->getStockTakeTotalRetail($stock_take_id);
+                $total_cost_diff = $this->getStockTakeTotalCostDiff($stock_take_id);
+                $total_retail_diff = $this->getStockTakeTotalRetailDiff($stock_take_id);         
+                
+                $request->request->add([
+                    'total_cost' => $total_cost,
+                    'total_retail' => $total_retail,
+                    'total_cost_diff' => $total_cost_diff,
+                    'total_retail_diff' => $total_retail_diff
+                ]);
+
+                if($update){
+
+                    $updatePriceInfo = $this->updateStockTakePriceInfo($request);
+                    $getItemList = $this->getStockTakeItems($stock_take_id);
+                    
+                    DB::commit(); 
+
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                    $response['data'] = $getItemList;
+                    $response['total_cost'] = $total_cost;
+                    $response['total_retail'] = $total_retail;
+                    $response['total_cost_diff'] = $total_cost_diff;
+                    $response['total_retail_diff'] = $total_retail_diff;
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                    $response['data'] = '';
+                }
+
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function stockTakeUpdateStock(Request $request)
+    {
+        $response = array();
+        $stock_take_id = $request->input('stock_take_id');
+
+         try{
+            DB::beginTransaction();
+
+                $items = StockTakeItems::where('stock_take_id', $stock_take_id)->where('status', 1)->get();
+
+                foreach($items as $value)
+                {
+                    $item_id = $value['item_id'];
+                    $physical_stock = $value['physical_stock'];
+
+                    $getItem = Item::with('department')->where('id', $item_id)->where('status', 1)->first();
+    
+                    if($getItem){
+                        $cost_price = $getItem['cost_price'];
+                        $retail_price = $getItem['retail_price'];
+                
+                        $checkExistingStock = ItemStock::where('item_id', $item_id)->where('status', 1)->first();
+
+                       if(!empty($checkExistingStock)){
+                        $existingStock = $checkExistingStock['qty'];
+
+                       }else{
+                        $existingStock = 0;
+                       }
+                   
+                        if($existingStock != $physical_stock){
+
+                            if($existingStock != 0){
+                                $updateStock = ItemStock::where('item_id', $item_id)->update([
+                                    'status' => 0,
+                                    'updated_by' => Auth::user()->id
+                                ]);  
+                            } 
+
+                            $current_stock = $physical_stock;
+
+                            $addStock = ItemStock::create([
+                                'item_id' => $item_id,
+                                'qty' => $current_stock,
+                                'created_by' => Auth::user()->id,
+                                'updated_by' => Auth::user()->id,
+                            ]);
+                                
+                            if(!$addStock){
+                                DB::rollback();
+                                $response['code'] = 0;
+                            }
+                        }
+
+                        DB::commit(); 
+                        $response['code'] = 1;
+                    }else{
+                        DB::rollback();
+                        $response['code'] = 0;
+                    }
+                }
+            return json_encode($response);
+         }catch(\Exception $e){
+             DB::rollback();
+             $response['code'] = 0;
+             $response['msg'] = $e->getMessage();
+             return json_encode($response);
+        } 
+    }
+
+    public function changeStatusStockTake(Request $request)
+    {
+        $status = $request->input('status');
+        $id = $request->input('id');
+
+        if($status == 1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = StockTake::find($id);
+            $queryStatus->status = $status;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function editStockTake($id)
+    {
+        $title = 'Edit Stock Take';
+
+        $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
+        $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
+        $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
+        
+        $data = StockTake::where('id',decrypt($id))->first();
+
+        $itemList = $this->getStockTakeItems(decrypt($id));
+     
+        return view('admin.stock.edit-stock-take',compact('data', 'title', 'itemList',
+                'departments', 'sub_departments', 'suppliers'));
+    }
+    
 }

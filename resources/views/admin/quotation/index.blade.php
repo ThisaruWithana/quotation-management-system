@@ -70,6 +70,10 @@
                                     <span class="badge badge-success">Active</span>
                                     @elseif($value->status == 2)
                                     <span class="badge badge-success">Accepted</span>
+                                    @elseif($value->status == 3)
+                                    <span class="badge badge-primary">Installed</span>
+                                    @elseif($value->status == 4)
+                                    <span class="badge badge-warning">Old</span>
                                     @else
                                     <span class="badge badge-warning">Deactive</span>
                                     @endif

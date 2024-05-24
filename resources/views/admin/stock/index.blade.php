@@ -16,6 +16,7 @@
                             <th class="th-sm">Comment</th>
                             <th class="th-sm">Total Retail</th>
                             <th class="th-sm">Total Cost</th>
+                            <th class="th-sm">Created By</th>
                             <th class="th-sm">Created At</th>
                             <th class="th-sm"></th>
                         </tr>
@@ -28,6 +29,7 @@
                             <td>{{ $value->comment }}</td>
                             <td>{{ number_format($value->total_cost, 2) }}</td>
                             <td>{{ number_format($value->total_retail, 2) }}</td>
+                            <td>{{ $value->created_user->name }}</td>
                             <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                             <td>
                                 <a href="{{ route('admin.stock.view',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="Edit">

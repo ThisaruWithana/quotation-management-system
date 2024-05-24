@@ -88,6 +88,12 @@
                             <p>Stock Adjustment</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/stock/take') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Stock Take</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
 

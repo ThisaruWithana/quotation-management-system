@@ -167,9 +167,9 @@
                                 <br>
                                     
                                 <div class="row">
-                                    <div class="col-lg-1">
+                                    <!-- <div class="col-lg-1">
                                         <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
-                                    </div>
+                                    </div> -->
                                     <div class="col-lg-2">
                                         <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Changes</button>
                                     </div>
