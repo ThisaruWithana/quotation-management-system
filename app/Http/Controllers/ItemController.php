@@ -759,4 +759,15 @@ class ItemController extends Controller
         }
     }
 
+    public function getItemIdByProductCode($code)
+    {
+        $query = Barcode::where('product_code', $code)->where('status', 1)->pluck('id');
+
+        if($query){
+            $barcode_id = $query[0];
+            $item = Item::where('barcode_id', $barcode_id)->first();
+            return $item['id'];
+        }
+    }
+
 }
