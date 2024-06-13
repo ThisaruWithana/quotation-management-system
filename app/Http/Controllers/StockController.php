@@ -23,6 +23,7 @@ use App\Models\StockAdjustmentItems;
 use App\Models\StockTake;
 use App\Models\StockTakeItems;
 use App\Imports\PoImport;
+use App\Imports\DeliveryImport;
 use Maatwebsite\Excel\Facades\Excel;
 // use App\Imports\PurchaseOrderImport;
 use DB;
@@ -1212,24 +1213,27 @@ class StockController extends Controller
         $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
         $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
+        $po = Po::where('status', 1)->orderBy('id','ASC')->get();
 
         return view('admin.po.create-delivery', compact(
-            'title', 'suppliers', 'departments', 'sub_departments'));
+            'title', 'suppliers', 'departments', 'sub_departments', 'po'));
     }
 
     public function storeDelivery(Request $request)
     {
         $response = array();
         $type = $request->input('type');
+        $po_id = $request->input('po_id');
 
          try{
              DB::beginTransaction();
 
-             $store = Po::updateOrCreate(
+             $store = Deliveries::updateOrCreate(
                  [
-                     'id'=>$request->input('po_id')
+                     'id'=>$request->input('delivery_id')
                  ],[
                      'supplier_id' => $request->input('supplier'),
+                     'po_id' => $request->input('po_id'),
                      'type' => $type,
                      'created_by' => Auth::user()->id,
                      'updated_by' => Auth::user()->id
@@ -1244,7 +1248,7 @@ class StockController extends Controller
                         ]);
 
                     if($type === 'Import'){
-                        $query = $this->importDelivery($request);
+                         $query = $this->importDelivery($request);
 
                         if($query){
                             DB::commit(); 
@@ -1291,7 +1295,20 @@ class StockController extends Controller
 
     public function importDelivery(Request $request)
     {
-       return Excel::import(new DeliveryImport,request()->file('file'));
+        $delivery_id = $request->delivery_id;
+
+        Excel::import(new DeliveryImport($delivery_id),request()->file('file'));
+
+        $total_cost = $this->getTotalCost($delivery_id);
+        $total_retail = $this->getTotalRetail($delivery_id);
+
+        $request->request->add([
+            'total_cost' => $total_cost,
+            'total_retail' => $total_retail
+        ]);
+
+        $updatePriceInfo = $this->updateDeliveryPriceInfo($request);
+        return back();
     }
 
     public function stockAdjustmentList(Request $request)

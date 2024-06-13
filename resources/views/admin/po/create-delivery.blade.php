@@ -10,7 +10,7 @@
                 </h5>
                     <!-- /.card-header -->
                             <!-- form start -->
-                    <form action="{{ URL('admin/deliveries/update') }}" method="POST" class="text-center border border-light p-5" id="formCreate">
+                    <form action="{{ URL('admin/deliveries/store') }}" method="POST" class="text-center border border-light p-5" id="formCreate"  enctype="multipart/form-data">
                          @csrf
                         <div class="card-body px-lg-2 pt-0">
                                 <div class="row">
@@ -35,9 +35,23 @@
                                                         <label for="supplier" class="form-label">Supplier</label>
                                                         <span class="required"> * </span>
                                                         <select id="supplier" name="supplier" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
-                                                            <option value="">Select Client</option>
+                                                            <option value="">Select Supplier</option>
                                                             @foreach ($suppliers as $value)
                                                             <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <div class="form-group text-left">
+                                                        <label for="po_id" class="form-label">PO</label>
+                                                        <span class="required"> * </span>
+                                                        <select id="po_id" name="po_id" class="selectpicker show-tick col-lg-12" data-live-search="true" required>
+                                                            <option value="">Select PO</option>
+                                                            @foreach ($po as $value)
+                                                            <option value="{{ $value->id }}">{{ $value->id }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -115,11 +129,11 @@
                                 </div>
                                 <br>
                                     
-                                <div class="row">
+                                <!-- <div class="row">
                                     <div class="col-lg-2">
                                         <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Details</button>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                         </form>
@@ -302,22 +316,7 @@
         <script>
             $(function() {
 
-                $('#sortable-table').DataTable({
-                    "bPaginate": false,
-                    "searching": false,
-                    "ordering": false,
-                    "responsive": true,
-                    "scrollX": true,
-                    "autoWidth":true,
-                    "fixedHeader": true,
-                    "paging": false,
-                    "scrollCollapse": true,
-                    "scrollY": '50vh',
-                    "bInfo" : false,
-                    "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 8,9 ]},
-                    ]
-                });
+
 
                 $('.table-item-search').DataTable({
                     "bPaginate": false,
@@ -349,6 +348,86 @@
                         $('#manual_form').hide();
                         $('#import_form').show();
                     }
+                });
+
+                $("#formCreate").submit(function(event) {
+                    event.preventDefault();
+
+                    var formData = new FormData(this);
+
+                    $.ajax({
+                        url: "{{ route('admin.deliveries.store') }}",
+                        type: 'POST',
+                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            data: formData,
+                            dataType:'JSON',
+                            contentType: false,
+                            cache: false,
+                            processData: false,
+                            success: function (data) {
+                                var result = data;
+
+                                if (result['code'] == 1) {
+                                    $(".add-items").show();
+                                    $("#btnSave").hide();
+                                    $("#supplier").prop('disabled', true);
+                                    $("#remark").prop('disabled', true);
+                                    $("#order_date").prop('disabled', true);
+                                    $("#expected_date").prop('disabled', true);
+                                    
+                                    $("#delivery_id").val(result['delivery_id']);
+                                    $("#deliveryId").val(result['delivery_id']);
+                                    $("#btnUpdate").show();
+
+                                    if (result['data'].length > 0) {
+
+                                        $('.item-list tbody').empty();
+
+                                        $.each(result['data'], function (count, val) {
+
+                                            var editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty']+', '+ val['retail']+' )"><i class="fas fa-edit"></i></a>';
+                                            $('.item-list tbody').append(
+                                                '<tr>'
+                                                +'<td>'+ val['item_id'] +'</td>'
+                                                +'<td>'+ val['name'] +'</td>'
+                                                +'<td>'+ val['supplier'] +'</td>'
+                                                +'<td>'+ val['department'] +'</td>'
+                                                +'<td>'+ val['sub_department'] +'</td>'
+                                                +'<td class="item-list-item-cost">'+ val['item_cost'] +'</td>'
+                                                +'<td class="item-list-item-retail">'+ val['retail'] +'</td>'
+                                                +'<td class="item-list-qty">'+ val['qty'] +'</td>'
+                                                +'<td>'+ val['total_cost'] +'</td>'
+                                                +'<td>'+ val['total_retail'] +'</td>'
+                                                +'<td>'
+                                                +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['delivery_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                                +'</td>'
+                                                +'<td>'
+                                                +editBtn
+                                                +'</td>'
+                                                +'</tr>'
+                                            );
+                                            $('.item-list-qty').addClass('editable');
+                                            $('.item-list-item-cost').addClass('editable');
+                                            $('.item-list-item-retail').addClass('editable');       
+                                        });
+                                            calculatePrices(result['total_cost'], result['total_retail']);
+                                    } 
+                                } else {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                            }
+                                        }
+                                    );
+                                }
+                            }, error: function (data) {
+                                        
+                        }
+                    });
                 });
                 
                 $('#itemSearchBtn').click(function(){
