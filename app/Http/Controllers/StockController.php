@@ -15,8 +15,6 @@ use App\Models\SubItem;
 use App\Models\Deliveries;
 use App\Models\DeliveryItems;
 use App\Models\PriceChangeLog;
-use App\Imports\PoImport;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Models\VAT;
 use App\Models\ItemStock;
 use App\Models\ItemSupplier;
@@ -24,6 +22,9 @@ use App\Models\StockAdjustment;
 use App\Models\StockAdjustmentItems;
 use App\Models\StockTake;
 use App\Models\StockTakeItems;
+use App\Imports\PoImport;
+use Maatwebsite\Excel\Facades\Excel;
+// use App\Imports\PurchaseOrderImport;
 use DB;
 
 class StockController extends Controller
@@ -566,7 +567,17 @@ class StockController extends Controller
 
     public function importPo(Request $request)
     {
-       return Excel::import(new PoImport,request()->file('file'));
+        $po_id = $request->po_id;
+        Excel::import(new PoImport($po_id),request()->file('file'));
+
+        $total_cost = $this->getPoTotalCost($po_id);
+
+        $request->request->add([
+            'total_cost' => $total_cost
+        ]);
+
+        $updatePriceInfo = $this->updatePriceInfo($request);
+        return back();
     }
 
     public function sendOrder(Request $request)
@@ -2213,6 +2224,13 @@ class StockController extends Controller
      
         return view('admin.stock.edit-stock-take',compact('data', 'title', 'itemList',
                 'departments', 'sub_departments', 'suppliers'));
+    }
+    
+    public function poImport(Request $request)
+    {
+        Excel::import(new PurchaseOrderImport, $request->file('file'));
+
+        return redirect()->back()->with('status', 'Imported Successfully');
     }
     
 }

@@ -147,6 +147,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('item-update', [StockController::class, 'itemUpdate'])->name('po.item-update');
         Route::post('change-status', [StockController::class, 'changeStatus'])->name('po.change-status');
         Route::post('send-order', [StockController::class, 'sendOrder'])->name('po.send-order');
+
+        
+        Route::post('import', [StockController::class, 'poImport'])->name('po.import');
         
     });
 
