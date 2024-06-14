@@ -1150,26 +1150,37 @@ class StockController extends Controller
 
                             $checkExistingStock = ItemStock::where('item_id', $item_id)->where('status', 1)->first();
 
-                            if($checkExistingStock['qty'] != $qty){
-                                if($existingStock != 0){
-                                    $updateStock = ItemStock::where('item_id', $item_id)->update([
-                                        'status' => 0,
-                                        'updated_by' => Auth::user()->id
-                                    ]);  
-                                } 
-                              
+                            if($checkExistingStock){
+
+                                if($checkExistingStock['qty'] != $qty){
+                                    if($existingStock != 0){
+                                        $updateStock = ItemStock::where('item_id', $item_id)->update([
+                                            'status' => 0,
+                                            'updated_by' => Auth::user()->id
+                                        ]);  
+                                    } 
+                                  
+                                    $updateStock = ItemStock::create([
+                                        'item_id' => $item_id,
+                                        'qty' => $qty,
+                                        'created_by' => Auth::user()->id,
+                                        'updated_by' => Auth::user()->id,
+                                    ]);
+                                    
+                                    if(!$updateStock){
+                                        DB::rollback();
+                                        $response['code'] = 0;
+                                    }
+                                }
+                            }else{
                                 $updateStock = ItemStock::create([
                                     'item_id' => $item_id,
                                     'qty' => $qty,
                                     'created_by' => Auth::user()->id,
                                     'updated_by' => Auth::user()->id,
                                 ]);
-                                
-                                if(!$updateStock){
-                                    DB::rollback();
-                                    $response['code'] = 0;
-                                }
                             }
+
 
                             if($cost_price != $delivery_item_cost || $retail_price != $delivery_item_retail){
 
@@ -1201,7 +1212,7 @@ class StockController extends Controller
             return json_encode($response);
          }catch(\Exception $e){
              DB::rollback();
-             $response['code'] = 0;
+             $response['code'] = $e->getMessage();
              return json_encode($response);
         } 
     }
