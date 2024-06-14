@@ -340,18 +340,11 @@ class ItemController extends Controller
                         'updated_by' => Auth::user()->id,
                     ]);
 
-                    if($updateBundleItemDetails){
-
-                        DB::commit();
-                        $response['code'] = 1;
-                        $response['msg'] = "Success";
-                        $response['data'] = $id;
-                    }else{
-                        DB::rollback();
-                        $response['code'] = 0;
-                        $response['msg'] = 'Something went wrong !';
-                        $response['data'] = '';
-                    }
+                    DB::commit();
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                    $response['data'] = $id;
+           
                 }else{
                     DB::rollback();
                     $response['code'] = 0;
