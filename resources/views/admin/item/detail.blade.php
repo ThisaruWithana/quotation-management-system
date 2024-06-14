@@ -5,7 +5,7 @@
           <div class="card-header">
             <div class="card-tools">
                 <a href="{{ route('admin.item.edit',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="far fa-edit"></i>  Edit Item</a>
-                <a href="{{ route('admin.item.download-barcode',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="fa fa-print"></i>   Barcode</a>
+                <!-- <a href="{{ route('admin.item.download-barcode',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="fa fa-print"></i>   Barcode</a> -->
             </div>
           </div>
           <div class="card-body">
