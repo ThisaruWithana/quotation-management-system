@@ -58,7 +58,7 @@
                                 <label for="product_code" class="form-label">Product Code</label>
                                 <span class="required"> * </span>
                                 <input type="text" class="form-control" name="product_code" id="product_code" required=""
-                                value="" autocomplete="off"  placeholder="" pattern=".{12,}">
+                                value="" autocomplete="off"  placeholder="">
                             </div>
                         </div>
                       </div>
