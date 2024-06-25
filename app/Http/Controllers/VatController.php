@@ -35,6 +35,16 @@ class VatController extends Controller
                 DB::beginTransaction();
 
                 // Add new VAT value
+
+                if($request->input('rate') != 0){
+   
+                    $update = DB::table('vat')
+                        ->where('value', '!=', 0)
+                        ->update([
+                            'status' => 0
+                    ]);
+                }
+    
                 $query = VAT::create([
                     'name' => $request->input('name'),
                     'value' => $request->input('rate'),
