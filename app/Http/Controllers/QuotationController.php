@@ -64,7 +64,7 @@ class QuotationController extends Controller
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
         $bundles = Bundle::where('status', 1)->orderBy('id','DESC')->get();
         $descriptions = QuotationDescription::where('status', 1)->orderBy('description','ASC')->get();
-        $vat_rate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+        $vat_rate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
 
         return view('admin.quotation.create', compact(
             'title', 'customers', 'departments', 'sub_departments', 
@@ -81,7 +81,7 @@ class QuotationController extends Controller
              DB::beginTransaction();
 
               $checkExist = QuotationDescription::where('description', 'LIKE',"%$description%")->get();
-              $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+              $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
 
              if(count($checkExist) == 0){
                 $add = QuotationDescription::create([
@@ -116,7 +116,7 @@ class QuotationController extends Controller
                  $id = $request->input('quotation_id');
                  $referenceNo = '';
 
-                $this->updatePriceInfo($request);
+                 $this->updatePriceInfo($request);
 
                  if($request->input('row_order') != ''){
                     $this->updateQuotationItemOrder($request);
@@ -339,7 +339,7 @@ class QuotationController extends Controller
 
     public function getVATAmt($quotation_cost)
     {
-        $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+        $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
         $vat = ($quotation_cost* floatval($vatRate[0])) / 100;
         return $vat;
     }
@@ -648,7 +648,7 @@ class QuotationController extends Controller
 
             try{
                 DB::beginTransaction();
-                $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+                $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
                 $vat_amt = ($request->input('price_after_discount') * $vatRate[0])/100;
 
                  $update = Quotation::where('id', $quotation_id)->update([
@@ -901,7 +901,7 @@ class QuotationController extends Controller
         $title = 'OPF Details';
         $data = Quotation::with('customer')->where('id',$id)->first();
         $bundles = Bundle::where('status', 1)->orderBy('id','DESC')->get();
-        $vat_rate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+        $vat_rate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
         
         $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
         $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
@@ -1632,7 +1632,7 @@ class QuotationController extends Controller
         ]; 
 
         $pdf = PDF::loadView('print.quotation', $data);
-        return $pdf->download('Quotation and Order Contract');
+        return $pdf->stream('Quotation and Order Contract', array("Attachment" => false));
     
     }
 
@@ -1650,7 +1650,7 @@ class QuotationController extends Controller
         ]; 
 
         $pdf = PDF::loadView('print.opf', $data);
-        return $pdf->download('Order Processing Form');
+        return $pdf->stream('Order Processing Form', array("Attachment" => false));
     
     }
 

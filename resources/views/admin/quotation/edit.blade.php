@@ -220,8 +220,8 @@
                                                             <th class="th-sm">Code</th>
                                                             <th class="th-sm">Name</th>
                                                             <th class="th-sm">Supplier</th>
-                                                            <th class="th-sm item-list-cost">Cost</th>
-                                                            <th class="th-sm item-list-item-cost">Actual Cost</th>
+                                                            <th class="th-sm item-list-cost">Actual Cost</th>
+                                                            <th class="th-sm item-list-item-cost">Cost</th>
                                                             <th class="th-sm item-list-retail">Retail</th>
                                                             <th class="th-sm item-list-qty">Qty</th>
                                                             <th class="th-sm item-list-total-cost">Total Cost</th>
@@ -288,11 +288,17 @@
                                             <table class="table table-bordered">
                                                 <tr id="lbl-cost-details" style="display:none;">
                                                     <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Cost :</b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($total_cost, 2) }}</span></b></p></td>
+                                                    <td style="width:50px;">
+                                                        <p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl">{{ number_format($total_cost, 2) }}</span></b></p>
+                                                        <input type="hidden" value="{{ $total_cost }}" id="total-cost">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Retail :</b></p></td>
-                                                    <td style="width:50px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl">{{ number_format($total_retail, 2) }}</span></b></p></td>
+                                                    <td style="width:50px;">
+                                                        <p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl">{{ number_format($total_retail, 2) }}</span></b></p>
+                                                        <input type="hidden" value="{{ $total_retail }}" id="total-retail">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Discount (%) :</b></p></td>
@@ -309,6 +315,10 @@
                                             <table class="table table-bordered">
                                                 <tr>
                                                     <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin :</b></p></td>
+                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin">{{ number_format($quotationMargin, 2) }} ({{ number_format($quotationMarginRate, 2) }}%)</span></b></p></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin After Discount:</b></p></td>
                                                     <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl">{{ number_format($quotationMargin, 2) }} ({{ number_format($quotationMarginRate, 2) }}%)</span></b></p></td>
                                                 </tr>
                                                 <tr>
@@ -383,7 +393,7 @@
                             </div>
 
                             <div class="form-group mr-1">
-                                <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
+                                <select id="departments" name="departments" class="selectpicker show-tick dropdown-item" data-live-search="true" onchange="searchItem(this.form)">
                                     <option value="">Departments</option>
                                     @foreach ($departments as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -392,7 +402,7 @@
                             </div>
 
                             <div class="form-group mr-1">
-                                <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true" onchange="searchItem(this.form)">
+                                <select id="sub_departments" name="sub_departments" class="selectpicker show-tick dropdown-item" data-live-search="true" onchange="searchItem(this.form)">
                                     <option value="">Sub Departments</option>
                                     @foreach ($sub_departments as $value)
                                         <option value="{{ $value->id }}" >{{ $value->name }}</option>
@@ -448,7 +458,7 @@
                     <input type="hidden" name="quotation_item_id" value="" id="quotation_item_id">
 
                     <div class="form-group" id="actual_cost_edit">
-                        <label for="actual_cost" class="col-form-label">Actual Cost</label>
+                        <label for="actual_cost" class="col-form-label">Cost</label>
                         <input type="text" class="form-control" id="actual_cost" name="actual_cost"
                             required="" value="" autocomplete="off">
                     </div>
@@ -593,12 +603,12 @@
                 var discount = $('#discount').val();
 
                 // calculatePrices(quotationCost, totalRetail, totalCost, discount);
-
+                calculateMarginBeforeDiscount(quotationCost, $("#total-cost").val());
                 $("#discount").on("keyup", function() {
 
                     var discount = this.value;
-                    var totalCost = parseFloat($("#total-cost-lbl").text());
-                    var totalRetail = parseFloat($("#retail-lbl").text());
+                    var totalCost = parseFloat($("#total-cost").val());
+                    var totalRetail = parseFloat($("#total-retail").val());
                     var quotationCost = parseFloat($('#price').val());
 
                     calculatePrices(quotationCost, totalRetail, totalCost, discount);
@@ -608,8 +618,8 @@
                 $("#price").on("keyup", function() {
 
                     var quotationCost = this.value;
-                    var totalCost = parseFloat($("#total-cost-lbl").text());
-                    var totalRetail = parseFloat($("#retail-lbl").text());
+                    var totalCost = parseFloat($("#total-cost").text());
+                    var totalRetail = parseFloat($("#total-retail").val());
                     var discount = parseFloat($('#discount').val());
 
                     calculatePrices(quotationCost, totalRetail, totalCost, discount);
@@ -636,8 +646,8 @@
                                     "status": $('#status').val(),
                                     "vat": $("#vat-lbl").text(),
                                     "total_vat": $("#quot-vat-lbl").text(),
-                                    "total_cost": $("#total-cost-lbl").text(),
-                                    "total_retail": $("#retail-lbl").text(),
+                                    "total_cost": $("#total-cost").val(),
+                                    "total_retail": $("#total-retail").val(),
                                     "quotation_vat": $("#quot-vat-lbl").text(),
                                     "quotation_margin": $("#quot-margin-lbl").text()
                                 },
@@ -1029,6 +1039,7 @@
                     discount = 0;
                 }else{
                     discount = parseFloat(discount);
+                    quotationCost = quotationCost - ((quotationCost * discount)/100);
                 }
 
                 var quotationPriceAfterDiscount = quotationCost;
@@ -1039,12 +1050,14 @@
 
                 var vat_rate = $("#vat_rate").val();
                 $("#margin").val(quotationMarginRate);
-
+              
                 var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
 
                 $("#quot-price-lbl").text(Number(quotationPriceAfterDiscount).toFixed(2));
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
                 $("#retail-lbl").text(Number(totalRetail).toFixed(2));
+                $("#total-cost").text(Number(totalCost).toFixed(2));
+                $("#total-retail").text(Number(totalRetail).toFixed(2));
 
                 $("#quot-margin-lbl").text(quotationMarginVal);
                 $("#discount-lbl").text(discount);
@@ -1316,6 +1329,15 @@
 
                     }
                 });
+            }
+
+            function calculateMarginBeforeDiscount(quotationCost, totalCost){
+
+                var quotationMargin = quotationCost - totalCost;
+                var quotationMarginRate = Number((quotationMargin / quotationCost) * 100).toFixed(2);
+                var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+
+                $("#quot-margin").text(quotationMarginVal);
             }
         </script>
         <!--Rearrange table rows-->

@@ -99,6 +99,11 @@ class VatController extends Controller
 
     public function getLatestVatRate()
     {
-       return $query = VAT::where('value', '!=', 0)->where('status', 1)->pluck('value');
+       return $query = VAT::where('status', 1)->pluck('value');
+    }
+    
+    public function getLatestVatRateForQuote()
+    {
+       return $query = VAT::where('status', 1)->where('value','!=', 0)->pluck('value');
     }
 }

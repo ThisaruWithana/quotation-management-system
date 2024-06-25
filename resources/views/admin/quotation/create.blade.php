@@ -163,7 +163,7 @@
                                 </div>
                                 <input type="hidden" name="quotation_id" id="quotation_id" value="">
                                 <input type="hidden" name="in_office" id="in_office" value="">
-                                <input type="hidden" name="vat_rate" id="vat_rate" value="{{ $vat_rate[0] }}">
+                                <input type="text" name="vat_rate" id="vat_rate" value="{{ $vat_rate[0] }}">
                                 <input type="hidden" name="row_order" id="row_order" value="">
                             </div>
 
@@ -216,8 +216,8 @@
                                                     <th class="th-sm">Code</th>
                                                     <th class="th-sm">Name</th>
                                                     <th class="th-sm">Supplier</th>
-                                                    <th class="th-sm item-list-cost">Cost</th>
-                                                    <th class="th-sm item-list-item-cost">Actual Cost</th>
+                                                    <th class="th-sm item-list-cost">Actual Cost</th>
+                                                    <th class="th-sm item-list-item-cost">Cost</th>
                                                     <th class="th-sm item-list-retail">Retail</th>
                                                     <th class="th-sm item-list-qty">Qty</th>
                                                     <th class="th-sm item-list-total-cost">Total Cost</th>
@@ -420,7 +420,7 @@
                             <input type="hidden" name="bundleId" value="" id="quotation_item_id">
 
                             <div class="form-group" id="actual_cost_edit">
-                                <label for="actual_cost" class="col-form-label">Actual Cost</label>
+                                <label for="actual_cost" class="col-form-label">Cost</label>
                                 <input type="text" class="form-control" id="actual_cost" name="actual_cost"
                                        required="" value="" autocomplete="off">
                             </div>
