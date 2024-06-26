@@ -32,7 +32,7 @@ class ReportController extends Controller
         ]; 
 
         $pdf = PDF::loadView('print.barcode', $data);
-        return $pdf->download('Barcode');
+        return $pdf->stream('Barcode', array("Attachment" => false));
     }
 
     public function itemOrderHistory(Request $request)
