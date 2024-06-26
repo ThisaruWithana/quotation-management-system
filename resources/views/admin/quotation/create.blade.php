@@ -163,7 +163,7 @@
                                 </div>
                                 <input type="hidden" name="quotation_id" id="quotation_id" value="">
                                 <input type="hidden" name="in_office" id="in_office" value="">
-                                <input type="text" name="vat_rate" id="vat_rate" value="{{ $vat_rate[0] }}">
+                                <input type="hidden" name="vat_rate" id="vat_rate" value="{{ $vat_rate[0] }}">
                                 <input type="hidden" name="row_order" id="row_order" value="">
                             </div>
 
@@ -246,14 +246,14 @@
                                                             Cost : </b></p></td>
                                                 <td style="width:50px;"><p class="text-sm mb-0"><b
                                                             class="d-block info-lb"><span
-                                                                id="total-cost-lbl"></span></b></p></td>
+                                                                id="total-cost-lbl"></span></b></p> <input type="text" value="" id="total-cost"></td>
                                             </tr>
                                             <tr>
                                                 <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total
                                                             Retail :</b></p></td>
                                                 <td style="width:50px;"><p class="text-sm mb-0"><b
                                                             class="d-block info-lb"><span id="retail-lbl"></span></b>
-                                                    </p></td>
+                                                    </p><input type="text" value="" id="total-retail"></td>
                                             </tr>
                                             <tr>
                                                 <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Discount
@@ -279,7 +279,12 @@
                                                             Margin :</b></p></td>
                                                 <td style="width:200px;"><p class="text-sm mb-0"><b
                                                             class="d-block info-lb"><span
-                                                                id="quot-margin-lbl"></span></b></p></td>
+                                                                id="quot-margin"></span></b></p></td>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin After Discount:</b></p></td>
+                                                <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl"></span></b></p></td>
                                             </tr>
                                             <tr>
                                                 <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">VAT : </b>
@@ -571,17 +576,28 @@
                     $('.add-description-history').hide();
                 });
 
+                // $("#discount").on("keyup", function() {
+
+                //     var discount = this.value;
+                //     var totalCost = parseFloat($("#total-cost-lbl").text());
+                //     var totalRetail = parseFloat($("#retail-lbl").text());
+                //     var quotationCost = parseFloat($('#price').val());
+                //     var quotationPriceAfterDiscount = quotationCost - ((quotationCost * discount)/100);
+
+                //     calculatePrices(quotationPriceAfterDiscount, totalRetail, totalCost, discount);
+
+                //     $("#discount-lbl").text(discount);
+
+                // });
+
                 $("#discount").on("keyup", function() {
 
                     var discount = this.value;
-                    var totalCost = parseFloat($("#total-cost-lbl").text());
-                    var totalRetail = parseFloat($("#retail-lbl").text());
+                    var totalCost = parseFloat($("#total-cost").val());
+                    var totalRetail = parseFloat($("#total-retail").val());
                     var quotationCost = parseFloat($('#price').val());
-                    var quotationPriceAfterDiscount = quotationCost - ((quotationCost * discount)/100);
 
-                    calculatePrices(quotationPriceAfterDiscount, totalRetail, totalCost, discount);
-
-                    $("#discount-lbl").text(discount);
+                    calculatePrices(quotationCost, totalRetail, totalCost, discount);
 
                 });
 
@@ -1036,14 +1052,16 @@
             }
 
             function calculatePrices(quotationCost, totalRetail, totalCost, discount){
+                
+                calculateMarginBeforeDiscount(quotationCost, totalCost);
 
                 if(typeof discount == "undefined"){
                     discount = 0;
                 }else{
                     discount = parseFloat(discount);
+                    quotationCost = quotationCost - ((quotationCost * discount)/100);
                 }
-
-                // - ((quotationCost * discount)/100)
+    
                 var quotationPriceAfterDiscount = quotationCost;
 
                 var quotationMargin = quotationPriceAfterDiscount - totalCost;
@@ -1051,14 +1069,15 @@
                 var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
 
                 var vat_rate = $("#vat_rate").val();
-
                 $("#margin").val(quotationMarginRate);
-
+              
                 var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
 
                 $("#quot-price-lbl").text(Number(quotationPriceAfterDiscount).toFixed(2));
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
                 $("#retail-lbl").text(Number(totalRetail).toFixed(2));
+                $("#total-cost").val(Number(totalCost).toFixed(2));
+                $("#total-retail").val(Number(totalRetail).toFixed(2));
 
                 $("#quot-margin-lbl").text(quotationMarginVal);
                 $("#discount-lbl").text(discount);
@@ -1324,6 +1343,14 @@
                 });
             }
 
+            function calculateMarginBeforeDiscount(quotationCost, totalCost){
+
+                var quotationMargin = quotationCost - totalCost;
+                var quotationMarginRate = Number((quotationMargin / quotationCost) * 100).toFixed(2);
+                var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+
+                $("#quot-margin").text(quotationMarginVal);
+            }
 
         </script>
 

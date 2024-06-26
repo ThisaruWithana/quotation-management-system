@@ -604,6 +604,7 @@
 
                 // calculatePrices(quotationCost, totalRetail, totalCost, discount);
                 calculateMarginBeforeDiscount(quotationCost, $("#total-cost").val());
+                
                 $("#discount").on("keyup", function() {
 
                     var discount = this.value;
@@ -1056,8 +1057,8 @@
                 $("#quot-price-lbl").text(Number(quotationPriceAfterDiscount).toFixed(2));
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
                 $("#retail-lbl").text(Number(totalRetail).toFixed(2));
-                $("#total-cost").text(Number(totalCost).toFixed(2));
-                $("#total-retail").text(Number(totalRetail).toFixed(2));
+                $("#total-cost").val(Number(totalCost).toFixed(2));
+                $("#total-retail").val(Number(totalRetail).toFixed(2));
 
                 $("#quot-margin-lbl").text(quotationMarginVal);
                 $("#discount-lbl").text(discount);
