@@ -224,6 +224,7 @@ class QuotationController extends Controller
                     'retail' => $retail,
                     'actual_retail' => $retail,
                     'qty' => 1,
+                    'margin' => $itemDetails['margin'],
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
                     'order' => $order,
@@ -259,6 +260,7 @@ class QuotationController extends Controller
                                     'retail' => $value['subitem']['retail_price'],
                                     'actual_retail' => $value['subitem']['retail_price'],
                                     'qty' => 1,
+                                    'margin' => $itemDetails['margin'],
                                     'total_cost' => $value['subitem']['cost_price'],
                                     'total_retail' => $value['subitem']['retail_price'],
                                     'order' => $subItemOrder,
@@ -418,6 +420,7 @@ class QuotationController extends Controller
                     'display_report' => $value['display_report'],
                     'quotation_id' => $value['quotation_id'],
                     'type' => $value['type'],
+                    'margin' => $value['margin'],
                     'supplier' => implode(" ",$supplierList)
                     ]);
 
@@ -568,9 +571,12 @@ class QuotationController extends Controller
                 $item_total_cost = $actual_cost * $qty;
                 $item_total_retail = $retail * $qty;
 
+                $margin = $this->calculateItemMargin($quotation_item_id, $actual_cost, $retail);
+
                 $update = QuotationItem::where('id', $quotation_item_id)->update([
                     'item_cost' => $actual_cost,
                     'qty' => $qty,
+                    'margin' => $margin,
                     'retail' => $retail,
                     'total_cost' => $item_total_cost,
                     'total_retail' => $item_total_retail,
@@ -624,6 +630,23 @@ class QuotationController extends Controller
                 $response['msg'] = $e->getMessage();
                 return json_encode($response);
             } 
+    }
+
+    public function calculateItemMargin($id, $costPrice, $retailPrice)
+    {
+        $item = QuotationItem::where('id',$id)->first();
+        $itemId = $item['item_id'];
+
+        $itemDetails = Item::with('department.vat')->where('id',$itemId)->first();
+        $caseSize = $itemDetails['case_size'];
+        $vat = $itemDetails['department']['vat']['value'];
+
+        $vatConst = ($vat + 100)/100;
+        $netRetail = $retailPrice / $vatConst;
+        $netProfit = $netRetail - ($costPrice / $caseSize);
+        $margin = ($netProfit / $netRetail) * 100;
+
+        return json_encode(round($margin, 2));
     }
 
     public function getQuotationDiscountAmt($quotation_id)

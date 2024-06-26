@@ -224,6 +224,7 @@
                                                             <th class="th-sm item-list-item-cost">Cost</th>
                                                             <th class="th-sm item-list-retail">Retail</th>
                                                             <th class="th-sm item-list-qty">Qty</th>
+                                                            <th class="th-sm item-list-item-margin">Margin</th>
                                                             <th class="th-sm item-list-total-cost">Total Cost</th>
                                                             <th class="th-sm">Total Retail</th>
                                                             <th class="th-sm item-list-display-report">Display In Report</th>
@@ -250,6 +251,7 @@
                                                                 <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
                                                                 <td class="item-list-retail">{{ $value['retail'] }}</td>
                                                                 <td class="item-list-qty">{{ $value['qty'] }}</td>
+                                                                <td>{{ $value['margin'] }}</td>
                                                                 <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
                                                                 <td>{{ $value['total_retail'] }}</td>
                                                                 <td class="item-list-display-report">
@@ -576,6 +578,7 @@
                 $('.item-list-cost').hide();
                 $('.item-search-cost').hide();
                 $('.item-list-display-report').hide();
+                $('.item-list-item-margin').hide();
 
                 cuteAlert({
                     type: "question",
@@ -592,6 +595,7 @@
                         $('.item-list-cost').show();
                         $('.item-search-cost').show();
                         $('.item-list-display-report').show();
+                        $('.item-list-item-margin').show();
 
                     } else {
                         $('#in_office').val('no');
@@ -838,6 +842,7 @@
                                                 +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                                 +'<td class="item-list-retail">' + val['retail'] + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                                 +'<td>' + val['total_retail'] + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -1007,6 +1012,7 @@
                                             +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td class="item-list-retail">' + val['retail'] + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -1045,12 +1051,12 @@
                     discount = 0;
                 }else{
                     discount = parseFloat(discount);
-                    // quotationCost = quotationCost - ((quotationCost * discount)/100);
                 }
 
                 if(quotationCost > 0){
           
                     var vat_rate = $("#vat_rate").val();
+                    quotationCost = quotationCost - ((quotationCost * discount)/100);
                     var quotationPriceAfterDiscount = quotationCost;
                  
                     var quotationMargin = quotationPriceAfterDiscount - totalCost;
@@ -1149,6 +1155,7 @@
                                             +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td class="item-list-retail">' + val['retail'] + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -1250,6 +1257,7 @@
                                                 +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                                 +'<td class="item-list-retail">' + val['retail'] + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                                 +'<td>' + val['total_retail'] + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
