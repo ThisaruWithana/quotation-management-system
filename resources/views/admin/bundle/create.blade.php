@@ -79,7 +79,7 @@
 
                                 <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="">
                                 <input type="hidden" name="in_office" id="in_office" value="">
-                                <input type="hidden" name="row_order" id="row_order" value="">
+                                <input type="text" name="row_order" id="row_order" value="">
                         </div>
                         <!-- /.card-body -->
                      <div class="col-lg-2">
@@ -425,7 +425,7 @@
                                 timeOut: 1500,
                                 fadeOut: 1500,
                             onHidden: function () {
-                                window.location.reload();
+                                
                                 }
                             }
                         );

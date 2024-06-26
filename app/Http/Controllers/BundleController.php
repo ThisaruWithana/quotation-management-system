@@ -504,8 +504,10 @@ class BundleController extends Controller
         
         try{
             DB::beginTransaction();
-            $itemOrder = explode(",", $rowOrder);
-    
+
+            if(!empty($rowOrder)){
+                
+                $itemOrder = explode(",", $rowOrder);
                 foreach($itemOrder as $item){
 
                     $index = array_search($item, $itemOrder);
@@ -526,6 +528,10 @@ class BundleController extends Controller
                     $response['code'] = 0;
                     $response['msg'] = 'Something went wrong !';
                 }
+            }else{
+                $response['code'] = 1;
+                $response['msg'] = "Success";
+            }
  
             return json_encode($response);
         }catch(\Exception $e){
