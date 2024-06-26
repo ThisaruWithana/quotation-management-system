@@ -456,6 +456,7 @@
                 <div class="modal-body">
                         @csrf
                     <input type="hidden" name="quotation_item_id" value="" id="quotation_item_id">
+                    <input type="hidden" name="discount_amt" value="" id="discount_amt">
 
                     <div class="form-group" id="actual_cost_edit">
                         <label for="actual_cost" class="col-form-label">Cost</label>
@@ -689,6 +690,8 @@
                                 "_token": "{{ csrf_token() }}",
                                 "bundle": this.value,
                                 "quotation_id":$('#quotation_id').val(),
+                                "discount":$('#discount').val(),
+                                "price":$('#price').val()
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
@@ -1036,35 +1039,41 @@
 
             function calculatePrices(quotationCost, totalRetail, totalCost, discount){
 
+                calculateMarginBeforeDiscount($("#price").val(), totalCost);
+                
                 if(typeof discount == "undefined"){
                     discount = 0;
                 }else{
                     discount = parseFloat(discount);
-                    quotationCost = quotationCost - ((quotationCost * discount)/100);
+                    // quotationCost = quotationCost - ((quotationCost * discount)/100);
                 }
 
-                var quotationPriceAfterDiscount = quotationCost;
+                if(quotationCost > 0){
+          
+                    var vat_rate = $("#vat_rate").val();
+                    var quotationPriceAfterDiscount = quotationCost;
+                 
+                    var quotationMargin = quotationPriceAfterDiscount - totalCost;
+                    var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
+                    var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
 
-                var quotationMargin = quotationPriceAfterDiscount - totalCost;
-                var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
-                var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
+                    
+                    $("#margin").val(quotationMarginRate);
+                    $("#quot-price-lbl").text(Number(quotationPriceAfterDiscount).toFixed(2));
+                    $("#quot-margin-lbl").text(quotationMarginVal);
+                    $("#quot-vat-lbl").text(Number(vatValue + quotationPriceAfterDiscount).toFixed(2));
+                    $("#vat-lbl").text(Number(vatValue).toFixed(2));
+                }
 
-                var vat_rate = $("#vat_rate").val();
-                $("#margin").val(quotationMarginRate);
-              
-                var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
-
-                $("#quot-price-lbl").text(Number(quotationPriceAfterDiscount).toFixed(2));
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
                 $("#retail-lbl").text(Number(totalRetail).toFixed(2));
                 $("#total-cost").val(Number(totalCost).toFixed(2));
                 $("#total-retail").val(Number(totalRetail).toFixed(2));
 
-                $("#quot-margin-lbl").text(quotationMarginVal);
                 $("#discount-lbl").text(discount);
-                $("#vat-lbl").text(Number(vatValue).toFixed(2));
-                $("#quot-vat-lbl").text(Number(vatValue + quotationPriceAfterDiscount).toFixed(2));
             }
+
 
             function updateDisplayStatus(isChecked){
               var ischecked = isChecked.checked;
@@ -1094,7 +1103,9 @@
                             data: {
                                 "_token": "{{ csrf_token() }}",
                                 "id": id,
-                                "quotation_id": quotationId
+                                "quotation_id": quotationId,
+                                "discount":$('#discount').val(),
+                                "price":$('#price').val()
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
@@ -1194,6 +1205,8 @@
                                     "_token": "{{ csrf_token() }}",
                                     "quotation_id": quotationId,
                                     "bundle_id": ItemId,
+                                    "discount":$('#discount').val(),
+                                    "price":$('#price').val()
                                 },
                                 success: function (data) {
                                     var result = JSON.parse(data);
@@ -1334,9 +1347,15 @@
 
             function calculateMarginBeforeDiscount(quotationCost, totalCost){
 
-                var quotationMargin = quotationCost - totalCost;
-                var quotationMarginRate = Number((quotationMargin / quotationCost) * 100).toFixed(2);
-                var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                var quotationMarginVal;
+
+                if(quotationCost > 0){
+                    var quotationMargin = quotationCost - totalCost;
+                    var quotationMarginRate = Number((quotationMargin / quotationCost) * 100).toFixed(2);
+                    quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                }else{
+                    quotationMarginVal = 0;
+                }
 
                 $("#quot-margin").text(quotationMarginVal);
             }

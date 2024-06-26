@@ -105,7 +105,6 @@ class QuotationController extends Controller
                      'price' => $request->input('price'),
                      'discount' => $request->input('discount'),
                      'vat_rate' => floatval($vatRate[0]),
-                     'price' => $request->input('price'),
                      'created_by' => Auth::user()->id,
                      'updated_by' => Auth::user()->id,
                      'status' => $status
@@ -288,13 +287,18 @@ class QuotationController extends Controller
             $total_retail = $this->getTotalRetail($quotation_id);
             $discount = $this->getQuotationDiscountAmt($quotation_id);
 
+            if($discount == 0){
+                $discount = $request->input('discount');
+            }
+
             if($store){
 
                 $request->request->add([
                     'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
-                    'discount' => $discount
+                    'discount' => $discount,
+                    'price' => $request->input('price')
                 ]);
 
                 $updatePriceInfo = $this->updatePriceInfo($request);
@@ -305,7 +309,7 @@ class QuotationController extends Controller
                 $response['data'] = $getQuotationItemList;
                 $response['total_cost'] = $total_cost;
                 $response['total_retail'] = $total_retail;
-                $response['discount'] = $discount;
+                $response['discount'] = $request->input('discount');
                 $response['quotation_cost'] = $this->getPriceAfterDiscount($quotation_id);
             }else{
                 DB::rollback();
@@ -483,6 +487,10 @@ class QuotationController extends Controller
                 $quotation_cost = $this->getQuotationCost($quotation_id);
                 $discount = $this->getQuotationDiscountAmt($quotation_id);
 
+                if($discount == 0){
+                    $discount = $request->input('discount');
+                }    
+
                 DB::commit(); 
 
                 if($update){
@@ -491,11 +499,12 @@ class QuotationController extends Controller
                         'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                         'total_cost' => $total_cost,
                         'total_retail' => $total_retail,
-                        'discount' => $discount
+                        'discount' => $discount,
+                        'price' => $request->input('price')
                     ]);
     
                     $queryUpdate = $this->updatePriceInfo($request);
-                     $getQuotationItemList = $this->getQuotationItems($quotation_id);
+                    $getQuotationItemList = $this->getQuotationItems($quotation_id);
 
                     $response['code'] = 1;
                     $response['msg'] = "Success";
@@ -578,7 +587,8 @@ class QuotationController extends Controller
                         'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                         'total_cost' => $total_cost,
                         'total_retail' => $total_retail,
-                        'discount' => $discount
+                        'discount' => $discount,
+                        'price' => $request->input('price')
                     ]);
 
                      $queryUpdate = $this->updatePriceInfo($request);
@@ -642,9 +652,25 @@ class QuotationController extends Controller
     {
         $response = array();
         $quotation_id = $request->input('quotation_id');
-        $margin_amount = $this->getQuotationMarginAmt($quotation_id, $request->input('price_after_discount'));
-        $margin_rate = $this->getQuotationMarginRate($request->input('price_after_discount'), $margin_amount);
         $quotation_cost = $this->getQuotationCost($quotation_id);
+
+        if($quotation_cost > 0){
+            $margin_amount = $this->getQuotationMarginAmt($quotation_id, $request->input('price_after_discount'));
+            $margin_rate = $this->getQuotationMarginRate($request->input('price_after_discount'), $margin_amount);
+        }else{
+            $quotation_cost = $request->input('price');
+            $discount = $request->input('discount');
+            $price_after_discount = $quotation_cost - (($quotation_cost * $discount)/100);
+
+            if($quotation_cost > 0){
+                $margin_amount = $this->getQuotationMarginAmt($quotation_id, $price_after_discount);
+                $margin_rate = $this->getQuotationMarginRate($price_after_discount, $margin_amount);
+
+            }else{
+                $margin_amount = 0;
+                $margin_rate = 0;
+            }
+        }
 
             try{
                 DB::beginTransaction();
@@ -738,18 +764,21 @@ class QuotationController extends Controller
             $quotation_cost = $this->getQuotationCost($quotation_id);
             $discount = $this->getQuotationDiscountAmt($quotation_id);
 
+            if($discount == 0){
+                $discount = $request->input('discount');
+            }  
+
             if($store){
 
                 $request->request->add([
-                    'price' => $quotation_cost,
-                    'total_cost' => $total_cost,
+                    'price' => $request->input('price'),
                     'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
+                    'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
                     'discount' => $discount
                 ]);
 
                 $updatePriceInfo = $this->updatePriceInfo($request);
-                
                 $getQuotationItemList = $this->getQuotationItems($quotation_id);
 
                 $response['code'] = 1;
@@ -822,10 +851,14 @@ class QuotationController extends Controller
             $quotation_cost = $this->getQuotationCost($quotation_id);
             $discount = $this->getQuotationDiscountAmt($quotation_id);
 
+            if($discount == 0){
+                $discount = $request->input('discount');
+            }  
+
             if($store){
 
                 $request->request->add([
-                    'price' => $quotation_cost,
+                    'price' => $request->input('price'),
                     'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
