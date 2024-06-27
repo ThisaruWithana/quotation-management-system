@@ -149,10 +149,7 @@
                                             <td style="height: 22px; text-align: center;padding: 5px 5px;border: 1px solid #000;background: #ddd;"
                                                 colspan="4">
                                                 <strong>
-                                                    SOFTWARE & HARDWARE MAINTENANCE £60.00 + VAT
-                                                    ,PER TILL, PER MONTH,WILL APPLY. .( PAID
-                                                    ANNUALLY IN ADVANCE ) TRANSACTION ONLY (FREE) ON
-                                                    MEDIA SCREEN.
+                                                    {{ $quotation['description'] }}
                                                 </strong>
                                             </td>
                                         </tr>

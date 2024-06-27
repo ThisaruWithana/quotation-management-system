@@ -12,7 +12,7 @@ class QuotationItem extends Model
     protected $table = 'quotation_item';
 
     protected $fillable = [
-        'id','quotation_id', 'item_id', 'item_cost','retail','qty', 'total_cost', 'total_retail', 'order', 
+        'id','quotation_id', 'item_id', 'item_cost','retail','qty', 'total_cost', 'total_retail', 'order', 'margin',
         'display_report', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by', 'actual_cost', 'actual_retail', 'vat', 'type'
     ];
 

@@ -64,7 +64,7 @@ class QuotationController extends Controller
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
         $bundles = Bundle::where('status', 1)->orderBy('id','DESC')->get();
         $descriptions = QuotationDescription::where('status', 1)->orderBy('description','ASC')->get();
-        $vat_rate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+        $vat_rate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
 
         return view('admin.quotation.create', compact(
             'title', 'customers', 'departments', 'sub_departments', 
@@ -81,7 +81,7 @@ class QuotationController extends Controller
              DB::beginTransaction();
 
               $checkExist = QuotationDescription::where('description', 'LIKE',"%$description%")->get();
-              $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+              $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
 
              if(count($checkExist) == 0){
                 $add = QuotationDescription::create([
@@ -105,7 +105,6 @@ class QuotationController extends Controller
                      'price' => $request->input('price'),
                      'discount' => $request->input('discount'),
                      'vat_rate' => floatval($vatRate[0]),
-                     'price' => $request->input('price'),
                      'created_by' => Auth::user()->id,
                      'updated_by' => Auth::user()->id,
                      'status' => $status
@@ -116,7 +115,7 @@ class QuotationController extends Controller
                  $id = $request->input('quotation_id');
                  $referenceNo = '';
 
-                $this->updatePriceInfo($request);
+                 $this->updatePriceInfo($request);
 
                  if($request->input('row_order') != ''){
                     $this->updateQuotationItemOrder($request);
@@ -187,6 +186,52 @@ class QuotationController extends Controller
                 'total_cost', 'total_retail', 'quotation_cost', 'quotationMargin', 'quotationMarginRate', 'quotationPriceAfterDiscount'));
     }
 
+    public function updateDescription(Request $request)
+    {
+        $response = array();
+        $description = $request->input('description');
+        $quotation_id = $request->input('quotation_id');
+
+         try{
+             DB::beginTransaction();
+
+              $checkExist = QuotationDescription::where('description', 'LIKE',"%$description%")->get();
+              $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
+
+             if(count($checkExist) == 0){
+                $add = QuotationDescription::create([
+                    'description' => $description,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
+                ]);
+             }
+
+             $update = Quotation::where('id', $quotation_id)->update([
+                 'description' => $description,
+                 'updated_by' => Auth::user()->id
+             ]);
+ 
+             if($update){
+                DB::commit(); 
+                 $response['code'] = 1;
+                 $response['msg'] = "Success";
+                 $response['data'] = $quotation_id;
+             }else{
+                 DB::rollback();
+                 $response['code'] = 0;
+                 $response['msg'] = 'Something went wrong !';
+                 $response['data'] = '';
+             }
+               
+             return json_encode($response);
+         }catch(\Exception $e){
+             DB::rollback();
+             $response['code'] = 0;
+             $response['msg'] = $e->getLine() . " – " . $e->getFile();
+             return json_encode($response);
+        } 
+    }
+
     public function addItems(Request $request)
     {
         $response = array();
@@ -225,6 +270,7 @@ class QuotationController extends Controller
                     'retail' => $retail,
                     'actual_retail' => $retail,
                     'qty' => 1,
+                    'margin' => $itemDetails['margin'],
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
                     'order' => $order,
@@ -260,6 +306,7 @@ class QuotationController extends Controller
                                     'retail' => $value['subitem']['retail_price'],
                                     'actual_retail' => $value['subitem']['retail_price'],
                                     'qty' => 1,
+                                    'margin' => $itemDetails['margin'],
                                     'total_cost' => $value['subitem']['cost_price'],
                                     'total_retail' => $value['subitem']['retail_price'],
                                     'order' => $subItemOrder,
@@ -288,13 +335,18 @@ class QuotationController extends Controller
             $total_retail = $this->getTotalRetail($quotation_id);
             $discount = $this->getQuotationDiscountAmt($quotation_id);
 
+            if($discount == 0){
+                $discount = $request->input('discount');
+            }
+
             if($store){
 
                 $request->request->add([
                     'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
-                    'discount' => $discount
+                    'discount' => $discount,
+                    'price' => $request->input('price')
                 ]);
 
                 $updatePriceInfo = $this->updatePriceInfo($request);
@@ -305,7 +357,7 @@ class QuotationController extends Controller
                 $response['data'] = $getQuotationItemList;
                 $response['total_cost'] = $total_cost;
                 $response['total_retail'] = $total_retail;
-                $response['discount'] = $discount;
+                $response['discount'] = $request->input('discount');
                 $response['quotation_cost'] = $this->getPriceAfterDiscount($quotation_id);
             }else{
                 DB::rollback();
@@ -339,7 +391,7 @@ class QuotationController extends Controller
 
     public function getVATAmt($quotation_cost)
     {
-        $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+        $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
         $vat = ($quotation_cost* floatval($vatRate[0])) / 100;
         return $vat;
     }
@@ -414,6 +466,7 @@ class QuotationController extends Controller
                     'display_report' => $value['display_report'],
                     'quotation_id' => $value['quotation_id'],
                     'type' => $value['type'],
+                    'margin' => $value['margin'],
                     'supplier' => implode(" ",$supplierList)
                     ]);
 
@@ -483,6 +536,10 @@ class QuotationController extends Controller
                 $quotation_cost = $this->getQuotationCost($quotation_id);
                 $discount = $this->getQuotationDiscountAmt($quotation_id);
 
+                if($discount == 0){
+                    $discount = $request->input('discount');
+                }    
+
                 DB::commit(); 
 
                 if($update){
@@ -491,11 +548,12 @@ class QuotationController extends Controller
                         'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                         'total_cost' => $total_cost,
                         'total_retail' => $total_retail,
-                        'discount' => $discount
+                        'discount' => $discount,
+                        'price' => $request->input('price')
                     ]);
     
                     $queryUpdate = $this->updatePriceInfo($request);
-                     $getQuotationItemList = $this->getQuotationItems($quotation_id);
+                    $getQuotationItemList = $this->getQuotationItems($quotation_id);
 
                     $response['code'] = 1;
                     $response['msg'] = "Success";
@@ -559,9 +617,12 @@ class QuotationController extends Controller
                 $item_total_cost = $actual_cost * $qty;
                 $item_total_retail = $retail * $qty;
 
+                $margin = $this->calculateItemMargin($quotation_item_id, $actual_cost, $retail);
+
                 $update = QuotationItem::where('id', $quotation_item_id)->update([
                     'item_cost' => $actual_cost,
                     'qty' => $qty,
+                    'margin' => $margin,
                     'retail' => $retail,
                     'total_cost' => $item_total_cost,
                     'total_retail' => $item_total_retail,
@@ -578,7 +639,8 @@ class QuotationController extends Controller
                         'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                         'total_cost' => $total_cost,
                         'total_retail' => $total_retail,
-                        'discount' => $discount
+                        'discount' => $discount,
+                        'price' => $request->input('price')
                     ]);
 
                      $queryUpdate = $this->updatePriceInfo($request);
@@ -616,6 +678,23 @@ class QuotationController extends Controller
             } 
     }
 
+    public function calculateItemMargin($id, $costPrice, $retailPrice)
+    {
+        $item = QuotationItem::where('id',$id)->first();
+        $itemId = $item['item_id'];
+
+        $itemDetails = Item::with('department.vat')->where('id',$itemId)->first();
+        $caseSize = $itemDetails['case_size'];
+        $vat = $itemDetails['department']['vat']['value'];
+
+        $vatConst = ($vat + 100)/100;
+        $netRetail = $retailPrice / $vatConst;
+        $netProfit = $netRetail - ($costPrice / $caseSize);
+        $margin = ($netProfit / $netRetail) * 100;
+
+        return json_encode(round($margin, 2));
+    }
+
     public function getQuotationDiscountAmt($quotation_id)
     {
         $query = Quotation::where('id', $quotation_id)->where('status', 1)->pluck('discount');
@@ -642,13 +721,29 @@ class QuotationController extends Controller
     {
         $response = array();
         $quotation_id = $request->input('quotation_id');
-        $margin_amount = $this->getQuotationMarginAmt($quotation_id, $request->input('price_after_discount'));
-        $margin_rate = $this->getQuotationMarginRate($request->input('price_after_discount'), $margin_amount);
         $quotation_cost = $this->getQuotationCost($quotation_id);
+
+        if($quotation_cost > 0){
+            $margin_amount = $this->getQuotationMarginAmt($quotation_id, $request->input('price_after_discount'));
+            $margin_rate = $this->getQuotationMarginRate($request->input('price_after_discount'), $margin_amount);
+        }else{
+            $quotation_cost = $request->input('price');
+            $discount = $request->input('discount');
+            $price_after_discount = $quotation_cost - (($quotation_cost * $discount)/100);
+
+            if($quotation_cost > 0){
+                $margin_amount = $this->getQuotationMarginAmt($quotation_id, $price_after_discount);
+                $margin_rate = $this->getQuotationMarginRate($price_after_discount, $margin_amount);
+
+            }else{
+                $margin_amount = 0;
+                $margin_rate = 0;
+            }
+        }
 
             try{
                 DB::beginTransaction();
-                $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+                $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
                 $vat_amt = ($request->input('price_after_discount') * $vatRate[0])/100;
 
                  $update = Quotation::where('id', $quotation_id)->update([
@@ -738,18 +833,21 @@ class QuotationController extends Controller
             $quotation_cost = $this->getQuotationCost($quotation_id);
             $discount = $this->getQuotationDiscountAmt($quotation_id);
 
+            if($discount == 0){
+                $discount = $request->input('discount');
+            }  
+
             if($store){
 
                 $request->request->add([
-                    'price' => $quotation_cost,
-                    'total_cost' => $total_cost,
+                    'price' => $request->input('price'),
                     'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
+                    'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
                     'discount' => $discount
                 ]);
 
                 $updatePriceInfo = $this->updatePriceInfo($request);
-                
                 $getQuotationItemList = $this->getQuotationItems($quotation_id);
 
                 $response['code'] = 1;
@@ -822,10 +920,14 @@ class QuotationController extends Controller
             $quotation_cost = $this->getQuotationCost($quotation_id);
             $discount = $this->getQuotationDiscountAmt($quotation_id);
 
+            if($discount == 0){
+                $discount = $request->input('discount');
+            }  
+
             if($store){
 
                 $request->request->add([
-                    'price' => $quotation_cost,
+                    'price' => $request->input('price'),
                     'price_after_discount' => $this->getPriceAfterDiscount($quotation_id),
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
@@ -901,7 +1003,7 @@ class QuotationController extends Controller
         $title = 'OPF Details';
         $data = Quotation::with('customer')->where('id',$id)->first();
         $bundles = Bundle::where('status', 1)->orderBy('id','DESC')->get();
-        $vat_rate = app('App\Http\Controllers\VatController')->getLatestVatRate();
+        $vat_rate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
         
         $suppliers = Supplier::where('status', 1)->orderBy('name','ASC')->get();
         $departments = Department::where('status', 1)->orderBy('name','ASC')->get();
@@ -1632,7 +1734,7 @@ class QuotationController extends Controller
         ]; 
 
         $pdf = PDF::loadView('print.quotation', $data);
-        return $pdf->download('Quotation and Order Contract');
+        return $pdf->stream('Quotation and Order Contract', array("Attachment" => false));
     
     }
 
@@ -1650,7 +1752,7 @@ class QuotationController extends Controller
         ]; 
 
         $pdf = PDF::loadView('print.opf', $data);
-        return $pdf->download('Order Processing Form');
+        return $pdf->stream('Order Processing Form', array("Attachment" => false));
     
     }
 

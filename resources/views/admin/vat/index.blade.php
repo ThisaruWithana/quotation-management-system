@@ -33,9 +33,12 @@
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('admin.vat.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                        <i class="far fa-edit"></i>
-                        </a>
+                        @if($value->status == 1)
+                            <a href="{{ route('admin.vat.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                <i class="far fa-edit"></i>
+                            </a>
+                        @else 
+                        @endif
                     </td>
                </tr>
                @endforeach

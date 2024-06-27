@@ -64,11 +64,11 @@
                                                     <div class="col-lg-12">
                                                         <div class="form-group text-left">
                                                             <label for="description" class="form-label">Description</label>
-                                                            <span class="required"> * </span><br>
+                                                            <!-- <span class="required"> * </span><br> -->
 
                                                             <textarea class="form-control" name="description" id="description"
                                                                       rows="4"
-                                                                      required></textarea><br>
+                                                                      ></textarea><br>
 
                                                             <button class="btn btn-default add-description" type="button"
                                                                     style="float:right; margin-top:-20px;"><i
@@ -92,30 +92,6 @@
                                                 </div>
                                         </div>
 
-                                        <div class="row">
-                                            <div class="col-lg-4">
-                                                <div class="form-group text-left">
-                                                    <label for="price" class="form-label">Quotation Price</label>
-                                                    <span class="required"> * </span><br>
-                                                    <input type="text" class="form-control" id="price" name="price"
-                                                           value="" autocomplete="off" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group text-left">
-                                                    <label for="discount" class="form-label">Discount</label>
-                                                    <input type="text" class="form-control" id="discount"
-                                                           name="discount" value="0" autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="form-group text-left">
-                                                    <label for="margin" class="form-label">Quotation Margin</label>
-                                                    <input type="text" class="form-control" id="margin" name="margin"
-                                                           value="" readonly>
-                                                </div>
-                                            </div>
-                                        </div>
 
                                     </div>
 
@@ -197,6 +173,32 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="form-group text-left">
+                                            <label for="price" class="form-label">Quotation Price</label>
+                                            <!-- <span class="required"> * </span><br> -->
+                                            <input type="text" class="form-control" id="price" name="price"
+                                                    value="0" autocomplete="off" >
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group text-left">
+                                            <label for="discount" class="form-label">Discount</label>
+                                            <input type="text" class="form-control" id="discount"
+                                                    name="discount" value="0" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="form-group text-left">
+                                            <label for="margin" class="form-label">Quotation Margin</label>
+                                            <input type="text" class="form-control" id="margin" name="margin"
+                                                    value="" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="col-lg-2" style="float:right;">
@@ -216,10 +218,11 @@
                                                     <th class="th-sm">Code</th>
                                                     <th class="th-sm">Name</th>
                                                     <th class="th-sm">Supplier</th>
-                                                    <th class="th-sm item-list-cost">Cost</th>
-                                                    <th class="th-sm item-list-item-cost">Actual Cost</th>
+                                                    <th class="th-sm item-list-cost">Actual Cost</th>
+                                                    <th class="th-sm item-list-item-cost">Cost</th>
                                                     <th class="th-sm item-list-retail">Retail</th>
                                                     <th class="th-sm item-list-qty">Qty</th>
+                                                    <th class="th-sm item-list-item-margin">Margin</th>
                                                     <th class="th-sm item-list-total-cost">Total Cost</th>
                                                     <th class="th-sm">Total Retail</th>
                                                     <th class="th-sm item-list-display-report">Display In Report</th>
@@ -246,14 +249,14 @@
                                                             Cost : </b></p></td>
                                                 <td style="width:50px;"><p class="text-sm mb-0"><b
                                                             class="d-block info-lb"><span
-                                                                id="total-cost-lbl"></span></b></p></td>
+                                                                id="total-cost-lbl"></span></b></p> <input type="hidden" value="" id="total-cost"></td>
                                             </tr>
                                             <tr>
                                                 <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total
                                                             Retail :</b></p></td>
                                                 <td style="width:50px;"><p class="text-sm mb-0"><b
                                                             class="d-block info-lb"><span id="retail-lbl"></span></b>
-                                                    </p></td>
+                                                    </p><input type="hidden" value="" id="total-retail"></td>
                                             </tr>
                                             <tr>
                                                 <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Discount
@@ -279,7 +282,12 @@
                                                             Margin :</b></p></td>
                                                 <td style="width:200px;"><p class="text-sm mb-0"><b
                                                             class="d-block info-lb"><span
-                                                                id="quot-margin-lbl"></span></b></p></td>
+                                                                id="quot-margin"></span></b></p></td>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin After Discount:</b></p></td>
+                                                <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl"></span></b></p></td>
                                             </tr>
                                             <tr>
                                                 <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">VAT : </b>
@@ -420,7 +428,7 @@
                             <input type="hidden" name="bundleId" value="" id="quotation_item_id">
 
                             <div class="form-group" id="actual_cost_edit">
-                                <label for="actual_cost" class="col-form-label">Actual Cost</label>
+                                <label for="actual_cost" class="col-form-label">Cost</label>
                                 <input type="text" class="form-control" id="actual_cost" name="actual_cost"
                                        required="" value="" autocomplete="off">
                             </div>
@@ -497,22 +505,6 @@
         <script>
             $(function() {
 
-                // $('#sortable-table').DataTable({
-                //     "bPaginate": false,
-                //     "searching": false,
-                //     "ordering": false,
-                //     "responsive": true,
-                //     "scrollX": true,
-                //     "autoWidth":true,
-                //     "fixedHeader": true,
-                //     "paging": false,
-                //     "scrollCollapse": true,
-                //     "scrollY": '50vh',
-                //     "aoColumnDefs": [
-                //         { "bSortable": false, "aTargets": [ 8,9 ]},
-                //     ]
-                // });
-
                 $('.table-item-search').DataTable({
                     "bPaginate": false,
                     "searching": false,
@@ -539,6 +531,7 @@
                 $('.item-list-cost').hide();
                 $('.item-search-cost').hide();
                 $('.item-list-display-report').hide();
+                $('.item-list-item-margin').hide();
 
                 cuteAlert({
                     type: "question",
@@ -555,6 +548,7 @@
                         $('.item-list-cost').show();
                         $('.item-search-cost').show();
                         $('.item-list-display-report').show();
+                        $('.item-list-item-margin').show();
 
                     } else {
                         $('#in_office').val('no');
@@ -574,14 +568,11 @@
                 $("#discount").on("keyup", function() {
 
                     var discount = this.value;
-                    var totalCost = parseFloat($("#total-cost-lbl").text());
-                    var totalRetail = parseFloat($("#retail-lbl").text());
+                    var totalCost = parseFloat($("#total-cost").val());
+                    var totalRetail = parseFloat($("#total-retail").val());
                     var quotationCost = parseFloat($('#price').val());
-                    var quotationPriceAfterDiscount = quotationCost - ((quotationCost * discount)/100);
 
-                    calculatePrices(quotationPriceAfterDiscount, totalRetail, totalCost, discount);
-
-                    $("#discount-lbl").text(discount);
+                    calculatePrices(quotationCost, totalRetail, totalCost, discount);
 
                 });
 
@@ -628,7 +619,6 @@
                                     $("#customer").attr('disabled',true);
                                     $('#customer').selectpicker('refresh');
 
-                                    $("#description").attr('disabled',true);
                                     $('#description').selectpicker('refresh');
 
                                     $("#quotation_id").val(result['data']);
@@ -690,6 +680,8 @@
                                 "_token": "{{ csrf_token() }}",
                                 "bundle": this.value,
                                 "quotation_id":$('#quotation_id').val(),
+                                "discount":$('#discount').val(),
+                                "price":$('#price').val()
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
@@ -720,6 +712,8 @@
                                         var editBtn = '';
 
                                         if(type === 'bundle'){
+                                            
+                                            $('.item-list-item-margin').hide();
                                             name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
                                         }else{
                                             name = val['name'];
@@ -735,6 +729,7 @@
                                             +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td class="item-list-retail">' + val['retail'] + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            // +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -824,6 +819,7 @@
                                                 +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                                 +'<td class="item-list-retail">' + val['retail'] + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                                 +'<td>' + val['total_retail'] + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -864,8 +860,25 @@
                 });
 
                 $('#btnSaveChanges').click(function(){
+            
+                    if($('#price').val() > 0 && $('#description').val() != ''){
 
-                    $.ajax({
+                        $.ajax({
+                            url: "{{ url('admin/quotation/update-description') }}",
+                            type: 'POST',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    "quotation_id": $('#quotation_id').val(),
+                                    "description": $('#description').val()
+                                },
+                                success: function (data) {
+                  
+                                }, error: function (data) {
+
+                            }
+                        });
+
+                        $.ajax({
                             url: "{{ url('admin/quotation/update-price-info') }}",
                             type: 'POST',
                                 data: {
@@ -903,7 +916,21 @@
                                 }, error: function (data) {
 
                             }
-                    });
+                        });
+
+                    }else{
+                        toastr.error(
+                            'Error',
+                            'Please Enter Quotation Price  & Description !',
+                            {
+                                timeOut: 1500,
+                                fadeOut: 1500,
+                                onHidden: function () {
+                                }
+                            }
+                        );
+                    }
+
 
                 });
 
@@ -961,6 +988,8 @@
                                 "id": isChecked.value,
                                 "ischecked": ischecked,
                                 "quotation_id":$('#quotation_id').val(),
+                                "price":$('#price').val(),
+                                "discount":$('#discount').val(),
                                 "type": Itemtype
                             },
                             success: function (data) {
@@ -1005,6 +1034,7 @@
                                             +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td class="item-list-retail">' + val['retail'] + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -1037,33 +1067,39 @@
 
             function calculatePrices(quotationCost, totalRetail, totalCost, discount){
 
+                calculateMarginBeforeDiscount($("#price").val(), totalCost);
+
                 if(typeof discount == "undefined"){
                     discount = 0;
                 }else{
                     discount = parseFloat(discount);
                 }
+    
+                if(quotationCost > 0){
 
-                // - ((quotationCost * discount)/100)
-                var quotationPriceAfterDiscount = quotationCost;
+                    var vat_rate = $("#vat_rate").val();
+                    quotationCost = quotationCost - ((quotationCost * discount)/100);
+                    var quotationPriceAfterDiscount = quotationCost;
 
-                var quotationMargin = quotationPriceAfterDiscount - totalCost;
-                var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
-                var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    var quotationMargin = quotationPriceAfterDiscount - totalCost;
+                    var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
+                    var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
 
-                var vat_rate = $("#vat_rate").val();
+                    var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
+                    
+                    $("#margin").val(quotationMarginRate);
+                    $("#quot-price-lbl").text(Number(quotationPriceAfterDiscount).toFixed(2));
+                    $("#quot-margin-lbl").text(quotationMarginVal);
+                    $("#quot-vat-lbl").text(Number(vatValue + quotationPriceAfterDiscount).toFixed(2));
+                    $("#vat-lbl").text(Number(vatValue).toFixed(2));
+                }
 
-                $("#margin").val(quotationMarginRate);
-
-                var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
-
-                $("#quot-price-lbl").text(Number(quotationPriceAfterDiscount).toFixed(2));
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
                 $("#retail-lbl").text(Number(totalRetail).toFixed(2));
+                $("#total-cost").val(Number(totalCost).toFixed(2));
+                $("#total-retail").val(Number(totalRetail).toFixed(2));
 
-                $("#quot-margin-lbl").text(quotationMarginVal);
                 $("#discount-lbl").text(discount);
-                $("#vat-lbl").text(Number(vatValue).toFixed(2));
-                $("#quot-vat-lbl").text(Number(vatValue + quotationPriceAfterDiscount).toFixed(2));
             }
 
             function updateDisplayStatus(isChecked){
@@ -1094,7 +1130,9 @@
                             data: {
                                 "_token": "{{ csrf_token() }}",
                                 "id": id,
-                                "quotation_id": quotationId
+                                "quotation_id": quotationId,
+                                "discount":$('#discount').val(),
+                                "price":$('#price').val()
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);
@@ -1137,6 +1175,7 @@
                                             +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td class="item-list-retail">' + val['retail'] + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -1189,6 +1228,8 @@
                                     "_token": "{{ csrf_token() }}",
                                     "quotation_id": quotationId,
                                     "bundle_id": ItemId,
+                                    "discount":$('#discount').val(),
+                                    "price":$('#price').val()
                                 },
                                 success: function (data) {
                                     var result = JSON.parse(data);
@@ -1232,6 +1273,7 @@
                                                 +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                                 +'<td class="item-list-retail">' + val['retail'] + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                                 +'<td>' + val['total_retail'] + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -1324,6 +1366,20 @@
                 });
             }
 
+            function calculateMarginBeforeDiscount(quotationCost, totalCost){
+                
+                var quotationMarginVal;
+
+                if(quotationCost > 0){
+                    var quotationMargin = quotationCost - totalCost;
+                    var quotationMarginRate = Number((quotationMargin / quotationCost) * 100).toFixed(2);
+                    quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                }else{
+                    quotationMarginVal = 0;
+                }
+
+                $("#quot-margin").text(quotationMarginVal);
+            }
 
         </script>
 

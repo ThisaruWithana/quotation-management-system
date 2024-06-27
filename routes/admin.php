@@ -112,6 +112,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('add-bundle', [QuotationController::class, 'addBundle'])->name('quotation.add-bundle');
         Route::post('edit-bundle', [QuotationController::class, 'editBundle'])->name('quotation.edit-bundle');
         Route::post('update-quotation-item-order', [QuotationController::class, 'updateQuotationItemOrder'])->name('quotation.update-quotation-item-order');
+        Route::post('update-description', [QuotationController::class, 'updateDescription'])->name('quotation.update-description');
 
     });
 

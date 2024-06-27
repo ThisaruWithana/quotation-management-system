@@ -35,6 +35,16 @@ class VatController extends Controller
                 DB::beginTransaction();
 
                 // Add new VAT value
+
+                if($request->input('rate') != 0){
+   
+                    $update = DB::table('vat')
+                        ->where('value', '!=', 0)
+                        ->update([
+                            'status' => 0
+                    ]);
+                }
+    
                 $query = VAT::create([
                     'name' => $request->input('name'),
                     'value' => $request->input('rate'),
@@ -68,28 +78,38 @@ class VatController extends Controller
             'rate' => ['required', 'string']
         ]); 
 
-         // Disable existing VAT values
-        $update = DB::table('vat')
-            ->where('id', $id)
-            ->update([
-                'status' => 0
-        ]);
-        
-        $query = VAT::create([
-            'name' => $request->input('name'),
-            'value' => $request->input('rate'),
-            'created_by' =>  Auth::user()->id,
-            'updated_by' => Auth::user()->id
-        ]);
-        
-        $update = DB::table('department')
-            ->where('vat_id', $id)
-            ->update([
-                'vat_id' => $query->id,
-                'updated_by' => Auth::user()->id
-        ]);
+        try{
+            DB::beginTransaction();
 
-        return redirect()->route('admin.vat.index')->with('success','VAT updated successfully.');
+              // Disable existing VAT values
+
+                $update = VAT::where('id', $id)->update([
+                    'status' => 0,
+                    'updated_by' => Auth::user()->id
+                ]);
+                
+                $query = VAT::create([
+                    'name' => $request->input('name'),
+                    'value' => $request->input('rate'),
+                    'created_by' =>  Auth::user()->id,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                $last_insert_id = $query->id;
+
+                $update = Department::where('vat_id', $id)->update([
+                    'vat_id' => $last_insert_id,
+                    'updated_by' => Auth::user()->id
+                ]);
+
+                DB::commit(); 
+                return redirect()->route('admin.vat.index')->with('success','VAT updated successfully.');
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
     }
 
     public function barcode()
@@ -99,6 +119,11 @@ class VatController extends Controller
 
     public function getLatestVatRate()
     {
-       return $query = VAT::where('value', '!=', 0)->where('status', 1)->pluck('value');
+       return $query = VAT::where('status', 1)->pluck('value');
+    }
+    
+    public function getLatestVatRateForQuote()
+    {
+       return $query = VAT::where('status', 1)->where('value','!=', 0)->pluck('value');
     }
 }
