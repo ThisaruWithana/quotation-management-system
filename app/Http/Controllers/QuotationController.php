@@ -186,6 +186,52 @@ class QuotationController extends Controller
                 'total_cost', 'total_retail', 'quotation_cost', 'quotationMargin', 'quotationMarginRate', 'quotationPriceAfterDiscount'));
     }
 
+    public function updateDescription(Request $request)
+    {
+        $response = array();
+        $description = $request->input('description');
+        $quotation_id = $request->input('quotation_id');
+
+         try{
+             DB::beginTransaction();
+
+              $checkExist = QuotationDescription::where('description', 'LIKE',"%$description%")->get();
+              $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
+
+             if(count($checkExist) == 0){
+                $add = QuotationDescription::create([
+                    'description' => $description,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
+                ]);
+             }
+
+             $update = Quotation::where('id', $quotation_id)->update([
+                 'description' => $description,
+                 'updated_by' => Auth::user()->id
+             ]);
+ 
+             if($update){
+                DB::commit(); 
+                 $response['code'] = 1;
+                 $response['msg'] = "Success";
+                 $response['data'] = $quotation_id;
+             }else{
+                 DB::rollback();
+                 $response['code'] = 0;
+                 $response['msg'] = 'Something went wrong !';
+                 $response['data'] = '';
+             }
+               
+             return json_encode($response);
+         }catch(\Exception $e){
+             DB::rollback();
+             $response['code'] = 0;
+             $response['msg'] = $e->getLine() . " – " . $e->getFile();
+             return json_encode($response);
+        } 
+    }
+
     public function addItems(Request $request)
     {
         $response = array();

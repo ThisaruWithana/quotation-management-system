@@ -64,11 +64,11 @@
                                                     <div class="col-lg-12">
                                                         <div class="form-group text-left">
                                                             <label for="description" class="form-label">Description</label>
-                                                            <span class="required"> * </span><br>
+                                                            <!-- <span class="required"> * </span><br> -->
 
                                                             <textarea class="form-control" name="description" id="description"
                                                                       rows="4"
-                                                                      required></textarea><br>
+                                                                      ></textarea><br>
 
                                                             <button class="btn btn-default add-description" type="button"
                                                                     style="float:right; margin-top:-20px;"><i
@@ -619,7 +619,6 @@
                                     $("#customer").attr('disabled',true);
                                     $('#customer').selectpicker('refresh');
 
-                                    $("#description").attr('disabled',true);
                                     $('#description').selectpicker('refresh');
 
                                     $("#quotation_id").val(result['data']);
@@ -862,7 +861,22 @@
 
                 $('#btnSaveChanges').click(function(){
             
-                    if($('#price').val() > 0){
+                    if($('#price').val() > 0 && $('#description').val() != ''){
+
+                        $.ajax({
+                            url: "{{ url('admin/quotation/update-description') }}",
+                            type: 'POST',
+                                data: {
+                                    "_token": "{{ csrf_token() }}",
+                                    "quotation_id": $('#quotation_id').val(),
+                                    "description": $('#description').val()
+                                },
+                                success: function (data) {
+                  
+                                }, error: function (data) {
+
+                            }
+                        });
 
                         $.ajax({
                             url: "{{ url('admin/quotation/update-price-info') }}",
@@ -907,7 +921,7 @@
                     }else{
                         toastr.error(
                             'Error',
-                            'Please Enter Quotation Price!',
+                            'Please Enter Quotation Price  & Description !',
                             {
                                 timeOut: 1500,
                                 fadeOut: 1500,
