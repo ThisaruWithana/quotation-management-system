@@ -27,7 +27,7 @@ class BundleController extends Controller
         }
 
         $pageSize = $new;
-        $data = Bundle::query()->with('created_user')->orderBy('id','DESC');
+        $data = Bundle::query()->with('created_user')->whereNotIn('status', [2])->orderBy('id','DESC');
 
         if($request->query('form_action') === 'search'){
 
@@ -593,5 +593,24 @@ class BundleController extends Controller
             $response['msg'] = $e->getMessage();
             return json_encode($response);
         } 
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->input('id');
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = Bundle::find($id);
+            $queryStatus->status = 2;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
     }
 }

@@ -81,6 +81,7 @@ class PermissionSeeder extends Seeder
             'admin.bundle.item-update',
             'admin.bundle.get-details',
             'admin.bundle.update-bundle-item-order',
+            'admin.bundle.destroy',
 
             'admin.item',
             'admin.item.create',
@@ -114,6 +115,7 @@ class PermissionSeeder extends Seeder
             'admin.quotation.add-bundle',
             'admin.quotation.edit-bundle',
             'admin.quotation.update-quotation-item-order',
+            'admin.quotation.destroy',
             
             'admin.opf',
             'admin.opf.print',

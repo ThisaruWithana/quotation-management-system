@@ -1504,7 +1504,7 @@
                                     }
                                 });
                         } else {
-                            window.location = '{{ url("admin/quotation") }}';
+                            // window.location = '{{ url("admin/quotation") }}';
                         }
                     });
                 }else{

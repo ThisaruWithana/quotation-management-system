@@ -74,6 +74,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('bundle/get-details', [BundleController::class, 'getDetails'])->name('bundle.get-details');
     Route::post('bundle/update-bundle-item-order', [BundleController::class, 'updateBundleItemOrder'])->name('bundle.update-bundle-item-order');
 
+    Route::post('bundle/destroy', [BundleController::class, 'destroy'])->name('bundle.destroy');
+
     Route::prefix('item')->group(function(){
 
         Route::get('/', [ItemController::class, 'index'])->name('item');

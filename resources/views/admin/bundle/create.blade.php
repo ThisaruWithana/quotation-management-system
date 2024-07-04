@@ -10,7 +10,8 @@
                     {{ $title }}
 
                     <div class="card-tools">
-                        <a href="{{ route('admin.bundle.index') }}" class="btn btn-sm btn-primary">
+                        <!-- <a href="{{ route('admin.bundle.index') }}" class="btn btn-sm btn-primary"> -->
+                            <a class="btn btn-sm btn-primary" onclick=softeDelete()>
                             <button type="button" class="btn btn-tool">
                                     <i class="fas fa-times"></i>
                             </button>
@@ -835,6 +836,74 @@
 
                     }
                 });
+            }
+
+            function softeDelete() {
+
+                if($('#bundle_id').val() != ''){
+                    cuteAlert({
+                        type: "question",
+                        title: "Are you sure",
+                        message: "You want to delete of this bundle and go back?",
+                        confirmText: "Yes",
+                        cancelText: "Cancel"
+                        }).then((e)=>{
+                        if ( e == ("confirm")){
+                                $.ajax({
+                                    url: "{{ url('admin/bundle/destroy') }}",
+                                    type: 'POST',
+                                    data: {
+                                        "_token": "{{ csrf_token() }}",
+                                        "id":$('#bundle_id').val(),
+                                        "status": 5
+                                    },
+                                    success: function (data) {
+                                        var result = JSON.parse(data);
+                                        if (result == 1) {
+                                            toastr.success(
+                                                'Success',
+                                                'Successfully Updated !',
+                                                {
+                                                    timeOut: 1500,
+                                                    fadeOut: 1500,
+                                                    onHidden: function () {
+                                                        window.location = '{{ url("admin/bundle") }}';
+                                                    }
+                                                });
+                                        } else {
+                                            toastr.error(
+                                                'Error',
+                                                'Something Went Wrong!',
+                                                {
+                                                    timeOut: 1500,
+                                                    fadeOut: 1500,
+                                                    onHidden: function () {
+                                                        window.location.reload();
+                                                    }
+                                                }
+                                            );
+                                        }
+                                    }, error: function (data) {
+                                            toastr.error(
+                                                'Error',
+                                                'Something Went Wrong!',
+                                                {
+                                                    timeOut: 1500,
+                                                    fadeOut: 1500,
+                                                    onHidden: function () {
+                                                        window.location.reload();
+                                                    }
+                                                }
+                                            );
+                                    }
+                                });
+                        } else {
+                       
+                        }
+                    });
+                }else{
+                    window.location = '{{ url("admin/bundle") }}';
+                }
             }
         </script>
 
