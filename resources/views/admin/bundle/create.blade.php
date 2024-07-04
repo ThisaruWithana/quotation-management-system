@@ -58,11 +58,17 @@
                                             <table class="table table-bordered">
                                                 <tr class="bundle-item-cost">
                                                     <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Cost :</b></p></td>
-                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
+                                                    <td style="width:50px;text-align: right">
+                                                        <p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p>
+                                                        <input type="hidden" value="" id="total_cost" name="total_cost">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Retail :</b></p></td>
-                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl"></span></b></p></td>
+                                                    <td style="width:50px;text-align: right">
+                                                        <p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl"></span></b></p>
+                                                        <input type="hidden" value="" id="total_retail" name="total_retail">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Difference :</b></p></td>
@@ -396,7 +402,7 @@
             });
 
             $('#bundle_cost').on('keyup', function(e) {
-                calculatePrices(e.target.value, 0, 0);
+                calculatePrices(e.target.value, $("#total_retail").val(), $("#total_cost").val());
             });
 
             $('#itemSearchBtn').click(function(){
@@ -580,6 +586,8 @@
                 $("#diff-lbl").text(Number(difference).toFixed(2));
                 $("#retail-lbl").text(Number(totalRetail).toFixed(2));
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
+                $("#total_cost").val(Number(totalCost).toFixed(2));
+                $("#total_retail").val(Number(totalRetail).toFixed(2));
             }
 
             function updateDisplayStatus(isChecked){
