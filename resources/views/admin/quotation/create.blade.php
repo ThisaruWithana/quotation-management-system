@@ -190,7 +190,7 @@
                                                     name="discount" value="0" autocomplete="off">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4" id="margin-details">
                                         <div class="form-group text-left">
                                             <label for="margin" class="form-label">Quotation Margin</label>
                                             <input type="text" class="form-control" id="margin" name="margin"
@@ -532,6 +532,7 @@
                 $('.item-search-cost').hide();
                 $('.item-list-display-report').hide();
                 $('.item-list-item-margin').hide();
+                $('#margin-details').hide();
 
                 cuteAlert({
                     type: "question",
@@ -549,6 +550,7 @@
                         $('.item-search-cost').show();
                         $('.item-list-display-report').show();
                         $('.item-list-item-margin').show();
+                        $('#margin-details').show();
 
                     } else {
                         $('#in_office').val('no');
@@ -710,28 +712,37 @@
                                         var type = val['type'];
                                         var name;
                                         var editBtn = '';
+                                        var retail, totalRetail, actualCost, itemCost, margin;
 
-                                        if(type === 'bundle'){
-                                            
-                                            $('.item-list-item-margin').hide();
-                                            name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
-                                        }else{
-                                            name = val['name'];
-                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
-                                        }
+                                            if(type === 'bundle'){
+                                                name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
+                                            }else{
+                                                name = val['name'];
+                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
+                                            }
 
                                         $('.item-list tbody').append(
                                             '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                            +'<td class="item-list-retail">' + retail + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            // +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td>' + totalRetail + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -801,13 +812,24 @@
 
                                             var type = val['type'];
                                             var name;
-                                            var editBtn;
+                                            var editBtn = '';
+                                            var retail, totalRetail, actualCost, itemCost, margin;
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
                                             }else{
                                                 name = val['name'];
                                                 editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
                                             }
 
                                             $('.item-list tbody').append(
@@ -815,13 +837,13 @@
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
-                                                +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                                +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                                +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                                +'<td class="item-list-retail">' + retail + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                                +'<td>' + val['total_retail'] + '</td>'
+                                                +'<td>' + totalRetail + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1017,12 +1039,23 @@
                                         var type = val['type'];
                                             var name;
                                             var editBtn = '';
+                                            var retail, totalRetail, actualCost, itemCost, margin;
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
                                             }else{
                                                 name = val['name'];
                                                 editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
                                             }
 
                                         $('.item-list tbody').append(
@@ -1030,13 +1063,13 @@
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                            +'<td class="item-list-retail">' + retail + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td>' + totalRetail + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1158,26 +1191,37 @@
                                         var type = val['type'];
                                         var name;
                                         var editBtn = '';
+                                        var retail, totalRetail, actualCost, itemCost, margin;
 
-                                        if(type === 'bundle'){
-                                            name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
-                                        }else{
-                                            name = val['name'];
-                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
-                                        }
+                                            if(type === 'bundle'){
+                                                name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
+                                            }else{
+                                                name = val['name'];
+                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
+                                            }
 
                                         $('.item-list tbody').append(
                                             '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                            +'<td class="item-list-retail">' + retail + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td>' + totalRetail + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1255,13 +1299,24 @@
 
                                             var type = val['type'];
                                             var name;
-                                            var editBtn;
+                                            var editBtn = '';
+                                            var retail, totalRetail, actualCost, itemCost, margin;
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
                                             }else{
                                                 name = val['name'];
                                                 editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
                                             }
 
                                             $('.item-list tbody').append(
@@ -1269,13 +1324,13 @@
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
-                                                +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                                +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                                +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                                +'<td class="item-list-retail">' + retail + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                                +'<td>' + val['total_retail'] + '</td>'
+                                                +'<td>' + totalRetail + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'

@@ -1,5 +1,9 @@
 <x-admin>
     @section('title') {{ 'Item Maintainance' }} @endsection
+
+    <style>
+
+    </style>
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
@@ -75,18 +79,18 @@
                 <table class="table" id="dataTable">
                     <thead>
                         <tr>
-                            <th class="th-sm">ID</th>
-                            <th class="th-sm col-md-auto">Name</th>
-                            <th class="th-sm col-md-auto">Barcode</th>
-                            <th class="th-sm" style="width:20%">Product Code</th>
-                            <th class="th-sm" style="width:15%">Margin</th>
-                            <th class="th-sm" style="width:20%">Supplier</th>
-                            <th class="th-sm" style="width:50%">Department</th>
-                            <th class="th-sm" style="width:20%">Sub Dept</th>
-                            <th class="th-sm" style="width:80%">Created By</th>
-                            <th class="th-sm" style="width:100%">Created At</th>
-                            <th class="th-sm" style="width:30%">Status</th>
-                            <th class="th-sm"></th>
+                            <th class="th-sm" scope="col">ID</th>
+                            <th class="th-sm col-md-auto" scope="col">Name</th>
+                            <th class="th-sm col-md-auto" scope="col">Barcode</th>
+                            <th class="th-sm" style="width:20%" scope="col">Product Code</th>
+                            <th class="th-sm" style="width:15%" scope="col">Margin</th>
+                            <th class="th-sm" style="width:20%" scope="col">Supplier</th>
+                            <th class="th-sm" style="width:50%" scope="col">Department</th>
+                            <th class="th-sm" style="width:20%" scope="col">Sub Dept</th>
+                            <th class="th-sm" style="width:80%" scope="col">Created By</th>
+                            <th class="th-sm" style="width:100%" scope="col">Created At</th>
+                            <th class="th-sm" style="width:30%" scope="col">Status</th>
+                            <th class="th-sm" scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -149,7 +153,7 @@
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
-                    // "scrollX": true,
+                    "scrollX": true,
                     // "autoWidth":true,
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 10 ]},
