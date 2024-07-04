@@ -3,7 +3,9 @@
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                <a href="{{ route('admin.supplier.create') }}" class="btn btn-sm btn-primary">Add New</a>
+                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                    <a href="{{ route('admin.supplier.create') }}" class="btn btn-sm btn-primary">Add New</a>
+                @endif   
             </div>
         </div>
         <div class="card-body">
@@ -18,7 +20,10 @@
                         <th class="th-sm">Created By</th>
                         <th class="th-sm">Created At</th>
                         <th class="th-sm">Status</th>
-                        <th class="th-sm" style="width:100px;"></th>
+                        
+                        @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                            <th class="th-sm" style="width:100px;"></th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -39,20 +44,22 @@
                                 <span class="badge badge-warning">Deactive</span>
                                 @endif
                             </td>
-                            <td>
-                                <a href="{{ route('admin.supplier.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                                    <i class="far fa-edit"></i>
-                                </a>
-                                @if($value->status === 1)
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                        <i class="fas fa-trash-alt"></i>
+                            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                                <td>
+                                    <a href="{{ route('admin.supplier.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                        <i class="far fa-edit"></i>
                                     </a>
-                                @else
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                        <i class="fas fa-check-circle"></i>
-                                    </a>
-                                @endif
-                            </td>
+                                    @if($value->status === 1)
+                                        <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    @else
+                                        <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                            <i class="fas fa-check-circle"></i>
+                                        </a>
+                                    @endif
+                                </td>
+                            @endif
                         </tr>
                      <?php $i++; ?>
                     @endforeach

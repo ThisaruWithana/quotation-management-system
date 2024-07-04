@@ -178,10 +178,10 @@
             </li>
         @endrole
 
-        @role('user')
-
+        @role('manager')
+            
         <li class="nav-item">
-                <a href="{{ route('admin.product.index') }}"
+                <a href="{{ route('admin.supplier.index') }}"
                     class="nav-link {{ Route::is('admin.supplier.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-cart-plus"></i>
                     <p>Suppliers</p>
@@ -189,7 +189,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.product.index') }}"
+                <a href="{{ route('admin.department.index') }}"
                     class="nav-link {{ Route::is('admin.department.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-university"></i>
                     <p>Departments</p>
@@ -197,38 +197,304 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.product.index') }}"
-                    class="nav-link {{ Route::is('admin.product.index') ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-th"></i>
-                    <p>Item Management</p>
+                <a href="{{ route('admin.customer.index') }}"
+                    class="nav-link {{ Route::is('admin.customer.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Customers</p>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.quotation.index') }}"
-                    class="nav-link {{ Route::is('admin.quotation.index') ? 'active' : '' }}">
+                <a href="{{ route('admin.item') }}"
+                    class="nav-link {{ Route::is('admin.item') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-th"></i>
+                    <p>Item Management</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('admin.bundle.index') }}"
+                    class="nav-link {{ Route::is('admin.bundle.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-boxes"></i>
+                    <p>Bundle Management
+                        <!-- <span class="badge badge-secondary right">{{ $SubCategoryCount }}</span> -->
+                    </p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('admin/quotation') }}"
+                    class="nav-link {{ Route::is('admin.quotation') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-gavel"></i>
                     <p>Quotation Management</p>
                 </a>
             </li>
-            
+
+            <li class="nav-item">
+                <a href="#"
+                    class="nav-link {{  (Route::is('admin.po')) ? 'active' : (Route::is('admin.deliveries') ? 'active' : '') }}">
+                    <i class="nav-icon fas fa-dolly"></i>
+                    <!-- <i class="fas fa-warehouse-alt"></i> style="display: none;" -->
+                    <p>Stock Management
+                    <i class="right fas fa-angle-down"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview" 
+                    @if(Route::is('admin.po')) style='display: block;' 
+                    @elseif(Route::is('admin.deliveries'))  style='display: block;' @else @endif>
+
+                    <li class="nav-item">
+                        <a href="{{ url('admin/po') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Purchse Order</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/deliveries') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Purchse Deliveries</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/stock') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Stock Adjustment</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/stock/take') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Stock Take</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <li class="nav-item">
                 <a href="{{ route('admin.role.index') }}"
-                    class="nav-link {{ Route::is('admin.config.index') ? 'active' : '' }}">
+                    class="nav-link {{  (Route::is('admin.role.index')) ? 'active' : (Route::is('admin.user.index') ? 'active' : '') }}">
                     <i class="nav-icon fas fa-user"></i>
                     <p>User Management
                     <i class="right fas fa-angle-down"></i>
                     </p>
                 </a>
-                <ul class="nav nav-treeview">
+                <ul class="nav nav-treeview" @if(Route::is('admin.role.index')) style='display: block;' 
+                    @elseif(Route::is('admin.permission.index'))  style='display: block;'  
+                    @elseif(Route::is('admin.user.index'))  style='display: block;' @else @endif>
                     <li class="nav-item {{ Route::is('admin.user.index') ? 'active' : '' }}">
                         <a href="{{ route('admin.user.index') }}" class="nav-link" id="level2item">
                             <i class="nav-icon fas fa-circle-o"></i>
                             <p>Users</p>
                         </a>
                     </li>
+                    <li class="nav-item {{ Route::is('admin.role.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.role.index') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Role</p>
+                        </a>
+                    </li>
+                    <li class="nav-item {{ Route::is('admin.permission.index') ? 'active' : '' }}">
+                        <a href="{{ route('admin.permission.index') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Permissions</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('admin.report.barcode') }}"
+                    class="nav-link {{ Route::is('admin.collection.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-print"></i>
+                    <p>Reports<i class="right fas fa-angle-down"></i></p>
+                </a>
+                <ul class="nav nav-treeview" 
+                    @if(Route::is('admin.report.barcode')) style='display: block;' 
+                    @elseif(Route::is('admin.report.order-history'))  style='display: block;' @else @endif>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/report/barcode') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Print Labels</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/report/order-history') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Item Order History</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('admin.role.index') }}"
+                    class="nav-link {{ Route::is('admin.config.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-cogs"></i>
+                    <p>Configurations
+                    <i class="right fas fa-angle-down"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a href="{{ route('admin.location.index') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Locations</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.vat.index') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>VAT</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endrole
+
+        @role('sales')
+
+        <li class="nav-item">
+                <a href="{{ route('admin.supplier.index') }}"
+                    class="nav-link {{ Route::is('admin.supplier.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-cart-plus"></i>
+                    <p>Suppliers</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('admin.department.index') }}"
+                    class="nav-link {{ Route::is('admin.department.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-university"></i>
+                    <p>Departments</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('admin.customer.index') }}"
+                    class="nav-link {{ Route::is('admin.customer.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Customers</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('admin/quotation') }}"
+                    class="nav-link {{ Route::is('admin.quotation') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-gavel"></i>
+                    <p>Quotation Management</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('admin.report.barcode') }}"
+                    class="nav-link {{ Route::is('admin.collection.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-print"></i>
+                    <p>Reports<i class="right fas fa-angle-down"></i></p>
+                </a>
+                <ul class="nav nav-treeview" 
+                    @if(Route::is('admin.report.barcode')) style='display: block;' 
+                    @elseif(Route::is('admin.report.order-history'))  style='display: block;' @else @endif>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/report/barcode') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Print Labels</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/report/order-history') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Item Order History</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+        @endrole
+
+        
+        @role('engineer')
+
+      
+        <li class="nav-item">
+                <a href="{{ route('admin.supplier.index') }}"
+                    class="nav-link {{ Route::is('admin.supplier.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-cart-plus"></i>
+                    <p>Suppliers</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ url('admin/quotation') }}"
+                    class="nav-link {{ Route::is('admin.quotation') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-gavel"></i>
+                    <p>Quotation Management</p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#"
+                    class="nav-link {{  (Route::is('admin.po')) ? 'active' : (Route::is('admin.deliveries') ? 'active' : '') }}">
+                    <i class="nav-icon fas fa-dolly"></i>
+                    <!-- <i class="fas fa-warehouse-alt"></i> style="display: none;" -->
+                    <p>Stock Management
+                    <i class="right fas fa-angle-down"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview" 
+                    @if(Route::is('admin.po')) style='display: block;' 
+                    @elseif(Route::is('admin.deliveries'))  style='display: block;' @else @endif>
+
+                    <li class="nav-item">
+                        <a href="{{ url('admin/po') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Purchse Order</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/deliveries') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Purchse Deliveries</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/stock') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Stock Adjustment</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/stock/take') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Stock Take</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('admin.report.barcode') }}"
+                    class="nav-link {{ Route::is('admin.collection.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-print"></i>
+                    <p>Reports<i class="right fas fa-angle-down"></i></p>
+                </a>
+                <ul class="nav nav-treeview" 
+                    @if(Route::is('admin.report.barcode')) style='display: block;' 
+                    @elseif(Route::is('admin.report.order-history'))  style='display: block;' @else @endif>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/report/barcode') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Print Labels</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url('admin/report/order-history') }}" class="nav-link" id="level2item">
+                            <i class="nav-icon fas fa-circle-o"></i>
+                            <p>Item Order History</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+        @endrole
+       
+       
     </ul>
 </nav>
