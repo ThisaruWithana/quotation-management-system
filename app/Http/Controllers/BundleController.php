@@ -505,6 +505,8 @@ class BundleController extends Controller
         try{
             DB::beginTransaction();
 
+            $this->updateBundleIInfo($request);
+
             if(!empty($rowOrder)){
                 
                 $itemOrder = explode(",", $rowOrder);
@@ -529,11 +531,39 @@ class BundleController extends Controller
                     $response['msg'] = 'Something went wrong !';
                 }
             }else{
+                DB::commit(); 
                 $response['code'] = 1;
                 $response['msg'] = "Success";
             }
  
             return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
+    
+    public function updateBundleIInfo(Request $request)
+    {
+        $response = array();
+        $bundle_id = $request->input('bundle_id');
+        
+        try{
+            DB::beginTransaction();
+
+            $queryUpdate = Bundle::where('id', $bundle_id)->update([
+                'remark' => $request->input('remark'),
+                'bundle_cost' => $request->input('bundle_cost'),
+                'updated_by' => Auth::user()->id
+            ]);
+                
+                if($queryUpdate){
+                    DB::commit(); 
+                }else{
+                    DB::rollback();
+                }
         }catch(\Exception $e){
             DB::rollback();
             $response['code'] = 0;

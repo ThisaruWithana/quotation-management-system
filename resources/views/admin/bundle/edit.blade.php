@@ -35,9 +35,9 @@
                                             <div class="col-lg-12">
                                                 <div class="form-group text-left">
                                                     <label for="bundle_cost" class="form-label">Bundle Cost</label>
-                                                    <span class="required"> * </span>
+                                                 
                                                     <input type="text" class="form-control" name="bundle_cost" id="bundle_cost"
-                                                        required="" value="{{ $data->bundle_cost }}"  autocomplete="off">
+                                                         value="{{ $data->bundle_cost }}"  autocomplete="off">
                                                         @error('bundle_cost')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -80,7 +80,7 @@
                                 <input type="hidden" value="{{ $data->total_cost }}" id="total_cost" name="total_cost">
                                 <input type="hidden" value="{{ $data->total_retail }}" id="total_retail" name="total_retail">
                                 <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="{{ $data->id }}">
-                                <input type="hidden" name="in_office" id="in_office" value="">
+                                <input type="hidden" name="in_office" id="in_office" value="yes">
                                 <input type="hidden" name="row_order" id="row_order" value="">
                         </div>
                         <!-- /.card-body -->
@@ -101,8 +101,8 @@
                                             <th class="th-sm">Code</th>
                                             <th class="th-sm">Name</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm item-list-cost">Cost</th>
-                                            <th class="th-sm item-list-item-cost">Actual Cost</th>
+                                            <th class="th-sm item-list-cost">Actual Cost</th>
+                                            <th class="th-sm item-list-item-cost">Cost</th>
                                             <th class="th-sm">Retail</th>
                                             <th class="th-sm item-list-qty">Qty</th>
                                             <th class="th-sm item-list-total-cost">Total Cost</th>
@@ -346,34 +346,35 @@
                 $('.item-list-retail').addClass('editable');
                 $('.item-list-qty').addClass('editable');
 
-                $('.bundle-item-cost').hide();
-                $('.item-list-item-cost').hide();
-                $('.item-list-total-cost').hide();
-                $('.item-list-cost').hide();
-                $('.item-search-cost').hide();
-                $('.item-list-display-report').hide();
+                // $('.bundle-item-cost').hide();
+                // $('.item-list-item-cost').hide();
+                // $('.item-list-total-cost').hide();
+                // $('.item-list-cost').hide();
+                // $('.item-search-cost').hide();
+                // $('.item-list-display-report').hide();
 
-                cuteAlert({
-                    type: "question",
-                    title: "Are you in the office",
-                    message: "",
-                    confirmText: "Yes",
-                    cancelText: "No"
-                    }).then((e)=>{
-                    if ( e == ("confirm")){
-                        $('#in_office').val('yes');
-                        $(".bundle-item-cost").show();
-                        $('.item-list-item-cost').show();
-                        $('.item-list-total-cost').show();
-                        $('.item-list-cost').show();
-                        $('.item-search-cost').show();
-                        $('.item-list-display-report').show();
+                // cuteAlert({
+                //     type: "question",
+                //     title: "Are you in the office",
+                //     message: "",
+                //     confirmText: "Yes",
+                //     cancelText: "No"
+                //     }).then((e)=>{
+                //     if ( e == ("confirm")){
+                //         $('#in_office').val('yes');
+                //         $(".bundle-item-cost").show();
+                //         $('.item-list-item-cost').show();
+                //         $('.item-list-total-cost').show();
+                //         $('.item-list-cost').show();
+                //         $('.item-search-cost').show();
+                //         $('.item-list-display-report').show();
 
-                    } else {
-                        $('#in_office').val('no');
-                    }
-                });
+                //     } else {
+                //         $('#in_office').val('no');
+                //     }
+                // });
 
+                $('#in_office').val('yes');
 
                 $("#bundleCreate").submit(function(event) {
                     event.preventDefault();

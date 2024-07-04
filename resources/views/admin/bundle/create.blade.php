@@ -35,9 +35,9 @@
                                             <div class="col-lg-12">
                                                 <div class="form-group text-left">
                                                     <label for="bundle_cost" class="form-label">Bundle Cost</label>
-                                                    <span class="required"> * </span>
+                                                    <!-- <span class="required"> * </span> -->
                                                     <input type="text" class="form-control" name="bundle_cost" id="bundle_cost"
-                                                        required="" value="{{ old('bundle_cost') }}"  autocomplete="off">
+                                                        value="{{ old('bundle_cost') }}"  autocomplete="off">
                                                         @error('bundle_cost')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -79,7 +79,7 @@
 
                                 <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="">
                                 <input type="hidden" name="in_office" id="in_office" value="">
-                                <input type="text" name="row_order" id="row_order" value="">
+                                <input type="hidden" name="row_order" id="row_order" value="">
                         </div>
                         <!-- /.card-body -->
                      <div class="col-lg-2">
@@ -102,8 +102,8 @@
                                             <th class="th-sm">Code</th>
                                             <th class="th-sm">Name</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm item-list-cost">Cost</th>
-                                            <th class="th-sm item-list-item-cost">Actual Cost</th>
+                                            <th class="th-sm item-list-cost">Actual Cost</th>
+                                            <th class="th-sm item-list-item-cost">Cost</th>
                                             <th class="th-sm">Retail</th>
                                             <th class="th-sm item-list-qty">Qty</th>
                                             <th class="th-sm item-list-total-cost">Total Cost</th>
@@ -318,33 +318,36 @@
                 $('.item-list-retail').addClass('editable');
                 $('.item-list-qty').addClass('editable');
 
-                $('.bundle-item-cost').hide();
-                $('.item-list-item-cost').hide();
-                $('.item-list-total-cost').hide();
-                $('.item-list-cost').hide();
-                $('.item-search-cost').hide();
-                $('.item-list-display-report').hide();
+                // $('.bundle-item-cost').hide();
+                // $('.item-list-item-cost').hide();
+                // $('.item-list-total-cost').hide();
+                // $('.item-list-cost').hide();
+                // $('.item-search-cost').hide();
+                // $('.item-list-display-report').hide();
 
-                cuteAlert({
-                    type: "question",
-                    title: "Are you in the office",
-                    message: "",
-                    confirmText: "Yes",
-                    cancelText: "No"
-                    }).then((e)=>{
-                    if ( e == ("confirm")){
-                        $('#in_office').val('yes');
-                        $(".bundle-item-cost").show();
-                        $('.item-list-item-cost').show();
-                        $('.item-list-total-cost').show();
-                        $('.item-list-cost').show();
-                        $('.item-search-cost').show();
-                        $('.item-list-display-report').show();
+                // cuteAlert({
+                //     type: "question",
+                //     title: "Are you in the office",
+                //     message: "",
+                //     confirmText: "Yes",
+                //     cancelText: "No"
+                //     }).then((e)=>{
+                //     if ( e == ("confirm")){
+                //         $('#in_office').val('yes');
+                //         $(".bundle-item-cost").show();
+                //         $('.item-list-item-cost').show();
+                //         $('.item-list-total-cost').show();
+                //         $('.item-list-cost').show();
+                //         $('.item-search-cost').show();
+                //         $('.item-list-display-report').show();
 
-                    } else {
-                        $('#in_office').val('no');
-                    }
-                });
+                //     } else {
+                //         $('#in_office').val('no');
+                //     }
+                // });
+
+                
+                $('#in_office').val('yes');
 
                 $("#bundleCreate").submit(function(event) {
                     event.preventDefault();
@@ -367,8 +370,8 @@
                                     $(".add-items").show();
                                     $("#btnSave").hide();
                                     $("#name").prop('disabled', true);
-                                    $("#bundle_cost").prop('disabled', true);
-                                    $("#remark").prop('disabled', true);
+                                    // $("#bundle_cost").prop('disabled', true);
+                                    // $("#remark").prop('disabled', true);
 
                                     $("#bundle_id").val(result['data']);
                                     $("#bundle").val(result['data']);
@@ -403,37 +406,55 @@
 
             $('#btnUpdate').click(function(){
 
-                $.ajax({
-                    url: "{{ url('admin/bundle/update-bundle-item-order') }}",
-                    type: 'POST',
-                    data: {
-                            "_token": "{{ csrf_token() }}",
-                            "bundle_id": $('#bundle_id').val(),
-                            "row_order": $('#row_order').val()
-                        },
-                    success: function (data) {
+                if($('#bundle_cost').val() != ''){
 
-                        var result = JSON.parse(data);
+                    $.ajax({
+                        url: "{{ url('admin/bundle/update-bundle-item-order') }}",
+                        type: 'POST',
+                        data: {
+                                "_token": "{{ csrf_token() }}",
+                                "bundle_id": $('#bundle_id').val(),
+                                "row_order": $('#row_order').val(),
+                                "bundle_cost": $('#bundle_cost').val(),
+                                "remark": $('#remark').val()
+                            },
+                        success: function (data) {
 
-                        if (result['code'] == 1) {
-                            window.location = '{{ url("admin/bundle") }}';
-                        } else {
-                            toastr.error(
-                                'Error',
-                                'Something Went Wrong!',
+                            var result = JSON.parse(data);
+
+                            if (result['code'] == 1) {
+                                window.location = '{{ url("admin/bundle") }}';
+                            } else {
+                                toastr.error(
+                                    'Error',
+                                    'Something Went Wrong!',
+                                {
+                                    timeOut: 1500,
+                                    fadeOut: 1500,
+                                onHidden: function () {
+                                    
+                                    }
+                                }
+                            );
+                        }
+                        }, error: function (data) {
+
+                        }
+                    });
+
+                }else{
+                        toastr.error(
+                            'Error',
+                            'Please Enter Bundle Cost !',
                             {
                                 timeOut: 1500,
                                 fadeOut: 1500,
-                            onHidden: function () {
-                                
+                                onHidden: function () {
                                 }
                             }
                         );
-                    }
-                    }, error: function (data) {
 
-                    }
-                });
+                }
             });
 
 
