@@ -196,9 +196,9 @@
                                     <div class="col-lg-6">
                                         <div class="form-group text-left">
                                             <label for="symbol_group" class="form-label">Symbol Group</label>
-                                            <span class="required"> * </span>
+                          
                                             <input type="text" class="form-control" name="symbol_group" id="symbol_group"
-                                                value="{{ old('symbol_group') }}" autocomplete="off" required>
+                                                value="{{ old('symbol_group') }}" autocomplete="off">
                                                 @error('symbol_group')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror

@@ -71,22 +71,22 @@
             </form>
             <br>
 
-            <div>
+            <div class="table-responsive">
                 <table class="table" id="dataTable">
                     <thead>
                         <tr>
                             <th class="th-sm">ID</th>
-                            <th class="th-sm">Name</th>
-                            <th class="th-sm">Barcode</th>
-                            <th class="th-sm" style="width: 100px;">Description</th>
-                            <th class="th-sm" style="width: 100px;">Margin Type</th>
-                            <th class="th-sm" style="width: 100px;">Supplier</th>
-                            <th class="th-sm" style="width: 100px;">Department</th>
-                            <th class="th-sm" style="width: 150px;">Sub Department</th>
-                            <th class="th-sm" style="width: 100px;">Created By</th>
-                            <th class="th-sm" style="width: 80px;">Created At</th>
-                            <th class="th-sm">Status</th>
-                            <th class="th-sm" style="width: 120px;"></th>
+                            <th class="th-sm col-md-auto">Name</th>
+                            <th class="th-sm" style="width:20%">Product Code</th>
+                            <th class="th-sm col-md-auto">Barcode</th>
+                            <th class="th-sm" style="width:15%">Margin</th>
+                            <th class="th-sm" style="width:20%">Supplier</th>
+                            <th class="th-sm" style="width:50%">Department</th>
+                            <th class="th-sm" style="width:20%">Sub Dept</th>
+                            <th class="th-sm" style="width:80%">Created By</th>
+                            <th class="th-sm" style="width:100%">Created At</th>
+                            <th class="th-sm" style="width:30%">Status</th>
+                            <th class="th-sm" style="width:100%"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,10 +94,10 @@
                     @foreach ($listData as $value)
                             <tr>
                                 <td>{{ $value->id }}</td>
-                                <td>{{ $value->name }}</td>
+                                <td class="w-25">{{ $value->name }}</td>
+                                <td>{{ $value->barcode['product_code'] }}</td>
                                 <td>{{ $value->barcode['barcode'] }}</td>
-                                <td>{{ $value->description }}</td>
-                                <td>{{ $value->margin_type }}</td>
+                                <td>{{ $value->margin }}</td>
                                 <td>
                                     @foreach($value->suppliers as $suppliers)
                                         {{ $suppliers['suppliername']['name'] }} 
@@ -149,10 +149,10 @@
                     "searching": true,
                     "ordering": true,
                     "responsive": true,
-                    "scrollX": true,
-                    "autoWidth":true,
+                    // "scrollX": true,
+                    // "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 11 ]},
+                        { "bSortable": false, "aTargets": [ 12 ]},
                     ],
                     "order": [0,'desc'],
                 });
