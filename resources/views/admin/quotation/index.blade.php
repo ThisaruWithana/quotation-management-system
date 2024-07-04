@@ -53,7 +53,7 @@
                             <th class="th-sm" style="width:150px;">Quotation Price</th>
                             <th class="th-sm">Discount</th>
                             <th class="th-sm">Status</th>
-                            <th class="th-sm" style="width:80px;"></th>
+                            <th class="th-sm" style="width:100px;"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,16 +82,21 @@
                                     <a href="{{ url('admin/quotation/edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                         <i class="far fa-edit"></i>
                                     </a>
-
-                                    @if($value->status === 1)
-                                        <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                            <i class="fas fa-trash-alt"></i>
+                                    
+                                    <a href="#" class="btn btn-sm btn-secondary" title="Deactivate" onclick="softeDelete({{ $value->id }}, {{ $value->status }})">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                        
+                                    <!-- @if($value->status == 1)
+                                        <a href="#" class="btn btn-sm btn-secondary" title="Deactivate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                            <i class="fa fa-toggle-on"></i>
                                         </a>
                                     @else
                                         <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                            <i class="fas fa-check-circle"></i>
+                                    
+                                            <i class="fa fa-toggle-off"></i>
                                         </a>
-                                    @endif
+                                    @endif -->
                                 </td>
                             </tr>
                         @endforeach
@@ -136,6 +141,69 @@
                                 "_token": "{{ csrf_token() }}",
                                 "id": id,
                                 "status": status
+                            },
+                            success: function (data) {
+                                var result = JSON.parse(data);
+                                if (result == 1) {
+                                    toastr.success(
+                                        'Success',
+                                        'Successfully Updated !',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        });
+                                } else {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    );
+                                }
+                            }, error: function (data) {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    );
+                            }
+                        });
+                } else {
+                }
+            });
+        }
+
+        function softeDelete(id) {
+
+            cuteAlert({
+                type: "question",
+                title: "Are you sure",
+                message: "You want to delete of this quotation ?",
+                confirmText: "Yes",
+                cancelText: "Cancel"
+                }).then((e)=>{
+                if ( e == ("confirm")){
+                        $.ajax({
+                            url: "{{ url('admin/quotation/destroy') }}",
+                            type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "id": id,
+                                "status": 5
                             },
                             success: function (data) {
                                 var result = JSON.parse(data);

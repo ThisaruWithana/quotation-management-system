@@ -38,7 +38,7 @@ class QuotationController extends Controller
 
         $pageSize = $new;
         $customers = Customer::where('status', 1)->orderBy('name','ASC')->get();
-        $data = Quotation::query()->with('customer')->orderBy('id','DESC');
+        $data = Quotation::query()->with('customer')->whereNotIn('status', [5])->orderBy('id','DESC');
         $customer = $request->input('customer');
 
         if($request->query('form_action') === 'search'){
@@ -577,6 +577,7 @@ class QuotationController extends Controller
                 return json_encode($response);
             } 
     }
+    
     public function changeStatus(Request $request)
     {
         $status = $request->input('status');
@@ -593,6 +594,25 @@ class QuotationController extends Controller
 
             $queryStatus = Quotation::find($id);
             $queryStatus->status = $status;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->input('id');
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = Quotation::find($id);
+            $queryStatus->status = 5;
             $queryStatus->save();
 
             DB::commit();

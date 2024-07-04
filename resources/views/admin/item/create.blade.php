@@ -4,6 +4,11 @@
         <div class="card-header">
             <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
+                <a href="{{ route('admin.item') }}" class="btn btn-sm">
+                  <button type="button" class="btn btn-tool">
+                      <i class="fas fa-times"></i>
+                  </button>
+                </a>
             </div>
         </div>
         <div class="card-body px-lg-2 pt-0">

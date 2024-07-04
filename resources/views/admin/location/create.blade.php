@@ -8,6 +8,14 @@
                <h5 class="card-header  white-text text-left py-3">
                   <!-- <strong>{{ $title }}</strong> -->
                   {{ $title }}
+
+                  <div class="card-tools">
+                     <a href="{{ route('admin.location.index') }}" class="btn btn-sm btn-primary">
+                        <button type="button" class="btn btn-tool">
+                              <i class="fas fa-times"></i>
+                        </button>
+                     </a>
+                  </div>
                </h5>
                <div class="card-body px-lg-2 pt-0">
                   <form class="text-center border border-light p-5" action="{{ route('admin.location.store') }}" method="POST">

@@ -114,6 +114,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('update-quotation-item-order', [QuotationController::class, 'updateQuotationItemOrder'])->name('quotation.update-quotation-item-order');
         Route::post('update-description', [QuotationController::class, 'updateDescription'])->name('quotation.update-description');
 
+        Route::post('destroy', [QuotationController::class, 'destroy'])->name('quotation.destroy');
     });
 
     Route::prefix('opf')->group(function(){

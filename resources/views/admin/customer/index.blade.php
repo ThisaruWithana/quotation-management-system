@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="card-body">
-            <table class="table table-bordered" id="dataTable" width="100%">
+            <table class="table" id="dataTable" width="100%">
                 <thead>
                     <tr>
                         <th class="th-sm">Code</th>
@@ -33,7 +33,7 @@
                         <th class="th-sm">Symbol Group</th>
                         <th class="th-sm">Created At</th>
                         <th class="th-sm">Status</th>
-                        <th class="th-sm" style="width:80px;"></th>
+                        <th class="th-sm" style="width:100px;"></th>
                     </tr>
                 </thead>
                 <tbody>

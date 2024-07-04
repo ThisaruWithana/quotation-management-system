@@ -1,5 +1,5 @@
 <x-admin>
-   @section('title')  {{ 'Stock Management' }} @endsection
+   @section('title')  {{ 'Stock Management- Stock Adjustment' }} @endsection
     <div class="card">
         <div class="card-header">
             <div class="card-tools">

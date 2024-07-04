@@ -18,7 +18,7 @@
                         <th class="th-sm">Created By</th>
                         <th class="th-sm">Created At</th>
                         <th class="th-sm">Status</th>
-                        <th class="th-sm"></th>
+                        <th class="th-sm" style="width:100px;"></th>
                     </tr>
                 </thead>
                 <tbody>
