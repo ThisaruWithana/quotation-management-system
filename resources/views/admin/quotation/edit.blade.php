@@ -251,7 +251,7 @@
                                                                 <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
                                                                 <td class="item-list-retail">{{ $value['retail'] }}</td>
                                                                 <td class="item-list-qty">{{ $value['qty'] }}</td>
-                                                                <td>{{ $value['margin'] }}</td>
+                                                                <td class="item-list-item-margin">{{ $value['margin'] }}</td>
                                                                 <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
                                                                 <td>{{ $value['total_retail'] }}</td>
                                                                 <td class="item-list-display-report">
