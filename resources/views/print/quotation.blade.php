@@ -167,7 +167,7 @@
                                     <tr>
                                         <td colspan="3"
                                             style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
-                                            Total Amount Inc. VAT
+                                            Total Amount
                                         </td>
                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
                                             £{{ number_format($quotation['price'], 2) }}
