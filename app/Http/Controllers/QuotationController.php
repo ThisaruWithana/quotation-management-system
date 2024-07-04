@@ -1043,11 +1043,16 @@ class QuotationController extends Controller
             if($quotation){
                 $cost = $quotation['total_cost'];
                 $margin = $quotation['margin'];
+                $customerId = $quotation['customer_id'];
+
+                $customer = Customer::where('id',$customerId)->first();
+                $symbol_group = $customer['symbol_group'];
 
                 $addOpf = Opf::create([
                     'quotation_id' => $quotationId,
                     'cost' => $cost,
                     'margin' => $margin,
+                    'symbol_group' => $symbol_group,
                     'created_by' => Auth::user()->id,
                     'updated_by' => Auth::user()->id,
                 ]);
