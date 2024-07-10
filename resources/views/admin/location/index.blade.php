@@ -11,11 +11,11 @@
          <table id="dataTable" class="table" width="100%">
             <thead>
                <tr>
-                  <th class="th-sm">Name</th>
-                  <th class="th-sm">Created By</th>
-                  <th class="th-sm">Created At</th>
-                  <th class="th-sm">Status</th>
-                  <th class="th-sm"></th>
+                  <th class="th-sm w-120px">Name</th>
+                  <th class="th-sm w-120px">Created By</th>
+                  <th class="th-sm w-120px">Created At</th>
+                  <th class="th-sm w-120px">Status</th>
+                  <th class="th-sm w-120px"></th>
                </tr>
             </thead>
             <tbody>
@@ -58,7 +58,6 @@
               "paging": true,
               "searching": true,
               "ordering": true,
-              "responsive": true,
               "aoColumnDefs": [
                 { "bSortable": false, "aTargets": [ 4] }, 
             ]

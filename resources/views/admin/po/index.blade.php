@@ -49,11 +49,11 @@
                             <th class="th-sm">#</th>
                             <th class="th-sm">Type</th>
                             <th class="th-sm">Supplier</th>
-                            <th class="th-sm">Order Date</th>
-                            <th class="th-sm">Total Cost</th>
-                            <th class="th-sm">Created At</th>
-                            <th class="th-sm">Status</th>
-                            <th class="th-sm"></th>
+                            <th class="th-sm w-100px">Order Date</th>
+                            <th class="th-sm w-100px">Total Cost</th>
+                            <th class="th-sm w-100px">Created At</th>
+                            <th class="th-sm w-100px">Status</th>
+                            <th class="th-sm w-120px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,11 +108,9 @@
                     "bPaginate": false,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
-                    // "scrollX": false,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 6 ]},
+                        { "bSortable": false, "aTargets": [ 7 ]},
                     ],
                     "order": [0,'desc'],
                 });

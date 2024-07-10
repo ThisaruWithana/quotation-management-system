@@ -122,12 +122,12 @@
                                                 <th class="th-sm">Code</th>
                                                 <th class="th-sm">Name</th>
                                                 <th class="th-sm">Supplier</th>
-                                                <th class="th-sm item-list-item-cost">Item Cost</th>
+                                                <th class="w-120px th-sm item-list-item-cost">Item Cost</th>
                                                 <th class="th-sm item-list-qty">Qty</th>
-                                                <th class="th-sm item-list-total-cost">Total Cost</th>
+                                                <th class="w-120px th-sm item-list-total-cost">Total Cost</th>
                                                 <th class="th-sm">Stock</th>
-                                                <th class="th-sm item-list-on-order">On Order</th>
-                                                <th class="th-sm item-list-order-qty">Order Qty</th>
+                                                <th class="w-120px th-sm item-list-on-order">On Order</th>
+                                                <th class="w-120px th-sm item-list-order-qty">Order Qty</th>
                                                 <th class="th-sm"></th>
                                                 <th class="th-sm"></th>
                                             </tr>
@@ -290,12 +290,12 @@
                                 <table class="table table-item-search table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
-                                            <th class="th-sm">Item Code</th>
-                                            <th class="th-sm">Item Name</th>
+                                            <th class="w-100px th-sm">Item Code</th>
+                                            <th class="w-100px th-sm">Item Name</th>
                                             <th class="th-sm">Department</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm item-search-cost">Cost Price</th>
-                                            <th class="th-sm">Retail Price</th>
+                                            <th class="w-100px th-sm item-search-cost">Cost Price</th>
+                                            <th class="w-100px th-sm">Retail Price</th>
                                             <th class="th-sm"></th>
                                         </tr>
                                     </thead>

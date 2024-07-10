@@ -79,18 +79,17 @@
                 <table class="table" id="dataTable">
                     <thead>
                         <tr>
-                            <th class="th-sm" scope="col">ID</th>
-                            <th class="th-sm col-md-auto" scope="col">Name</th>
-                            <th class="th-sm col-md-auto" scope="col">Barcode</th>
-                            <th class="th-sm" style="width:20%" scope="col">Product Code</th>
-                            <th class="th-sm" style="width:15%" scope="col">Margin</th>
-                            <th class="th-sm" style="width:20%" scope="col">Supplier</th>
-                            <th class="th-sm" style="width:50%" scope="col">Department</th>
-                            <th class="th-sm" style="width:20%" scope="col">Sub Dept</th>
-                            <th class="th-sm" style="width:80%" scope="col">Created By</th>
-                            <th class="th-sm" style="width:100%" scope="col">Created At</th>
-                            <th class="th-sm" style="width:30%" scope="col">Status</th>
-                            <th class="th-sm" scope="col"></th>
+                            <th class="th-sm">ID</th>
+                            <th class="th-sm  w-100px">Name</th>
+                            <th class="th-sm w-100px">Barcode</th>
+                            <th class="th-sm w-100px">Product Code</th>
+                            <th class="th-sm">Margin</th>
+                            <th class="th-sm w-100px">Supplier</th>
+                            <th class="th-sm w-100px">Department</th>
+                            <th class="th-sm w-100px">Sub Dept</th>
+                            <th class="th-sm w-100px">Created By</th>
+                            <th class="th-sm">Status</th>
+                            <th class="th-sm w-120px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -98,7 +97,7 @@
                     @foreach ($listData as $value)
                             <tr>
                                 <td>{{ $value->id }}</td>
-                                <td class="w-25">{{ $value->name }}</td>
+                                <td>{{ $value->name }}</td>
                                 <td>{{ $value->barcode['barcode'] }}</td>
                                 <td>{{ $value->barcode['product_code'] }}</td>
                                 <td>{{ $value->margin }}</td>
@@ -110,7 +109,6 @@
                                 <td>{{ $value->department['name'] }}</td>
                                 <td>{{ $value->subdepartment['name'] }}</td>
                                 <td>{{ $value->created_user->name }}</td>
-                                <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                                 <td>
                                     @if($value->status == 1)
                                     <span class="badge badge-success">Active</span>
@@ -152,9 +150,7 @@
                     "bPaginate": false,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
-                    "scrollX": true,
-                    // "autoWidth":true,
+                    "autoWidth":true,
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 10 ]},
                     ],

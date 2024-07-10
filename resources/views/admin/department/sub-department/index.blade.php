@@ -14,14 +14,14 @@
             <table class="table" id="dataTable">
                 <thead>
                     <tr>
-                        <th class="th-sm">Sub Department</th>
-                        <th class="th-sm">Department</th>
-                        <th class="th-sm">Created By</th>
-                        <th class="th-sm">Created At</th>
-                        <th class="th-sm">Last Updated</th>
-                        <th class="th-sm">Status</th>
+                        <th class="th-sm w-120px">Sub Department</th>
+                        <th class="th-sm w-100px">Department</th>
+                        <th class="th-sm w-100px">Created By</th>
+                        <th class="th-sm w-100px">Created At</th>
+                        <th class="th-sm w-100px">Last Updated</th>
+                        <th class="th-sm w-100px">Status</th>
                             @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
-                                <th class="th-sm" style="width:100px;"></th>
+                                <th class="th-sm w-100px"></th>
                             @endif
                     </tr>
                 </thead>
@@ -71,7 +71,6 @@
                     "paging": true,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
               "aoColumnDefs": [
                 { "bSortable": false, "aTargets": [ 6] }, 
             ]

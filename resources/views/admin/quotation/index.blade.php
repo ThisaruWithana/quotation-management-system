@@ -42,18 +42,18 @@
                 </div>
             </form>
             <br>
-            <div>
-                <table class="table table-bordered" id="dataTable" width="100%">
+            <div class="table-responsive">
+                <table class="table" id="dataTable" width="100%">
                     <thead>
                         <tr>
                             <th class="th-sm">#</th>
-                            <th class="th-sm">Quot.Ref</th>
-                            <th class="th-sm" style="width:200px;">Customer Name</th>
+                            <th class="th-sm w-120px">Quot.Ref</th>
+                            <th class="th-sm w-120px">Customer Name</th>
                             <th class="th-sm">Description</th>
-                            <th class="th-sm" style="width:150px;">Quotation Price</th>
+                            <th class="th-sm w-120px">Quotation Price</th>
                             <th class="th-sm">Discount</th>
                             <th class="th-sm">Status</th>
-                            <th class="th-sm" style="width:100px;"></th>
+                            <th class="th-sm w-120px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -86,17 +86,7 @@
                                     <a href="#" class="btn btn-sm btn-secondary" title="Deactivate" onclick="softeDelete({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
-                                        
-                                    <!-- @if($value->status == 1)
-                                        <a href="#" class="btn btn-sm btn-secondary" title="Deactivate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                            <i class="fa fa-toggle-on"></i>
-                                        </a>
-                                    @else
-                                        <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                    
-                                            <i class="fa fa-toggle-off"></i>
-                                        </a>
-                                    @endif -->
+                   
                                 </td>
                             </tr>
                         @endforeach
@@ -114,8 +104,6 @@
                     "bPaginate": false,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
-                    "scrollX": true,
                     "autoWidth":true,
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 7 ]},
