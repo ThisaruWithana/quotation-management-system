@@ -1,9 +1,9 @@
 <x-admin>
     @section('title') {{ 'Item Maintainance' }} @endsection
 
-    <style>
-
-    </style>
+    
+  </style> 
+</head> 
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
@@ -11,7 +11,7 @@
                 <a href="{{ route('admin.item.create') }}" class="btn btn-sm btn-primary" >Add New</a>
             </div>
         </div>
-        <div class="card-body  table-responsive">
+        <div class="card-body">
             
         <form method="GET" action="{{ route('admin.item') }}" id="frm-list">
 
@@ -82,14 +82,14 @@
                             <th class="th-sm">ID</th>
                             <th class="th-sm  w-100px">Name</th>
                             <th class="th-sm w-100px">Barcode</th>
-                            <th class="th-sm w-100px">Product Code</th>
+                            <th class="th-sm w-120px">Product Code</th>
                             <th class="th-sm">Margin</th>
                             <th class="th-sm w-100px">Supplier</th>
                             <th class="th-sm w-100px">Department</th>
                             <th class="th-sm w-100px">Sub Dept</th>
                             <th class="th-sm w-100px">Created By</th>
                             <th class="th-sm">Status</th>
-                            <th class="th-sm w-120px"></th>
+                            <th class="th-sm w-150px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,6 +138,7 @@
                         @endforeach
                     </tbody>
                 </table>
+
             </div>
             <div id="list_pagination" style="float: right;">{{ $listData->appends(Request::all())->links() }}</div>
         </div>
@@ -151,6 +152,9 @@
                     "searching": true,
                     "ordering": true,
                     "autoWidth":true,
+                    "fixedHeader": {
+                        "header": true,
+                    },
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 10 ]},
                     ],
@@ -160,9 +164,6 @@
                 var dt = $('#dataTable').DataTable();
                 dt.columns.adjust();
 
-                $("#check-all").click(function () {
-                    $('#dataTable tbody input[type="checkbox"]').prop('checked', this.checked);
-                });
             });
             
             function changeStatus(id, status) {

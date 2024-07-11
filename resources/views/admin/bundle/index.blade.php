@@ -93,6 +93,9 @@
                     "searching": true,
                     "ordering": true,
                     "autoWidth":true,
+                    "fixedHeader": {
+                        "header": true,
+                    },
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 8 ]},
                     ],

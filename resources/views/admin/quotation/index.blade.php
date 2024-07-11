@@ -48,9 +48,9 @@
                         <tr>
                             <th class="th-sm">#</th>
                             <th class="th-sm w-120px">Quot.Ref</th>
-                            <th class="th-sm w-120px">Customer Name</th>
+                            <th class="th-sm w-150px">Customer Name</th>
                             <th class="th-sm">Description</th>
-                            <th class="th-sm w-120px">Quotation Price</th>
+                            <th class="th-sm w-150px">Quotation Price</th>
                             <th class="th-sm">Discount</th>
                             <th class="th-sm">Status</th>
                             <th class="th-sm w-120px"></th>

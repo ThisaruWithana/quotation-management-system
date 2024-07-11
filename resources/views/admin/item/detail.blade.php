@@ -1,5 +1,6 @@
 <x-admin>
     @section('title')  {{ 'Item Maintainance' }} @endsection
+
       <section class="content">
         <div class="card ">
           <div class="card-header">
@@ -14,7 +15,7 @@
             <div class="row">
                 <div class="col-10">
                     <div class="row">
-                        <div class="post table-responsive">
+                        <div class="post table-responsive" >
                             <h4>Suppliers</h4><br>
                             <table class="table table-head-fixed text-nowrap">
                                 <thead>
@@ -42,8 +43,8 @@
                             </table>
                         </div>
                     </div><br><br>
-                    <div class="row">
-                        <div class="post table-responsive">
+                    <div class="row"> 
+                        <div class="post table-responsive" id="content_1">
                             <h4>Optional Item List</h4><br>
                             <table class="table table-head-fixed text-nowrap">
                                 <thead>
@@ -149,7 +150,7 @@
     @section('js')
         <script>
             $(document).ready(function(){
-                $('.table-responsive').doubleScroll();
+                // $('.table-responsive').doubleScroll();
             });
         </script>
     @endsection
