@@ -2,7 +2,6 @@
     @section('title') {{ 'Item Maintainance' }} @endsection
 
     
-  </style> 
 </head> 
     <div class="card">
         <div class="card-header">

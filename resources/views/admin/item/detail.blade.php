@@ -1,5 +1,11 @@
 <x-admin>
     @section('title')  {{ 'Item Maintainance' }} @endsection
+    <style type="text/css">
+        #container {
+            max-height: 100%;
+            /* max-width: 90%; */
+        }
+    </style>
 
       <section class="content">
         <div class="card ">
@@ -15,7 +21,7 @@
             <div class="row">
                 <div class="col-10">
                     <div class="row">
-                        <div class="post table-responsive" >
+                        <div class="post table-responsive" id="">
                             <h4>Suppliers</h4><br>
                             <table class="table table-head-fixed text-nowrap">
                                 <thead>
@@ -151,6 +157,8 @@
         <script>
             $(document).ready(function(){
                 // $('.table-responsive').doubleScroll();
+
+                $('#container').scrollbox();
             });
         </script>
     @endsection

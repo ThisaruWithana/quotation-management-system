@@ -126,13 +126,6 @@
                 padding: 0;
             }
         </style>
-
-        <style type="text/css">
-            #container {
-                max-height: 500px;
-                /* max-width: 750px; */
-            }
-        </style>
     @yield('css')
 </head>
 
