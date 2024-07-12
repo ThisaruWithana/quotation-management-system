@@ -360,10 +360,10 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('admin.department.index') }}"
-                    class="nav-link {{ Route::is('admin.department.index') ? 'active' : '' }}">
-                    <i class="nav-icon fas fa-university"></i>
-                    <p>Departments</p>
+                <a href="{{ route('admin.item') }}"
+                    class="nav-link {{ Route::is('admin.item') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-th"></i>
+                    <p>Item Management</p>
                 </a>
             </li>
 
@@ -413,7 +413,7 @@
         @role('engineer')
 
       
-        <li class="nav-item">
+            <li class="nav-item">
                 <a href="{{ route('admin.supplier.index') }}"
                     class="nav-link {{ Route::is('admin.supplier.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-cart-plus"></i>
@@ -422,13 +422,26 @@
             </li>
 
             <li class="nav-item">
+                <a href="{{ route('admin.customer.index') }}"
+                    class="nav-link {{ Route::is('admin.customer.index') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-users"></i>
+                    <p>Customers</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('admin.item') }}"
+                    class="nav-link {{ Route::is('admin.item') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-th"></i>
+                    <p>Item Management</p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ url('admin/quotation') }}"
                     class="nav-link {{ Route::is('admin.quotation') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-gavel"></i>
                     <p>Quotation Management</p>
                 </a>
             </li>
-
             <li class="nav-item">
                 <a href="#"
                     class="nav-link {{  (Route::is('admin.po')) ? 'active' : (Route::is('admin.deliveries') ? 'active' : '') }}">

@@ -6,8 +6,9 @@
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                <!-- <a href="#" class="btn btn-sm btn-primary" >Bulck Edit</a> -->
-                <a href="{{ route('admin.item.create') }}" class="btn btn-sm btn-primary" >Add New</a>
+                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                    <a href="{{ route('admin.item.create') }}" class="btn btn-sm btn-primary" >Add New</a>
+                @endif
             </div>
         </div>
         <div class="card-body">
@@ -116,6 +117,7 @@
                                     @endif
                                 </td>
                                 <td>
+                                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
                                     <a href="{{ route('admin.item.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" target="_blank">
                                         <i class="far fa-edit"></i>
                                     </a>
@@ -128,6 +130,8 @@
                                             <i class="fas fa-check-circle"></i>
                                         </a>
                                     @endif
+                                @endif
+                                 
                                     <a href="{{ route('admin.item.detail',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                         <i class="far fa-eye"></i>
                                     </a>

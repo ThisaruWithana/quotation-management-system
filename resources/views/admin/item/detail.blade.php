@@ -11,7 +11,9 @@
         <div class="card ">
           <div class="card-header">
             <div class="card-tools">
-                <a href="{{ route('admin.item.edit',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="far fa-edit"></i>  Edit Item</a>
+                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                    <a href="{{ route('admin.item.edit',encrypt($data->id)) }}" class="btn btn-sm btn-primary"><i class="far fa-edit"></i> Edit Item</a>
+                @endif  
                 <a href="{{ route('admin.item') }}" class="btn btn-sm btn-primary"><i class="fas fa-times"></i></a>
         
             </div>
