@@ -285,7 +285,7 @@
 
                                     <div class="col-lg-4">
                                         <table class="table table-bordered">
-                                            <tr>
+                                            <tr id="quot-margin-before-discount">
                                                 <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot.
                                                             Margin :</b></p></td>
                                                 <td style="width:200px;"><p class="text-sm mb-0"><b
@@ -293,7 +293,7 @@
                                                                 id="quot-margin"></span></b></p></td>
                                             </tr>
                                             
-                                            <tr>
+                                            <tr id="quot-margin-after-discount">
                                                 <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin After Discount:</b></p></td>
                                                 <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl"></span></b></p></td>
                                             </tr>
@@ -540,6 +540,8 @@
                 $('.item-search-cost').hide();
                 $('.item-list-display-report').hide();
                 $('.item-list-item-margin').hide();
+                $('#quot-margin-before-discount').hide();
+                $('#quot-margin-after-discount').hide();
                 $('#margin-details').hide();
 
                 cuteAlert({
@@ -559,6 +561,8 @@
                         $('.item-list-display-report').show();
                         $('.item-list-item-margin').show();
                         $('#margin-details').show();
+                        $('#quot-margin-before-discount').show();
+                        $('#quot-margin-after-discount').show();
 
                     } else {
                         $('#in_office').val('no');
