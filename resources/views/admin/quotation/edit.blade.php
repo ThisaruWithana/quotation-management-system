@@ -311,11 +311,11 @@
                                             <table class="table table-bordered">
                                                 <tr id="quot-margin-before-discount">
                                                     <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin :</b></p></td>
-                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin">{{ number_format($quotationMargin, 2) }} ({{ number_format($quotationMarginRate, 2) }}%)</span></b></p></td>
+                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin">{{ number_format($quotationMarginRate, 2) }}%</span></b></p></td>
                                                 </tr>
                                                 <tr id="quot-margin-after-discount">
                                                     <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin After Discount:</b></p></td>
-                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl">{{ number_format($quotationMargin, 2) }} ({{ number_format($quotationMarginRate, 2) }}%)</span></b></p></td>
+                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl">{{ number_format($quotationMarginRate, 2) }}%</span></b></p></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">VAT :</b></p></td>
@@ -586,8 +586,8 @@
                     }
                 });
 
-                var totalCost = parseFloat($("#total-cost-lbl").text());
-                var totalRetail = parseFloat($("#retail-lbl").text());
+                var totalCost = parseFloat($("#total-cost").val());
+                var totalRetail = parseFloat($("#total-retail").val());
                 var quotationCost = parseFloat($('#price').val());
                 var discount = $('#discount').val();
 
@@ -607,7 +607,7 @@
                 $("#price").on("keyup", function() {
 
                     var quotationCost = this.value;
-                    var totalCost = parseFloat($("#total-cost").text());
+                    var totalCost = parseFloat($("#total-cost").val());
                     var totalRetail = parseFloat($("#total-retail").val());
                     var discount = parseFloat($('#discount').val());
 
@@ -1061,7 +1061,7 @@
             function calculatePrices(quotationCost, totalRetail, totalCost, discount){
 
                 calculateMarginBeforeDiscount($("#price").val(), totalCost);
-                
+   
                 if(typeof discount == "undefined"){
                     discount = 0;
                 }else{
@@ -1076,7 +1076,7 @@
                  
                     var quotationMargin = quotationPriceAfterDiscount - totalCost;
                     var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
-                    var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    var quotationMarginVal = quotationMarginRate + '%';
 
                     var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
                     
@@ -1397,7 +1397,7 @@
                 if(quotationCost > 0){
                     var quotationMargin = quotationCost - totalCost;
                     var quotationMarginRate = Number((quotationMargin / quotationCost) * 100).toFixed(2);
-                    quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    quotationMarginVal = quotationMarginRate + '%';
                 }else{
                     quotationMarginVal = 0;
                 }

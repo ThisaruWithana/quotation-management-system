@@ -593,8 +593,8 @@
                 $("#price").on("keyup", function() {
 
                     var quotationCost = this.value;
-                    var totalCost = parseFloat($("#total-cost-lbl").text());
-                    var totalRetail = parseFloat($("#retail-lbl").text());
+                    var totalCost = parseFloat($("#total-cost").val());
+                    var totalRetail = parseFloat($("#total-retail").val());
                     var discount = parseFloat($('#discount').val());
 
                     if (isNaN(totalCost)) {
@@ -1128,7 +1128,7 @@
 
                     var quotationMargin = quotationPriceAfterDiscount - totalCost;
                     var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
-                    var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    var quotationMarginVal = quotationMarginRate + '%';
 
                     var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
                     
@@ -1440,7 +1440,7 @@
                 if(quotationCost > 0){
                     var quotationMargin = quotationCost - totalCost;
                     var quotationMarginRate = Number((quotationMargin / quotationCost) * 100).toFixed(2);
-                    quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    quotationMarginVal = quotationMarginRate + '%';
                 }else{
                     quotationMarginVal = 0;
                 }
