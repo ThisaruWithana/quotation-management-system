@@ -4,7 +4,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.item') }}" class="btn btn-sm">
+                <a class="btn btn-sm" onclick=softeDelete()>
                   <button type="button" class="btn btn-tool">
                       <i class="fas fa-times"></i>
                   </button>
@@ -848,6 +848,72 @@
         });
       }
 
+      function softeDelete() {
+
+        if($('#item_id').val() != ''){
+            cuteAlert({
+                type: "question",
+                title: "Are you sure",
+                message: "You want to delete of this changes and go back?",
+                confirmText: "Yes",
+                cancelText: "Cancel"
+                }).then((e)=>{
+                if ( e == ("confirm")){
+                        $.ajax({
+                            url: "{{ url('admin/item/destroy') }}",
+                            type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "id":$('#item_id').val()
+                            },
+                            success: function (data) {
+                                var result = JSON.parse(data);
+                                if (result == 1) {
+                                    toastr.success(
+                                        'Success',
+                                        'Successfully Updated !',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location = '{{ url("admin/item") }}';
+                                            }
+                                        });
+                                } else {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    );
+                                }
+                            }, error: function (data) {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    );
+                            }
+                        });
+                } else {
+              
+                }
+            });
+        }else{
+            window.location = '{{ url("admin/item") }}';
+        }
+      }
     </script>
     @endsection
 </x-admin>

@@ -5,7 +5,7 @@
         <div class="card-header">
             <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.item') }}" class="btn btn-sm">
+                <a class="btn btn-sm" onclick=saveChangesConfirmation()>
                   <button type="button" class="btn btn-tool">
                       <i class="fas fa-times"></i>
                   </button>
@@ -54,7 +54,7 @@
               </div>
 
               <div class="bs-stepper-content">
-              <form class="text-center border border-light p-5" action="" id="itemdetails" enctype="multipart/form-data" onsubmit="return false;">
+              <form class="text-center border border-light p-5" method="POST" action="{{ url('admin/item/update') }}" id="itemdetails" enctype="multipart/form-data" onsubmit="return false;">
                 <div id="test-l-1" class="content">
 
                         <div class="row">
@@ -715,25 +715,24 @@
                 });
         }
 
-            function updateMandatoryStatus(isChecked){
-              var ischecked = isChecked.checked;
+        function updateMandatoryStatus(isChecked){
+            var ischecked = isChecked.checked;
 
-                $.ajax({
-                    url: "{{ url('admin/item/update-mandatory-status') }}",
-                    type: 'POST',
-                        data: {
-                            "_token": "{{ csrf_token() }}",
-                            "id": isChecked.value,
-                            "ischecked": ischecked
-                        },
-                        success: function (data) {
-                            var result = JSON.parse(data);
+            $.ajax({
+                url: "{{ url('admin/item/update-mandatory-status') }}",
+                type: 'POST',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": isChecked.value,
+                        "ischecked": ischecked
+                    },
+                    success: function (data) {
+                        var result = JSON.parse(data);
 
-                        }, error: function (data) {
-
-                    }
-                });
-            }
+                    }, error: function (data) {
+                }
+            });
+        }
         
         function changeStatus(id, itemId){
 
@@ -782,7 +781,25 @@
             });
         }
 
+        function saveChangesConfirmation() {
 
+            cuteAlert({
+                    type: "question",
+                    title: "Are you sure",
+                    message: "You want to save this changes and go back?",
+                    confirmText: "Yes",
+                    cancelText: "Cancel"
+                    }).then((e)=>{
+                    if ( e == ("confirm")){
+
+                        $("#itemdetails").submit();
+
+
+                    } else {
+                
+                    }
+                });
+        }
     </script>
     @endsection
 </x-admin>

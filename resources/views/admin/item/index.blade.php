@@ -1,7 +1,8 @@
 <x-admin>
     @section('title') {{ 'Item Maintainance' }} @endsection
-
     
+    <style>
+    </style>
 </head> 
     <div class="card">
         <div class="card-header">
@@ -76,7 +77,8 @@
             <br>
 
             <div class="table-responsive">
-                <table class="table" id="dataTable">
+
+                <table class="table" id="dataTable" style="width:100%">
                     <thead>
                         <tr>
                             <th class="th-sm">ID</th>
@@ -161,7 +163,9 @@
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 10 ]},
                     ],
-                    "order": [0,'desc'],
+                    "order": [0,'desc'],  
+                    "scrollX": true,
+                    "scrollY": 500
                 });
                 
                 var dt = $('#dataTable').DataTable();
@@ -231,50 +235,6 @@
                     }
                 });
             }
-
-            // function filterData(){
-
-            //     $.ajax({
-            //         url: "{{ url('admin/item/filter') }}",
-            //         type: 'POST',
-            //             data: {
-            //                 "_token": "{{ csrf_token() }}",
-            //                 "status": $('#status').val(),
-            //             },
-            //             success: function (data) {
-            //                 $("#dataTable tbody").empty();
-            //                 var result = JSON.parse(data);
-
-            //                 alert(result.length);
-
-            //                 if (result.length > 0) {
-
-            //                     $.each(result, function (count, val) {
-
-            //                         $('#dataTable tbody').append(
-            //                             '<tr>'
-            //                             +'</td><input type="checkbox" name="ids[]" value="'+ val['id'] +'" class="form-check-label"></td>'
-            //                             +'</td>'+ val['id'] +'</td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</tr>'
-            //                         );
-            //                     });
-            //                 } 
-            //             }, error: function (data) {
-                                    
-            //         }
-            //     });
-            // }
 
             function selectPageSize(pageSize) {
                     document.getElementById('frm-list').submit();

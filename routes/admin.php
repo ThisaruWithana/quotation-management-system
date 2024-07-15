@@ -95,8 +95,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('update-mandatory-status', [ItemController::class, 'updateMandatoryStatus'])->name('item.update-mandatory-status');
         Route::post('store-sub-items', [ItemController::class, 'storeSubItems'])->name('item.store-sub-items');
         Route::post('get-sub-items', [ItemController::class, 'getSubItems'])->name('item.get-sub-items');
+
         Route::post('validate-productcode', [ItemController::class, 'validateProductCode'])->name('item.validate-productcode');
         Route::post('delete-item', [ItemController::class, 'deleteItem'])->name('item.delete-item');
+        Route::post('destroy', [ItemController::class, 'destroy'])->name('item.destroy');
     });
 
     Route::prefix('quotation')->group(function(){

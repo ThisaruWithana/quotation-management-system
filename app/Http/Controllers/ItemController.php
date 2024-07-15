@@ -49,7 +49,8 @@ class ItemController extends Controller
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
 
         
-        $data = Item::query()->with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')->orderBy('id','desc');
+        $data = Item::query()->with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')
+                ->whereIn('status', [0,1])->orderBy('id','desc');
 
         if($request->query('form_action') === 'search'){
 
@@ -820,5 +821,24 @@ class ItemController extends Controller
                 $response['msg'] = $e->getMessage();
                 return json_encode($response);
             } 
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->input('id');
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = Item::find($id);
+            $queryStatus->status = 2;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
     }
 }
