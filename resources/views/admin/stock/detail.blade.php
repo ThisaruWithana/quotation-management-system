@@ -27,7 +27,7 @@
                 </div>
                 <hr><br>
 
-                    <div class="row">
+                    <div class="row table-responsive">
                         <div class="col-lg-12" style="margin-left:20px;">
                             <h4>Stock Adjustment Items</h4><br>
                             <div class="post">
