@@ -35,7 +35,10 @@ class UserController extends Controller
             'role' => 'required'
         ]);
 
+        $role_id = $this->getRoleIdByName($request->role);
+
         $user = User::create([
+            'role_id' => $role_id,
             'name' => $request->name,
             'email' => $request->email,
             'mode' => 'light',
