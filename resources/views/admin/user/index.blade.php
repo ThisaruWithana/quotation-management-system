@@ -9,11 +9,11 @@
             <table class="table" id="dataTable">
                 <thead>
                     <tr>
-                        <th class="th-sm">Name</th>
-                        <th class="th-sm">Email</th>
-                        <th class="th-sm">Created At</th>
-                        <th class="th-sm">Status</th>
-                        <th></th>
+                        <th class="th-sm w-150px">Name</th>
+                        <th class="th-sm w-150px">Email</th>
+                        <th class="th-sm w-120px">Created At</th>
+                        <th class="th-sm w-120px">Status</th>
+                        <th class="th-sm w-120px"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,7 +56,6 @@
                     "paging": true,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 4] }, 
                     ]

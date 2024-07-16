@@ -4,7 +4,9 @@
         <div class="card-header">
             <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.department.sub.create') }}" class="btn btn-sm btn-primary">Add New</a>
+                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                    <a href="{{ route('admin.department.sub.create') }}" class="btn btn-sm btn-primary">Add New</a>
+                @endif
                 <a href="{{ route('admin.department.index') }}" class="btn btn-sm btn-warning">Departments</a>
             </div>
         </div>
@@ -12,19 +14,23 @@
             <table class="table" id="dataTable">
                 <thead>
                     <tr>
-                        <th class="th-sm">Sub Department</th>
-                        <th class="th-sm">Department</th>
-                        <th class="th-sm">Created By</th>
-                        <th class="th-sm">Created At</th>
-                        <th class="th-sm">Last Updated</th>
-                        <th class="th-sm">Status</th>
-                        <th class="th-sm" style="width:100px;"></th>
+                        <th class="th-sm w-50px">ID</th>
+                        <th class="th-sm w-120px">Sub Department</th>
+                        <th class="th-sm w-100px">Department</th>
+                        <th class="th-sm w-100px">Created By</th>
+                        <th class="th-sm w-100px">Created At</th>
+                        <th class="th-sm w-100px">Last Updated</th>
+                        <th class="th-sm w-100px">Status</th>
+                            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                                <th class="th-sm w-100px"></th>
+                            @endif
                     </tr>
                 </thead>
                 <tbody>
                 <?php $i = 1; ?>
                 @foreach ($data as $value)
                         <tr>
+                            <td>{{ $value->id }}</td>
                             <td>{{ $value->name }}</td>
                             <td>{{ $value->departments->name }}</td>
                             <td>{{ $value->created_user->name }}</td>
@@ -37,20 +43,22 @@
                                 <span class="badge badge-warning">Deactive</span>
                                 @endif
                             </td>
-                            <td>
-                                <a href="{{ route('admin.department.sub.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                                    <i class="far fa-edit"></i>
-                                </a>
-                                @if($value->status === 1)
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                        <i class="fas fa-trash-alt"></i>
+                            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                                <td>
+                                    <a href="{{ route('admin.department.sub.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                        <i class="far fa-edit"></i>
                                     </a>
-                                @else
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                        <i class="fas fa-check-circle"></i>
-                                    </a>
-                                @endif
-                            </td>
+                                    @if($value->status === 1)
+                                        <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    @else
+                                        <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                            <i class="fas fa-check-circle"></i>
+                                        </a>
+                                    @endif
+                                </td>
+                            @endif
                         </tr>
                      <?php $i++; ?>
                     @endforeach
@@ -65,9 +73,8 @@
                     "paging": true,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
               "aoColumnDefs": [
-                { "bSortable": false, "aTargets": [ 6] }, 
+                { "bSortable": false, "aTargets": [ 7] }, 
             ]
                 });
             });

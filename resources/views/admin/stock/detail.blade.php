@@ -27,45 +27,45 @@
                 </div>
                 <hr><br>
 
-                    <div class="row">
-                    <div class="col-lg-12" style="margin-left:20px;">
-                        <h4>Stock Adjustment Items</h4><br>
-                        <div class="post">
-                            <table class="table table-head-fixed text-nowrap" id="">
-                                <thead>
-                                    <tr>
-                                        <th class="th-sm">ID</th>
-                                        <th class="th-sm">Name</th>
-                                        <th class="th-sm">Supplier</th>
-                                        <th class="th-sm">Item Cost</th>
-                                        <th class="th-sm">Item Retail</th>
-                                        <th class="th-sm">Stock Before Adjustment</th>
-                                        <th class="th-sm">Qty</th>
-                                        <th class="th-sm">Stock After Adjustment</th>
-                                        <th class="th-sm">Adjustment Total Cost</th>
-                                        <th class="th-sm">Adjustment Total Retail</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($itemList as $value)
+                    <div class="row table-responsive">
+                        <div class="col-lg-12" style="margin-left:20px;">
+                            <h4>Stock Adjustment Items</h4><br>
+                            <div class="post">
+                                <table class="table table-head-fixed" id="">
+                                    <thead>
                                         <tr>
-                                            <td>{{ $value['item_id'] }}</td>
-                                            <td>{{ $value['name'] }}</td>
-                                            <td>{{ $value['supplier'] }}</td>
-                                            <td>{{ number_format($value['item_cost'], 2) }}</td>
-                                            <td>{{ number_format($value['retail'], 2) }}</td>
-                                            <td>{{ $value['stock_before'] }}</td>
-                                            <td>{{ $value['qty'] }}</td>
-                                            <td>{{ $value['stock_after'] }}</td>
-                                            <td>{{ number_format($value['total_cost'], 2) }}</td>
-                                            <td>{{ number_format($value['total_retail'], 2) }}</td>
+                                            <th class="th-sm">ID</th>
+                                            <th class="th-sm">Name</th>
+                                            <th class="th-sm">Supplier</th>
+                                            <th class="w-100px th-sm">Item Cost</th>
+                                            <th class="w-120px th-sm">Item Retail</th>
+                                            <th class="w-200px th-sm">Stock Before Adjustment</th>
+                                            <th class="th-sm">Qty</th>
+                                            <th class="w-200px th-sm">Stock After Adjustment</th>
+                                            <th class="w-200px th-sm">Adjustment Total Cost</th>
+                                            <th class="w-200px th-sm">Adjustment Total Retail</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($itemList as $value)
+                                            <tr>
+                                                <td>{{ $value['item_id'] }}</td>
+                                                <td>{{ $value['name'] }}</td>
+                                                <td>{{ $value['supplier'] }}</td>
+                                                <td>{{ number_format($value['item_cost'], 2) }}</td>
+                                                <td>{{ number_format($value['retail'], 2) }}</td>
+                                                <td>{{ $value['stock_before'] }}</td>
+                                                <td>{{ $value['qty'] }}</td>
+                                                <td>{{ $value['stock_after'] }}</td>
+                                                <td>{{ number_format($value['total_cost'], 2) }}</td>
+                                                <td>{{ number_format($value['total_retail'], 2) }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
 
-                    </div>
+                        </div>
                     </div>
               </div>
   

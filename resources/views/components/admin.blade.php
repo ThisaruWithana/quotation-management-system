@@ -36,7 +36,7 @@
     <!-- JQVMap -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/jqvmap/jqvmap.min.css') }}">
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{ asset('admin/dist/css/adminlte.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/dist/css/adminlte.min.css?ver=0.1') }}">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Daterange picker -->
@@ -52,14 +52,18 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
 
-    <link rel="stylesheet" href="{{ asset('admin/dist/css/style.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css">
+    <link rel="stylesheet" href="{{ asset('admin/dist/css/style.css?ver=0.1') }}">
+    <link rel="stylesheet" href="{{ asset('admin/dist/css/bs-stepper.min.css') }}">
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="{{ asset('admin/dist/css/bootstrap-select.min.css') }}">
 
+    <link rel="stylesheet" href="{{ asset('admin/dist/css/fixedHeader.dataTables.min.css') }}">
+
+    <link href="{{ asset('admin/dist/css/scrollbox.min.css') }}" rel="stylesheet" />
+    
     <style>
         .required{
             color:red;
@@ -82,11 +86,8 @@
         .editable {
         background-color: #f7dc6f;
         }
-        .modal-body{
-            overflow-y: auto;
-        }
-    </style>
 
+    </style>
 <style>
             .dataTables_scrollHeadInner{
                 width: 100% !important;
@@ -237,13 +238,18 @@
 
     
     <script src="{{ asset('admin/dist/js/cute-alert.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+    <script src="{{ asset('admin/dist/js/bs-stepper.min.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js" integrity="sha512-rCjfoab9CVKOH/w/T6GbBxnAH5Azhy4+q1EXW5XEURefHbIkRbQ++ZR+GBClo3/d3q583X/gO4FKmOFuhkKrdA==" crossorigin="anonymous"></script>
+    <script src="{{ asset('admin/dist/js/scrollbox.min.js') }}"></script>
+
 
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <script src="{{ asset('admin/dist/js/bootstrap-select.min.js') }}"></script>
 
-    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script> -->
+    <!-- Fixed Headers -->
+    <script src="{{ asset('admin/dist/js/dataTables.fixedHeader.min.js') }}"></script>
+
 
     <!-- Toast cdn -->
     <script src="{{ asset('admin/dist/js/toastr.min.js') }}"
@@ -286,6 +292,28 @@
                     reader.readAsDataURL(input.files[0]);
                 }
             }
+            
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            var $container = $('#container'),
+                i = 1;
+
+            $container
+                .on('reach.scrollbox', function () {
+                    if (i < 6) {
+                        // emulate XHR
+                        window.setTimeout(function () {
+                            $container.append('<div class="test-div">This is a test div #' + i ++ + '</div>');
+                            $container.scrollbox('update'); // recalculate bar height and position
+                        }, 300);
+                    }
+                })
+                .scrollbox({
+                    buffer: 50 // position from bottom when reach.scrollbox will be triggered
+                });
+        });
     </script>
     <x-alert />
     @yield('js')

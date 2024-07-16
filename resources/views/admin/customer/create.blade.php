@@ -8,6 +8,14 @@
                 <h5 class="card-header  white-text text-left py-3">
                     <!-- <strong>{{ $title }}</strong> -->
                     {{ $title }}
+
+                    <div class="card-tools">
+                        <a href="{{ route('admin.customer.index') }}" class="btn btn-sm btn-primary">
+                            <button type="button" class="btn btn-tool">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </a>
+                    </div>
                 </h5>
                     <!-- /.card-header -->
                     <!-- form start -->
@@ -196,9 +204,9 @@
                                     <div class="col-lg-6">
                                         <div class="form-group text-left">
                                             <label for="symbol_group" class="form-label">Symbol Group</label>
-                                            <span class="required"> * </span>
+                          
                                             <input type="text" class="form-control" name="symbol_group" id="symbol_group"
-                                                value="{{ old('symbol_group') }}" autocomplete="off" required>
+                                                value="{{ old('symbol_group') }}" autocomplete="off">
                                                 @error('symbol_group')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror

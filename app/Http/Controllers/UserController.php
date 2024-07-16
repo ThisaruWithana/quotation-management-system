@@ -35,7 +35,10 @@ class UserController extends Controller
             'role' => 'required'
         ]);
 
+        $role_id = $this->getRoleIdByName($request->role);
+
         $user = User::create([
+            'role_id' => $role_id,
             'name' => $request->name,
             'email' => $request->email,
             'mode' => 'light',
@@ -59,14 +62,24 @@ class UserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'role' => ['required', 'string']
         ]); 
+
+        $role_id = $this->getRoleIdByName($request->role);
+        
         $user = User::find($request->id);
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->role_id = $role_id;
         $user->mode = 'light';
         $user->updated_by = Auth::user()->id;
         $user->save();
         $user->assignRole($request->role);
         return redirect()->route('admin.user.index')->with('success','User updated successfully.');
+    }
+
+    public function getRoleIdByName($role)
+    {
+        $query = Role::where('name', $role)->pluck('id');
+        return $query[0];
     }
 
     public function changeStatus(Request $request)

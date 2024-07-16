@@ -1,13 +1,18 @@
 <x-admin>
     @section('title') {{ 'Item Maintainance' }} @endsection
+    
+    <style>
+    </style>
+</head> 
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                <!-- <a href="#" class="btn btn-sm btn-primary" >Bulck Edit</a> -->
-                <a href="{{ route('admin.item.create') }}" class="btn btn-sm btn-primary" >Add New</a>
+                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                    <a href="{{ route('admin.item.create') }}" class="btn btn-sm btn-primary" >Add New</a>
+                @endif
             </div>
         </div>
-        <div class="card-body  table-responsive">
+        <div class="card-body">
             
         <form method="GET" action="{{ route('admin.item') }}" id="frm-list">
 
@@ -71,22 +76,22 @@
             </form>
             <br>
 
-            <div>
-                <table class="table" id="dataTable">
+            <div class="table-responsive">
+
+                <table class="table" id="dataTable" style="width:100%">
                     <thead>
                         <tr>
                             <th class="th-sm">ID</th>
-                            <th class="th-sm">Name</th>
-                            <th class="th-sm">Barcode</th>
-                            <th class="th-sm" style="width: 100px;">Description</th>
-                            <th class="th-sm" style="width: 100px;">Margin Type</th>
-                            <th class="th-sm" style="width: 100px;">Supplier</th>
-                            <th class="th-sm" style="width: 100px;">Department</th>
-                            <th class="th-sm" style="width: 150px;">Sub Department</th>
-                            <th class="th-sm" style="width: 100px;">Created By</th>
-                            <th class="th-sm" style="width: 80px;">Created At</th>
+                            <th class="th-sm  w-100px">Name</th>
+                            <th class="th-sm w-100px">Barcode</th>
+                            <th class="th-sm w-120px">Product Code</th>
+                            <th class="th-sm">Margin</th>
+                            <th class="th-sm w-100px">Supplier</th>
+                            <th class="th-sm w-100px">Department</th>
+                            <th class="th-sm w-100px">Sub Dept</th>
+                            <th class="th-sm w-100px">Created By</th>
                             <th class="th-sm">Status</th>
-                            <th class="th-sm" style="width: 120px;"></th>
+                            <th class="th-sm w-150px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -96,8 +101,8 @@
                                 <td>{{ $value->id }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->barcode['barcode'] }}</td>
-                                <td>{{ $value->description }}</td>
-                                <td>{{ $value->margin_type }}</td>
+                                <td>{{ $value->barcode['product_code'] }}</td>
+                                <td>{{ $value->margin }}</td>
                                 <td>
                                     @foreach($value->suppliers as $suppliers)
                                         {{ $suppliers['suppliername']['name'] }} 
@@ -106,7 +111,6 @@
                                 <td>{{ $value->department['name'] }}</td>
                                 <td>{{ $value->subdepartment['name'] }}</td>
                                 <td>{{ $value->created_user->name }}</td>
-                                <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                                 <td>
                                     @if($value->status == 1)
                                     <span class="badge badge-success">Active</span>
@@ -115,9 +119,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.item.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" target="_blank">
-                                        <i class="far fa-edit"></i>
-                                    </a>
+                                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
                                     @if($value->status === 1)
                                         <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                             <i class="fas fa-trash-alt"></i>
@@ -127,6 +129,14 @@
                                             <i class="fas fa-check-circle"></i>
                                         </a>
                                     @endif
+                                
+                                    @if($value->status === 1)
+                                        <a href="{{ route('admin.item.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" target="_blank">
+                                            <i class="far fa-edit"></i>
+                                        </a>
+                                    @endif
+                                @endif
+                                 
                                     <a href="{{ route('admin.item.detail',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
                                         <i class="far fa-eye"></i>
                                     </a>
@@ -136,6 +146,7 @@
                         @endforeach
                     </tbody>
                 </table>
+
             </div>
             <div id="list_pagination" style="float: right;">{{ $listData->appends(Request::all())->links() }}</div>
         </div>
@@ -148,21 +159,21 @@
                     "bPaginate": false,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
-                    "scrollX": true,
                     "autoWidth":true,
+                    "fixedHeader": {
+                        "header": true,
+                    },
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 11 ]},
+                        { "bSortable": false, "aTargets": [ 10 ]},
                     ],
-                    "order": [0,'desc'],
+                    "order": [0,'desc'],  
+                    "scrollX": true,
+                    "scrollY": 500
                 });
                 
                 var dt = $('#dataTable').DataTable();
                 dt.columns.adjust();
 
-                $("#check-all").click(function () {
-                    $('#dataTable tbody input[type="checkbox"]').prop('checked', this.checked);
-                });
             });
             
             function changeStatus(id, status) {
@@ -227,50 +238,6 @@
                     }
                 });
             }
-
-            // function filterData(){
-
-            //     $.ajax({
-            //         url: "{{ url('admin/item/filter') }}",
-            //         type: 'POST',
-            //             data: {
-            //                 "_token": "{{ csrf_token() }}",
-            //                 "status": $('#status').val(),
-            //             },
-            //             success: function (data) {
-            //                 $("#dataTable tbody").empty();
-            //                 var result = JSON.parse(data);
-
-            //                 alert(result.length);
-
-            //                 if (result.length > 0) {
-
-            //                     $.each(result, function (count, val) {
-
-            //                         $('#dataTable tbody').append(
-            //                             '<tr>'
-            //                             +'</td><input type="checkbox" name="ids[]" value="'+ val['id'] +'" class="form-check-label"></td>'
-            //                             +'</td>'+ val['id'] +'</td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</td></td>'
-            //                             +'</tr>'
-            //                         );
-            //                     });
-            //                 } 
-            //             }, error: function (data) {
-                                    
-            //         }
-            //     });
-            // }
 
             function selectPageSize(pageSize) {
                     document.getElementById('frm-list').submit();

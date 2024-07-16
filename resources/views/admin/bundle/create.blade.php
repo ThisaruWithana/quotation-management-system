@@ -7,8 +7,16 @@
             <div class="col-lg-12">
                 <div class="card card-primary">
                 <h5 class="card-header  white-text text-left py-3">
-                    <!-- <strong>{{ $title }}</strong> -->
                     {{ $title }}
+
+                    <div class="card-tools">
+                        <!-- <a href="{{ route('admin.bundle.index') }}" class="btn btn-sm btn-primary"> -->
+                            <a class="btn btn-sm btn-primary" onclick=softeDelete()>
+                            <button type="button" class="btn btn-tool">
+                                    <i class="fas fa-times"></i>
+                            </button>
+                        </a>
+                    </div>
                 </h5>
                     <!-- /.card-header -->
                     <!-- form start -->
@@ -35,9 +43,9 @@
                                             <div class="col-lg-12">
                                                 <div class="form-group text-left">
                                                     <label for="bundle_cost" class="form-label">Bundle Cost</label>
-                                                    <span class="required"> * </span>
+                                                    <!-- <span class="required"> * </span> -->
                                                     <input type="text" class="form-control" name="bundle_cost" id="bundle_cost"
-                                                        required="" value="{{ old('bundle_cost') }}"  autocomplete="off">
+                                                        value="{{ old('bundle_cost') }}"  autocomplete="off">
                                                         @error('bundle_cost')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -58,11 +66,17 @@
                                             <table class="table table-bordered">
                                                 <tr class="bundle-item-cost">
                                                     <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Cost :</b></p></td>
-                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p></td>
+                                                    <td style="width:50px;text-align: right">
+                                                        <p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p>
+                                                        <input type="hidden" value="" id="total_cost" name="total_cost">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Retail :</b></p></td>
-                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl"></span></b></p></td>
+                                                    <td style="width:50px;text-align: right">
+                                                        <p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl"></span></b></p>
+                                                        <input type="hidden" value="" id="total_retail" name="total_retail">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Difference :</b></p></td>
@@ -79,7 +93,7 @@
 
                                 <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="">
                                 <input type="hidden" name="in_office" id="in_office" value="">
-                                <input type="text" name="row_order" id="row_order" value="">
+                                <input type="hidden" name="row_order" id="row_order" value="">
                         </div>
                         <!-- /.card-body -->
                      <div class="col-lg-2">
@@ -102,13 +116,14 @@
                                             <th class="th-sm">Code</th>
                                             <th class="th-sm">Name</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm item-list-cost">Cost</th>
-                                            <th class="th-sm item-list-item-cost">Actual Cost</th>
+                                            <th class="w-120px th-sm item-list-cost">Actual Cost</th>
+                                            <th class="th-sm item-list-item-cost">Cost</th>
                                             <th class="th-sm">Retail</th>
                                             <th class="th-sm item-list-qty">Qty</th>
-                                            <th class="th-sm item-list-total-cost">Total Cost</th>
-                                            <th class="th-sm">Total Retail</th>
-                                            <th class="th-sm item-list-display-report">Display In Report</th>
+                                            <th class="th-sm item-list-item-margin">Margin</th>
+                                            <th class="w-120px th-sm item-list-total-cost">Total Cost</th>
+                                            <th class="w-120px th-sm">Total Retail</th>
+                                            <th class="w-150px th-sm item-list-display-report">Display In Report</th>
                                             <th class="th-sm"></th>
                                             <th class="th-sm"></th>
                                         </tr>
@@ -187,12 +202,12 @@
                                 <table class="table table-item-search table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
-                                            <th class="th-sm">Item Code</th>
-                                            <th class="th-sm">Item Name</th>
+                                            <th class="w-120px th-sm">Item Code</th>
+                                            <th class="w-120px th-sm">Item Name</th>
                                             <th class="th-sm">Department</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm item-search-cost">Cost Price</th>
-                                            <th class="th-sm">Retail Price</th>
+                                            <th class="w-120px th-sm item-search-cost">Cost Price</th>
+                                            <th class="w-120px th-sm">Retail Price</th>
                                             <th class="th-sm"></th>
                                         </tr>
                                     </thead>
@@ -229,7 +244,7 @@
                     <input type="hidden" name="retail" value="" id="retail">
 
                     <div class="form-group" id="actual_cost_edit">
-                        <label for="actual_cost" class="col-form-label">Actual Cost</label>
+                        <label for="actual_cost" class="col-form-label">Cost</label>
                         <input type="text" class="form-control" id="actual_cost" name="actual_cost"
                             required="" value="" autocomplete="off">
                     </div>
@@ -299,6 +314,7 @@
             $(function() {
 
                 $('.table-item-search').DataTable({
+                    "paging": false,
                     "bPaginate": false,
                     "searching": false,
                     "ordering": false,
@@ -318,33 +334,36 @@
                 $('.item-list-retail').addClass('editable');
                 $('.item-list-qty').addClass('editable');
 
-                $('.bundle-item-cost').hide();
-                $('.item-list-item-cost').hide();
-                $('.item-list-total-cost').hide();
-                $('.item-list-cost').hide();
-                $('.item-search-cost').hide();
-                $('.item-list-display-report').hide();
+                // $('.bundle-item-cost').hide();
+                // $('.item-list-item-cost').hide();
+                // $('.item-list-total-cost').hide();
+                // $('.item-list-cost').hide();
+                // $('.item-search-cost').hide();
+                // $('.item-list-display-report').hide();
 
-                cuteAlert({
-                    type: "question",
-                    title: "Are you in the office",
-                    message: "",
-                    confirmText: "Yes",
-                    cancelText: "No"
-                    }).then((e)=>{
-                    if ( e == ("confirm")){
-                        $('#in_office').val('yes');
-                        $(".bundle-item-cost").show();
-                        $('.item-list-item-cost').show();
-                        $('.item-list-total-cost').show();
-                        $('.item-list-cost').show();
-                        $('.item-search-cost').show();
-                        $('.item-list-display-report').show();
+                // cuteAlert({
+                //     type: "question",
+                //     title: "Are you in the office",
+                //     message: "",
+                //     confirmText: "Yes",
+                //     cancelText: "No"
+                //     }).then((e)=>{
+                //     if ( e == ("confirm")){
+                //         $('#in_office').val('yes');
+                //         $(".bundle-item-cost").show();
+                //         $('.item-list-item-cost').show();
+                //         $('.item-list-total-cost').show();
+                //         $('.item-list-cost').show();
+                //         $('.item-search-cost').show();
+                //         $('.item-list-display-report').show();
 
-                    } else {
-                        $('#in_office').val('no');
-                    }
-                });
+                //     } else {
+                //         $('#in_office').val('no');
+                //     }
+                // });
+
+                
+                $('#in_office').val('yes');
 
                 $("#bundleCreate").submit(function(event) {
                     event.preventDefault();
@@ -367,8 +386,6 @@
                                     $(".add-items").show();
                                     $("#btnSave").hide();
                                     $("#name").prop('disabled', true);
-                                    $("#bundle_cost").prop('disabled', true);
-                                    $("#remark").prop('disabled', true);
 
                                     $("#bundle_id").val(result['data']);
                                     $("#bundle").val(result['data']);
@@ -394,7 +411,7 @@
             });
 
             $('#bundle_cost').on('keyup', function(e) {
-                calculatePrices(e.target.value, 0, 0);
+                calculatePrices(e.target.value, $("#total_retail").val(), $("#total_cost").val());
             });
 
             $('#itemSearchBtn').click(function(){
@@ -403,37 +420,55 @@
 
             $('#btnUpdate').click(function(){
 
-                $.ajax({
-                    url: "{{ url('admin/bundle/update-bundle-item-order') }}",
-                    type: 'POST',
-                    data: {
-                            "_token": "{{ csrf_token() }}",
-                            "bundle_id": $('#bundle_id').val(),
-                            "row_order": $('#row_order').val()
-                        },
-                    success: function (data) {
+                if($('#bundle_cost').val() != ''){
 
-                        var result = JSON.parse(data);
+                    $.ajax({
+                        url: "{{ url('admin/bundle/update-bundle-item-order') }}",
+                        type: 'POST',
+                        data: {
+                                "_token": "{{ csrf_token() }}",
+                                "bundle_id": $('#bundle_id').val(),
+                                "row_order": $('#row_order').val(),
+                                "bundle_cost": $('#bundle_cost').val(),
+                                "remark": $('#remark').val()
+                            },
+                        success: function (data) {
 
-                        if (result['code'] == 1) {
-                            window.location = '{{ url("admin/bundle") }}';
-                        } else {
-                            toastr.error(
-                                'Error',
-                                'Something Went Wrong!',
+                            var result = JSON.parse(data);
+
+                            if (result['code'] == 1) {
+                                window.location = '{{ url("admin/bundle") }}';
+                            } else {
+                                toastr.error(
+                                    'Error',
+                                    'Something Went Wrong!',
+                                {
+                                    timeOut: 1500,
+                                    fadeOut: 1500,
+                                onHidden: function () {
+                                    
+                                    }
+                                }
+                            );
+                        }
+                        }, error: function (data) {
+
+                        }
+                    });
+
+                }else{
+                        toastr.error(
+                            'Error',
+                            'Please Enter Bundle Cost !',
                             {
                                 timeOut: 1500,
                                 fadeOut: 1500,
-                            onHidden: function () {
-                                
+                                onHidden: function () {
                                 }
                             }
                         );
-                    }
-                    }, error: function (data) {
 
-                    }
-                });
+                }
             });
 
 
@@ -523,6 +558,7 @@
                                             +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td class="item-list-item-margin">' + val['margin'] + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -559,6 +595,8 @@
                 $("#diff-lbl").text(Number(difference).toFixed(2));
                 $("#retail-lbl").text(Number(totalRetail).toFixed(2));
                 $("#total-cost-lbl").text(Number(totalCost).toFixed(2));
+                $("#total_cost").val(Number(totalCost).toFixed(2));
+                $("#total_retail").val(Number(totalRetail).toFixed(2));
             }
 
             function updateDisplayStatus(isChecked){
@@ -622,6 +660,7 @@
                                             +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td class="item-list-item-margin">' + val['margin'] + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -706,6 +745,7 @@
                                             +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
                                             +'<td>' + val['retail'] + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
+                                            +'<td class="item-list-item-margin">' + val['margin'] + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
                                             +'<td>' + val['total_retail'] + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
@@ -732,7 +772,6 @@
                                         timeOut: 1500,
                                         fadeOut: 1500,
                                         onHidden: function () {
-                                            // window.location.reload();
                                         }
                                     }
                                 );
@@ -798,6 +837,74 @@
 
                     }
                 });
+            }
+
+            function softeDelete() {
+
+                if($('#bundle_id').val() != ''){
+                    cuteAlert({
+                        type: "question",
+                        title: "Are you sure",
+                        message: "You want to delete of this bundle and go back?",
+                        confirmText: "Yes",
+                        cancelText: "Cancel"
+                        }).then((e)=>{
+                        if ( e == ("confirm")){
+                                $.ajax({
+                                    url: "{{ url('admin/bundle/destroy') }}",
+                                    type: 'POST',
+                                    data: {
+                                        "_token": "{{ csrf_token() }}",
+                                        "id":$('#bundle_id').val(),
+                                        "status": 5
+                                    },
+                                    success: function (data) {
+                                        var result = JSON.parse(data);
+                                        if (result == 1) {
+                                            toastr.success(
+                                                'Success',
+                                                'Successfully Updated !',
+                                                {
+                                                    timeOut: 1500,
+                                                    fadeOut: 1500,
+                                                    onHidden: function () {
+                                                        window.location = '{{ url("admin/bundle") }}';
+                                                    }
+                                                });
+                                        } else {
+                                            toastr.error(
+                                                'Error',
+                                                'Something Went Wrong!',
+                                                {
+                                                    timeOut: 1500,
+                                                    fadeOut: 1500,
+                                                    onHidden: function () {
+                                                        window.location.reload();
+                                                    }
+                                                }
+                                            );
+                                        }
+                                    }, error: function (data) {
+                                            toastr.error(
+                                                'Error',
+                                                'Something Went Wrong!',
+                                                {
+                                                    timeOut: 1500,
+                                                    fadeOut: 1500,
+                                                    onHidden: function () {
+                                                        window.location.reload();
+                                                    }
+                                                }
+                                            );
+                                    }
+                                });
+                        } else {
+                       
+                        }
+                    });
+                }else{
+                    window.location = '{{ url("admin/bundle") }}';
+                }
             }
         </script>
 

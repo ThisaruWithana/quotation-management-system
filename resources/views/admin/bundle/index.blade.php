@@ -29,19 +29,19 @@
                 </div>
             </form>
             <br>
-            <div>
-                <table class="table table-bordered" id="dataTable" width="100%">
+            <div class="table-responsive">
+                <table class="table" id="dataTable" width="100%">
                     <thead>
                         <tr>
-                            <th class="th-sm">#</th>
-                            <th class="th-sm">Bundle Name</th>
-                            <th class="th-sm">Remark</th>
-                            <th class="th-sm">Bundle Cost</th>
-                            <th class="th-sm">Bundle Retail</th>
-                            <th class="th-sm">Total Cost</th>
-                            <th class="th-sm">Difference</th>
-                            <th class="th-sm">Status</th>
-                            <th class="th-sm"></th>
+                            <th class="th-sm w-50px">ID</th>
+                            <th class="th-sm w-100px">Bundle Name</th>
+                            <th class="th-sm w-100px">Remark</th>
+                            <th class="th-sm w-100px">Bundle Cost</th>
+                            <th class="th-sm w-100px">Bundle Retail</th>
+                            <th class="th-sm w-100px">Total Cost</th>
+                            <th class="th-sm w-100px">Difference</th>
+                            <th class="th-sm w-100px">Status</th>
+                            <th class="th-sm w-100px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,10 +62,6 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.bundle.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                                    <i class="far fa-edit"></i>
-                                </a>
-
                                 @if($value->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -73,6 +69,11 @@
                                 @else
                                     <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-check-circle"></i>
+                                    </a>
+                                @endif
+                                @if($value->status === 1)
+                                    <a href="{{ route('admin.bundle.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                        <i class="far fa-edit"></i>
                                     </a>
                                 @endif
                             </td>
@@ -92,9 +93,10 @@
                     "bPaginate": false,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
-                    // "scrollX": false,
                     "autoWidth":true,
+                    "fixedHeader": {
+                        "header": true,
+                    },
                     "aoColumnDefs": [
                         { "bSortable": false, "aTargets": [ 8 ]},
                     ],

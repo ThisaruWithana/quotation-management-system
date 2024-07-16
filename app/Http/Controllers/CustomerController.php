@@ -45,7 +45,6 @@ class CustomerController extends Controller
                     'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customer')->ignore($id)],
                     'address' => 'required|max:255',
                     'tel' => 'required|max:11',
-                    'symbol_group' => 'required',
                 ]);
             }else{
                 $request->validate([
@@ -54,7 +53,6 @@ class CustomerController extends Controller
                     'email' => 'required', 'string', 'email', 'max:255', 'unique:'.Customer::class,
                     'address' => 'required|max:255',
                     'tel' => 'required|max:11',
-                    'symbol_group' => 'required',
                 ]);
             }
 

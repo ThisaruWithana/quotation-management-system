@@ -4,6 +4,11 @@
         <div class="card-header">
             <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
+                <a class="btn btn-sm" onclick=softeDelete()>
+                  <button type="button" class="btn btn-tool">
+                      <i class="fas fa-times"></i>
+                  </button>
+                </a>
             </div>
         </div>
         <div class="card-body px-lg-2 pt-0">
@@ -59,6 +64,7 @@
                                 <span class="required"> * </span>
                                 <input type="text" class="form-control" name="product_code" id="product_code" required=""
                                 value="" autocomplete="off"  placeholder="">
+                                <span id="product-code-err" class="required"> </span>
                             </div>
                         </div>
                       </div>
@@ -113,7 +119,7 @@
                       </div>
                           
                       <div class="text-left">
-                        <button class="btn btn-primary" type="submit">Next</button>
+                        <button class="btn btn-primary" type="submit" id="btnSubmit">Next</button>
                       </div>
                     </form>
               </div>
@@ -268,6 +274,7 @@
                                             <th class="th-sm">Cost Price</th>
                                             <th class="th-sm">Retail Price</th>
                                             <th class="th-sm">Is Mandatory</th>
+                                            <th class="th-sm"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -486,6 +493,32 @@
                                     
                     }
                 });
+            });
+
+            $("#product_code").keyup(function (event){
+              event.preventDefault();
+
+                $.ajax({
+                    url: "{{ url('admin/item/validate-productcode') }}",
+                    type: 'POST',
+                        data: {
+                            "_token": "{{ csrf_token() }}",
+                            "code": this.value
+                        },
+                        success: function (data) {
+                            var result = JSON.parse(data);
+
+                            if(result['code'] == 0){
+                              $("#btnSubmit").prop('disabled', true);
+                              $("#product-code-err").text(result['msg']);
+                            }else{
+                              $("#btnSubmit").prop('disabled', false);
+                              $("#product-code-err").text('');
+                            }
+                        }, error: function (data) {      
+                    }
+                });
+
             });
 
             $("#retail_price").keyup(function (){
@@ -747,22 +780,139 @@
                                   checkboxStatus = 'checked';
                                 }
 
-                              $('#optionalItemTable tbody').append(
-                                '<tr>'
-                                +'<td>' + val['subitem']['id'] + '</td>'
-                                +'<td>' + val['subitem']['name'] + '</td>'
-                                +'<td>' + val['subitem']['barcode']['barcode'] + '</td>'
-                                +'<td>' + val['subitem']['department']['name'] + '</td>'
-                                +'<td>' + val['subitem']['cost_price'] + '</td>'
-                                +'<td>' + val['subitem']['retail_price'] + '</td>'
-                                +'<td><input type="checkbox" onclick="updateMandatoryStatus(this)" id="is_mandatory" name="is_mandatory" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
-                                +'</tr>'
+                                $('#optionalItemTable tbody').append(
+                                    '<tr>'
+                                    +'<td>' + val['subitem']['id'] + '</td>'
+                                    +'<td>' + val['subitem']['name'] + '</td>'
+                                    +'<td>' + val['subitem']['barcode']['barcode'] + '</td>'
+                                    +'<td>' + val['subitem']['department']['name'] + '</td>'
+                                    +'<td>' + val['subitem']['cost_price'] + '</td>'
+                                    +'<td>' + val['subitem']['retail_price'] + '</td>'
+                                    +'<td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                    +'<td>'
+                                    +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['parent_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                    +'</td>'
+                                    +'</tr>'
                                 );
                           });
                         }
                     }, error: function (data) {
                 }
             });
+      }
+
+      function changeStatus(id, itemId){
+
+        $.ajax({
+                url: "{{ url('admin/item/delete-item') }}",
+                type: 'POST',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": id,
+                        "item_id": itemId
+                    },
+                    success: function (data) {
+                        var result = JSON.parse(data);
+                        $('#optionalItemTable tbody').empty();
+
+                        if (result['data'].length > 0) {
+                          
+                            $.each(result['data'], function (count, val) {
+
+                                var isMandatory = val['is_mandatory'];
+                                var checkboxStatus = '';
+
+                                if(isMandatory === 1){
+                                checkboxStatus = 'checked';
+                                }
+                                console.log(result['data'].length);
+                                $('#optionalItemTable tbody').append(
+                                    '<tr>'
+                                        +'<td>' + val['subitem']['id'] + '</td>'
+                                        +'<td>' + val['subitem']['name'] + '</td>'
+                                        +'<td>' + val['subitem']['barcode']['barcode'] + '</td>'
+                                        +'<td>' + val['subitem']['department']['name'] + '</td>'
+                                        +'<td>' + val['subitem']['cost_price'] + '</td>'
+                                        +'<td>' + val['subitem']['retail_price'] + '</td>'
+                                        +'<td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                        +'<td>'
+                                        +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['parent_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                        +'</td>'
+                                    +'</tr>'
+                                );
+                            });
+                        }
+                    }, error: function (data) {
+
+                }
+        });
+      }
+
+      function softeDelete() {
+
+        if($('#item_id').val() != ''){
+            cuteAlert({
+                type: "question",
+                title: "Are you sure",
+                message: "You want to delete of this changes and go back?",
+                confirmText: "Yes",
+                cancelText: "Cancel"
+                }).then((e)=>{
+                if ( e == ("confirm")){
+                        $.ajax({
+                            url: "{{ url('admin/item/destroy') }}",
+                            type: 'POST',
+                            data: {
+                                "_token": "{{ csrf_token() }}",
+                                "id":$('#item_id').val()
+                            },
+                            success: function (data) {
+                                var result = JSON.parse(data);
+                                if (result == 1) {
+                                    toastr.success(
+                                        'Success',
+                                        'Successfully Updated !',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location = '{{ url("admin/item") }}';
+                                            }
+                                        });
+                                } else {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    );
+                                }
+                            }, error: function (data) {
+                                    toastr.error(
+                                        'Error',
+                                        'Something Went Wrong!',
+                                        {
+                                            timeOut: 1500,
+                                            fadeOut: 1500,
+                                            onHidden: function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    );
+                            }
+                        });
+                } else {
+              
+                }
+            });
+        }else{
+            window.location = '{{ url("admin/item") }}';
+        }
       }
     </script>
     @endsection

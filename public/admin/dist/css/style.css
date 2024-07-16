@@ -394,3 +394,31 @@
 .info-bg {
   background: #88cef7;
 }
+
+.w-100px{
+  min-width: 100px !important;
+  width: 100px !important;
+}
+
+.modal-body {
+  overflow-y: inherit !important;
+}
+
+.w-120px{
+  min-width: 120px !important;
+  width: 120px !important;
+}
+
+.w-150px{
+  min-width: 150px !important;
+  width: 150px !important;
+}
+
+.w-200px{
+  min-width: 200px !important;
+  width: 200px !important;
+}
+.w-50px{
+  min-width: 50px !important;
+  width: 50px !important;
+}

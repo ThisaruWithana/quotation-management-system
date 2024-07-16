@@ -1,23 +1,23 @@
 <x-admin>
-   @section('title')  {{ 'Stock Management' }} @endsection
+   @section('title')  {{ 'Stock Management- Stock Adjustment' }} @endsection
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
                 <a href="{{ url('admin/stock/create-adjustment') }}" class="btn btn-sm btn-primary">Add New</a>
             </div>
         </div>
-        <div class="card-body table-responsive">
-            <div>
+        <div class="card-body">
+            <divv class="table-responsive">
                 <table class="table" id="dataTable" width="100%">
                     <thead>
                         <tr>
                             <th class="th-sm">#</th>
                             <th class="th-sm">Type</th>
                             <th class="th-sm">Comment</th>
-                            <th class="th-sm">Total Retail</th>
-                            <th class="th-sm">Total Cost</th>
-                            <th class="th-sm">Created By</th>
-                            <th class="th-sm">Created At</th>
+                            <th class="th-sm w-100px">Total Retail</th>
+                            <th class="th-sm w-100px">Total Cost</th>
+                            <th class="th-sm w-100px">Created By</th>
+                            <th class="th-sm w-100px">Created At</th>
                             <th class="th-sm"></th>
                         </tr>
                     </thead>
@@ -51,11 +51,9 @@
                     "bPaginate": true,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
-                    // "scrollX": false,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 6 ]},
+                        { "bSortable": false, "aTargets": [ 7 ]},
                     ],
                     "order": [0,'desc'],
                 });

@@ -7,6 +7,14 @@
                 <div class="card card-primary">
                 <h5 class="card-header  white-text text-left py-3">
                     {{ $title }}
+
+                    <div class="card-tools">
+                        <a href="{{ route('admin.po') }}" class="btn btn-sm btn-primary">
+                            <button type="button" class="btn btn-tool">
+                                    <i class="fas fa-times"></i>
+                            </button>
+                        </a>
+                    </div>
                 </h5>
                     <!-- /.card-header -->
                             <!-- form start -->
@@ -119,10 +127,10 @@
                                                 <th class="th-sm">Name</th>
                                                 <th class="th-sm">Supplier</th>
                                                 <th class="th-sm">Department</th>
-                                                <th class="th-sm">Sub Department</th>
-                                                <th class="th-sm">Item Cost</th>
+                                                <th class="w-150px th-sm">Sub Department</th>
+                                                <th class="w-100px th-sm">Item Cost</th>
                                                 <th class="th-sm item-list-qty">Qty</th>
-                                                <th class="th-sm">Total Cost</th>
+                                                <th class="w-100px th-sm">Total Cost</th>
                                                 <th class="th-sm"></th>
                                                 <th class="th-sm"></th>
                                             </tr>
@@ -202,12 +210,12 @@
                                 <table class="table table-item-search table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
-                                            <th class="th-sm">Item Code</th>
-                                            <th class="th-sm">Item Name</th>
+                                            <th class="w-100px th-sm">Item Code</th>
+                                            <th class="w-100px th-sm">Item Name</th>
                                             <th class="th-sm">Department</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm item-search-cost">Cost Price</th>
-                                            <th class="th-sm">Retail Price</th>
+                                            <th class="w-100px th-sm item-search-cost">Cost Price</th>
+                                            <th class="w-100px th-sm">Retail Price</th>
                                             <th class="th-sm"></th>
                                         </tr>
                                     </thead>

@@ -10,6 +10,14 @@
                 <div class="card card-primary">
                     <h5 class="card-header  white-text text-left py-3">
                         {{ $title }}
+
+                        <div class="card-tools">
+                            <a class="btn btn-sm btn-primary" onclick=softeDelete()>
+                                <button type="button" class="btn btn-tool">
+                                        <i class="fas fa-times"></i>
+                                </button>
+                            </a>
+                        </div>
                     </h5>
                     <!-- /.card-header -->
                     <!-- form start -->
@@ -190,7 +198,7 @@
                                                     name="discount" value="0" autocomplete="off">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4" id="margin-details">
                                         <div class="form-group text-left">
                                             <label for="margin" class="form-label">Quotation Margin</label>
                                             <input type="text" class="form-control" id="margin" name="margin"
@@ -218,14 +226,14 @@
                                                     <th class="th-sm">Code</th>
                                                     <th class="th-sm">Name</th>
                                                     <th class="th-sm">Supplier</th>
-                                                    <th class="th-sm item-list-cost">Actual Cost</th>
+                                                    <th class="w-120px th-sm item-list-cost">Actual Cost</th>
                                                     <th class="th-sm item-list-item-cost">Cost</th>
                                                     <th class="th-sm item-list-retail">Retail</th>
                                                     <th class="th-sm item-list-qty">Qty</th>
                                                     <th class="th-sm item-list-item-margin">Margin</th>
-                                                    <th class="th-sm item-list-total-cost">Total Cost</th>
-                                                    <th class="th-sm">Total Retail</th>
-                                                    <th class="th-sm item-list-display-report">Display In Report</th>
+                                                    <th class="w-120px th-sm item-list-total-cost">Total Cost</th>
+                                                    <th class="w-120px th-sm">Total Retail</th>
+                                                    <th class="w-150px th-sm item-list-display-report">Display In Report</th>
                                                     <th class="th-sm"></th>
                                                     <th class="th-sm"></th>
                                                 </tr>
@@ -277,7 +285,7 @@
 
                                     <div class="col-lg-4">
                                         <table class="table table-bordered">
-                                            <tr>
+                                            <tr id="quot-margin-before-discount">
                                                 <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot.
                                                             Margin :</b></p></td>
                                                 <td style="width:200px;"><p class="text-sm mb-0"><b
@@ -285,7 +293,7 @@
                                                                 id="quot-margin"></span></b></p></td>
                                             </tr>
                                             
-                                            <tr>
+                                            <tr id="quot-margin-after-discount">
                                                 <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin After Discount:</b></p></td>
                                                 <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl"></span></b></p></td>
                                             </tr>
@@ -386,12 +394,12 @@
                                            style="width: 100%">
                                         <thead>
                                         <tr>
-                                            <th class="th-sm">Item Code</th>
-                                            <th class="th-sm">Item Name</th>
+                                            <th class="w-100px th-sm">Item Code</th>
+                                            <th class="w-100px th-sm">Item Name</th>
                                             <th class="th-sm">Department</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm item-search-cost">Cost Price</th>
-                                            <th class="th-sm">Retail Price</th>
+                                            <th class="w-100px th-sm item-search-cost">Cost Price</th>
+                                            <th class="w-100px th-sm">Retail Price</th>
                                             <th class="th-sm"></th>
                                         </tr>
                                         </thead>
@@ -532,6 +540,9 @@
                 $('.item-search-cost').hide();
                 $('.item-list-display-report').hide();
                 $('.item-list-item-margin').hide();
+                $('#quot-margin-before-discount').hide();
+                $('#quot-margin-after-discount').hide();
+                $('#margin-details').hide();
 
                 cuteAlert({
                     type: "question",
@@ -549,6 +560,9 @@
                         $('.item-search-cost').show();
                         $('.item-list-display-report').show();
                         $('.item-list-item-margin').show();
+                        $('#margin-details').show();
+                        $('#quot-margin-before-discount').show();
+                        $('#quot-margin-after-discount').show();
 
                     } else {
                         $('#in_office').val('no');
@@ -579,8 +593,8 @@
                 $("#price").on("keyup", function() {
 
                     var quotationCost = this.value;
-                    var totalCost = parseFloat($("#total-cost-lbl").text());
-                    var totalRetail = parseFloat($("#retail-lbl").text());
+                    var totalCost = parseFloat($("#total-cost").val());
+                    var totalRetail = parseFloat($("#total-retail").val());
                     var discount = parseFloat($('#discount').val());
 
                     if (isNaN(totalCost)) {
@@ -710,28 +724,37 @@
                                         var type = val['type'];
                                         var name;
                                         var editBtn = '';
+                                        var retail, totalRetail, actualCost, itemCost, margin;
 
-                                        if(type === 'bundle'){
-                                            
-                                            $('.item-list-item-margin').hide();
-                                            name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
-                                        }else{
-                                            name = val['name'];
-                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
-                                        }
+                                            if(type === 'bundle'){
+                                                name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
+                                            }else{
+                                                name = val['name'];
+                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
+                                            }
 
                                         $('.item-list tbody').append(
                                             '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                            +'<td class="item-list-retail">' + retail + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            // +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td>' + totalRetail + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -801,13 +824,24 @@
 
                                             var type = val['type'];
                                             var name;
-                                            var editBtn;
+                                            var editBtn = '';
+                                            var retail, totalRetail, actualCost, itemCost, margin;
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
                                             }else{
                                                 name = val['name'];
                                                 editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
                                             }
 
                                             $('.item-list tbody').append(
@@ -815,13 +849,13 @@
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
-                                                +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                                +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                                +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                                +'<td class="item-list-retail">' + retail + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                                +'<td>' + val['total_retail'] + '</td>'
+                                                +'<td>' + totalRetail + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1017,12 +1051,23 @@
                                         var type = val['type'];
                                             var name;
                                             var editBtn = '';
+                                            var retail, totalRetail, actualCost, itemCost, margin;
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
                                             }else{
                                                 name = val['name'];
                                                 editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
                                             }
 
                                         $('.item-list tbody').append(
@@ -1030,13 +1075,13 @@
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                            +'<td class="item-list-retail">' + retail + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td>' + totalRetail + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1083,7 +1128,7 @@
 
                     var quotationMargin = quotationPriceAfterDiscount - totalCost;
                     var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
-                    var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    var quotationMarginVal = quotationMarginRate + '%';
 
                     var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
                     
@@ -1158,26 +1203,37 @@
                                         var type = val['type'];
                                         var name;
                                         var editBtn = '';
+                                        var retail, totalRetail, actualCost, itemCost, margin;
 
-                                        if(type === 'bundle'){
-                                            name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
-                                        }else{
-                                            name = val['name'];
-                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
-                                        }
+                                            if(type === 'bundle'){
+                                                name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
+                                            }else{
+                                                name = val['name'];
+                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
+                                            }
 
                                         $('.item-list tbody').append(
                                             '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                            +'<td class="item-list-retail">' + retail + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td>' + totalRetail + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1255,13 +1311,24 @@
 
                                             var type = val['type'];
                                             var name;
-                                            var editBtn;
+                                            var editBtn = '';
+                                            var retail, totalRetail, actualCost, itemCost, margin;
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
                                             }else{
                                                 name = val['name'];
                                                 editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
                                             }
 
                                             $('.item-list tbody').append(
@@ -1269,13 +1336,13 @@
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
-                                                +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                                +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                                +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                                +'<td class="item-list-retail">' + retail + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                                +'<td>' + val['total_retail'] + '</td>'
+                                                +'<td>' + totalRetail + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1373,12 +1440,80 @@
                 if(quotationCost > 0){
                     var quotationMargin = quotationCost - totalCost;
                     var quotationMarginRate = Number((quotationMargin / quotationCost) * 100).toFixed(2);
-                    quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    quotationMarginVal = quotationMarginRate + '%';
                 }else{
                     quotationMarginVal = 0;
                 }
 
                 $("#quot-margin").text(quotationMarginVal);
+            }
+
+            function softeDelete() {
+
+                if($('#quotation_id').val() != ''){
+                    cuteAlert({
+                        type: "question",
+                        title: "Are you sure",
+                        message: "You want to delete of this quotation and go back?",
+                        confirmText: "Yes",
+                        cancelText: "Cancel"
+                        }).then((e)=>{
+                        if ( e == ("confirm")){
+                                $.ajax({
+                                    url: "{{ url('admin/quotation/destroy') }}",
+                                    type: 'POST',
+                                    data: {
+                                        "_token": "{{ csrf_token() }}",
+                                        "id":$('#quotation_id').val(),
+                                        "status": 5
+                                    },
+                                    success: function (data) {
+                                        var result = JSON.parse(data);
+                                        if (result == 1) {
+                                            toastr.success(
+                                                'Success',
+                                                'Successfully Updated !',
+                                                {
+                                                    timeOut: 1500,
+                                                    fadeOut: 1500,
+                                                    onHidden: function () {
+                                                        window.location = '{{ url("admin/quotation") }}';
+                                                    }
+                                                });
+                                        } else {
+                                            toastr.error(
+                                                'Error',
+                                                'Something Went Wrong!',
+                                                {
+                                                    timeOut: 1500,
+                                                    fadeOut: 1500,
+                                                    onHidden: function () {
+                                                        window.location.reload();
+                                                    }
+                                                }
+                                            );
+                                        }
+                                    }, error: function (data) {
+                                            toastr.error(
+                                                'Error',
+                                                'Something Went Wrong!',
+                                                {
+                                                    timeOut: 1500,
+                                                    fadeOut: 1500,
+                                                    onHidden: function () {
+                                                        window.location.reload();
+                                                    }
+                                                }
+                                            );
+                                    }
+                                });
+                        } else {
+                            // window.location = '{{ url("admin/quotation") }}';
+                        }
+                    });
+                }else{
+                    window.location = '{{ url("admin/quotation") }}';
+                }
             }
 
         </script>

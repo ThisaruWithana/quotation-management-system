@@ -19,41 +19,50 @@ class PermissionSeeder extends Seeder
             'admin.user.edit',
             'admin.user.delete',
             'admin.user.change-status',
+            'admin.user.store',
+            'admin.user.update',
 
             'admin.role.index',
             'admin.role.create',
             'admin.role.edit',
             'admin.role.delete',
             'admin.role.change-status',
+            'admin.role.store',
 
             'admin.permission.index',
             'admin.permission.create',
             'admin.permission.edit',
             'admin.permission.delete',
             'admin.permission.change-status',
+            'admin.permission.store',
 
             'admin.location.index',
             'admin.location.create',
             'admin.location.edit',
             'admin.location.delete',
             'admin.location.change-status',
+            'admin.location.store',
 
             'admin.vat.index',
             'admin.vat.create',
             'admin.vat.edit',
             'admin.vat.delete',
+            'admin.vat.store',
+
 
             'admin.supplier.index',
             'admin.supplier.create',
             'admin.supplier.edit',
             'admin.supplier.delete',
             'admin.supplier.change-status',
+            'admin.supplier.store',
             
             'admin.department.index',
             'admin.department.create',
             'admin.department.edit',
             'admin.department.delete',
             'admin.department.change-status',
+            'admin.department.store',
             
             'admin.department.sub.index',
             'admin.department.sub.create',
@@ -69,6 +78,7 @@ class PermissionSeeder extends Seeder
             'admin.customer.delete',
             'admin.customer.change-status',
             'admin.customer.get-details',
+            'admin.customer.store',
 
             'admin.bundle.index',
             'admin.bundle.create',
@@ -81,6 +91,8 @@ class PermissionSeeder extends Seeder
             'admin.bundle.item-update',
             'admin.bundle.get-details',
             'admin.bundle.update-bundle-item-order',
+            'admin.bundle.destroy',
+            'admin.bundle.store',
 
             'admin.item',
             'admin.item.create',
@@ -99,6 +111,9 @@ class PermissionSeeder extends Seeder
             'admin.item.update-display-status',
             'admin.item.store-sub-items',
             'admin.item.get-sub-items',
+            'admin.item.validate-productcode',
+            'admin.item.delete-item',
+            'admin.item.destroy',
 
             'admin.quotation',
             'admin.quotation.create',
@@ -114,6 +129,7 @@ class PermissionSeeder extends Seeder
             'admin.quotation.add-bundle',
             'admin.quotation.edit-bundle',
             'admin.quotation.update-quotation-item-order',
+            'admin.quotation.destroy',
             
             'admin.opf',
             'admin.opf.print',

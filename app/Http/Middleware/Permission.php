@@ -20,14 +20,16 @@ class Permission
     public function handle($request, Closure $next)
     {
         $current_route = Route::currentRouteName();
-        $role_id = Auth::user()->roles->first()->id;
+        $role_id = Auth::user()->role_id;
 
+        
+// var_dump($current_route); die();
         if($role_id != 1 && $current_route != "user.my-password-reset" && !is_null($current_route) && $current_route != "user.my-profile" && $current_route != "user.my-profile-edit"){
 
             $result = RolePermission::join('permissions','permissions.id','=','role_has_permissions.permission_id')
                 ->where('role_has_permissions.role_id',$role_id)
                 ->where('permissions.name',$current_route)
-                // ->where('role_has_permissions.status','=',1)
+                ->where('role_has_permissions.status','=',1)
                 ->count();
 
             if($result == 0){

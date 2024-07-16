@@ -23,7 +23,7 @@ class User extends Authenticatable
         'password',
         'phonenumber',
         'provider_id',
-        'avatar', 'created_by', 'updated_by','status', 'mode'
+        'avatar', 'created_by', 'updated_by','status', 'mode', 'role_id'
     ];
 
     /**
@@ -45,4 +45,5 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
 }

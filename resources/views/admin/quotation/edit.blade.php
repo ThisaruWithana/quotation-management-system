@@ -1,44 +1,6 @@
 <x-admin>
    @section('title')  {{ 'Quotation Management' }} @endsection
 
-       <!-- <style>
-           .dataTables_scrollHeadInner{
-               width: 100% !important;
-           }
-           .dataTables_scrollHeadInner  .table{
-               width: 100% !important;
-           }
-           div.dataTables_wrapper div.dataTables_info {
-               padding-top: .85em;
-               text-align: left;
-               padding-bottom: 30px;
-           }
-
-           .card-dark{
-               background: #FDFDFD;
-               padding: 15px;
-               border: 1px solid #ddd;
-               box-shadow: none;
-           }
-
-           .form-control:disabled, .form-control[readonly] {
-               background-color: #e9ecef;
-               opacity: 1;
-               border: 1px solid #ced4da !important;
-           }
-           .bootstrap-select.disabled, .bootstrap-select > .disabled {
-               cursor: not-allowed;
-               border: 1px solid #ced4da !important;
-               border-radius: 10px;
-           }
-
-           .bootstrap-select > .dropdown-toggle{
-               border: 1px solid #ced4da !important;
-           }
-           .form-group .bootstrap-select, .form-horizontal .bootstrap-select, .form-inline .bootstrap-select {
-               padding: 0;
-           }
-       </style> -->
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
@@ -46,6 +8,14 @@
                 <div class="card card-primary">
                 <h5 class="card-header  white-text text-left py-3">
                     {{ $title }}
+
+                    <div class="card-tools">
+                        <a href="{{ route('admin.quotation') }}" class="btn btn-sm btn-primary">
+                            <button type="button" class="btn btn-tool">
+                                    <i class="fas fa-times"></i>
+                            </button>
+                        </a>
+                    </div>
                 </h5>
                     <!-- /.card-header -->
 
@@ -195,7 +165,7 @@
                                                 <input type="text" class="form-control" id="discount" name="discount" value="{{ $data['discount'] ?: 0 }}" autocomplete="off" @if($data->status != 1) readonly @endif>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3">
+                                        <div class="col-lg-3" id="margin-details">
                                             <div class="form-group text-left">
                                                 <label for="margin" class="form-label">Quotation Margin</label>
                                                 <input type="text" class="form-control" id="margin" name="margin" value="{{ $data['margin'] }}" readonly>
@@ -220,14 +190,14 @@
                                                             <th class="th-sm">Code</th>
                                                             <th class="th-sm">Name</th>
                                                             <th class="th-sm">Supplier</th>
-                                                            <th class="th-sm item-list-cost">Actual Cost</th>
+                                                            <th class="w-120px th-sm item-list-cost">Actual Cost</th>
                                                             <th class="th-sm item-list-item-cost">Cost</th>
                                                             <th class="th-sm item-list-retail">Retail</th>
                                                             <th class="th-sm item-list-qty">Qty</th>
                                                             <th class="th-sm item-list-item-margin">Margin</th>
-                                                            <th class="th-sm item-list-total-cost">Total Cost</th>
-                                                            <th class="th-sm">Total Retail</th>
-                                                            <th class="th-sm item-list-display-report">Display In Report</th>
+                                                            <th class="w-120px th-sm item-list-total-cost">Total Cost</th>
+                                                            <th class="w-120px th-sm">Total Retail</th>
+                                                            <th class="w-150px th-sm item-list-display-report">Display In Report</th>
                                                             <th class="th-sm"></th>
                                                             <th class="th-sm"></th>
                                                         </tr>
@@ -247,13 +217,37 @@
                                                                     @endif
                                                                 </td>
                                                                 <td>{{ $value['supplier'] }}</td>
-                                                                <td class="item-list-cost">{{ $value['actual_cost'] }}</td>
-                                                                <td class="item-list-item-cost">{{ $value['item_cost'] }}</td>
-                                                                <td class="item-list-retail">{{ $value['retail'] }}</td>
+                                                                <td class="item-list-cost">
+                                                                    @if($value['type'] === 'bundle')
+                                                                        
+                                                                    @else
+                                                                        {{ $value['actual_cost'] }}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="item-list-item-cost">
+                                                                    @if($value['type'] === 'bundle')
+                                                                        
+                                                                    @else
+                                                                        {{ $value['item_cost'] }}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="item-list-retail">
+                                                                    @if($value['type'] === 'bundle')
+                                                                        
+                                                                    @else
+                                                                        {{ $value['retail'] }}
+                                                                    @endif
+                                                                </td>
                                                                 <td class="item-list-qty">{{ $value['qty'] }}</td>
-                                                                <td>{{ $value['margin'] }}</td>
+                                                                <td class="item-list-item-margin">{{ $value['margin'] }}</td>
                                                                 <td class="item-list-total-cost">{{ $value['total_cost'] }}</td>
-                                                                <td>{{ $value['total_retail'] }}</td>
+                                                                <td>
+                                                                    @if($value['type'] === 'bundle')
+                                                                        {{ $value['total_cost'] }}
+                                                                    @else
+                                                                        {{ $value['total_retail'] }}
+                                                                    @endif
+                                                                </td>
                                                                 <td class="item-list-display-report">
                                                                         <input type="checkbox" id="item" name="item"
                                                                         onclick="updateDisplayStatus(this)" value="{{ $value['id'] }}" class="form-check-label"
@@ -315,13 +309,13 @@
 
                                         <div class="col-lg-4">
                                             <table class="table table-bordered">
-                                                <tr>
+                                                <tr id="quot-margin-before-discount">
                                                     <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin :</b></p></td>
-                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin">{{ number_format($quotationMargin, 2) }} ({{ number_format($quotationMarginRate, 2) }}%)</span></b></p></td>
+                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin">{{ number_format($quotationMarginRate, 2) }}%</span></b></p></td>
                                                 </tr>
-                                                <tr>
+                                                <tr id="quot-margin-after-discount">
                                                     <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin After Discount:</b></p></td>
-                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl">{{ number_format($quotationMargin, 2) }} ({{ number_format($quotationMarginRate, 2) }}%)</span></b></p></td>
+                                                    <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl">{{ number_format($quotationMarginRate, 2) }}%</span></b></p></td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">VAT :</b></p></td>
@@ -420,12 +414,12 @@
                                 <table class="table table-item-search table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
-                                            <th class="th-sm">Item Code</th>
-                                            <th class="th-sm">Item Name</th>
+                                            <th class="w-100px th-sm">Item Code</th>
+                                            <th class="w-100px th-sm">Item Name</th>
                                             <th class="th-sm">Department</th>
                                             <th class="th-sm">Supplier</th>
-                                            <th class="th-sm item-search-cost">Cost Price</th>
-                                            <th class="th-sm">Retail Price</th>
+                                            <th class="w-100px th-sm item-search-cost">Cost Price</th>
+                                            <th class="w-100px th-sm">Retail Price</th>
                                             <th class="th-sm"></th>
                                         </tr>
                                     </thead>
@@ -535,22 +529,6 @@
     @section('js')
         <script>
             $(function() {
-                // $('#sortable-table').DataTable({
-                //     "bPaginate": false,
-                //     "searching": false,
-                //     "ordering": false,
-                //     "responsive": true,
-                //     "scrollX": true,
-                //     "autoWidth":true,
-                //     "fixedHeader": true,
-                //     "paging": false,
-                //     "scrollCollapse": true,
-                //     "scrollY": '50vh',
-                //     "aoColumnDefs": [
-                //         { "bSortable": false, "aTargets": [ 8,9 ]},
-                //     ]
-                // });
-
                 $('.table-item-search').DataTable({
                     "bPaginate": false,
                     "searching": false,
@@ -579,6 +557,9 @@
                 $('.item-search-cost').hide();
                 $('.item-list-display-report').hide();
                 $('.item-list-item-margin').hide();
+                $('#quot-margin-before-discount').hide();
+                $('#quot-margin-after-discount').hide();
+                $('#margin-details').hide();
 
                 cuteAlert({
                     type: "question",
@@ -596,18 +577,20 @@
                         $('.item-search-cost').show();
                         $('.item-list-display-report').show();
                         $('.item-list-item-margin').show();
+                        $('#quot-margin-before-discount').show();
+                        $('#quot-margin-after-discount').show();
+                        $('#margin-details').show();
 
                     } else {
                         $('#in_office').val('no');
                     }
                 });
 
-                var totalCost = parseFloat($("#total-cost-lbl").text());
-                var totalRetail = parseFloat($("#retail-lbl").text());
+                var totalCost = parseFloat($("#total-cost").val());
+                var totalRetail = parseFloat($("#total-retail").val());
                 var quotationCost = parseFloat($('#price').val());
                 var discount = $('#discount').val();
 
-                // calculatePrices(quotationCost, totalRetail, totalCost, discount);
                 calculateMarginBeforeDiscount(quotationCost, $("#total-cost").val());
                 
                 $("#discount").on("keyup", function() {
@@ -624,7 +607,7 @@
                 $("#price").on("keyup", function() {
 
                     var quotationCost = this.value;
-                    var totalCost = parseFloat($("#total-cost").text());
+                    var totalCost = parseFloat($("#total-cost").val());
                     var totalRetail = parseFloat($("#total-retail").val());
                     var discount = parseFloat($('#discount').val());
 
@@ -724,12 +707,23 @@
                                         var type = val['type'];
                                         var name;
                                         var editBtn = '';
+                                        var retail, totalRetail, actualCost, itemCost, margin;
 
                                         if(type === 'bundle'){
                                             name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                            retail = '';
+                                            totalRetail = val['total_cost'];
+                                            actualCost = '';
+                                            itemCost = '';
+                                            margin = '';
                                         }else{
                                             name = val['name'];
                                             editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                            retail = val['retail'];
+                                            totalRetail = val['total_retail'];
+                                            actualCost = val['actual_cost'];
+                                            itemCost = val['item_cost'];
+                                            margin = val['margin'];
                                         }
 
                                         $('.item-list tbody').append(
@@ -737,12 +731,12 @@
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                            +'<td class="item-list-retail">' + retail + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
                                             +'<td  class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td>' + totalRetail + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -824,27 +818,37 @@
                                             var type = val['type'];
                                             var name;
                                             var editBtn = '';
+                                            var retail, totalRetail, actualCost, itemCost, margin;
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
                                             }else{
                                                 name = val['name'];
                                                 editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
                                             }
-
 
                                             $('.item-list tbody').append(
                                                 '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
-                                                +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                                +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                                +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                                +'<td class="item-list-retail">' + retail + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                                +'<td>' + val['total_retail'] + '</td>'
+                                                +'<td>' + totalRetail + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -993,28 +997,39 @@
                                         }
 
                                         var type = val['type'];
-                                            var name;
-                                            var editBtn = '';
+                                        var name;
+                                        var editBtn = '';
+                                        var retail, totalRetail, actualCost, itemCost, margin;
 
-                                            if(type === 'bundle'){
-                                                name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
-                                            }else{
-                                                name = val['name'];
-                                                editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
-                                            }
+                                        if(type === 'bundle'){
+                                            name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                            retail = '';
+                                            totalRetail = val['total_cost'];
+                                            actualCost = '';
+                                            itemCost = '';
+                                            margin = '';
+                                        }else{
+                                            name = val['name'];
+                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                            retail = val['retail'];
+                                            totalRetail = val['total_retail'];
+                                            actualCost = val['actual_cost'];
+                                            itemCost = val['item_cost'];
+                                            margin = val['margin'];
+                                        }
 
                                         $('.item-list tbody').append(
                                             '<tr class="row_position" id="' + val['id'] + '" data-id="' + i + '">'
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                            +'<td class="item-list-retail">' + retail + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td>' + totalRetail + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1046,7 +1061,7 @@
             function calculatePrices(quotationCost, totalRetail, totalCost, discount){
 
                 calculateMarginBeforeDiscount($("#price").val(), totalCost);
-                
+   
                 if(typeof discount == "undefined"){
                     discount = 0;
                 }else{
@@ -1061,7 +1076,7 @@
                  
                     var quotationMargin = quotationPriceAfterDiscount - totalCost;
                     var quotationMarginRate = Number((quotationMargin / quotationPriceAfterDiscount) * 100).toFixed(2);
-                    var quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    var quotationMarginVal = quotationMarginRate + '%';
 
                     var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
                     
@@ -1138,12 +1153,23 @@
                                         var type = val['type'];
                                         var name;
                                         var editBtn = '';
+                                        var retail, totalRetail, actualCost, itemCost, margin;
 
                                         if(type === 'bundle'){
                                             name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                            retail = '';
+                                            totalRetail = val['total_cost'];
+                                            actualCost = '';
+                                            itemCost = '';
+                                            margin = '';
                                         }else{
                                             name = val['name'];
-                                             editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                            editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                            retail = val['retail'];
+                                            totalRetail = val['total_retail'];
+                                            actualCost = val['actual_cost'];
+                                            itemCost = val['item_cost'];
+                                            margin = val['margin'];
                                         }
 
                                         $('.item-list tbody').append(
@@ -1151,13 +1177,13 @@
                                             +'<td>' + val['item_id'] + '</td>'
                                             +'<td>' + name + '</td>'
                                             +'<td>' + val['supplier'] + '</td>'
-                                            +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                            +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                            +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                            +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                            +'<td class="item-list-retail">' + retail + '</td>'
                                             +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                            +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                             +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                            +'<td>' + val['total_retail'] + '</td>'
+                                            +'<td>' + totalRetail + '</td>'
                                             +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                             +'<td>'
                                             +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1240,12 +1266,23 @@
                                             var type = val['type'];
                                             var name;
                                             var editBtn = '';
+                                            var retail, totalRetail, actualCost, itemCost, margin;
 
                                             if(type === 'bundle'){
                                                 name = '<a class="" title="Edit Bundle" onclick="editBundle('+ val['quotation_id'] +','+ val['item_id'] +')">' + val['name'] + '</a>';
+                                                retail = '';
+                                                totalRetail = val['total_cost'];
+                                                actualCost = '';
+                                                itemCost = '';
+                                                margin = '';
                                             }else{
                                                 name = val['name'];
                                                 editBtn ='<a class="btn btn-sm btn-secondary" title="Edit" onclick="editDetails(' + val['id'] +', '+ val['item_cost'] +', '+ val['qty'] +', '+ val['retail'] +' )"><i class="fas fa-edit"></i></a>';
+                                                retail = val['retail'];
+                                                totalRetail = val['total_retail'];
+                                                actualCost = val['actual_cost'];
+                                                itemCost = val['item_cost'];
+                                                margin = val['margin'];
                                             }
 
                                             $('.item-list tbody').append(
@@ -1253,13 +1290,13 @@
                                                 +'<td>' + val['item_id'] + '</td>'
                                                 +'<td>' + name + '</td>'
                                                 +'<td>' + val['supplier'] + '</td>'
-                                                +'<td class="item-list-cost" '+ costColHidden +'>' + val['actual_cost'] + '</td>'
-                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + val['item_cost'] + '</td>'
-                                                +'<td class="item-list-retail">' + val['retail'] + '</td>'
+                                                +'<td class="item-list-cost" '+ costColHidden +'>' + actualCost + '</td>'
+                                                +'<td class="item-list-item-cost" '+ costColHidden +'>' + itemCost + '</td>'
+                                                +'<td class="item-list-retail">' + retail + '</td>'
                                                 +'<td class="item-list-qty">' + val['qty'] + '</td>'
-                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + val['margin'] + '</td>'
+                                                +'<td class="item-list-item-margin" '+ costColHidden +'>' + margin + '</td>'
                                                 +'<td class="item-list-total-cost" '+ costColHidden +'>' + val['total_cost'] + '</td>'
-                                                +'<td>' + val['total_retail'] + '</td>'
+                                                +'<td>' + totalRetail + '</td>'
                                                 +'<td class="item-list-display-report" '+ costColHidden +'><input type="checkbox" id="item" name="item" onclick="updateDisplayStatus(this)" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
                                                 +'<td>'
                                                 +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['quotation_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
@@ -1360,7 +1397,7 @@
                 if(quotationCost > 0){
                     var quotationMargin = quotationCost - totalCost;
                     var quotationMarginRate = Number((quotationMargin / quotationCost) * 100).toFixed(2);
-                    quotationMarginVal = Number(quotationMargin).toFixed(2) + ' (' + quotationMarginRate + '%)';
+                    quotationMarginVal = quotationMarginRate + '%';
                 }else{
                     quotationMarginVal = 0;
                 }

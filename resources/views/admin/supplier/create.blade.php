@@ -8,6 +8,15 @@
                     <h5 class="card-header  white-text text-left py-3">
                         <!-- <strong>{{ $title }}</strong> -->
                         {{ $title }}
+
+                        <div class="card-tools">
+                            <a href="{{ route('admin.supplier.index') }}" class="btn btn-sm btn-primary">
+                                <button type="button" class="btn btn-tool">
+                                    <!-- <i class="fa fa-arrow-left"></i> -->
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </a>
+                        </div>
                     </h5>
                     <!-- /.card-header -->
                     <!-- form start -->

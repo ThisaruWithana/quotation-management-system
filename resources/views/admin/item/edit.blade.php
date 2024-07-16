@@ -5,6 +5,11 @@
         <div class="card-header">
             <h3 class="card-title">{{ $title }}</h3>
             <div class="card-tools">
+                <a class="btn btn-sm" onclick=saveChangesConfirmation()>
+                  <button type="button" class="btn btn-tool">
+                      <i class="fas fa-times"></i>
+                  </button>
+                </a>
             </div>
         </div>
         <div class="card-body px-lg-2 pt-0">
@@ -49,10 +54,8 @@
               </div>
 
               <div class="bs-stepper-content">
-              <form class="text-center border border-light p-5" action="" id="itemdetails" enctype="multipart/form-data" onsubmit="return false;">
+              <form class="text-center border border-light p-5" method="POST" action="{{ url('admin/item/update') }}" id="itemdetails" enctype="multipart/form-data" onsubmit="return false;">
                 <div id="test-l-1" class="content">
-
-                      <!-- <form class="text-center border border-light p-5" action="" id="itemCreate" onsubmit="return false;"> -->
 
                         <div class="row">
                           <div class="col-lg-5">
@@ -122,18 +125,11 @@
                               </div>
                           </div>
                         </div>
-<!-- 
-                            <div class="text-left">
-                              <button class="btn btn-primary" type="button" onclick="stepper1.next()">Next</button>
-                            </div> -->
 
-                      <!-- </form> -->
                 </div>
                 <div id="test-l-2" class="content">
 
-                  <!-- <form class="text-center border border-light p-5" action="" id="itemdetails" onsubmit="return false;"> -->
-
-                          <div class="row">
+                        <div class="row">
                             <div class="col-lg-10">
                                 <div class="form-group text-left">
                                     <label for="name" class="form-label">Item Name</label>
@@ -175,16 +171,8 @@
                             <div class="row">
                             </div>
 
-                            <!-- <div class="text-left">
-                              <button class="btn btn-primary item-info" type="button"  onclick="stepper1.next()">Next</button>
-                              <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                            </div> -->
-                  <!-- </form> -->
                 </div>
                 <div id="test-l-3" class="content">
-
-                  <!-- <form class="text-center border border-light p-5" action="" id="itemStockSettings" enctype="multipart/form-data" onsubmit="return false;"> -->
-
                           <div class="row">
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
@@ -252,30 +240,13 @@
                           </div>
 
                           <input type="hidden" class="form-control" name="item_id" id="item_id" value="{{ $data['id'] }}">
-<!-- 
-                            <div class="text-left">
-                              <button class="btn btn-primary stock-setting" type="button" onclick="stepper1.next()">Next</button>
-                              <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                            </div> -->
-                  <!-- </form> -->
+
                 </div>
                 <div id="test-l-4" class="content">
-                    <!-- <form class="text-center border border-light p-5" action="" id="itemOptionalItems" onsubmit="return false;"> -->
-
+                   
                             <div class="row">
                               <div class="col-lg-12">
-                                  <!-- <div class="form-group text-left">
-                                      <label for="case_size" class="form-label">Optional Items</label>
-                                      <select class="selectpicker  show-tick col-lg-8" data-live-search="true" id="optional_items" name="optional_items[]" multiple>
-                
-                                          @foreach ($itemList as $value)
-                                            <option value="{{ $value->id }}"
-                                          {{in_array($value->id, $selectedOptionalItems) ? 'selected' : ''}}>{{ $value->barcode->barcode }} - (Dep) {{ $value->department->name }} - {{ $value->name }}</option>
-                                          @endforeach
-                                      </select>
-                                      <button class="btn btn-primary" type="button" id="addOptionalItems">Save</button>
-                                  </div> -->
-
+          
                                   <div class="col-lg-2"style="float:right;">
                                     <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                         <i class="fa fa-search-plus"></i>
@@ -296,6 +267,7 @@
                                             <th class="th-sm">Cost Price</th>
                                             <th class="th-sm">Retail Price</th>
                                             <th class="th-sm">Is Mandatory</th>
+                                            <th class="th-sm"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -309,6 +281,11 @@
                                                 <td>{{ $value->subitem->retail_price }}</td>
                                                 <td><input type="checkbox" onclick="updateMandatoryStatus(this)" id="is_mandatory" name="is_mandatory" value="{{ $value->id }}" class="form-check-label"
                                                   @if($value->is_mandatory == 1) checked @endif></td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->parent_id }})">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -316,15 +293,9 @@
                               </div>
                             </div>
 
-                              <!-- <div class="text-left">
-                              <button class="btn btn-primary" type="button" onclick="stepper1.next()">Next</button>
-                                <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                              </div> -->
-                    <!-- </form> -->
                 </div>
                 <div id="test-l-5" class="content">
-                  <!-- <form class="text-center border border-light p-5" action="" id="itemPricingInfo" onsubmit="return false;"> -->
-
+                  
                           <div class="row">
                             <div class="col-lg-5">
                                 <div class="form-group text-left">
@@ -363,9 +334,7 @@
 
                             <div class="text-left">
                               <button class="btn btn-primary col-lg-1" type="submit">Save</button>
-                              <!-- <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button> -->
-                            </div>
-                  <!-- </form> -->
+                              </div>
                 </div>
                 </form>
               </div>
@@ -649,6 +618,9 @@
                                     +'<td>' + val['subitem']['cost_price'] + '</td>'
                                     +'<td>' + val['subitem']['retail_price'] + '</td>'
                                     +'<td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                    +'<td>'
+                                    +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['parent_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                    +'</td>'
                                     +'</tr>'
                                     );
                               });
@@ -731,6 +703,9 @@
                                     +'<td>' + val['subitem']['cost_price'] + '</td>'
                                     +'<td>' + val['subitem']['retail_price'] + '</td>'
                                     +'<td><input type="checkbox" onclick="updateMandatoryStatus(this)" id="is_mandatory" name="is_mandatory" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                    +'<td>'
+                                    +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['parent_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                    +'</td>'
                                     +'</tr>'
                                     );
                               });
@@ -740,26 +715,91 @@
                 });
         }
 
-            function updateMandatoryStatus(isChecked){
-              var ischecked = isChecked.checked;
+        function updateMandatoryStatus(isChecked){
+            var ischecked = isChecked.checked;
 
-                $.ajax({
-                    url: "{{ url('admin/item/update-mandatory-status') }}",
+            $.ajax({
+                url: "{{ url('admin/item/update-mandatory-status') }}",
+                type: 'POST',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "id": isChecked.value,
+                        "ischecked": ischecked
+                    },
+                    success: function (data) {
+                        var result = JSON.parse(data);
+
+                    }, error: function (data) {
+                }
+            });
+        }
+        
+        function changeStatus(id, itemId){
+
+            $.ajax({
+                    url: "{{ url('admin/item/delete-item') }}",
                     type: 'POST',
                         data: {
                             "_token": "{{ csrf_token() }}",
-                            "id": isChecked.value,
-                            "ischecked": ischecked
+                            "id": id,
+                            "item_id": itemId
                         },
                         success: function (data) {
                             var result = JSON.parse(data);
+                            $('#optionalItemTable tbody').empty();
 
+                            if (result['data'].length > 0) {
+                               
+                                $.each(result['data'], function (count, val) {
+
+                                    var isMandatory = val['is_mandatory'];
+                                    var checkboxStatus = '';
+
+                                    if(isMandatory === 1){
+                                     checkboxStatus = 'checked';
+                                    }
+                                    console.log(result['data'].length);
+                                    $('#optionalItemTable tbody').append(
+                                        '<tr>'
+                                            +'<td>' + val['subitem']['id'] + '</td>'
+                                            +'<td>' + val['subitem']['name'] + '</td>'
+                                            +'<td>' + val['subitem']['barcode']['barcode'] + '</td>'
+                                            +'<td>' + val['subitem']['department']['name'] + '</td>'
+                                            +'<td>' + val['subitem']['cost_price'] + '</td>'
+                                            +'<td>' + val['subitem']['retail_price'] + '</td>'
+                                            +'<td><input type="checkbox" id="is_mandatory" name="is_mandatory" value="' + val['id'] + '" class="form-check-label" '+ checkboxStatus +'></td>'
+                                            +'<td>'
+                                            +'<a class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus(' + val['id'] + ', ' + val['parent_id'] + ')"><i class="fas fa-trash-alt"></i></a>'
+                                            +'</td>'
+                                        +'</tr>'
+                                    );
+                                });
+                            }
                         }, error: function (data) {
 
                     }
-                });
-            }
+            });
+        }
 
+        function saveChangesConfirmation() {
+
+            cuteAlert({
+                    type: "question",
+                    title: "Are you sure",
+                    message: "You want to save this changes and go back?",
+                    confirmText: "Yes",
+                    cancelText: "Cancel"
+                    }).then((e)=>{
+                    if ( e == ("confirm")){
+
+                        $("#itemdetails").submit();
+
+
+                    } else {
+                
+                    }
+                });
+        }
     </script>
     @endsection
 </x-admin>

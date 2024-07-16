@@ -58,13 +58,13 @@
                 <table class="table" id="dataTable" width="100%">
                     <thead>
                         <tr>
-                            <th class="th-sm">Item ID</th>
+                            <th class="th-sm w-100px">Item ID</th>
                             <th class="th-sm">Name</th>
-                            <th class="th-sm">PO No</th>
-                            <th class="th-sm">Item Cost</th>
+                            <th class="th-sm w-100px">PO No</th>
+                            <th class="th-sm w-100px">Item Cost</th>
                             <th class="th-sm">Qty</th>
-                            <th class="th-sm">Total Cost</th>
-                            <th class="th-sm">PO Date</th>
+                            <th class="th-sm w-100px">Total Cost</th>
+                            <th class="th-sm w-100px">PO Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,12 +93,7 @@
                     "bPaginate": false,
                     "searching": true,
                     "ordering": true,
-                    "responsive": true,
-                    // "scrollX": false,
                     "autoWidth":true,
-                    "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 6 ]},
-                    ],
                     "order": [0,'desc'],
                 });
             });

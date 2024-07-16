@@ -27,7 +27,7 @@ class BundleController extends Controller
         }
 
         $pageSize = $new;
-        $data = Bundle::query()->with('created_user')->orderBy('id','DESC');
+        $data = Bundle::query()->with('created_user')->whereNotIn('status', [2])->orderBy('id','DESC');
 
         if($request->query('form_action') === 'search'){
 
@@ -155,6 +155,7 @@ class BundleController extends Controller
                     'item_cost' => $actual_cost,
                     'retail' => $retail,
                     'qty' => 1,
+                    'margin' => $itemDetails['margin'],
                     'total_cost' => $total_cost,
                     'total_retail' => $total_retail,
                     'order' => $order,
@@ -189,6 +190,7 @@ class BundleController extends Controller
                                     'actual_cost' => $value['subitem']['cost_price'],
                                     'retail' => $value['subitem']['retail_price'],
                                     'qty' => 1,
+                                    'margin' => $itemDetails['margin'],
                                     'total_cost' => $value['subitem']['cost_price'],
                                     'total_retail' => $value['subitem']['retail_price'],
                                     'order' => $subItemOrder,
@@ -402,9 +404,12 @@ class BundleController extends Controller
                 $item_total_cost = $actual_cost * $qty;
                 $item_total_retail = $retail * $qty;
 
+                $margin = $this->calculateItemMargin($bundle_item_id, $actual_cost, $retail);
+
                 $update = BundleItem::where('id', $bundle_item_id)->update([
                     'item_cost' => $actual_cost,
                     'qty' => $qty,
+                    'margin' => $margin,
                     'total_cost' => $item_total_cost,
                     'total_retail' => $item_total_retail,
                     'updated_by' => Auth::user()->id
@@ -455,6 +460,23 @@ class BundleController extends Controller
             } 
     }
 
+    public function calculateItemMargin($id, $costPrice, $retailPrice)
+    {
+        $item = BundleItem::where('id',$id)->first();
+        $itemId = $item['item_id'];
+
+        $itemDetails = Item::with('department.vat')->where('id',$itemId)->first();
+        $caseSize = $itemDetails['case_size'];
+        $vat = $itemDetails['department']['vat']['value'];
+
+        $vatConst = ($vat + 100)/100;
+        $netRetail = $retailPrice / $vatConst;
+        $netProfit = $netRetail - ($costPrice / $caseSize);
+        $margin = ($netProfit / $netRetail) * 100;
+
+        return json_encode(round($margin, 2));
+    }
+
     public function getBundleItems($bundleId)
     {
         $bundleItemList = BundleItem::with('item', 'item.suppliers.suppliername')
@@ -483,6 +505,7 @@ class BundleController extends Controller
                     'total_retail' => $value['total_retail'],
                     'display_report' => $value['display_report'],
                     'bundle_id' => $value['bundle_id'],
+                    'margin' => $value['margin'],
                     'supplier' => implode(" ",$supplierList)
                     ]);
 
@@ -504,6 +527,8 @@ class BundleController extends Controller
         
         try{
             DB::beginTransaction();
+
+            $this->updateBundleIInfo($request);
 
             if(!empty($rowOrder)){
                 
@@ -529,6 +554,7 @@ class BundleController extends Controller
                     $response['msg'] = 'Something went wrong !';
                 }
             }else{
+                DB::commit(); 
                 $response['code'] = 1;
                 $response['msg'] = "Success";
             }
@@ -540,5 +566,51 @@ class BundleController extends Controller
             $response['msg'] = $e->getMessage();
             return json_encode($response);
         } 
+    }
+    
+    public function updateBundleIInfo(Request $request)
+    {
+        $response = array();
+        $bundle_id = $request->input('bundle_id');
+        
+        try{
+            DB::beginTransaction();
+
+            $queryUpdate = Bundle::where('id', $bundle_id)->update([
+                'remark' => $request->input('remark'),
+                'bundle_cost' => $request->input('bundle_cost'),
+                'updated_by' => Auth::user()->id
+            ]);
+                
+                if($queryUpdate){
+                    DB::commit(); 
+                }else{
+                    DB::rollback();
+                }
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->input('id');
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = Bundle::find($id);
+            $queryStatus->status = 2;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
     }
 }

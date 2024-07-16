@@ -49,7 +49,8 @@ class ItemController extends Controller
         $sub_departments = SubDepartment::where('status', 1)->orderBy('name','ASC')->get();
 
         
-        $data = Item::query()->with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')->orderBy('id','desc');
+        $data = Item::query()->with('created_user', 'department', 'subdepartment', 'barcode', 'suppliers.suppliername')
+                ->whereIn('status', [0,1])->orderBy('id','desc');
 
         if($request->query('form_action') === 'search'){
 
@@ -763,4 +764,81 @@ class ItemController extends Controller
         }
     }
 
+    public function validateProductCode(Request $request)
+    {
+        $code = $request->input('code');
+        $response = array();
+
+        $query = Barcode::where('product_code', $code)->get();
+
+        if(count($query) > 0){
+            $response['code'] = 0;
+            $response['msg'] = "Product code already exist !";
+        }else{
+            $response['code'] = 1;
+            $response['msg'] = "";
+        }
+
+        return json_encode($response);
+    }
+
+    
+    public function deleteItem(Request $request)
+    {
+        $response = array();
+        $id = $request->input('id');
+        $item_id = $request->input('item_id');
+
+            try{
+                DB::beginTransaction();
+
+                $update = SubItem::where('id', $id)->update([
+                    'status' => 0,
+                    'updated_by' => Auth::user()->id
+                ]);
+                
+                DB::commit(); 
+
+                if($update){
+
+                    $data = SubItem::with('subitem.barcode', 'subitem.department')->where('parent_id', $item_id)
+                    ->where('status', 1)->orderBy('id','DESC')->get();
+
+                    $response['code'] = 1;
+                    $response['msg'] = "Success";
+                    $response['data'] = $data;
+                }else{
+                    DB::rollback();
+                    $response['code'] = 0;
+                    $response['msg'] = 'Something went wrong !';
+                    $response['data'] = '';
+                }
+
+                return json_encode($response);
+            }catch(\Exception $e){
+                DB::rollback();
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                return json_encode($response);
+            } 
+    }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->input('id');
+
+        DB::beginTransaction();
+        try {
+
+            $queryStatus = Item::find($id);
+            $queryStatus->status = 2;
+            $queryStatus->save();
+
+            DB::commit();
+            return 1;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $e->getMessage();
+        }
+    }
 }
