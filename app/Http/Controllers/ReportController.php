@@ -16,7 +16,7 @@ class ReportController extends Controller
     public function barcode()
     {
         $title = 'Print Labels';
-        $items = Item::orderBy('name','ASC')->get();
+        $items = Item::orderBy('name','ASC')->where('status', 1)->get();
         return view('admin.reports.barcode', compact('items', 'title'));
     }
 
@@ -70,7 +70,7 @@ class ReportController extends Controller
         }
                 
         $listData = $data->paginate($pageSize);  
-        $items = Item::orderBy('name','ASC')->get();
+        $items = Item::orderBy('name','ASC')->where('status', 1)->get();
 
         return view('admin.reports.item-order-history', compact('items', 'title', 'pageSize', 'listData'));
     }

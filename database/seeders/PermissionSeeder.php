@@ -71,7 +71,6 @@ class PermissionSeeder extends Seeder
             'admin.department.sub.change-status',
             'admin.department.get-subdepartments-by-departments',
             'admin.department.get-vat-value',
-            'admin.department.sub.store',
             
             'admin.customer.index',
             'admin.customer.create',
@@ -112,6 +111,9 @@ class PermissionSeeder extends Seeder
             'admin.item.update-display-status',
             'admin.item.store-sub-items',
             'admin.item.get-sub-items',
+            'admin.item.validate-productcode',
+            'admin.item.delete-item',
+            'admin.item.destroy',
 
             'admin.quotation',
             'admin.quotation.create',
