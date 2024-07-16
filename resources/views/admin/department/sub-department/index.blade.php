@@ -14,6 +14,7 @@
             <table class="table" id="dataTable">
                 <thead>
                     <tr>
+                        <th class="th-sm w-50px">ID</th>
                         <th class="th-sm w-120px">Sub Department</th>
                         <th class="th-sm w-100px">Department</th>
                         <th class="th-sm w-100px">Created By</th>
@@ -29,6 +30,7 @@
                 <?php $i = 1; ?>
                 @foreach ($data as $value)
                         <tr>
+                            <td>{{ $value->id }}</td>
                             <td>{{ $value->name }}</td>
                             <td>{{ $value->departments->name }}</td>
                             <td>{{ $value->created_user->name }}</td>
@@ -72,7 +74,7 @@
                     "searching": true,
                     "ordering": true,
               "aoColumnDefs": [
-                { "bSortable": false, "aTargets": [ 6] }, 
+                { "bSortable": false, "aTargets": [ 7] }, 
             ]
                 });
             });

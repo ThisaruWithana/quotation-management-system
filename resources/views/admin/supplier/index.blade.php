@@ -11,9 +11,10 @@
         <div class="card-body">
             
             <div class="table-responsive">
-                <table class="table" id="dataTable">
+                <table class="table" id="dataTable" width="100%">
                     <thead>
                         <tr>
+                            <th class="th-sm w-50px">ID</th>
                             <th class="th-sm w-100px">Name</th>
                             <th class="th-sm w-120px">Contact Person</th>
                             <th class="th-sm">Address</th>
@@ -32,6 +33,7 @@
                     <?php $i = 1; ?>
                     @foreach ($data as $value)
                             <tr>
+                                <td>{{ $value->id }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->contact_person }}</td>
                                 <td>{{ $value->address }} {{ $value->postal_code }}</td>
@@ -78,7 +80,7 @@
                     "searching": true,
                     "ordering": true,
               "aoColumnDefs": [
-                { "bSortable": false, "aTargets": [ 8] }, 
+                { "bSortable": false, "aTargets": [ 9] }, 
             ]
                 });
             });
