@@ -7,6 +7,8 @@ use App\Models\Barcode;
 use App\Models\Item;
 use App\Models\Po;
 use App\Models\PoItems;
+use App\Imports\CustomerImport;
+use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use Auth;
 use PDF;
@@ -75,4 +77,32 @@ class ReportController extends Controller
         return view('admin.reports.item-order-history', compact('items', 'title', 'pageSize', 'listData'));
     }
 
+    public function importData()
+    {
+        $title = 'Import Data';
+        return view('admin.reports.import', compact('title'));
+    }
+
+    public function import(Request $request)
+    {
+        $type = $request->input('type');
+
+        if($type === 'customer'){
+           return $this->importCustomer($request);
+        }else{
+            return $this->importItems($request);
+        }
+    }
+
+    public function importCustomer(Request $request)
+    {
+        Excel::import(new CustomerImport,request()->file('file'));
+     
+        return redirect()->route('admin.report.import-data')->with('success','Imported Successfully');
+    }
+
+    public function importItems(Request $request)
+    {
+
+    }
 }

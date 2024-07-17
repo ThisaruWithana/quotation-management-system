@@ -27,10 +27,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
 
     Route::middleware(['check-permission'])->group(function(){
         Route::resource('permission',PermissionController::class);
-        // Route::resource('subcategory',SubCateoryController::class);
-        // Route::resource('collection',CollectionController::class);
-        // Route::resource('product',ProductController::class);
-        // Route::get('/get/subcategory',[ProductController::class,'getsubcategory'])->name('getsubcategory');
         Route::get('/remove-external-img/{id}',[ProductController::class,'removeImage'])->name('remove.image');
     });
 
@@ -75,6 +71,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('bundle/update-bundle-item-order', [BundleController::class, 'updateBundleItemOrder'])->name('bundle.update-bundle-item-order');
 
     Route::post('bundle/destroy', [BundleController::class, 'destroy'])->name('bundle.destroy');
+
 
     Route::prefix('item')->group(function(){
 
@@ -178,7 +175,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::get('barcode', [ReportController::class, 'barcode'])->name('report.barcode');
         Route::get('order-history', [ReportController::class, 'itemOrderHistory'])->name('report.order-history');
 
+        Route::get('import-data', [ReportController::class, 'importData'])->name('report.import-data');
+
+
         Route::post('print-label', [ReportController::class, 'printLabels'])->name('report.print-label');
+        Route::post('import', [ReportController::class, 'import'])->name('report.import');
     });
 
     Route::prefix('stock')->group(function(){

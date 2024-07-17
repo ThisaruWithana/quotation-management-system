@@ -176,6 +176,14 @@
                     </li>
                 </ul>
             </li>
+            
+            <li class="nav-item">
+                <a href="{{ route('admin.report.import-data') }}"
+                    class="nav-link {{ Route::is('admin.report.import-data') ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-cart-plus"></i>
+                    <p>Import Data</p>
+                </a>
+            </li>
         @endrole
 
         @role('manager')
