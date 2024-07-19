@@ -697,7 +697,7 @@ class ItemController extends Controller
         
     }
 
-    public  function generateBarcode($length = 11) {
+    public  function generateBarcode($length = 10) {
         $characters = '0123456789';
         $charactersLength = strlen($characters);
         $uniqueNumber = '';

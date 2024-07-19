@@ -18,6 +18,7 @@
             <div class="card-tools">
                 @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
                     <a href="{{ route('admin.customer.create') }}" class="btn btn-sm btn-primary">Add New</a>
+                    <a href="{{ URL('admin/report/import-data') }}/customer" class="btn btn-sm btn-warning">Import</a>
                 @endif 
             </div>
         </div>

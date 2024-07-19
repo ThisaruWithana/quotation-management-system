@@ -21,7 +21,7 @@
         <div class="card-body">
 
             <div class="row">
-                <div class="col-10">
+                <div class="col-9">
                     <div class="row">
                         <div class="post table-responsive" id="">
                             <h4>Suppliers</h4><br>
@@ -93,7 +93,7 @@
                 
                 </div>
                 
-                <div class="col-2">
+                <div class="col-3">
                     <h4> {{ 'Item Details' }} </h4><br>
               
                     @if(isset($data->image))
@@ -130,7 +130,7 @@
                     <h5 class="mt-5 text-muted">Stock Details</h5>
                     <div class="text-muted col-md-5">
                         <p class="text-sm"><b class="d-block info-lb">Min Stock: </b> {{ $data->min_stock }}</p>
-                        <p class="text-sm"><b class="d-block info-lb">In Stock: </b> </p>
+                        <!-- <p class="text-sm"><b class="d-block info-lb">In Stock: </b> </p> -->
                         <p class="text-sm"><b class="d-block info-lb">Location: </b> {{ $data->location->name }}</p>
                         <p class="text-sm"><b class="d-block info-lb">Auto Order:</b>&nbsp&nbsp
                             @if($data->auto_order == 1)  Yes @else No @endif
