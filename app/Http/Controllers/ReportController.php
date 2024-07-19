@@ -8,6 +8,7 @@ use App\Models\Item;
 use App\Models\Po;
 use App\Models\PoItems;
 use App\Imports\CustomerImport;
+use App\Imports\ItemImport;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use Auth;
@@ -77,10 +78,10 @@ class ReportController extends Controller
         return view('admin.reports.item-order-history', compact('items', 'title', 'pageSize', 'listData'));
     }
 
-    public function importData()
+    public function importData($type)
     {
         $title = 'Import Data';
-        return view('admin.reports.import', compact('title'));
+        return view('admin.reports.import', compact('title', 'type'));
     }
 
     public function import(Request $request)
@@ -98,11 +99,13 @@ class ReportController extends Controller
     {
         Excel::import(new CustomerImport,request()->file('file'));
      
-        return redirect()->route('admin.report.import-data')->with('success','Imported Successfully');
+        return redirect()->route('admin.customer.index')->with('success','Imported Successfully');
     }
 
     public function importItems(Request $request)
     {
-
+        Excel::import(new ItemImport,request()->file('file'));
+     
+        return redirect()->route('admin.item')->with('success','Imported Successfully');
     }
 }

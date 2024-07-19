@@ -19,11 +19,11 @@
                                         <div class="row">
                                             <div class="col-lg-3">
                                                 <div class="form-group text-left">
-                                                    <label for="type" class="form-label">Select Type</label>
+                                                    <label for="type" class="form-label">Select Type </label>
                                                     <span class="required"> * </span>
                                                     <select id="type" name="type" class="selectpicker show-tick col-lg-12" required>
-                                                        <option value="customer">Customer</option>
-                                                        <option value="item">Items</option>
+                                                        <option value="customer" {{ $type === 'customer' ? 'selected' : '' }})>Customer</option>
+                                                        <option value="item" {{ $type === 'item' ? 'selected' : '' }}>Items</option>
                                                     </select>
                                                 </div>
                                             </div>

@@ -175,7 +175,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::get('barcode', [ReportController::class, 'barcode'])->name('report.barcode');
         Route::get('order-history', [ReportController::class, 'itemOrderHistory'])->name('report.order-history');
 
-        Route::get('import-data', [ReportController::class, 'importData'])->name('report.import-data');
+        Route::get('import-data/{type}', [ReportController::class, 'importData'])->name('report.import-data');
 
 
         Route::post('print-label', [ReportController::class, 'printLabels'])->name('report.print-label');
