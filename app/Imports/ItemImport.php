@@ -22,6 +22,7 @@ class ItemImport implements ToCollection, WithHeadingRow
     {
         foreach ($rows as $row)
         {
+           
             $product_code = $row['product_code'];
  
             $checkIfExist = Barcode::where('product_code', $row['product_code'])->first();
@@ -32,14 +33,19 @@ class ItemImport implements ToCollection, WithHeadingRow
                 $retail_price = $row['retail'];
                 $in_stock = $row['in_stock'];
 
-                
                 $getVatRate = Department::with('vat')->where('id', $row['department_id'])->first();
-                $vat = $getVatRate['vat']['value'];
+                $vat = 0;
 
                 $vat_const = ($vat + 100)/100;
                 $net_retail = $retail_price / $vat_const;
-                $net_profit = $net_retail - ($cost_price / $case_size);
-                $margin = ($net_profit / $net_retail) * 100;
+        
+                $net_profit = $net_retail - $cost_price;
+
+                if($net_retail != 0){
+                    $margin = ($net_profit / $net_retail) * 100;
+                }else{
+                    $margin = 0;
+                }
 
                 $store = Item::create([
                     'department_id' => (int)$row['department_id'],

@@ -18,9 +18,9 @@ class CustomerImport implements ToCollection, WithHeadingRow
         foreach ($rows as $row)
         {
             
-            $checkIfExist = Customer::where('email', $row['email'])->first();
+            // $checkIfExist = Customer::where('email', $row['email'])->first();
 
-            if(!$checkIfExist){
+            // if(!$checkIfExist){
 
                 $store = Customer::create([
                     'name' => $row['name'],
@@ -61,11 +61,11 @@ class CustomerImport implements ToCollection, WithHeadingRow
                     $code =  $type.$customer_id;
                 }
 
-               return $update = Customer::where('id', $customer_id)->update([
+                $update = Customer::where('id', $customer_id)->update([
                     'code' => $code,
                     'updated_by' => Auth::user()->id
                 ]);
-            }
+            // }
         }
     }
 }

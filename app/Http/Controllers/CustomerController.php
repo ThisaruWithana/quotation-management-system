@@ -42,7 +42,7 @@ class CustomerController extends Controller
                 $request->validate([
                     'name' => 'required', 'string', 'max:255',
                     'contact_person' => 'required',
-                    'email' => ['required', 'string', 'email', 'max:255', Rule::unique('customer')->ignore($id)],
+                    'email' => ['required', 'string', 'email', 'max:255'],
                     'address' => 'required|max:255',
                     'tel' => 'required|max:11',
                 ]);
@@ -50,7 +50,7 @@ class CustomerController extends Controller
                 $request->validate([
                     'name' => 'required', 'string', 'max:255',
                     'contact_person' => 'required',
-                    'email' => 'required', 'string', 'email', 'max:255', 'unique:'.Customer::class,
+                    'email' => 'required', 'string', 'email', 'max:255',
                     'address' => 'required|max:255',
                     'tel' => 'required|max:11',
                 ]);

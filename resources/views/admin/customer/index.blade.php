@@ -28,6 +28,7 @@
                 <table class="table" id="dataTable" width="100%">
                     <thead>
                         <tr>
+                            <th class="th-sm">ID</th>
                             <th class="th-sm">Code</th>
                             <th class="th-sm w-100px">Name</th>
                             <th class="th-sm w-120px">Contact Person</th>
@@ -44,6 +45,7 @@
                     <tbody>
                     @foreach ($data as $value)
                             <tr>
+                                <td>{{ $value->id }}</td>
                                 <td>{{ $value->code }}</td>
                                 <td>{{ $value->name }}</td>
                                 <td>{{ $value->contact_person }}</td>
@@ -93,8 +95,9 @@
                     "ordering": true,
                     "autoWidth":true,
                     "aoColumnDefs": [
-                        { "bSortable": false, "aTargets": [ 10] },
-                    ]
+                        { "bSortable": false, "aTargets": [ 11] },
+                    ],
+                    "order": [0,'desc'],  
                 });
             });
 
