@@ -356,34 +356,6 @@
                 $('.item-list-retail').addClass('editable');
                 $('.item-list-qty').addClass('editable');
 
-                // $('.bundle-item-cost').hide();
-                // $('.item-list-item-cost').hide();
-                // $('.item-list-total-cost').hide();
-                // $('.item-list-cost').hide();
-                // $('.item-search-cost').hide();
-                // $('.item-list-display-report').hide();
-
-                // cuteAlert({
-                //     type: "question",
-                //     title: "Are you in the office",
-                //     message: "",
-                //     confirmText: "Yes",
-                //     cancelText: "No"
-                //     }).then((e)=>{
-                //     if ( e == ("confirm")){
-                //         $('#in_office').val('yes');
-                //         $(".bundle-item-cost").show();
-                //         $('.item-list-item-cost').show();
-                //         $('.item-list-total-cost').show();
-                //         $('.item-list-cost').show();
-                //         $('.item-search-cost').show();
-                //         $('.item-list-display-report').show();
-
-                //     } else {
-                //         $('#in_office').val('no');
-                //     }
-                // });
-
                 $('#in_office').val('yes');
 
                 $("#bundleCreate").submit(function(event) {
@@ -540,11 +512,8 @@
                                 }
 
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
-                                // gettableRowOrder();
 
-                                if(Itemtype == 'main'){
-                                    displaySubItemList(isChecked.value);
-                                }
+                                displaySubItemList(isChecked.value);
                             }, error: function (data) {
 
                         }
@@ -744,7 +713,7 @@
                                     );
                             });
                         }else{
-
+                            $("#subItemList").modal('hide');
                         }
                     }, error: function (data) {
 

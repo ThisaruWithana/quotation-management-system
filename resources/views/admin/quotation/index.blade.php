@@ -29,7 +29,7 @@
                     <select id="customer" name="customer" class="selectpicker show-tick" data-live-search="true">
                         <option value="">Customer</option>
                         @foreach ($customers as $value)
-                            <option value="{{ $value->id }}" @if(Request()->customer == $value->id) selected @endif>{{ $value->name }}</option>
+                            <option value="{{ $value->id }}" @if(Request()->customer == $value->id) selected @endif>{{ $value->name }} - {{ $value->contact_person }}</option>
                         @endforeach
                     </select>
                 </div>

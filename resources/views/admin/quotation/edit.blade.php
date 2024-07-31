@@ -61,7 +61,10 @@
                                                             <option value="">Select Client</option>
                                                             @foreach ($customers as $value)
                                                             <option value="{{ $value->id }}"
-                                                                {{ $value->id === $data->customer_id ? 'selected' : '' }}>{{ $value->code }} - {{  $value->postal_code }} - {{ $value->name }}</option>
+                                                                {{ $value->id === $data->customer_id ? 'selected' : '' }}>
+                                                                        {{  $value->postal_code }}
+                                                                        - {{ $value->name }}
+                                                                        - {{ $value->contact_person }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -1049,9 +1052,7 @@
 
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
-                                if(Itemtype == 'main'){
-                                    displaySubItemList(isChecked.value);
-                                }
+                                displaySubItemList(isChecked.value);
                             }, error: function (data) {
 
                         }
@@ -1382,7 +1383,7 @@
                                     );
                             });
                         }else{
-
+                            $("#subItemList").modal('hide');
                         }
                     }, error: function (data) {
 

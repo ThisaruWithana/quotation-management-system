@@ -164,8 +164,6 @@ class BundleController extends Controller
                     'updated_by' => Auth::user()->id,
                 ]);
 
-                if($request->input('type') === 'main'){
-
                     $checkSubItems = SubItem::where('parent_id',$id)->where('status', 1)->get();
 
                     if(count($checkSubItems) > 0){
@@ -201,9 +199,6 @@ class BundleController extends Controller
                             }
                         }
                     }
-    
-                }
-
             }else{
 
                 $is_checked = 0;

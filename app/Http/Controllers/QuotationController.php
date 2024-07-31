@@ -279,7 +279,7 @@ class QuotationController extends Controller
                     'updated_by' => Auth::user()->id,
                 ]);
                 
-                if($request->input('type') === 'main'){
+                // if($request->input('type') === 'main'){
 
                     $checkSubItems = SubItem::where('parent_id',$id)->where('status', 1)->get();
 
@@ -318,7 +318,7 @@ class QuotationController extends Controller
                         }
                     }
     
-                }
+                // }
             }else{
 
                 $is_checked = 0;
@@ -1320,8 +1320,6 @@ class QuotationController extends Controller
                     'created_by' => Auth::user()->id,
                     'updated_by' => Auth::user()->id,
                 ]);
-                
-                if($request->input('type') === 'main'){
 
                     $checkSubItems = SubItem::where('parent_id',$id)->where('status', 1)->get();
 
@@ -1358,8 +1356,6 @@ class QuotationController extends Controller
                             }
                         }
                     }
-
-                }
             }else{
 
                 $is_checked = 0;

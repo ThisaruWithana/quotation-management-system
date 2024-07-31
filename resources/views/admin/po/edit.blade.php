@@ -569,9 +569,7 @@
 
                                 calculatePrices(result['total_cost']);
 
-                                if(Itemtype == 'main'){
-                                    displaySubItemList(isChecked.value);
-                                }
+                                displaySubItemList(isChecked.value);
                             }, error: function (data) {
                                         
                         }
@@ -679,7 +677,7 @@
                                     );
                             });
                         }else{
-
+                            $("#subItemList").modal('hide');
                         }
                     }, error: function (data) {
                                                         
