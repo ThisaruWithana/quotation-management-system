@@ -61,9 +61,10 @@
                                                                     data-live-search="true" required>
                                                                 <option value="">Select Client</option>
                                                                 @foreach ($customers as $value)
-                                                                    <option value="{{ $value->id }}">{{ $value->code }}
-                                                                        - {{  $value->postal_code }}
-                                                                        - {{ $value->name }}</option>
+                                                                    <option value="{{ $value->id }}">
+                                                                        {{  $value->postal_code }}
+                                                                        - {{ $value->name }}
+                                                                        - {{ $value->contact_person }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -1101,9 +1102,7 @@
 
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
-                                if(Itemtype == 'main'){
-                                    displaySubItemList(isChecked.value);
-                                }
+                                displaySubItemList(isChecked.value);
                             }, error: function (data) {
 
                         }
@@ -1425,7 +1424,7 @@
                                     );
                             });
                         }else{
-
+                            $("#subItemList").modal('hide');
                         }
                     }, error: function (data) {
 
@@ -1451,14 +1450,15 @@
             function softeDelete() {
 
                 if($('#quotation_id').val() != ''){
+
                     cuteAlert({
-                        type: "question",
+                        type: "error",
                         title: "Are you sure",
                         message: "You want to delete of this quotation and go back?",
-                        confirmText: "Yes",
-                        cancelText: "Cancel"
-                        }).then((e)=>{
-                        if ( e == ("confirm")){
+                        buttonText: "Yes"
+                    }).then((e) => {
+
+                        if ( e == ("ok")){
                                 $.ajax({
                                     url: "{{ url('admin/quotation/destroy') }}",
                                     type: 'POST',
@@ -1508,9 +1508,10 @@
                                     }
                                 });
                         } else {
-                            // window.location = '{{ url("admin/quotation") }}';
+                            
                         }
-                    });
+                    })
+
                 }else{
                     window.location = '{{ url("admin/quotation") }}';
                 }

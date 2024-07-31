@@ -300,8 +300,6 @@ class StockController extends Controller
                     'updated_by' => Auth::user()->id,
                 ]);
                 
-                if($request->input('type') === 'main'){
-
                     $checkSubItems = SubItem::where('parent_id',$id)->where('status', 1)->get();
 
                     if(!isset($po_id)){
@@ -334,8 +332,6 @@ class StockController extends Controller
                             }
                         }
                     }
-    
-                }
             }else{
 
                 $is_checked = 0;
@@ -940,8 +936,6 @@ class StockController extends Controller
                     'updated_by' => Auth::user()->id,
                 ]);
                 
-                if($request->input('type') === 'main'){
-
                     $checkSubItems = SubItem::where('parent_id',$id)->where('status', 1)->get();
 
                     if(count($checkSubItems) > 0){
@@ -974,8 +968,6 @@ class StockController extends Controller
                             }
                         }
                     }
-    
-                }
             }else{
 
                 $is_checked = 0;

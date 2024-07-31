@@ -380,23 +380,6 @@
         <script>
             $(function() {
 
-                // $('#sortable-table').DataTable({
-                //     "bPaginate": false,
-                //     "searching": false,
-                //     "ordering": false,
-                //     "responsive": true,
-                //     "scrollX": true,
-                //     "autoWidth":true,
-                //     "fixedHeader": true,
-                //     "paging": false,
-                //     "scrollCollapse": true,
-                //     "scrollY": '50vh',
-                //     "bInfo" : false,
-                //     "aoColumnDefs": [
-                //         { "bSortable": false, "aTargets": [ 8,9 ]},
-                //     ]
-                // });
-
                 $('.table-item-search').DataTable({
                     "bPaginate": false,
                     "searching": false,
@@ -680,9 +663,7 @@
 
                                 calculatePrices(result['total_cost'], result['total_retail']);
 
-                                if(Itemtype == 'main'){
-                                    displaySubItemList(isChecked.value);
-                                }
+                                displaySubItemList(isChecked.value);
                             }, error: function (data) {
                                         
                         }
@@ -796,7 +777,7 @@
                                     );
                             });
                         }else{
-
+                            $("#subItemList").modal('hide');
                         }
                     }, error: function (data) {
                                                         

@@ -852,13 +852,12 @@
 
         if($('#item_id').val() != ''){
             cuteAlert({
-                type: "question",
+                type: "error",
                 title: "Are you sure",
                 message: "You want to delete of this changes and go back?",
-                confirmText: "Yes",
-                cancelText: "Cancel"
+                buttonText: "Yes"
                 }).then((e)=>{
-                if ( e == ("confirm")){
+                if ( e == ("ok")){
                         $.ajax({
                             url: "{{ url('admin/item/destroy') }}",
                             type: 'POST',
