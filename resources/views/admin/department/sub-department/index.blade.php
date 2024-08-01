@@ -10,74 +10,114 @@
                 <a href="{{ route('admin.department.index') }}" class="btn btn-sm btn-warning">Departments</a>
             </div>
         </div>
-        <div class="card-body table-responsive">
-            <table class="table" id="dataTable">
-                <thead>
-                    <tr>
-                        <th class="th-sm w-50px">ID</th>
-                        <th class="th-sm w-120px">Sub Department</th>
-                        <th class="th-sm w-100px">Department</th>
-                        <th class="th-sm w-100px">Created By</th>
-                        <th class="th-sm w-100px">Created At</th>
-                        <th class="th-sm w-100px">Last Updated</th>
-                        <th class="th-sm w-100px">Status</th>
-                            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
-                                <th class="th-sm w-100px"></th>
-                            @endif
-                    </tr>
-                </thead>
-                <tbody>
-                <?php $i = 1; ?>
-                @foreach ($data as $value)
+        <div class="card-body">
+            <form method="GET" action="{{ url('admin/department/sub/index') }}" id="frm-list">
+
+                <div class="row">
+                    <div class="form-group" style="margin-left:10px;">
+
+                            <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
+                                onchange="selectPageSize(this.value)">
+                                    <option value="10" {{ $pageSize == '10' ? 'selected="selected"' : '' }}>10
+                                    </option>
+                                    <option value="25" {{ $pageSize == '25' ? 'selected="selected"' : '' }}>25
+                                    </option>
+                                    <option value="50" {{ $pageSize == '50' ? 'selected="selected"' : '' }}>50
+                                    </option>
+                                    <option value="100" {{ $pageSize == '100' ? 'selected="selected"' : '' }}>100
+                                    </option>
+                            </select>
+                    </div>
+
+                    <div class="form-group" style="margin-left:10px;">
+                        <input type="text" class="form-control" name="keyword" id="keyword" autocomplete="off"
+                            placeholder="Name, Department" value="{{ Request()->keyword }}">
+                    </div>
+
+                    <input type="hidden" name="form_action" value="search">
+
+                    <div class="form-group text-right" style="margin-left:5px;">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+
+                </div>
+            </form>
+            <br>
+            
+            <div class="table-responsive">
+                <table class="table" id="dataTable">
+                    <thead>
                         <tr>
-                            <td>{{ $value->id }}</td>
-                            <td>{{ $value->name }}</td>
-                            <td>{{ $value->departments->name }}</td>
-                            <td>{{ $value->created_user->name }}</td>
-                            <td>{{ $value->created_at }}</td>
-                            <td>{{ $value->updated_at }}</td>
-                            <td>
-                                @if($value->status == 1)
-                                <span class="badge badge-success">Active</span>
-                                @else 
-                                <span class="badge badge-warning">Deactive</span>
+                            <th class="th-sm w-50px">ID</th>
+                            <th class="th-sm w-120px">Sub Department</th>
+                            <th class="th-sm w-100px">Department</th>
+                            <th class="th-sm w-100px">Created By</th>
+                            <th class="th-sm w-100px">Created At</th>
+                            <th class="th-sm w-100px">Last Updated</th>
+                            <th class="th-sm w-100px">Status</th>
+                                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                                    <th class="th-sm w-100px"></th>
                                 @endif
-                            </td>
-                            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php $i = 1; ?>
+                    @foreach ($listData as $value)
+                            <tr>
+                                <td>{{ $value->id }}</td>
+                                <td>{{ $value->name }}</td>
+                                <td>{{ $value->departments->name }}</td>
+                                <td>{{ $value->created_user->name }}</td>
+                                <td>{{ $value->created_at }}</td>
+                                <td>{{ $value->updated_at }}</td>
                                 <td>
-                                    <a href="{{ route('admin.department.sub.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                                        <i class="far fa-edit"></i>
-                                    </a>
-                                    @if($value->status === 1)
-                                        <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </a>
-                                    @else
-                                        <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
-                                            <i class="fas fa-check-circle"></i>
-                                        </a>
+                                    @if($value->status == 1)
+                                    <span class="badge badge-success">Active</span>
+                                    @else 
+                                    <span class="badge badge-warning">Deactive</span>
                                     @endif
                                 </td>
-                            @endif
-                        </tr>
-                     <?php $i++; ?>
-                    @endforeach
-                </tbody>
-            </table>
+                                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                                    <td>
+                                        <a href="{{ route('admin.department.sub.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                            <i class="far fa-edit"></i>
+                                        </a>
+                                        @if($value->status === 1)
+                                            <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        @else
+                                            <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                                <i class="fas fa-check-circle"></i>
+                                            </a>
+                                        @endif
+                                    </td>
+                                @endif
+                            </tr>
+                        <?php $i++; ?>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div id="list_pagination" style="float: right;">{{ $listData->appends(Request::all())->links() }}</div>
         </div>
     </div>
     @section('js')
         <script>
             $(function() {
                 $('#dataTable').DataTable({
-                    "paging": true,
-                    "searching": true,
+                    "paging": false,
+                    "searching": false,
                     "ordering": true,
               "aoColumnDefs": [
                 { "bSortable": false, "aTargets": [ 7] }, 
             ]
                 });
             });
+        
+        function selectPageSize(pageSize) {
+            document.getElementById('frm-list').submit();
+        }
 
         function changeStatus(id, status) {
 

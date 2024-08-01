@@ -10,11 +10,34 @@ use Auth;
 
 class SupplierController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $pageSize;
+
+        if (!isset($request->pagesize)) {
+            $new = 10;
+        }else{
+            $new = $request->pagesize;
+        }
+
+        $pageSize = $new;
         $title = 'Suppliers';
-        $data = Supplier::with('created_user')->orderBy('id','DESC')->get();
-        return view('admin.supplier.index', compact('data', 'title'));
+        $keyword = $request->input('keyword');
+        $data = Supplier::query()->with('created_user')->orderBy('id','DESC');
+
+        if($request->query('form_action') === 'search'){
+
+            if(!is_null($keyword)) {
+                $data->where(function ($qry) use ($keyword) {
+                    $qry->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('contact_person', 'like', '%' . $keyword . '%')
+                        ->orWhere('postal_code', 'like', '%' . $keyword . '%');
+                });
+            }
+        }
+        $listData = $data->paginate($pageSize);  
+
+        return view('admin.supplier.index', compact('listData', 'title', 'pageSize'));
     }
 
     public function create()
