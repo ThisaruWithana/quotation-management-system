@@ -26,7 +26,7 @@
                             </select>
                     </div>
                     <div class="row" style="float:right; ">
-                        <div class="form-group" style="margin-left:10px; width: 350px;">
+                        <div class="form-group" style="margin-left:10px; width: 250px;">
                             <input type="text" class="form-control" name="keyword" id="keyword" autocomplete="off"
                                 placeholder="Name, Postcode, Contact Person" value="{{ Request()->keyword }}">
                         </div>
