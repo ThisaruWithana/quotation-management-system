@@ -12,12 +12,35 @@ use Auth;
 
 class DepartmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $pageSize;
+
+        if (!isset($request->pagesize)) {
+            $new = 10;
+        }else{
+            $new = $request->pagesize;
+        }
+
+        $pageSize = $new;
+        $keyword = $request->input('keyword');
+
         $title = 'Departments';
-        $data = Department::with('created_user', 'vat')->orderBy('id','DESC')->get();
+
         $subDepartments = SubDepartment::with('created_user', 'departments')->orderBy('id','DESC')->get();
-        return view('admin.department.index', compact('data', 'title', 'subDepartments'));
+        $data = Department::query()->with('created_user')->orderBy('id','DESC');
+
+        if($request->query('form_action') === 'search'){
+
+            if(!is_null($keyword)) {
+                $data->where(function ($qry) use ($keyword) {
+                    $qry->where('name', 'like', '%' . $keyword . '%');
+                });
+            }
+        }
+        $listData = $data->paginate($pageSize);  
+
+        return view('admin.department.index', compact('listData', 'title', 'subDepartments', 'pageSize'));
     }
 
     public function create()
@@ -111,12 +134,37 @@ class DepartmentController extends Controller
         }
     }
 
-    public function listSubDepartment()
+    public function listSubDepartment(Request $request)
     {
-        $title = 'Sub Departments';
-        $data = SubDepartment::with('created_user', 'departments')->orderBy('id','DESC')->get();
+        $pageSize;
 
-        return view('admin.department.sub-department.index', compact('data', 'title'));
+        if (!isset($request->pagesize)) {
+            $new = 10;
+        }else{
+            $new = $request->pagesize;
+        }
+
+        $pageSize = $new;
+        $keyword = $request->input('keyword');
+
+        $title = 'Sub Departments';
+
+        $data = SubDepartment::query()->with('created_user', 'departments')->orderBy('id','DESC');
+
+        if($request->query('form_action') === 'search'){
+
+            if(!is_null($keyword)) {
+                $data->where(function ($qry) use ($keyword) {
+                    $qry->where('name', 'like', '%' . $keyword . '%')
+                    ->orWhereHas('departments', function($q) use($keyword) {
+                        $q->where('name', 'like', '%' . $keyword . '%');
+                    });
+                });
+            }
+        }
+        $listData = $data->paginate($pageSize);  
+
+        return view('admin.department.sub-department.index', compact('listData', 'title', 'pageSize'));
     }
 
     public function createSubDepartment()

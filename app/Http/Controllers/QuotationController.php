@@ -40,11 +40,22 @@ class QuotationController extends Controller
         $customers = Customer::where('status', 1)->orderBy('name','ASC')->get();
         $data = Quotation::query()->with('customer')->whereNotIn('status', [5])->orderBy('id','DESC');
         $customer = $request->input('customer');
+        $keyword = $request->input('keyword');
 
         if($request->query('form_action') === 'search'){
 
             if(!is_null($customer)) {
                 $data->where('customer_id',  $customer);
+            }
+
+            if(!is_null($keyword)) {
+                $data->where(function ($qry) use ($keyword) {
+                    $qry->where('ref', 'like', '%' . $keyword . '%')
+                        ->orWhere('description', 'like', '%' . $keyword . '%')
+                        ->orWhereHas('customer', function($q) use($keyword) {
+                            $q->where('name', 'like', '%' . $keyword . '%');
+                        });
+                });
             }
         }
         $listData = $data->paginate($pageSize);  
@@ -104,6 +115,7 @@ class QuotationController extends Controller
                      'description' => $request->input('description'),
                      'price' => $request->input('price'),
                      'discount' => $request->input('discount'),
+                     'retail_print_option' => $request->input('retail_print_option'),
                      'vat_rate' => floatval($vatRate[0]),
                      'created_by' => Auth::user()->id,
                      'updated_by' => Auth::user()->id,
@@ -191,6 +203,7 @@ class QuotationController extends Controller
         $response = array();
         $description = $request->input('description');
         $quotation_id = $request->input('quotation_id');
+        $retail_print_option = $request->input('retail_print_option');
 
          try{
              DB::beginTransaction();
@@ -208,6 +221,7 @@ class QuotationController extends Controller
 
              $update = Quotation::where('id', $quotation_id)->update([
                  'description' => $description,
+                 'retail_print_option' => $retail_print_option,
                  'updated_by' => Auth::user()->id
              ]);
  

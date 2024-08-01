@@ -41,6 +41,7 @@ class ItemController extends Controller
         $supplierId = $request->input('supplier');
         $department = $request->input('departments');
         $sub_department = $request->input('sub_departments');
+        $keyword = $request->input('keyword');
         
         $title = 'Item Maintainance';
 
@@ -70,6 +71,17 @@ class ItemController extends Controller
 
                 $data->whereHas('suppliers', function($q) use ($supplierId){
                     $q->where('supplier_id', $supplierId);
+                });
+            }
+
+            if(!is_null($keyword)) {
+                $data->where(function ($qry) use ($keyword) {
+                    $qry->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('description', 'like', '%' . $keyword . '%')
+                        ->orWhereHas('barcode', function($q) use($keyword) {
+                            $q->where('barcode', 'like', '%' . $keyword . '%')
+                                ->orWhere('product_code', 'like', '%' . $keyword . '%');
+                        });
                 });
             }
         }

@@ -16,9 +16,7 @@
         <div class="card-body">
             
         <form method="GET" action="{{ route('admin.item') }}" id="frm-list">
-
-            <div class="row">
-                    <div class="form-group" style="margin-left:10px;">
+                    <div class="form-group" style="float:left; margin-left:10px;">
 
                             <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
                                 onchange="selectPageSize(this.value)">
@@ -33,47 +31,53 @@
                             </select>
                     </div>
 
-                    <div class="form-group" style="margin-left:10px;">
-                    <select id="status" name="status" class="selectpicker show-tick" data-live-search="false">
-                        <option value="">Status</option>        
-                        <option value="1" @if(Request()->status == '1') selected @endif>Active</option>     
-                        <option value="0" @if(Request()->status == '0') selected @endif>Deactive</option> 
-                    </select>
-                    </div>
+                    <div class="row" style="float:right;">
+                        <div class="form-group" style="margin-left:10px;">
+                            <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" >
+                                <option value="">Supplier</option>        
+                                @foreach ($suppliers as $value)
+                                    <option value="{{ $value->id }}" @if(Request()->supplier == $value->id) selected @endif>{{ $value->name }}</option>
+                                @endforeach 
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin-left:10px;">
+                            <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true">
+                                <option value="">Departments</option>        
+                                @foreach ($departments as $value)
+                                    <option value="{{ $value->id }}" @if(Request()->departments == $value->id) selected @endif>{{ $value->name }}</option>
+                                @endforeach 
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin-left:10px;">
+                            <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true">
+                                <option value="">Sub Departments</option>        
+                                @foreach ($sub_departments as $value)
+                                    <option value="{{ $value->id }}"  @if(Request()->sub_departments == $value->id) selected @endif>{{ $value->name }}</option>
+                                @endforeach 
+                            </select>
+                        </div>
 
-                    <div class="form-group" style="margin-left:10px;">
-                        <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" >
-                            <option value="">Supplier</option>        
-                            @foreach ($suppliers as $value)
-                                <option value="{{ $value->id }}" @if(Request()->supplier == $value->id) selected @endif>{{ $value->name }}</option>
-                            @endforeach 
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" style="margin-left:10px;">
-                        <select id="departments" name="departments" class="selectpicker show-tick" data-live-search="true">
-                            <option value="">Departments</option>        
-                            @foreach ($departments as $value)
-                                <option value="{{ $value->id }}" @if(Request()->departments == $value->id) selected @endif>{{ $value->name }}</option>
-                            @endforeach 
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" style="margin-left:10px;">
-                        <select id="sub_departments" name="sub_departments" class="selectpicker show-tick" data-live-search="true">
-                            <option value="">Sub Departments</option>        
-                            @foreach ($sub_departments as $value)
-                                <option value="{{ $value->id }}"  @if(Request()->sub_departments == $value->id) selected @endif>{{ $value->name }}</option>
-                            @endforeach 
-                        </select>
-                    </div>
+                        <div class="form-group" style="margin-left:10px;">
+                            <select id="status" name="status" class="selectpicker show-tick" data-live-search="false">
+                                <option value="">Status</option>        
+                                <option value="1" @if(Request()->status == '1') selected @endif>Active</option>     
+                                <option value="0" @if(Request()->status == '0') selected @endif>Deactive</option> 
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin-left:10px; width: 250px;">
+                            <input type="text" class="form-control" name="keyword" id="keyword" autocomplete="off"
+                            placeholder="Name, Barcode, Product Code" value="{{ Request()->keyword }}">
+                        </div>
 
-                    <input type="hidden" name="form_action" value="search">
+                        <input type="hidden" name="form_action" value="search">
 
-                    <div class="form-group text-right" style="margin-left:10px;">
-                        <button class="btn btn-primary" type="submit">Filter</button>
+                        <div class="form-group text-right" style="margin-left:5px;">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </div>
                     </div>
-            </div>
             </form>
             <br>
 
@@ -158,7 +162,7 @@
             $(function() {
                 $('#dataTable').DataTable({
                     "bPaginate": false,
-                    "searching": true,
+                    "searching": false,
                     "ordering": true,
                     "autoWidth":true,
                     "fixedHeader": {

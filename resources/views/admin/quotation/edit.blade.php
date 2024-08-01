@@ -175,7 +175,16 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    <div class="row">
+                                        <div class="col-lg-5" id="retail-print-option" style="display:none;">
+                                            <div class="form-group text-left">
+                                                <label for="retail_print_option" class="form-label">Print retails prices in print </label>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                <input type="checkbox" id="retail_print_option" name="retail_print_option" value="1" 
+                                                    class="form-check-label" @if($data['retail_print_option'] == 1)  checked @endif>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="col-lg-2 mt-3 mb-3 p-0" style="float:right;">
@@ -563,6 +572,7 @@
                 $('#quot-margin-before-discount').hide();
                 $('#quot-margin-after-discount').hide();
                 $('#margin-details').hide();
+                $('#retail-print-option').hide();
 
                 cuteAlert({
                     type: "question",
@@ -584,6 +594,8 @@
                         $('#quot-margin-after-discount').show();
                         $('#margin-details').show();
 
+                        $('#retail-print-option').show();
+                        
                     } else {
                         $('#in_office').val('no');
                     }
@@ -621,6 +633,12 @@
                 $("#formCreate").submit(function(event) {
                     event.preventDefault();
 
+                    var retail_print_option = 0;
+
+                    if($('#retail_print_option').prop('checked') == true ){
+                        retail_print_option = $('#retail_print_option').val();
+                    }
+
                     var formData = new FormData(this);
 
                     $.ajax({
@@ -641,7 +659,8 @@
                                     "total_cost": $("#total-cost").val(),
                                     "total_retail": $("#total-retail").val(),
                                     "quotation_vat": $("#quot-vat-lbl").text(),
-                                    "quotation_margin": $("#quot-margin-lbl").text()
+                                    "quotation_margin": $("#quot-margin-lbl").text(),
+                                    "retail_print_option": retail_print_option
                                 },
                                 success: function (data) {
                                     var result = JSON.parse(data);

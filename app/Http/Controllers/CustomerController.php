@@ -11,11 +11,37 @@ use Auth;
 
 class CustomerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $pageSize;
+
+        if (!isset($request->pagesize)) {
+            $new = 10;
+        }else{
+            $new = $request->pagesize;
+        }
+
+        $pageSize = $new;
         $title = 'Customers';
-        $data = Customer::with('created_user')->orderBy('id','DESC')->get();
-        return view('admin.customer.index', compact('data', 'title'));
+        $keyword = $request->input('keyword');
+
+        $data = Customer::query()->with('created_user')->orderBy('id','DESC');
+
+        
+        if($request->query('form_action') === 'search'){
+
+            if(!is_null($keyword)) {
+                $data->where(function ($qry) use ($keyword) {
+                    $qry->where('name', 'like', '%' . $keyword . '%')
+                        ->orWhere('code', 'like', '%' . $keyword . '%')
+                        ->orWhere('contact_person', 'like', '%' . $keyword . '%')
+                        ->orWhere('postal_code', 'like', '%' . $keyword . '%');
+                });
+            }
+        }
+        $listData = $data->paginate($pageSize);  
+
+        return view('admin.customer.index', compact('listData', 'title', 'pageSize'));
     }
 
     public function create()

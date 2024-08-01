@@ -207,6 +207,16 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-lg-5" id="retail-print-option" style="display:none;">
+                                        <div class="form-group text-left">
+                                        <label for="retail_print_option" class="form-label">Print retails prices in print </label>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <input type="checkbox" id="retail_print_option" name="retail_print_option" value="1" 
+                                                class="form-check-label" checked>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -544,6 +554,7 @@
                 $('#quot-margin-before-discount').hide();
                 $('#quot-margin-after-discount').hide();
                 $('#margin-details').hide();
+                $('#retail-print-option').hide();
 
                 cuteAlert({
                     type: "question",
@@ -564,6 +575,7 @@
                         $('#margin-details').show();
                         $('#quot-margin-before-discount').show();
                         $('#quot-margin-after-discount').show();
+                        $('#retail-print-option').show();
 
                     } else {
                         $('#in_office').val('no');
@@ -895,6 +907,12 @@
                 });
 
                 $('#btnSaveChanges').click(function(){
+
+                    var retail_print_option = 0;
+
+                    if($('#retail_print_option').prop('checked') == true ){
+                        retail_print_option = $('#retail_print_option').val();
+                    }
             
                     if($('#price').val() > 0 && $('#description').val() != ''){
 
@@ -904,7 +922,8 @@
                                 data: {
                                     "_token": "{{ csrf_token() }}",
                                     "quotation_id": $('#quotation_id').val(),
-                                    "description": $('#description').val()
+                                    "description": $('#description').val(),
+                                    "retail_print_option": retail_print_option
                                 },
                                 success: function (data) {
                   
