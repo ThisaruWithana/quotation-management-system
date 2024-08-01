@@ -9,8 +9,7 @@
         <div class="card-body table-responsive">
         <form method="GET" action="{{ url('admin/quotation') }}" id="frm-list">
 
-            <div class="row">
-                <div class="form-group" style="margin-left:10px;">
+                <div class="form-group" style="float:left; margin-left:10px;">
 
                         <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
                             onchange="selectPageSize(this.value)">
@@ -25,25 +24,26 @@
                         </select>
                 </div>
 
-                <div class="form-group" style="margin-left:10px;">
-                    <select id="customer" name="customer" class="selectpicker show-tick" data-live-search="true">
-                        <option value="">Customer</option>
-                        @foreach ($customers as $value)
-                            <option value="{{ $value->id }}" @if(Request()->customer == $value->id) selected @endif>{{ $value->name }} - {{ $value->contact_person }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <div class="row" style="float:right;">
+                    <div class="form-group" style="margin-left:10px;">
+                        <select id="customer" name="customer" class="selectpicker show-tick" data-live-search="true">
+                            <option value="">Customer</option>
+                            @foreach ($customers as $value)
+                                <option value="{{ $value->id }}" @if(Request()->customer == $value->id) selected @endif>{{ $value->name }} - {{ $value->contact_person }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div class="form-group" style="margin-left:10px; width: 250px;">
-                    <input type="text" class="form-control" name="keyword" id="keyword" autocomplete="off"
-                        placeholder="Ref, Customer, Description" value="{{ Request()->keyword }}">
-                </div>
+                    <div class="form-group" style="margin-left:10px; width: 210px;">
+                        <input type="text" class="form-control" name="keyword" id="keyword" autocomplete="off"
+                            placeholder="Ref, Customer, Description" value="{{ Request()->keyword }}">
+                    </div>
 
-                <input type="hidden" name="form_action" value="search">
+                    <input type="hidden" name="form_action" value="search">
 
-                <div class="form-group text-right" style="margin-left:10px;">
-                    <button class="btn btn-primary" type="submit">Search</button>
-                </div>
+                    <div class="form-group text-right" style="margin-left:10px;">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
                 </div>
             </form>
             <br>
