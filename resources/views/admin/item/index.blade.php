@@ -32,15 +32,6 @@
                                 </option>
                             </select>
                     </div>
-
-                    <div class="form-group" style="margin-left:10px;">
-                    <select id="status" name="status" class="selectpicker show-tick" data-live-search="false">
-                        <option value="">Status</option>        
-                        <option value="1" @if(Request()->status == '1') selected @endif>Active</option>     
-                        <option value="0" @if(Request()->status == '0') selected @endif>Deactive</option> 
-                    </select>
-                    </div>
-
                     <div class="form-group" style="margin-left:10px;">
                         <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true" >
                             <option value="">Supplier</option>        
@@ -68,10 +59,23 @@
                         </select>
                     </div>
 
+                    <div class="form-group" style="margin-left:10px;">
+                        <select id="status" name="status" class="selectpicker show-tick" data-live-search="false">
+                            <option value="">Status</option>        
+                            <option value="1" @if(Request()->status == '1') selected @endif>Active</option>     
+                            <option value="0" @if(Request()->status == '0') selected @endif>Deactive</option> 
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="margin-left:10px; width: 250px;">
+                        <input type="text" class="form-control" name="keyword" id="keyword" autocomplete="off"
+                         placeholder="Name, Barcode, Product Code" value="{{ Request()->keyword }}">
+                    </div>
+
                     <input type="hidden" name="form_action" value="search">
 
-                    <div class="form-group text-right" style="margin-left:10px;">
-                        <button class="btn btn-primary" type="submit">Filter</button>
+                    <div class="form-group text-right" style="margin-left:5px;">
+                        <button class="btn btn-primary" type="submit">Search</button>
                     </div>
             </div>
             </form>
@@ -158,7 +162,7 @@
             $(function() {
                 $('#dataTable').DataTable({
                     "bPaginate": false,
-                    "searching": true,
+                    "searching": false,
                     "ordering": true,
                     "autoWidth":true,
                     "fixedHeader": {

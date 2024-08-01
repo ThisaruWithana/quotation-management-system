@@ -34,10 +34,15 @@
                     </select>
                 </div>
 
+                <div class="form-group" style="margin-left:10px; width: 250px;">
+                    <input type="text" class="form-control" name="keyword" id="keyword" autocomplete="off"
+                        placeholder="Ref, Customer, Description" value="{{ Request()->keyword }}">
+                </div>
+
                 <input type="hidden" name="form_action" value="search">
 
                 <div class="form-group text-right" style="margin-left:10px;">
-                    <button class="btn btn-primary" type="submit">Filter</button>
+                    <button class="btn btn-primary" type="submit">Search</button>
                 </div>
                 </div>
             </form>
@@ -104,7 +109,7 @@
 
                 $('#dataTable').DataTable({
                     "bPaginate": false,
-                    "searching": true,
+                    "searching": false,
                     "ordering": true,
                     "autoWidth":true,
                     "fixedHeader": {

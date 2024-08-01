@@ -25,15 +25,18 @@ class BundleController extends Controller
         }else{
             $new = $request->pagesize;
         }
+        $keyword = $request->input('keyword');
 
         $pageSize = $new;
         $data = Bundle::query()->with('created_user')->whereNotIn('status', [2])->orderBy('id','DESC');
 
         if($request->query('form_action') === 'search'){
 
-            // if(!is_null($customer)) {
-            //     $data->where('customer_id',  $customer);
-            // }
+            if(!is_null($keyword)) {
+                $data->where(function ($qry) use ($keyword) {
+                    $qry->where('name', 'like', '%' . $keyword . '%');
+                });
+            }
         }
         $listData = $data->paginate($pageSize);  
 
