@@ -152,7 +152,7 @@
                                             <td style="height: 22px; text-align: center;padding: 5px 5px;border: 1px solid #000;background: #ddd;"
                                                 colspan="4">
                                                 <strong>
-                                                    {{ $quotation['description'] }}
+                                                    {{ strip_tags(html_entity_decode($quotation['description'])) }}
                                                 </strong>
                                             </td>
                                         </tr>
@@ -183,6 +183,15 @@
                                         </td>
                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
                                             {{ number_format($quotation['discount'], 2) }}%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"
+                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                            Total Amount (After Discount)
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                                            £{{ number_format(($quotation['price'] - (($quotation['price'] * $quotation['discount']) / 100)), 2) }}
                                         </td>
                                     </tr>
                                     <tr>
@@ -311,6 +320,15 @@
                                         </td>
                                         <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
                                             {{ number_format($quotation['discount'], 2) }}%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"
+                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                            Total Amount (After Discount)
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                                            £{{ number_format(($quotation['price'] - (($quotation['price'] * $quotation['discount']) / 100)), 2) }}
                                         </td>
                                     </tr>
                                     <tr>

@@ -205,23 +205,24 @@ class QuotationController extends Controller
         $description = $request->input('description');
         $quotation_id = $request->input('quotation_id');
         $retail_print_option = $request->input('retail_print_option');
+        $description_witout_tags = strip_tags(html_entity_decode($request->input('description')));
 
          try{
              DB::beginTransaction();
 
-              $checkExist = QuotationDescription::where('description', 'LIKE',"%$description%")->get();
+              $checkExist = QuotationDescription::where('description', 'LIKE',"%$description_witout_tags%")->get();
               $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
 
              if(count($checkExist) == 0){
                 $add = QuotationDescription::create([
-                    'description' => $description,
+                    'description' => $description_witout_tags,
                     'created_by' => Auth::user()->id,
                     'updated_by' => Auth::user()->id,
                 ]);
              }
 
              $update = Quotation::where('id', $quotation_id)->update([
-                 'description' => $description,
+                 'description' => $description_witout_tags,
                  'retail_print_option' => $retail_print_option,
                  'updated_by' => Auth::user()->id
              ]);
