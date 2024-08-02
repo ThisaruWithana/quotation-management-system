@@ -663,7 +663,9 @@
 
                                 calculatePrices(result['total_cost'], result['total_retail']);
 
-                                displaySubItemList(isChecked.value);
+                                if(ischecked == true){
+                                    displaySubItemList(isChecked.value);
+                                }
                             }, error: function (data) {
                                         
                         }
@@ -777,7 +779,7 @@
                                     );
                             });
                         }else{
-                            $("#subItemList").modal('hide');
+                            // $("#subItemList").modal('hide');
                         }
                     }, error: function (data) {
                                                         
