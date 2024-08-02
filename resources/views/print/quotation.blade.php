@@ -279,8 +279,9 @@
                                             <td style="height: 22px; text-align: center;padding: 5px 5px;border: 1px solid #000;background: #ddd;"
                                                 colspan="3">
                                                 <strong>
-                                                    {{ $quotation['description'] }}
+                                                    {!! strip_tags(html_entity_decode($quotation['description'])) !!}
                                                 </strong>
+                                               
                                             </td>
                                         </tr>
                                         <tr>
@@ -399,6 +400,7 @@
                                 <p style="margin-bottom: 0px;margin-top: 2px">4 MAYPOLE YARD</p>
                                 <p style="margin-bottom: 0px;margin-top: 2px">WEST STREET (BETWEEN 14-16)</p>
                                 <p style="margin-bottom: 0px;margin-top: 2px">DUNSTABLE</p>
+                                <p style="margin-bottom: 0px;margin-top: 2px">LU6 1XF</p>
                             </strong>
                         </td>
                     </tr>
@@ -408,14 +410,14 @@
                             <strong>
                                 <p style="margin-bottom: 2px; margin: left 10px;">Tel:020 89533962</p>
                                 <p style="margin-bottom: 0px;margin-top: 2px; margin: left 10px;">Fax:020 89533962</p>
-                                <p style="margin-bottom: 0px;margin-top: 2px; margin: left 10px;">Email:</p>
+                                <p style="margin-bottom: 0px;margin-top: 2px; margin: left 10px;">Email: admin@msp-group.co.uk</p>
                             </strong>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <table style="width: 100%">
-                                <tbody style="font-size: 13px;text-align: left">
+                                <tbody style="font-size: 13px;text-align: left;">
                                     <tr>
                                         <td style="padding: 5px;" colspan="2"> <strong>FOR MSP SYSTEMS LTD</strong>
                                         </td>
@@ -423,15 +425,8 @@
                                     <tr>
                                         <td style="padding: 10px;"> <strong>Name :</strong>
                                         </td>
-                                        <td style="padding: 5px;">
-                                            ________________________________
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 5px;"> <strong>Signature :</strong>
-                                        </td>
-                                        <td style="padding: 5px;">
-                                            ________________________________
+                                        <td style="padding: 5px;margin-left: -100px;">
+                                            {{ $quotation['created_user']['name'] }}
                                         </td>
                                     </tr>
                                 </tbody>
