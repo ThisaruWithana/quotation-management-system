@@ -250,6 +250,8 @@
     <!-- Fixed Headers -->
     <script src="{{ asset('admin/dist/js/dataTables.fixedHeader.min.js') }}"></script>
 
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
 
     <!-- Toast cdn -->
     <script src="{{ asset('admin/dist/js/toastr.min.js') }}"

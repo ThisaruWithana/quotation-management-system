@@ -87,16 +87,17 @@ class QuotationController extends Controller
         $response = array();
         $description = $request->input('description');
         $status = $request->input('status');
+        $description_witout_tags = strip_tags(html_entity_decode($request->input('description')));
 
          try{
              DB::beginTransaction();
 
-              $checkExist = QuotationDescription::where('description', 'LIKE',"%$description%")->get();
+              $checkExist = QuotationDescription::where('description', 'LIKE',"%$description_witout_tags%")->get();
               $vatRate = app('App\Http\Controllers\VatController')->getLatestVatRateForQuote();
 
              if(count($checkExist) == 0){
                 $add = QuotationDescription::create([
-                    'description' => $description,
+                    'description' => $description_witout_tags,
                     'created_by' => Auth::user()->id,
                     'updated_by' => Auth::user()->id,
                 ]);
@@ -112,7 +113,7 @@ class QuotationController extends Controller
                      'id'=>$request->input('quotation_id')
                  ],[
                      'customer_id' => $request->input('customer'),
-                     'description' => $request->input('description'),
+                     'description' => $description_witout_tags,
                      'price' => $request->input('price'),
                      'discount' => $request->input('discount'),
                      'retail_print_option' => $request->input('retail_print_option'),
@@ -1755,7 +1756,7 @@ class QuotationController extends Controller
 
     public function printQuotation($id)
     {
-        $quotation = Quotation::with('customer')->where('id',decrypt($id))->first();
+        $quotation = Quotation::with('customer', 'created_user')->where('id',decrypt($id))->first();
         $quotationItems = $this->getQuotationItems(decrypt($id));
 
         $discountAmt = ($quotation['price'] * $quotation['discount'])/100;

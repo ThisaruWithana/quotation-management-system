@@ -75,9 +75,9 @@
                                                             <label for="description" class="form-label">Description</label>
                                                             <!-- <span class="required"> * </span><br> -->
 
-                                                            <textarea class="form-control" name="description" id="description"
+                                                            <textarea class="form-control ckeditor" name="description" id="description"
                                                                       rows="4"
-                                                                      ></textarea><br>
+                                                                      ></textarea><br>  <br>
 
                                                             <button class="btn btn-default add-description" type="button"
                                                                     style="float:right; margin-top:-20px;"><i
@@ -522,6 +522,18 @@
 
     @section('js')
         <script>
+            let ckeditor;
+            ClassicEditor
+                .create( document.querySelector( '#description' ) )
+                .then( editor => {
+                    editor.ui.view.editable.element.style.height = '200px';
+                    ckeditor = editor;
+                } )
+                .catch( error => {
+                ckeditor.error( error );
+            });
+        </script>
+        <script>
             $(function() {
 
                 $('.table-item-search').DataTable({
@@ -590,6 +602,7 @@
                     var txt = $.trim(this.value);
                     $('#description').append(txt);
                     $('.add-description-history').hide();
+                    ckeditor.setData(txt);
                 });
 
                 $("#discount").on("keyup", function() {
@@ -1121,7 +1134,9 @@
 
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
 
-                                displaySubItemList(isChecked.value);
+                                if(ischecked == true){
+                                    displaySubItemList(isChecked.value);
+                                }
                             }, error: function (data) {
 
                         }
@@ -1443,7 +1458,7 @@
                                     );
                             });
                         }else{
-                            $("#subItemList").modal('hide');
+                            // $("#subItemList").modal('hide');
                         }
                     }, error: function (data) {
 
