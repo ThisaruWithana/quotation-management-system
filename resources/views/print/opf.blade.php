@@ -107,8 +107,7 @@
                                                 <td>
                                                     <p style="margin: 0px"><strong style="width: 120px;">Maintenace
                                                         From Quote:</strong>
-                                                        SOFTWARE & HARDWARE MAINTENANCE £60.00 + VAT ,PER TILL, PER MONTH,WILL APPLY. .( PAID
-                                                        ANNUALLY IN ADVANCE ) TRANSACTION ONLY (FREE) ON MEDIA SCREEN.</p>
+                                                        {{ strip_tags(html_entity_decode($opf->quotation->description)) }}</p>
 
                                                 </td>
                                             </tr>

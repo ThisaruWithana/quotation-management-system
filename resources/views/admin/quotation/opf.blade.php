@@ -90,7 +90,7 @@
                                         </tr>
                                         <tr>
                                             <td style="width:100px;"><p class="text-sm mb-0 text-bold">Description :</p></td>
-                                            <td style="width:auto;"><p class="text-sm  mb-0"><span id="cus-email-lbl">{{ $data['description'] }}</span></p></td>
+                                            <td style="width:auto;"><p class="text-sm  mb-0"><span id="cus-email-lbl">{{ strip_tags(html_entity_decode($data['description'])) }}</span></p></td>
                                         </tr>
                                     </table>
 

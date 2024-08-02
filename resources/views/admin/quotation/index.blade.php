@@ -68,7 +68,7 @@
                                 <td>{{ $value->id }}</td>
                                 <td>{{ $value->ref }}</td>
                                 <td>{{ $value->customer->name }}</td>
-                                <td>{{ $value->description }}</td>
+                                <td>{{ strip_tags(html_entity_decode($value->description)) }} </td>
                                 <td>{{ number_format($value->price, 2) }}</td>
                                 <td>{{ $value->discount }}</td>
                                 <td>{{ $value->created_user->name }}</td>

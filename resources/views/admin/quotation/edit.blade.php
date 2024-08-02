@@ -75,9 +75,11 @@
                                                         <label for="description" class="form-label">Description</label>
                                                         <span class="required"> * </span><br>
 
-                                                        <textarea class="form-control" name="description" id="description" rows="4"
-                                                            required @if($data->status != 1) disabled @endif>{{ $data->description }}</textarea><br>
-
+                                                        <textarea  id="description" name="description" class="form-control ckeditor" rows="4"
+                                                            required @if($data->status != 1) disabled @endif>
+                                                            {!! $data->description !!}
+                                                        </textarea>
+                                                        <br><br>
                                                         <button class="btn btn-default add-description" type="button" style="float:right; margin-top:-20px;" @if($data->status != 1) disabled @endif><i class="fa fa-plus"> Add</i></button><br>
 
                                                         <div style="display:none;" class="add-description-history">
@@ -492,12 +494,12 @@
             </div>
         </div>
 
-        <!-- Sub Items Model -->
-        <div class="modal fade bd-example-modal-lg" id="subItemList" tabindex="-1" role="dialog" aria-labelledby="subItemList" aria-hidden="true">
+        <!-- Sub Items Model 1-->
+        <div class="modal fade bd-example-modal-lg" id="subItemList1" tabindex="-1" role="dialog" aria-labelledby="subItemList1" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items</h5>
+                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items - 1</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -510,7 +512,95 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive">
-                                <table class="table table-sub-items table-bordered" id="dataTable" style="width: 100%">
+                                <table class="table table-sub-items-1 table-bordered" id="dataTable" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-sm">Item Code</th>
+                                            <th class="th-sm">Item Name</th>
+                                            <th class="th-sm">Department</th>
+                                            <th class="th-sm">Supplier</th>
+                                            <th class="th-sm item-search-cost">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
+                                            <th class="th-sm"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Items Model 2-->
+        <div class="modal fade bd-example-modal-lg" id="subItemList2" tabindex="-1" role="dialog" aria-labelledby="subItemList2" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items - 2</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="" method="POST"
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                            @csrf
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive">
+                                <table class="table table-sub-items-2 table-bordered" id="dataTable" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-sm">Item Code</th>
+                                            <th class="th-sm">Item Name</th>
+                                            <th class="th-sm">Department</th>
+                                            <th class="th-sm">Supplier</th>
+                                            <th class="th-sm item-search-cost">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
+                                            <th class="th-sm"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Items Model 3-->
+        <div class="modal fade bd-example-modal-lg" id="subItemList3" tabindex="-1" role="dialog" aria-labelledby="subItemList3" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items - 3</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="" method="POST"
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                            @csrf
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive">
+                                <table class="table table-sub-items-3 table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Item Code</th>
@@ -540,7 +630,21 @@
 
     @section('js')
         <script>
+            let ckeditor;
+            ClassicEditor
+                .create( document.querySelector( '#description' ) )
+                .then( editor => {
+                    editor.ui.view.editable.element.style.height = '200px';
+                    ckeditor = editor;
+                } )
+                .catch( error => {
+                ckeditor.error( error );
+            });
+        </script>
+
+        <script>
             $(function() {
+
                 $('.table-item-search').DataTable({
                     "bPaginate": false,
                     "searching": false,
@@ -796,6 +900,8 @@
                     var txt = $.trim(this.value);
                     $('#description').append(txt);
                     $('.add-description-history').hide();
+
+                    ckeditor.setData(txt);
                 });
 
                 $('#formEditQuotationItem').submit(function(event){
@@ -1070,8 +1176,11 @@
                                 }
 
                                 calculatePrices(result['quotation_cost'], result['total_retail'], result['total_cost'], result['discount']);
-
-                                displaySubItemList(isChecked.value);
+                                
+                                if(ischecked == true){
+                                    displaySubItemList(isChecked.value, Itemtype);
+                                 
+                                }
                             }, error: function (data) {
 
                         }
@@ -1356,7 +1465,17 @@
                 });
             }
 
-            function displaySubItemList(ItemId){
+            function displaySubItemList(ItemId, Itemtype){
+               
+                var type;
+                var i = 1;
+
+                if(Itemtype === 'main'){
+                    type = 'sub-' + i;
+                }else{
+                    i = i + 1;
+                    type = 'sub-' + i;
+                }
 
                 $.ajax({
                     url: "{{ url('admin/item/get-sub-items') }}",
@@ -1368,10 +1487,10 @@
                     success: function (data) {
                         var result = JSON.parse(data);
 
-                        $('.table-sub-items tbody').empty();
+                        $('.table-sub-items-'+ i +' tbody').empty();
 
                         if (result.length > 0) {
-                            $("#subItemList").modal('show');
+                            $("#subItemList" + i).modal('show');
                             var costColHidden;
 
                             if($('#in_office').val() != 'yes'){
@@ -1381,7 +1500,6 @@
                             $.each(result, function (count, val) {
                                 var isMandatory = val['is_mandatory'];
                                 var selected;
-                                var type = 'sub';
 
                                 if(isMandatory == 1){
                                     selected = 'checked disabled';
@@ -1389,7 +1507,7 @@
                                     selected = '';
                                 }
 
-                                $('.table-sub-items tbody').append(
+                                $('.table-sub-items-'+ i +' tbody').append(
                                     '<tr>'
                                     +'<td>' + val['id'] + '</td>'
                                     +'<td>' + val['name'] + '</td>'
@@ -1402,7 +1520,7 @@
                                     );
                             });
                         }else{
-                            $("#subItemList").modal('hide');
+                            $("#subItemList" + i).modal('hide');
                         }
                     }, error: function (data) {
 
