@@ -6,11 +6,9 @@
                 <a href="{{ url('admin/po/create') }}" class="btn btn-sm btn-primary">Add New</a>
             </div>
         </div>
-        <div class="card-body table-responsive">
+        <div class="card-body">
         <form method="GET" action="{{ url('admin/po') }}" id="frm-list">
-
-            <div class="row">
-                <div class="form-group" style="margin-left:10px;">
+                <div class="form-group" style="float:left; margin-left:10px;">
 
                         <select name="pagesize" id="pagesize" class="custom-select tbl-sort-select"
                             onchange="selectPageSize(this.value)">
@@ -24,7 +22,8 @@
                                 </option>
                         </select>
                 </div>
-                    
+
+                <div class="row" style="float:right;">
                     <div class="form-group" style="margin-left:10px;">
                         <select id="supplier" name="supplier" class="selectpicker show-tick" data-live-search="true">
                             <option value="">Suppliers</option>        
@@ -37,12 +36,12 @@
                     <input type="hidden" name="form_action" value="search">
                     
                     <div class="form-group text-right" style="margin-left:10px;">
-                        <button class="btn btn-primary" type="submit">Filter</button>
+                        <button class="btn btn-primary" type="submit">Search</button>
                     </div>
                 </div>
             </form>
             <br>
-            <div>
+            <div class="table-responsive">
                 <table class="table" id="dataTable" width="100%">
                     <thead>
                         <tr>
@@ -106,7 +105,7 @@
 
                 $('#dataTable').DataTable({
                     "bPaginate": false,
-                    "searching": true,
+                    "searching": false,
                     "ordering": true,
                     "autoWidth":true,
                     "aoColumnDefs": [
