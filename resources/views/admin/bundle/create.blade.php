@@ -263,13 +263,12 @@
                 </div>
             </div>
         </div>
-
-        <!-- Sub Items Model -->
-        <div class="modal fade bd-example-modal-lg" id="subItemList" tabindex="-1" role="dialog" aria-labelledby="subItemList" aria-hidden="true">
+        <!-- Sub Items Model 1-->
+        <div class="modal fade bd-example-modal-lg" id="subItemList1" tabindex="-1" role="dialog" aria-labelledby="subItemList1" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items</h5>
+                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items - 1</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -282,7 +281,95 @@
 
                         <div class="row">
                             <div class="col-lg-12 table-responsive">
-                                <table class="table table-sub-items table-bordered" id="dataTable" style="width: 100%">
+                                <table class="table table-sub-items-1 table-bordered" id="dataTable" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-sm">Item Code</th>
+                                            <th class="th-sm">Item Name</th>
+                                            <th class="th-sm">Department</th>
+                                            <th class="th-sm">Supplier</th>
+                                            <th class="th-sm item-search-cost">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
+                                            <th class="th-sm"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Items Model 2-->
+        <div class="modal fade bd-example-modal-lg" id="subItemList2" tabindex="-1" role="dialog" aria-labelledby="subItemList2" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items - 2</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="" method="POST"
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                            @csrf
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive">
+                                <table class="table table-sub-items-2 table-bordered" id="dataTable" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="th-sm">Item Code</th>
+                                            <th class="th-sm">Item Name</th>
+                                            <th class="th-sm">Department</th>
+                                            <th class="th-sm">Supplier</th>
+                                            <th class="th-sm item-search-cost">Cost Price</th>
+                                            <th class="th-sm">Retail Price</th>
+                                            <th class="th-sm"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sub Items Model 3-->
+        <div class="modal fade bd-example-modal-lg" id="subItemList3" tabindex="-1" role="dialog" aria-labelledby="subItemList3" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="subItemListTitle">Group Sub Items - 3</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="" method="POST"
+                        class="text-center border border-light p-1" id="itemSearch" enctype="multipart/form-data" onsubmit="return false;">
+                            @csrf
+
+                        <div class="row">
+                            <div class="col-lg-12 table-responsive">
+                                <table class="table table-sub-items-3 table-bordered" id="dataTable" style="width: 100%">
                                     <thead>
                                         <tr>
                                             <th class="th-sm">Item Code</th>
@@ -334,35 +421,6 @@
                 $('.item-list-retail').addClass('editable');
                 $('.item-list-qty').addClass('editable');
 
-                // $('.bundle-item-cost').hide();
-                // $('.item-list-item-cost').hide();
-                // $('.item-list-total-cost').hide();
-                // $('.item-list-cost').hide();
-                // $('.item-search-cost').hide();
-                // $('.item-list-display-report').hide();
-
-                // cuteAlert({
-                //     type: "question",
-                //     title: "Are you in the office",
-                //     message: "",
-                //     confirmText: "Yes",
-                //     cancelText: "No"
-                //     }).then((e)=>{
-                //     if ( e == ("confirm")){
-                //         $('#in_office').val('yes');
-                //         $(".bundle-item-cost").show();
-                //         $('.item-list-item-cost').show();
-                //         $('.item-list-total-cost').show();
-                //         $('.item-list-cost').show();
-                //         $('.item-search-cost').show();
-                //         $('.item-list-display-report').show();
-
-                //     } else {
-                //         $('#in_office').val('no');
-                //     }
-                // });
-
-                
                 $('#in_office').val('yes');
 
                 $("#bundleCreate").submit(function(event) {
@@ -580,7 +638,7 @@
                                 calculatePrices(result['bundle_cost'], result['total_retail'], result['total_cost']);
 
                                 if(ischecked == true){
-                                    displaySubItemList(isChecked.value);
+                                    displaySubItemList(isChecked.value, Itemtype);
                                 }
                             }, error: function (data) {
 
@@ -785,59 +843,68 @@
                 });
             });
 
-            function displaySubItemList(ItemId){
+            function displaySubItemList(ItemId, Itemtype){
+               
+               var type;
+               var i = 1;
 
-                $.ajax({
-                    url: "{{ url('admin/item/get-sub-items') }}",
-                    type: 'POST',
-                    data: {
-                            "_token": "{{ csrf_token() }}",
-                            "id": ItemId
-                        },
-                    success: function (data) {
-                        var result = JSON.parse(data);
+               if(Itemtype === 'main'){
+                   type = 'sub-' + i;
+               }else{
+                   i = i + 1;
+                   type = 'sub-' + i;
+               }
 
-                        $('.table-sub-items tbody').empty();
+               $.ajax({
+                   url: "{{ url('admin/item/get-sub-items') }}",
+                   type: 'POST',
+                   data: {
+                           "_token": "{{ csrf_token() }}",
+                           "id": ItemId
+                       },
+                   success: function (data) {
+                       var result = JSON.parse(data);
 
-                        if (result.length > 0) {
-                            $("#subItemList").modal('show');
-                            var costColHidden;
+                       $('.table-sub-items-'+ i +' tbody').empty();
 
-                            if($('#in_office').val() != 'yes'){
-                                costColHidden = 'style="display:none;"';
-                            }
+                       if (result.length > 0) {
+                           $("#subItemList" + i).modal('show');
+                           var costColHidden;
 
-                            $.each(result, function (count, val) {
-                                var isMandatory = val['is_mandatory'];
-                                var selected;
-                                var type = 'sub';
+                           if($('#in_office').val() != 'yes'){
+                               costColHidden = 'style="display:none;"';
+                           }
 
-                                if(isMandatory == 1){
-                                    selected = 'checked disabled';
-                                }else{
-                                    selected = '';
-                                }
+                           $.each(result, function (count, val) {
+                               var isMandatory = val['is_mandatory'];
+                               var selected;
 
-                                $('.table-sub-items tbody').append(
-                                    '<tr>'
-                                    +'<td>' + val['id'] + '</td>'
-                                    +'<td>' + val['name'] + '</td>'
-                                    +'<td>' + val['department']+ '</td>'
-                                    +'<td>' + val['supplier'] + '</td>'
-                                    +'<td class="item-search-cost" '+ costColHidden +'>' + val['cost_price'] + '</td>'
-                                    +'<td>' + val['retail_price'] + '</td>'
-                                    +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this, \'' + type + '\')" value="' + val['id'] + '" class="form-check-label" '+ selected +'></td>'
-                                    +'</tr>'
-                                    );
-                            });
-                        }else{
-                            // $("#subItemList").modal('hide');
-                        }
-                    }, error: function (data) {
+                               if(isMandatory == 1){
+                                   selected = 'checked disabled';
+                               }else{
+                                   selected = '';
+                               }
 
-                    }
-                });
-            }
+                               $('.table-sub-items-'+ i +' tbody').append(
+                                   '<tr>'
+                                   +'<td>' + val['id'] + '</td>'
+                                   +'<td>' + val['name'] + '</td>'
+                                   +'<td>' + val['department']+ '</td>'
+                                   +'<td>' + val['supplier'] + '</td>'
+                                   +'<td class="item-search-cost" '+ costColHidden +'>' + val['cost_price'] + '</td>'
+                                   +'<td>' + val['retail_price'] + '</td>'
+                                   +'<td><input type="checkbox" id="item" name="item" onclick="selectItem(this, \'' + type + '\')" value="' + val['id'] + '" class="form-check-label" '+ selected +'></td>'
+                                   +'</tr>'
+                                   );
+                           });
+                       }else{
+                           $("#subItemList" + i).modal('hide');
+                       }
+                   }, error: function (data) {
+
+                   }
+               });
+           }
 
             function softeDelete() {
 
