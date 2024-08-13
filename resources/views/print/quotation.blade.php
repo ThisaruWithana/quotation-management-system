@@ -114,7 +114,7 @@
                                 <thead style="font-size: 9px;text-align: center;vertical-align: center;">
                                     <tr>
                                         <th style="border: 1px solid #000;background: #ddd; width:100px;">
-                                            Code
+                                            Product Code
                                         </th>
                                         <th style="border: 1px solid #000;background: #ddd;">
                                             Description
@@ -134,7 +134,7 @@
                                         @if($value['display_report'] === 1)
                                             <tr>
                                                 <td style="padding: 10px;border-right: 1px solid #000000;border-left:1px solid #000000 ;border-bottom: 1px solid #000000;text-align: left;">
-                                                    {{ $value['id'] }}
+                                                    {{ $value['product_code'] }}
                                                 </td>
                                                 <td style="padding: 10px;text-align: left;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
                                                     {{ $value['name'] }}
@@ -273,7 +273,7 @@
                                         @if($value['display_report'] === 1)
                                             <tr>
                                                 <td style="padding: 10px;border-right: 1px solid #000000;border-left:1px solid #000000 ;border-bottom: 1px solid #000000;text-align: left;">
-                                                    {{ $value['id'] }}
+                                                    {{ $value['product_code'] }}
                                                 </td>
                                                 <td style="padding: 10px;text-align: left;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
                                                     {{ $value['name'] }}
