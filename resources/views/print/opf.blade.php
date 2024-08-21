@@ -3,7 +3,30 @@
 <head>
     <title>Quotation and Order Contract</title>
     <style>
-      #height-container { position: absolute; left: 0px; right: 0px; top: 0px; width: 100%;}
+        @page {
+            margin: 0;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        #height-container {
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            width: 100%;
+            margin: 0;
+            padding: 30px 0px 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+        }
+        td {
+            padding: 5px 8px;
+        }
     </style>
 </head>
 
@@ -18,7 +41,7 @@
                         <!--Header-->
 
                         <tr>
-                            <td style="width:100%; font-size:11px; padding:5px 20px 0px;text-align: center;color: #572682;font-weight: bold;font-style:italic">
+                            <td style="width:100%; font-size:11px; padding:0px 20px 0px;text-align: center;color: #572682;font-weight: bold;font-style:italic">
                                 <table style="width:100%;margin: auto;padding: 0px;border-radius: 6px;border-collapse: collapse;">
                                     <tbody>
 
@@ -209,7 +232,7 @@
                                                                                 </td>
                                                                             </tr>
 
-                                                                            <?php 
+                                                                            <?php
                                                                                 $total_qty = $total_qty + $value['qty'];
                                                                                 $total_stock = $total_stock + $value['in_stock'];
                                                                                 $total_order_qty = $total_order_qty + $value['order_qty'];
@@ -260,7 +283,7 @@
                                                                                 £{{ number_format($total_cost, 2) }}
                                                                             </td>
                                                                         </tr>
-                                                                        
+
                                                                         <tr>
                                                                             <td colspan="7"
                                                                                 style="text-align: right; padding:5px 10px; border: 1px solid black;background: #f3f3f3;font-weight: bold">
