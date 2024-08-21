@@ -440,7 +440,7 @@ class QuotationController extends Controller
 
     public function getQuotationItems($quotationId)
     {
-        $itemList = QuotationItem::with('item', 'item.suppliers.suppliername')
+        $itemList = QuotationItem::with('item', 'item.suppliers.suppliername', 'item.barcode')
         ->where('quotation_id', $quotationId)->where('status', 1)
         ->orderBy('order','ASC')->get();
 
@@ -467,7 +467,7 @@ class QuotationController extends Controller
                 $item_id = $value['item']['id'];
                 $actual_cost = $value['item']['cost_price'];
             }
-                    
+
                 $data2 = ([
                     'id' => $value['id'],
                     'item_id' => $item_id,
@@ -483,6 +483,7 @@ class QuotationController extends Controller
                     'quotation_id' => $value['quotation_id'],
                     'type' => $value['type'],
                     'margin' => $value['margin'],
+                    'product_code' => $value['item']['barcode']['product_code'],
                     'supplier' => implode(" ",$supplierList)
                     ]);
 
@@ -1771,7 +1772,7 @@ class QuotationController extends Controller
         ]; 
 
         $pdf = PDF::loadView('print.quotation', $data);
-        return $pdf->stream('Quotation and Order Contract', array("Attachment" => false));
+        return $pdf->stream('Quotation and Order Contract.pdf', array("Attachment" => false));
     
     }
 
@@ -1789,7 +1790,7 @@ class QuotationController extends Controller
         ]; 
 
         $pdf = PDF::loadView('print.opf', $data);
-        return $pdf->stream('Order Processing Form', array("Attachment" => false));
+        return $pdf->stream('Order Processing Form.pdf', array("Attachment" => false));
     
     }
 

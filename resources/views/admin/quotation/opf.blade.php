@@ -107,7 +107,7 @@
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="col-lg-2" style="float:right;">
-                                            <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                            <button class="btn btn-primary m-0 btn-block mx-4" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                                 <i class="fa fa-search-plus"></i> 
                                                 Find Items
                                             </button>
@@ -215,17 +215,17 @@
                             <br>
                                     
                                 <div class="row">
-                                    <div class="col-lg-1">
+                                    <div class="">
                                         <a href="{{ url('admin/opf/print',encrypt($data->id)) }}">
-                                            <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
+                                            <button class="btn btn-block btn-primary" type="button" id="printBtn">Print</button>
                                         </a>
                                     </div>
                                     <div class="col-lg-2">
-                                        <button class="btn btn-primary btn-block" type="button" id="btnSaveChanges">Save Changes</button>
+                                        <button class="btn btn-block btn-primary" type="button" id="btnSaveChanges">Save Changes</button>
                                     </div>
                                 </div>
                         </div>
-                        </form>
+                    </form>
                 </div> 
 
             </div>
