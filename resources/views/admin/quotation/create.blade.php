@@ -6,139 +6,106 @@
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
-            <div class="col-lg-12">
+            <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="card card-primary">
-                    <h5 class="card-header  white-text text-left py-3">
+                    <h5 class="card-header white-text text-left py-3">
                         {{ $title }}
-
                         <div class="card-tools">
-                            <a class="btn btn-sm btn-primary" onclick=softeDelete()>
+                            <a class="btn btn-sm btn-primary" onclick="softeDelete()">
                                 <button type="button" class="btn btn-tool">
-                                        <i class="fas fa-times"></i>
+                                    <i class="fas fa-times"></i>
                                 </button>
                             </a>
                         </div>
                     </h5>
                     <!-- /.card-header -->
                     <!-- form start -->
-                    <form action="{{ url('admin/quotation/store') }}" method="PUT"
-                          class="text-center border border-light p-5" id="formCreate">
+                    <form action="{{ url('admin/quotation/store') }}" method="PUT" class="text-center border border-light p-5" id="formCreate">
                         @csrf
                         <div class="card-body px-lg-2 pt-0">
 
                             <div>
                                 <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="row card card-dark">
-                                                <div class="row">
-                                                    <div class="col-lg-3">
-                                                        <div class="form-group text-left">
-                                                            <label for="status" class="form-label">Status</label>
-                                                            <select id="status" name="status" class="selectpicker" disabled>
-                                                                <option value="1">New</option>
-                                                                <option value="2">Accepted</option>
-                                                                <option value="3">Installed</option>
-                                                                <option value="4">Old</option>
-                                                                <option value="0">Deactivated</option>
-                                                            </select>
-                                                        </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="card card-dark">
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="form-group text-left">
+                                                        <label for="status" class="form-label">Status</label>
+                                                        <select id="status" name="status" class="selectpicker form-control" disabled>
+                                                            <option value="1">New</option>
+                                                            <option value="2">Accepted</option>
+                                                            <option value="3">Installed</option>
+                                                            <option value="4">Old</option>
+                                                            <option value="0">Deactivated</option>
+                                                        </select>
                                                     </div>
-
-                                                    <div class="col-lg-6" style="margin-left:100px;">
-                                                        <div class="form-group text-left">
-                                                            <label for="ref" class="form-label">Quot. Ref</label>
-                                                            <input type="text" class="form-control" id="ref" name="ref" value=""
-                                                                   readonly>
-                                                        </div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6">
+                                                    <div class="form-group text-left">
+                                                        <label for="ref" class="form-label">Quot. Ref</label>
+                                                        <input type="text" class="form-control" id="ref" name="ref" value="" readonly>
                                                     </div>
-
-                                                    <div class="col-lg-12">
-                                                        <div class="form-group text-left">
-                                                            <label for="customer" class="form-label">Client</label>
-                                                            <span class="required"> * </span><br>
-                                                            <select id="customer" name="customer"
-                                                                    class="selectpicker show-tick col-lg-12"
-                                                                    data-live-search="true" required>
-                                                                <option value="">Select Client</option>
-                                                                @foreach ($customers as $value)
-                                                                    <option value="{{ $value->id }}">
-                                                                        {{  $value->postal_code }}
-                                                                        - {{ $value->name }}
-                                                                        - {{ $value->contact_person }}</option>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12">
+                                                    <div class="form-group text-left">
+                                                        <label for="customer" class="form-label">Client</label>
+                                                        <span class="required"> * </span><br>
+                                                        <select id="customer" name="customer" class="selectpicker show-tick form-control" data-live-search="true" required>
+                                                            <option value="">Select Client</option>
+                                                            @foreach ($customers as $value)
+                                                                <option value="{{ $value->id }}">
+                                                                    {{ $value->postal_code }} - {{ $value->name }} - {{ $value->contact_person }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12 col-md-12">
+                                                    <div class="form-group text-left">
+                                                        <label for="description" class="form-label">Description</label>
+                                                        <textarea class="form-control ckeditor" name="description" id="description" rows="4"></textarea><br><br>
+                                                        <button class="btn btn-default add-description" type="button" style="float:right; margin-top:-20px;">
+                                                            <i class="fa fa-plus"> Add</i>
+                                                        </button><br>
+                                                        <div style="display:none;" class="add-description-history">
+                                                            <select id="description_dropdown" name="description_dropdown" class="selectpicker show-tick form-control" data-live-search="true">
+                                                                <option value="">Select Description</option>
+                                                                @foreach ($descriptions as $value)
+                                                                    <option value="{{ $value->description }}">{{ $value->description }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
                                                     </div>
-
-                                                    <div class="col-lg-12">
-                                                        <div class="form-group text-left">
-                                                            <label for="description" class="form-label">Description</label>
-                                                            <!-- <span class="required"> * </span><br> -->
-
-                                                            <textarea class="form-control ckeditor" name="description" id="description"
-                                                                      rows="4"
-                                                                      ></textarea><br>  <br>
-
-                                                            <button class="btn btn-default add-description" type="button"
-                                                                    style="float:right; margin-top:-20px;"><i
-                                                                    class="fa fa-plus"> Add</i></button>
-                                                            <br>
-
-                                                            <div style="display:none;" class="add-description-history">
-                                                                <select id="description_dropdown" name="description_dropdown"
-                                                                        class="selectpicker show-tick col-lg-12"
-                                                                        data-live-search="true">
-                                                                    <option value="">Select Description</option>
-                                                                    @foreach ($descriptions as $value)
-                                                                        <option
-                                                                            value="{{ $value->description }}">{{ $value->description }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
                                                 </div>
+                                            </div>
                                         </div>
-
-
                                     </div>
 
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-6 col-md-12">
                                         <div class="row">
-                                            <div class="col-lg-12 customer-details"
-                                                 style="display:block;margin-top: 0px;padding-left: 100px">
+                                            <div class="col-lg-12 col-md-12 customer-details" style="display:block;margin-top: 0px;">
                                                 <div class="text-left">
-                                                    <table class="table table-bordered ">
+                                                    <table class="table table-bordered">
                                                         <tr>
-                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">
-                                                                    Name :</p></td>
-                                                            <td style="width:50px;"><p class="text-sm mb-0"><span
-                                                                        id="cus-name-lbl"></span></p></td>
+                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">Name :</p></td>
+                                                            <td><p class="text-sm mb-0"><span id="cus-name-lbl"></span></p></td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">
-                                                                    Address :</p></td>
-                                                            <td style="width:50px;"><p class="text-sm mb-0"><span
-                                                                        id="cus-address-lbl"></span></p></td>
+                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">Address :</p></td>
+                                                            <td><p class="text-sm mb-0"><span id="cus-address-lbl"></span></p></td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">
-                                                                    Contact Number :</p></td>
-                                                            <td style="width:50px;"><p class="text-sm mb-0"><span
-                                                                        id="cus-tel-lbl"></span></p></td>
+                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">Contact Number :</p></td>
+                                                            <td><p class="text-sm mb-0"><span id="cus-tel-lbl"></span></p></td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">
-                                                                    Email :</p></td>
-                                                            <td style="width:50px;"><p class="text-sm mb-0"><span
-                                                                        id="cus-email-lbl"></span></p></td>
+                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">Email :</p></td>
+                                                            <td><p class="text-sm mb-0"><span id="cus-email-lbl"></span></p></td>
                                                         </tr>
                                                         <tr>
-                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">
-                                                                    Code :</p></td>
-                                                            <td style="width:50px;"><p class="text-sm mb-0"><span
-                                                                        id="cus-code-lbl"></span></p></td>
+                                                            <td style="width:120px;"><p class="text-sm mb-0 text-bold">Code :</p></td>
+                                                            <td><p class="text-sm mb-0"><span id="cus-code-lbl"></span></p></td>
                                                         </tr>
                                                     </table>
                                                 </div>
@@ -152,86 +119,73 @@
                                 <input type="hidden" name="row_order" id="row_order" value="">
                             </div>
 
-                            <div class="col-lg-2 p-0">
+                            <div class="col-lg-2 col-md-3 col-sm-6 p-0">
                                 <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
                             </div>
                             <hr>
 
                             <div class="add-items" style="display:none;">
-
                                 <div class="row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 col-md-6">
                                         <div class="form-group text-left">
                                             <label for="bundle" class="form-label">Bundle</label>
-                                            <select id="bundle" name="bundle" class="selectpicker show-tick col-lg-12"
-                                                    data-live-search="true">
+                                            <select id="bundle" name="bundle" class="selectpicker show-tick form-control" data-live-search="true">
                                                 <option value="">Select Bundle</option>
                                                 @foreach ($bundles as $value)
-                                                    <option
-                                                        value="{{ $value->id }}">{{ number_format($value->bundle_cost, 2) }}
-                                                        - {{ $value->name }}</option>
+                                                    <option value="{{ $value->id }}">{{ number_format($value->bundle_cost, 2) }} - {{ $value->name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-2">
+                                    <div class="col-lg-2 col-md-6">
                                         <div class="form-group text-left">
                                             <label for="bundle_cost" class="form-label">Bundle Cost</label>
-                                            <input type="text" class="form-control" id="bundle_cost" name="bundle_cost"
-                                                   readonly>
+                                            <input type="text" class="form-control" id="bundle_cost" name="bundle_cost" readonly>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 col-md-6">
                                         <div class="form-group text-left">
                                             <label for="price" class="form-label">Quotation Price</label>
-                                            <!-- <span class="required"> * </span><br> -->
-                                            <input type="text" class="form-control" id="price" name="price"
-                                                    value="0" autocomplete="off" >
+                                            <input type="text" class="form-control" id="price" name="price" value="0" autocomplete="off">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 col-md-6">
                                         <div class="form-group text-left">
                                             <label for="discount" class="form-label">Discount</label>
-                                            <input type="text" class="form-control" id="discount"
-                                                    name="discount" value="0" autocomplete="off">
+                                            <input type="text" class="form-control" id="discount" name="discount" value="0" autocomplete="off">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4" id="margin-details">
+                                    <div class="col-lg-4 col-md-6" id="margin-details">
                                         <div class="form-group text-left">
                                             <label for="margin" class="form-label">Quotation Margin</label>
-                                            <input type="text" class="form-control" id="margin" name="margin"
-                                                    value="" readonly>
+                                            <input type="text" class="form-control" id="margin" name="margin" value="" readonly>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-5" id="retail-print-option" style="display:none;">
+                                    <div class="col-lg-5 col-md-6" id="retail-print-option" style="display:none;">
                                         <div class="form-group text-left">
-                                        <label for="retail_print_option" class="form-label">Print retails prices in print </label>
-                                            &nbsp;&nbsp;&nbsp;&nbsp;
-                                            <input type="checkbox" id="retail_print_option" name="retail_print_option" value="1" 
-                                                class="form-check-label" checked>
+                                            <label for="retail_print_option" class="form-label">Print retails prices in print</label>
+                                            <input type="checkbox" id="retail_print_option" name="retail_print_option" value="1" class="form-check-label" checked>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-2" style="float:right;">
-                                            <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn"
-                                                    data-toggle="modal" data-target="#exampleModal">
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="col-md-3 col-lg-3 mb-1" style="float:right;">
+                                            <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                                 <i class="fa fa-search-plus"></i>
                                                 Find Items
                                             </button>
                                         </div>
-                                        <br> <br>
+                                        <br><br>
 
                                         <div class="table-responsive">
-                                            <table class="table item-list table-bordered" id="sortable-table"
-                                                   width="100%">
+                                            <table class="table item-list table-bordered" id="sortable-table" width="100%">
                                                 <thead>
                                                 <tr>
                                                     <th class="th-sm">Code</th>
@@ -254,90 +208,64 @@
                                                 </tbody>
                                             </table>
                                         </div>
-
                                     </div>
                                 </div>
                                 <br>
                                 <hr>
                                 <div class="row text-left">
-
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 col-md-6">
                                         <table class="table table-bordered">
                                             <tr id="lbl-cost-details" style="display:none;">
-                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total
-                                                            Cost : </b></p></td>
-                                                <td style="width:50px;"><p class="text-sm mb-0"><b
-                                                            class="d-block info-lb"><span
-                                                                id="total-cost-lbl"></span></b></p> <input type="hidden" value="" id="total-cost"></td>
+                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Cost :</b></p></td>
+                                                <td><p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p><input type="hidden" value="" id="total-cost"></td>
                                             </tr>
                                             <tr>
-                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total
-                                                            Retail :</b></p></td>
-                                                <td style="width:50px;"><p class="text-sm mb-0"><b
-                                                            class="d-block info-lb"><span id="retail-lbl"></span></b>
-                                                    </p><input type="hidden" value="" id="total-retail"></td>
+                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Retail :</b></p></td>
+                                                <td><p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl"></span></b></p><input type="hidden" value="" id="total-retail"></td>
                                             </tr>
                                             <tr>
-                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Discount
-                                                            (%) :</b></p></td>
-                                                <td style="width:50px;"><p class="text-sm mb-0"><b
-                                                            class="d-block info-lb"><span id="discount-lbl"></span></b>
-                                                    </p></td>
+                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Discount (%) :</b></p></td>
+                                                <td><p class="text-sm mb-0"><b class="d-block info-lb"><span id="discount-lbl"></span></b></p></td>
                                             </tr>
                                             <tr>
-                                                <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot.
-                                                            Price :</b></p></td>
-                                                <td style="width:50px;"><p class="text-sm mb-0"><b
-                                                            class="d-block info-lb"><span
-                                                                id="quot-price-lbl"></span></b></p></td>
+                                                <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Price :</b></p></td>
+                                                <td><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-price-lbl"></span></b></p></td>
                                             </tr>
                                         </table>
                                     </div>
 
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 col-md-6">
                                         <table class="table table-bordered">
                                             <tr id="quot-margin-before-discount">
-                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot.
-                                                            Margin :</b></p></td>
-                                                <td style="width:200px;"><p class="text-sm mb-0"><b
-                                                            class="d-block info-lb"><span
-                                                                id="quot-margin"></span></b></p></td>
+                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin :</b></p></td>
+                                                <td><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin"></span></b></p></td>
                                             </tr>
-                                            
                                             <tr id="quot-margin-after-discount">
                                                 <td style="width:auto"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Margin After Discount:</b></p></td>
                                                 <td style="width:auto;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-margin-lbl"></span></b></p></td>
                                             </tr>
                                             <tr>
-                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">VAT : </b>
-                                                    </p></td>
-                                                <td style="width:50px;"><p class="text-sm mb-0"><b
-                                                            class="d-block info-lb"><span id="vat-lbl"></span></b></p>
-                                                </td>
+                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">VAT :</b></p></td>
+                                                <td><p class="text-sm mb-0"><b class="d-block info-lb"><span id="vat-lbl"></span></b></p></td>
                                             </tr>
                                             <tr>
-                                                <td style="width:200px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot.
-                                                            + VAT :</b></p></td>
-                                                <td style="width:50px;"><p class="text-sm mb-0"><b
-                                                            class="d-block info-lb"><span id="quot-vat-lbl"></span></b>
-                                                    </p></td>
+                                                <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. + VAT :</b></p></td>
+                                                <td><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-vat-lbl"></span></b></p></td>
                                             </tr>
                                         </table>
                                     </div>
                                 </div>
                                 <br>
-                                <div class="col-lg-2">
-                                    <button class="btn btn-primary btn-block" type="button" id="btnSaveChanges">Save
-                                        Changes
-                                    </button>
+                                <div class="col-lg-2 col-md-3 col-sm-6 p-0">
+                                    <button class="btn btn-primary btn-block" type="button" id="btnSaveChanges">Save Changes</button>
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
+
         <!-- /.card -->
 
         <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog"
@@ -1013,7 +941,7 @@
                     if($('#retail_print_option').prop('checked') == true ){
                         retail_print_option = $('#retail_print_option').val();
                     }
-            
+
                     if($('#price').val() > 0 && description != ''){
 
                         $.ajax({
@@ -1026,7 +954,7 @@
                                     "retail_print_option": retail_print_option
                                 },
                                 success: function (data) {
-                  
+
                                 }, error: function (data) {
 
                             }
@@ -1239,7 +1167,7 @@
                 }else{
                     discount = parseFloat(discount);
                 }
-    
+
                 if(quotationCost > 0){
 
                     var vat_rate = $("#vat_rate").val();
@@ -1251,7 +1179,7 @@
                     var quotationMarginVal = quotationMarginRate + '%';
 
                     var vatValue = (quotationPriceAfterDiscount * vat_rate) / 100;
-                    
+
                     $("#margin").val(quotationMarginRate);
                     $("#quot-price-lbl").text(Number(quotationPriceAfterDiscount).toFixed(2));
                     $("#quot-margin-lbl").text(quotationMarginVal);
@@ -1500,7 +1428,7 @@
             }
 
             function displaySubItemList(ItemId, Itemtype){
-               
+
                var type;
                var i = 1;
 
@@ -1563,7 +1491,7 @@
            }
 
             function calculateMarginBeforeDiscount(quotationCost, totalCost){
-                
+
                 var quotationMarginVal;
 
                 if(quotationCost > 0){
@@ -1638,7 +1566,7 @@
                                     }
                                 });
                         } else {
-                            
+
                         }
                     })
 

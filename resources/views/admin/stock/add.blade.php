@@ -89,14 +89,12 @@
                             <div class="add-items" style="display:none;">
                                 <div class="row">
                                     <div class="col-lg-12">
-                                        <div class="col-lg-2" style="float:right;">
-                                            <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn"
-                                                    data-toggle="modal" data-target="#exampleModal">
-                                                <i class="fa fa-search-plus"></i>
-                                                Find Items
-                                            </button>
-                                        </div>
-                                        <br><br>
+                                    <div class="col-md-3 col-lg-3 mb-1" style="float:right;">
+                                        <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                            <i class="fa fa-search-plus"></i>
+                                            Find Items
+                                        </button>
+                                    </div><br><br>
 
                                         <div class="table-responsive">
                                             <table class="table item-list table-bordered" id="sortable-table"
@@ -127,7 +125,7 @@
                                 </div>
                         
                                 <br>
-                                <div class="col-lg-2">
+                                <div class="col-md-4 col-lg-3 mb-1">
                                     <button class="btn btn-primary btn-block" type="button" id="btnStockUpdate">Update Stock</button>
                                 </div>
                             </div>

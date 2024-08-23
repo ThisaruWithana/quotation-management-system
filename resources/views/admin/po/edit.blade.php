@@ -118,7 +118,7 @@
 
                             <div class="row add-items" style="display:block;">
                                 <div class="col-lg-12">
-                                    <div class="col-lg-2" style="float:right;">
+                                    <div class="col-md-3 col-lg-3 mb-1" style="float:right;">
                                         <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                             <i class="fa fa-search-plus"></i>
                                             Find Items
@@ -178,7 +178,7 @@
                                     <!-- <div class="col-lg-1">
                                         <button class="btn btn-primary btn-block" type="button" id="printBtn">Print</button>
                                     </div> -->
-                                    <div class="col-lg-2">
+                                    <div class="col-md-4 col-lg-3 mb-1">
                                         <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Changes</button>
                                     </div>
                                 </div>

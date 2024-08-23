@@ -106,42 +106,46 @@
                             </div><br>
                         </div>
 
-                            <div class="add-items" style="display:none;">
+ 
+                        <div class="row add-items" style="display:none;">
+                                <div class="col-lg-12">
+                                <div class="col-md-3 col-lg-3 mb-1" style="float:right;">
+                                        <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                            <i class="fa fa-search-plus"></i>
+                                            Find Items
+                                        </button>
+                                    </div><br><br>
 
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-2" style="float:right;">
-                                            <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
-                                                <i class="fa fa-search-plus"></i> 
-                                                Find Items
-                                            </button>
-                                        </div>
+                                    <div class="table-responsive">
+                                        <table class="table item-list table-bordered" id="sortable-table" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="th-sm">Code</th>
+                                                    <th class="th-sm">Name</th>
+                                                    <th class="th-sm">Supplier</th>
+                                                    <th class="th-sm">Department</th>
+                                                    <th class="w-150px th-sm">Sub Department</th>
+                                                    <th class="w-100px th-sm">Item Cost</th>
+                                                    <th class="th-sm item-list-qty">Qty</th>
+                                                    <th class="w-100px th-sm">Total Cost</th>
+                                                    <th class="th-sm"></th>
+                                                    <th class="th-sm"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                   
+                                            </tbody>
+                                        </table>
                                     </div>
-                                </div><br>
-                                    
-                                <div class="table-responsiv">
-                                    <table class="table item-list table-bordered" id="sortable-table" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th class="th-sm">Code</th>
-                                                <th class="th-sm">Name</th>
-                                                <th class="th-sm">Supplier</th>
-                                                <th class="th-sm">Department</th>
-                                                <th class="w-150px th-sm">Sub Department</th>
-                                                <th class="w-100px th-sm">Item Cost</th>
-                                                <th class="th-sm item-list-qty">Qty</th>
-                                                <th class="w-100px th-sm">Total Cost</th>
-                                                <th class="th-sm"></th>
-                                                <th class="th-sm"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                         
-                                        
-                                        </tbody>
-                                    </table>
-                                </div>
 
+                                </div>
+                                <br>
+                                    
+                                <!-- <div class="row">
+                                    <div class="col-lg-2">
+                                        <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Details</button>
+                                    </div>
+                                </div> -->
                             </div>
                             <br>
                         </div>

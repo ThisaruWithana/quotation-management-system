@@ -247,7 +247,7 @@
                             <div class="row">
                               <div class="col-lg-12">
           
-                                  <div class="col-lg-2"style="float:right;">
+                                  <div class="col-md-3 col-lg-3 mb-1"style="float:right;">
                                     <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                         <i class="fa fa-search-plus"></i>
                                         Find Items
@@ -332,9 +332,9 @@
                             </div>
                           </div>
 
-                            <div class="text-left">
-                              <button class="btn btn-primary col-lg-1" type="submit">Save</button>
-                              </div>
+                            <div class="col-md-4 col-lg-3 mb-1 text-left">
+                              <button class="btn btn-primary" type="submit">Save</button>
+                            </div>
                 </div>
                 </form>
               </div>
