@@ -4,114 +4,109 @@
     <section class="content">
         <!-- Default box -->
         <div class="d-flex justify-content-center">
-            <div class="col-lg-12">
+            <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="card card-primary">
-                <h5 class="card-header  white-text text-left py-3">
-                    {{ $title }}
+                    <h5 class="card-header white-text text-left py-3">
+                        {{ $title }}
 
-                    <div class="card-tools">
-                        <!-- <a href="{{ route('admin.bundle.index') }}" class="btn btn-sm btn-primary"> -->
-                            <a class="btn btn-sm btn-primary" onclick=softeDelete()>
-                            <button type="button" class="btn btn-tool">
+                        <div class="card-tools">
+                            <a class="btn btn-sm btn-primary" onclick="softeDelete()">
+                                <button type="button" class="btn btn-tool">
                                     <i class="fas fa-times"></i>
-                            </button>
-                        </a>
-                    </div>
-                </h5>
+                                </button>
+                            </a>
+                        </div>
+                    </h5>
                     <!-- /.card-header -->
                     <!-- form start -->
-                    <form action="{{ route('admin.bundle.store') }}" method="PUT"
-                    class="text-center border border-light p-5" id="bundleCreate">
+                    <form action="{{ route('admin.bundle.store') }}" method="PUT" class="text-center border border-light p-5" id="bundleCreate">
                         @csrf
                         <div class="card-body px-lg-2 pt-0">
-
-                                <div class="row">
-                                    <div class="col-lg-7 ">
-                                        <div class="row card card-dark">
-                                            <div class="col-lg-12">
-                                                <div class="form-group text-left">
-                                                    <label for="name" class="form-label">Bundle Name</label>
-                                                    <span class="required"> * </span>
-                                                    <input type="text" class="form-control" name="name" id="name"
-                                                        required="" value="{{ old('name') }}" autocomplete="off">
-                                                        @error('name')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    <div class="invalid-feedback">Bundle Name is required.</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-12">
-                                                <div class="form-group text-left">
-                                                    <label for="bundle_cost" class="form-label">Bundle Cost</label>
-                                                    <!-- <span class="required"> * </span> -->
-                                                    <input type="text" class="form-control" name="bundle_cost" id="bundle_cost"
-                                                        value="{{ old('bundle_cost') }}"  autocomplete="off">
-                                                        @error('bundle_cost')
-                                                            <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
-                                                    <div class="invalid-feedback">Bundle Cost is required.</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-12">
-                                                <div class="form-group text-left">
-                                                    <label for="remark" class="form-label">Remark</label>
-                                                    <textarea class="form-control" name="remark" id="remark"></textarea>
-
-                                                </div>
+                            <div class="row">
+                                <div class="col-lg-7 col-md-12">
+                                    <div class="card card-dark">
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="form-group text-left">
+                                                <label for="name" class="form-label">Bundle Name</label>
+                                                <span class="required"> * </span>
+                                                <input type="text" class="form-control" name="name" id="name" required value="{{ old('name') }}" autocomplete="off">
+                                                @error('name')
+                                                <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                                <div class="invalid-feedback">Bundle Name is required.</div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-4 pricing-details">
-                                        <div class="text-left" style="margin-left:100px;margin-top: 25px;">
-                                            <table class="table table-bordered">
-                                                <tr class="bundle-item-cost">
-                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Cost :</b></p></td>
-                                                    <td style="width:50px;text-align: right">
-                                                        <p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p>
-                                                        <input type="hidden" value="" id="total_cost" name="total_cost">
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Retail :</b></p></td>
-                                                    <td style="width:50px;text-align: right">
-                                                        <p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl"></span></b></p>
-                                                        <input type="hidden" value="" id="total_retail" name="total_retail">
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Difference :</b></p></td>
-                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="diff-lbl"></span></b></p></td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Bundle Cost :</b></p></td>
-                                                    <td style="width:50px;text-align: right"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="bundle-cost-lbl"></span></b></p></td>
-                                                </tr>
-                                            </table>
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="form-group text-left">
+                                                <label for="bundle_cost" class="form-label">Bundle Cost</label>
+                                                <input type="text" class="form-control" name="bundle_cost" id="bundle_cost" value="{{ old('bundle_cost') }}" autocomplete="off">
+                                                @error('bundle_cost')
+                                                <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                                <div class="invalid-feedback">Bundle Cost is required.</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="form-group text-left">
+                                                <label for="remark" class="form-label">Remark</label>
+                                                <textarea class="form-control" name="remark" id="remark"></textarea>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-4 col-md-12">
+                                    <div class="text-left mt-4">
+                                        <table class="table table-bordered">
+                                            <tr class="bundle-item-cost">
+                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Cost :</b></p></td>
+                                                <td style="width:50px; text-align: right;">
+                                                    <p class="text-sm mb-0"><b class="d-block info-lb"><span id="total-cost-lbl"></span></b></p>
+                                                    <input type="hidden" value="" id="total_cost" name="total_cost">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Total Retail :</b></p></td>
+                                                <td style="width:50px; text-align: right;">
+                                                    <p class="text-sm mb-0"><b class="d-block info-lb"><span id="retail-lbl"></span></b></p>
+                                                    <input type="hidden" value="" id="total_retail" name="total_retail">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Difference :</b></p></td>
+                                                <td style="width:50px; text-align: right;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="diff-lbl"></span></b></p></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb">Bundle Cost :</b></p></td>
+                                                <td style="width:50px; text-align: right;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="bundle-cost-lbl"></span></b></p></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
 
-                                <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="">
-                                <input type="hidden" name="in_office" id="in_office" value="">
-                                <input type="hidden" name="row_order" id="row_order" value="">
+                            <input type="hidden" class="form-control" name="bundle_id" id="bundle_id" value="">
+                            <input type="hidden" name="in_office" id="in_office" value="">
+                            <input type="hidden" name="row_order" id="row_order" value="">
                         </div>
                         <!-- /.card-body -->
-                     <div class="col-lg-2">
-                        <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
-                     </div><br>
+                        <div class="col-lg-2 col-md-3 col-sm-6 mx-auto">
+                            <button class="btn btn-primary btn-block" type="submit" id="btnSave">Create</button>
+                        </div>
+                        <br>
 
-                    <div class="row add-items" style="display:none;">
-                        <div class="col-lg-12">
-                            <div class="col-lg-2" style="float:right;">
-                                <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
-                                    <i class="fa fa-search-plus"></i>
-                                    Find Items
-                                </button>
-                            </div><br><br>
+                        <div class="row add-items" style="display:none;">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="col-md-3 col-lg-4 mb-1" style="float:right;">
+                                    <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                        <i class="fa fa-search-plus"></i>
+                                        Find Items
+                                    </button>
+                                </div>
+                                <br><br>
 
-                            <div class="table-responsive">
-                            <table class="table bundle-item-list table-bordered" id="sortable-table" style="width: 100%">
-                                    <thead>
+                                <div class="table-responsive">
+                                    <table class="table bundle-item-list table-bordered" id="sortable-table" style="width: 100%">
+                                        <thead>
                                         <tr>
                                             <th class="th-sm">Code</th>
                                             <th class="th-sm">Name</th>
@@ -127,22 +122,22 @@
                                             <th class="th-sm"></th>
                                             <th class="th-sm"></th>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-
                         </div>
-                    </div>
 
-                    <div class="col-lg-2">
-                        <button class="btn btn-primary btn-block" type="button" id="btnUpdate" style="display:none;">Save</button>
-                     </div>
+                        <div class="col-lg-2 col-md-3 col-sm-6 mx-auto" style="display:none;">
+                            <button class="btn btn-primary btn-block" type="button" id="btnUpdate">Save</button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
+
         <!-- /.card -->
         <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
@@ -504,7 +499,7 @@
                                     timeOut: 1500,
                                     fadeOut: 1500,
                                 onHidden: function () {
-                                    
+
                                     }
                                 }
                             );
@@ -844,7 +839,7 @@
             });
 
             function displaySubItemList(ItemId, Itemtype){
-               
+
                var type;
                var i = 1;
 
@@ -965,7 +960,7 @@
                                     }
                                 });
                         } else {
-                       
+
                         }
                     });
                 }else{

@@ -103,7 +103,7 @@
 
                             <div class="row add-items" style="display:none;">
                                 <div class="col-lg-12">
-                                    <div class="col-lg-2" style="float:right;">
+                                <div class="col-md-3 col-lg-3 mb-1" style="float:right;">
                                         <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                             <i class="fa fa-search-plus"></i>
                                             Find Items

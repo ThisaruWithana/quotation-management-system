@@ -36,7 +36,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-3">
+                                                <div class="col-lg-5">
                                                     <div class="form-group text-left">
                                                         <label for="status" class="form-label">Delivery Status</label>
                                                         <span class="required"> * </span>
@@ -126,7 +126,7 @@
 
                             <div class="row add-items" style="display:block;">
                                 <div class="col-lg-12">
-                                    <div class="col-lg-2" style="float:right;">
+                                    <div class="col-md-3 col-lg-3 mb-1" style="float:right;">
                                         <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
                                             <i class="fa fa-search-plus"></i>
                                             Find Items
@@ -188,14 +188,14 @@
                                     
                                 <div class="row">
                                     @if($data->status != 0)
-                                        <div class="col-lg-1">
+                                    <div class="col-md-4 col-lg-2 mb-1">
                                             <button class="btn btn-warning btn-block" type="button" id="btnSuspend">Suspend</button>
                                         </div>
                                     @endif
-                                    <div class="col-lg-2">
+                                    <div class="col-md-4 col-lg-3 mb-1">
                                         <button class="btn btn-primary btn-block" type="submit" id="btnSaveChanges">Save Details</button>
                                     </div>
-                                    <div class="col-lg-2">
+                                    <div class="col-md-4 col-lg-3 mb-1">
                                         <button class="btn btn-primary btn-block" type="button" id="btnStockUpdate">Update Stock</button>
                                     </div>
                                 </div>
