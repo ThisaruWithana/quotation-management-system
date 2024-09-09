@@ -290,7 +290,7 @@ class ItemController extends Controller
                         'updated_by' => Auth::user()->id,
                     ]);
 
-                    if($request->image){
+                    if($request->input('image') != 'undefined'){
                        
                         $request->validate([
                             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
@@ -322,8 +322,11 @@ class ItemController extends Controller
                 }
                 return json_encode($response);
             }catch(\Exception $e){
-                DB::rollback();
-                return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+                DB::rollback(); 
+                $response['code'] = 0;
+                $response['msg'] = $e->getMessage();
+                $response['data'] = '';
+                return json_encode($response);
             } 
     }
 

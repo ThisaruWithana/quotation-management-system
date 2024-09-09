@@ -36,8 +36,9 @@ class MoveOldQuotations extends Command
             $created_at = $value['created_at'];
             $date = date('Y-m-d H:i:s');
 
-            $diff = Carbon::now()->diff($created_at)->format('%d');
-
+            // $diff = Carbon::now()->diff($created_at)->format('%d');
+            $diff = Carbon::now()->diffInDays($created_at);
+       
             if($diff > 30){
                 $updateStatus = Quotation::where('id', $id)->update([
                     'status' => 4

@@ -1,345 +1,353 @@
 <x-admin>
     @section('title')  {{ 'Item Maintainance' }} @endsection
     <div class="card col-md-12">
-        <div class="card-header">
-            <h3 class="card-title">{{ $title }}</h3>
-            <div class="card-tools">
-                <a class="btn btn-sm" onclick=softeDelete()>
-                  <button type="button" class="btn btn-tool">
-                      <i class="fas fa-times"></i>
-                  </button>
-                </a>
-            </div>
-        </div>
-        <div class="card-body px-lg-2 pt-0">
+        
+        <form class="text-center border border-light p-2" action="" id="itemCreate" onsubmit="return false;">
+        
+            <div class="card-header">
+                <h3 class="card-title">{{ $title }}</h3>
+                <div class="card-tools">
+                    <a>
+                        <button class="btn btn-sm btn-primary" type="submit" id="btnSaveDetails">
+                        <i class="fa fa-save"></i> &nbsp;Save
+                        </button>
+                    </a>
 
-        <div class="col-md-12">
-          <div id="stepper1" class="bs-stepper">
-            <div class="bs-stepper-header">
-              <div class="step" data-target="#test-l-1">
-                <button type="button" class="btn step-trigger">
-                  <span class="bs-stepper-circle">1</span>
-                  <span class="bs-stepper-label">Create Item</span>
-                </button>
-              </div>
-              <div class="line"></div>
-              <div class="step" data-target="#test-l-2">
-                <button type="button" class="btn step-trigger">
-                  <span class="bs-stepper-circle">2</span>
-                  <span class="bs-stepper-label">Item Details</span>
-                </button>
-              </div>
-              <div class="line"></div>
-              <div class="step" data-target="#test-l-3">
-                <button type="button" class="btn step-trigger">
-                  <span class="bs-stepper-circle">3</span>
-                  <span class="bs-stepper-label">Stock Settings</span>
-                </button>
-              </div>
-              <div class="line"></div>
-              <div class="step" data-target="#test-l-4">
-                <button type="button" class="btn step-trigger">
-                  <span class="bs-stepper-circle">4</span>
-                  <span class="bs-stepper-label">Optional Items</span>
-                </button>
-              </div>
-              <div class="line"></div>
-              <div class="step" data-target="#test-l-5">
-                <button type="button" class="btn step-trigger">
-                  <span class="bs-stepper-circle">5</span>
-                  <span class="bs-stepper-label">Pricing Details</span>
-                </button>
-              </div>
+                    <a class="btn btn-sm btn-primary" onclick=softeDelete()><i class="fas fa-times"></i></a>
+                </div>
             </div>
 
-            <div class="bs-stepper-content">
-              <div id="test-l-1" class="content">
+            <div class="card-body px-lg-2 pt-0">
 
-                    <form class="text-center border border-light p-5" action="" id="itemCreate" onsubmit="return false;">
-                        
-                      <div class="row">
-                          <div class="col-lg-5">
-                            <div class="form-group text-left">
-                                <label for="product_code" class="form-label">Product Code</label>
-                                <span class="required"> * </span>
-                                <input type="text" class="form-control" name="product_code" id="product_code" required=""
-                                value="" autocomplete="off"  placeholder="">
-                                <span id="product-code-err" class="required"> </span>
-                            </div>
-                        </div>
-                      </div>
-                        <div class="row">
-                          <div class="col-lg-6">
-                            <div class="form-group text-left">
-                                <label for="supplier" class="form-label">Supplier</label>
-                                <span class="required"> * </span><br>
-                            <select id="supplier" name="supplier" class="selectpicker  show-tick col-lg-6" data-live-search="true" multiple required>
-                                <option value="">Select Supplier</option>
-                                @foreach ($suppliers as $value)
-                                <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                @endforeach
-                            </select>
-                            </div>
-                        </div>
-                        </div>
-                        <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group text-left">
-                                <label for="department" class="form-label">Department</label>
-                                <span class="required"> * </span><br>
-                                <select id="department" name="department" class="selectpicker form-control show-tick col-lg-6" data-live-search="true" required>
-                                    <option value="">Select Department</option>
-                                    @foreach ($departments as $value)
-                                    <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                      <div class="col-lg-6">
-                          <div class="form-group text-left">
-                              <label for="sub_department" class="form-label">Sub Department</label>
-                              <span class="required"> * </span><br>
-                          <select id="sub_department" name="sub_department" class="selectpicker form-control show-tick col-lg-6" data-live-search="true" required>
-                              <option value="">Select Sub Department</option>
-                              @foreach ($sub_departments as $value)
-                              <option value="{{ $value->id }}">{{ $value->name }}</option>
-                              @endforeach
-                          </select>
-                          </div>
-                      </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group text-left">
-                                <label for="vat" class="form-label">Sales VAT (%)</label>
-                                <input type="text" class="form-control" name="vat" id="vat"
-                                value="" autocomplete="off"  readonly>
-                            </div>
-                        </div>
-                      </div>
-                          
-                      <div class="text-left">
-                        <button class="btn btn-primary" type="submit" id="btnSubmit">Next</button>
-                      </div>
-                    </form>
-              </div>
-              <div id="test-l-2" class="content">
+                <div class="col-md-12">
+                <div id="stepper1" class="bs-stepper">
 
-                <form class="text-center border border-light p-5" action="" id="itemdetails" onsubmit="return false;">
-                        
-                        <div class="row">
-                          <div class="col-lg-10">
-                              <div class="form-group text-left">
-                                  <label for="name" class="form-label">Item Name</label>
-                                  <span class="required"> * </span>
-                                  <input type="text" class="form-control" name="name" id="name"
-                                  value="" autocomplete="off"  placeholder="" required>
-                              </div>
-                          </div>
-                        </div>
-                        
-                        <div class="row">
-                          <div class="col-lg-10">
-                              <div class="form-group text-left">
-                                  <label for="description" class="form-label">Description</label>
-                                  <textarea class="form-control" name="description" id="description"
-                                               ></textarea>
-                              </div>
-                          </div>
-                        </div>
-
-                          <div class="row">
-                            <div class="col-lg-5">
-                                <div class="form-group text-left">
-                                    <label for="item_size" class="form-label">Item Size</label>
-                                    <span class="required"> * </span>
-                                    <input type="text" class="form-control" name="item_size" id="item_size"
-                                    value="" autocomplete="off"  placeholder="" required>
+                    <div class="bs-stepper-header">
+                    <div class="step" data-target="#test-l-1">
+                        <button type="button" class="btn step-trigger">
+                        <span class="bs-stepper-circle">1</span>
+                        <span class="bs-stepper-label">Create Item</span>
+                        </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#test-l-2">
+                        <button type="button" class="btn step-trigger">
+                        <span class="bs-stepper-circle">2</span>
+                        <span class="bs-stepper-label">Item Details</span>
+                        </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#test-l-3">
+                        <button type="button" class="btn step-trigger">
+                        <span class="bs-stepper-circle">3</span>
+                        <span class="bs-stepper-label">Stock Settings</span>
+                        </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#test-l-4">
+                        <button type="button" class="btn step-trigger">
+                        <span class="bs-stepper-circle">4</span>
+                        <span class="bs-stepper-label">Optional Items</span>
+                        </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#test-l-5">
+                        <button type="button" class="btn step-trigger">
+                        <span class="bs-stepper-circle">5</span>
+                        <span class="bs-stepper-label">Pricing Details</span>
+                        </button>
+                    </div>
+                    </div>
+                    <div class="bs-stepper-content">
+                    <div id="test-l-1" class="content">
+                                
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="form-group text-left">
+                                        <label for="product_code" class="form-label">Product Code</label>
+                                        <span class="required"> * </span>
+                                        <input type="text" class="form-control" name="product_code" id="product_code" required=""
+                                        value="" autocomplete="off"  placeholder="">
+                                        <span id="product-code-err" class="required"> </span>
+                                    </div>
                                 </div>
                             </div>
-  
-                            <div class="col-lg-5">
-                                <div class="form-group text-left">
-                                    <label for="margin_type">Margin Type</label>
-                                    <span class="required"> * </span><br>
-                                    <select id="margin_type" name="margin_type" class="selectpicker show-tick col-lg-5" required>
-                                        <option value="Floating">Floating</option>
-                                        <option value="Fixed">Fixed</option>
-                                    </select>
-                                </div>
-                            </div>
-                          </div>
-                          
-                          <div class="text-left">
-                            <button class="btn btn-primary item-info" type="submit">Next</button>
-                            <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                          </div>
-                </form>
-              </div>
-              <div id="test-l-3" class="content">
-                
-                <form class="text-center border border-light p-5" action="" id="itemStockSettings" enctype="multipart/form-data" onsubmit="return false;">
-                        
-                        <div class="row">
-                          <div class="col-lg-5">
-                              <div class="form-group text-left">
-                                  <label for="min_stock" class="form-label">Min Stock</label>
-                                  <span class="required"> * </span>
-                                  <input type="text" class="form-control" name="min_stock" id="min_stock"
-                                  value="" autocomplete="off"  placeholder="" required>
-                              </div>
-                          </div>
-                            <div class="col-lg-5">
-                                <div class="form-group text-left">
-                                    <label for="location" class="form-label">Location</label>
-                                    <span class="required"> * </span><br>
-                                    <select id="location" name="location" class="selectpicker show-tick col-lg-5" data-live-search="true" required>
-                                        <option value="">Select Location</option>
-                                        @foreach ($locations as $value)
+                                <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group text-left">
+                                        <label for="supplier" class="form-label">Supplier</label>
+                                        <span class="required"> * </span><br>
+                                    <select id="supplier" name="supplier" class="selectpicker  show-tick col-lg-6" data-live-search="true" multiple required>
+                                        <option value="">Select Supplier</option>
+                                        @foreach ($suppliers as $value)
                                         <option value="{{ $value->id }}">{{ $value->name }}</option>
                                         @endforeach
                                     </select>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group text-left">
+                                        <label for="department" class="form-label">Department</label>
+                                        <span class="required"> * </span><br>
+                                        <select id="department" name="department" class="selectpicker form-control show-tick col-lg-6" data-live-search="true" required>
+                                            <option value="">Select Department</option>
+                                            @foreach ($departments as $value)
+                                            <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            <div class="col-lg-6">
+                                <div class="form-group text-left">
+                                    <label for="sub_department" class="form-label">Sub Department</label>
+                                    <span class="required"> * </span><br>
+                                <select id="sub_department" name="sub_department" class="selectpicker form-control show-tick col-lg-6" data-live-search="true" required>
+                                    <option value="">Select Sub Department</option>
+                                    @foreach ($sub_departments as $value)
+                                    <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                    @endforeach
+                                </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-lg-5">
-                              <div class="form-group text-left">
-                                  <label for="image" class="form-label">Image</label>
-                                  <input type="file" class="form-control" name="image" id="image"
-                                  value="" autocomplete="off"  placeholder="">
-                              </div>
-
-                              <div class="img-upload" style="display:none;">
-                                  <img class="item-img" src="" alt="">
-                              </div>
-                          </div>
-                          <div class="col-lg-5">
-                              <div class="form-group text-left">
-                                  <label for="in_stock" class="form-label">In Stock</label>
-                                  <input type="text" class="form-control" name="in_stock" id="in_stock"
-                                  value="" autocomplete="off"  placeholder="" disabled>
-                              </div>
-                          </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="form-group text-left form-check">
-                              <input class="form-check-input" type="checkbox" value="1" name="auto_order" id="auto_order" checked/>
-                              <label class="form-check-label" for="auto_order">Auto Order</label>
                             </div>
-                        </div>
-                        <div class="col-lg-3">
-                          <div class="form-group text-left form-check">
-                            <input class="form-check-input" type="checkbox" value="1" name="status" id="status"/>
-                            <label class="form-check-label" for="status">Active</label>
-                          </div>
-                        </div>
-                        <div class="col-lg-3">
-                          <div class="form-group text-left form-check">
-                            <input class="form-check-input" type="checkbox" value="1" id="exclude_from_stock" name="exclude_from_stock"/>
-                            <label class="form-check-label" for="exclude_from_stock">Exclude from stock</label>
-                          </div>
-                        </div>
-                        
-                        <input type="hidden" class="form-control" name="item_id" id="item_id">
-                          
-                          <div class="text-left">
-                            <button class="btn btn-primary stock-setting" type="submit">Next</button>
-                            <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                          </div>
-                </form>
-              </div>
-              <div id="test-l-4" class="content">
-                    <form class="text-center border border-light p-5" action="" id="itemOptionalItems" onsubmit="return false;">
-                            
                             <div class="row">
-                              <div class="col-lg-12">
-                                <div class="col-md-3 col-lg-3 mb-1"style="float:right;">
-                                  <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
-                                      <i class="fa fa-search-plus"></i>
-                                      Find Items
-                                  </button>
+                                <div class="col-lg-6">
+                                    <div class="form-group text-left">
+                                        <label for="vat" class="form-label">Sales VAT (%)</label>
+                                        <input type="text" class="form-control" name="vat" id="vat"
+                                        value="" autocomplete="off"  readonly>
+                                    </div>
                                 </div>
-                              </div>
-                            </div><br><br>
-                            <div class="row">
-                              <div class="col-lg-12">
-                                <table class="table table-head-fixed text-nowrap text-left" id="optionalItemTable">
-                                    <thead>
-                                        <tr>
-                                            <th class="th-sm">ID</th>
-                                            <th class="th-sm">Name</th>
-                                            <th class="th-sm">Barcode</th>
-                                            <th class="th-sm">Department</th>
-                                            <th class="th-sm">Cost Price</th>
-                                            <th class="th-sm">Retail Price</th>
-                                            <th class="th-sm">Is Mandatory</th>
-                                            <th class="th-sm"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                     
-                                    </tbody>
-                                </table>
-                              </div>
                             </div>
+                                
+                            <div class="text-left">
+                                <button class="btn btn-primary" type="button" id="btnSubmit">Next</button>
+                            </div>
+            
+                    </div>
+                    <div id="test-l-2" class="content">
 
-                              <div class="text-left">
-                              <button class="btn btn-primary" type="submit" onclick="stepper1.next()">Next</button>
-                                <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                              </div>
-                    </form>
-              </div>
-              <div id="test-l-5" class="content">
-                <form class="text-center border border-light p-5" action="" id="itemPricingInfo" onsubmit="return false;">
+                        <!-- <form class="text-center border border-light" action="" id="itemdetails" onsubmit="return false;"> -->
+                                
+                                <div class="row">
+                                <div class="col-lg-10">
+                                    <div class="form-group text-left">
+                                        <label for="name" class="form-label">Item Name</label>
+                                        <span class="required"> * </span>
+                                        <input type="text" class="form-control" name="name" id="name"
+                                        value="" autocomplete="off"  placeholder="" required>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="row">
+                                <div class="col-lg-10">
+                                    <div class="form-group text-left">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" name="description" id="description"
+                                                    ></textarea>
+                                    </div>
+                                </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-5">
+                                        <div class="form-group text-left">
+                                            <label for="item_size" class="form-label">Item Size</label>
+                                            <span class="required"> * </span>
+                                            <input type="text" class="form-control" name="item_size" id="item_size"
+                                            value="" autocomplete="off"  placeholder="" required>
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-lg-5">
+                                        <div class="form-group text-left">
+                                            <label for="margin_type">Margin Type</label>
+                                            <span class="required"> * </span><br>
+                                            <select id="margin_type" name="margin_type" class="selectpicker show-tick col-lg-5" required>
+                                                <option value="Floating">Floating</option>
+                                                <option value="Fixed">Fixed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-left">
+                                    <button class="btn btn-primary item-info" type="submit" id="itemdetails">Next</button>
+                                    <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
+                                </div>
+                        <!-- </form> -->
+                    </div>
+                    <div id="test-l-3" class="content">
                         
-                        <div class="row">
-                          <div class="col-lg-5">
-                              <div class="form-group text-left">
-                                  <label for="case_size" class="form-label">Case Size</label>
-                                  <span class="required"> * </span>
-                                  <input type="text" class="form-control" name="case_size" id="case_size"
-                                  value="" autocomplete="off"  placeholder="" required>
-                              </div>
-                          </div>
-                          <div class="col-lg-5">
-                              <div class="form-group text-left">
-                                  <label for="cost_price" class="form-label">Cost Price</label>
-                                  <span class="required"> * </span>
-                                  <input type="text" class="form-control" name="cost_price" id="cost_price"
-                                  value="" autocomplete="off"  placeholder="" required>
-                              </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-lg-5">
-                              <div class="form-group text-left">
-                                  <label for="retail_price" class="form-label">Retail Price</label>
-                                  <span class="required"> * </span>
-                                  <input type="text" class="form-control" name="retail_price" id="retail_price"
-                                  value="" autocomplete="off"  placeholder="" required>
-                              </div>
-                          </div>
-                          <div class="col-lg-5">
-                              <div class="form-group text-left">
-                                  <label for="margin" class="form-label">Margin (%)</label>
-                                  <input type="text" class="form-control" name="margin" id="margin"
-                                  value="" autocomplete="off"  placeholder="" readonly>
-                              </div>
-                          </div>
-                        </div>
-                          
-                          <div class="text-left">
-                            <button class="btn btn-primary" type="submit">Save</button>
-                            <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
-                          </div>
-                </form>
-              </div>
+                        <form class="text-center border border-light p-5" method="post" action="{{ url('admin/item/store-stock-settings') }}" id="stockDetails" enctype="multipart/form-data">
+                                
+                                <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="form-group text-left">
+                                        <label for="min_stock" class="form-label">Min Stock</label>
+                                        <span class="required"> * </span>
+                                        <input type="text" class="form-control" name="min_stock" id="min_stock"
+                                        value="" autocomplete="off"  placeholder="" required>
+                                    </div>
+                                </div>
+                                    <div class="col-lg-5">
+                                        <div class="form-group text-left">
+                                            <label for="location" class="form-label">Location</label>
+                                            <span class="required"> * </span><br>
+                                            <select id="location" name="location" class="selectpicker show-tick col-lg-5" data-live-search="true" required>
+                                                <option value="">Select Location</option>
+                                                @foreach ($locations as $value)
+                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="hidden" class="form-control" name="location_id" id="location_id">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="form-group text-left">
+                                        <label for="image" class="form-label">Image</label>
+                                        <input type="file" class="form-control" name="image" id="image"
+                                        value="" autocomplete="off"  placeholder="">
+                                    </div>
+
+                                    <div class="img-upload" style="display:none;">
+                                        <img class="item-img" src="" alt="">
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="form-group text-left">
+                                        <label for="in_stock" class="form-label">In Stock</label>
+                                        <input type="text" class="form-control" name="in_stock" id="in_stock"
+                                        value="" autocomplete="off"  placeholder="" disabled>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group text-left form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" name="auto_order" id="auto_order" checked/>
+                                    <label class="form-check-label" for="auto_order">Auto Order</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                <div class="form-group text-left form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" name="status" id="status"/>
+                                    <label class="form-check-label" for="status">Active</label>
+                                </div>
+                                </div>
+                                <div class="col-lg-3">
+                                <div class="form-group text-left form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="exclude_from_stock" name="exclude_from_stock"/>
+                                    <label class="form-check-label" for="exclude_from_stock">Exclude from stock</label>
+                                </div>
+                                </div>
+                                
+                                <input type="hidden" class="form-control" name="item_id" id="item_id">
+                                
+                                <div class="text-left">
+                                    <button class="btn btn-primary stock-setting" id="stock-setting" type="submit">Next</button>
+                                    <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
+                                </div>
+                        </form>
+                    </div>
+                    <div id="test-l-4" class="content">
+                            <form class="text-center border border-light" action="" id="itemOptionalItems" onsubmit="return false;">
+                                    
+                                    <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="col-md-3 col-lg-3 mb-1"style="float:right;">
+                                        <button class="btn btn-primary btn-block" type="button" id="itemSearchBtn" data-toggle="modal" data-target="#exampleModal">
+                                            <i class="fa fa-search-plus"></i>
+                                            Find Items
+                                        </button>
+                                        </div>
+                                    </div>
+                                    </div><br><br>
+                                    <div class="row">
+                                    <div class="col-lg-12">
+                                        <table class="table table-head-fixed text-nowrap text-left" id="optionalItemTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="th-sm">ID</th>
+                                                    <th class="th-sm">Name</th>
+                                                    <th class="th-sm">Barcode</th>
+                                                    <th class="th-sm">Department</th>
+                                                    <th class="th-sm">Cost Price</th>
+                                                    <th class="th-sm">Retail Price</th>
+                                                    <th class="th-sm">Is Mandatory</th>
+                                                    <th class="th-sm"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    </div>
+
+                                    <div class="text-left">
+                                    <button class="btn btn-primary" type="submit" onclick="stepper1.next()">Next</button>
+                                        <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
+                                    </div>
+                            </form>
+                    </div>
+                    <div id="test-l-5" class="content">
+                        <form class="text-center border border-light" action="" id="itemPricingInfo" onsubmit="return false;">
+                                
+                                <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="form-group text-left">
+                                        <label for="case_size" class="form-label">Case Size</label>
+                                        <span class="required"> * </span>
+                                        <input type="text" class="form-control" name="case_size" id="case_size"
+                                        value="" autocomplete="off"  placeholder="" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="form-group text-left">
+                                        <label for="cost_price" class="form-label">Cost Price</label>
+                                        <span class="required"> * </span>
+                                        <input type="text" class="form-control" name="cost_price" id="cost_price"
+                                        value="" autocomplete="off"  placeholder="" required>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="row">
+                                <div class="col-lg-5">
+                                    <div class="form-group text-left">
+                                        <label for="retail_price" class="form-label">Retail Price</label>
+                                        <span class="required"> * </span>
+                                        <input type="text" class="form-control" name="retail_price" id="retail_price"
+                                        value="" autocomplete="off"  placeholder="" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="form-group text-left">
+                                        <label for="margin" class="form-label">Margin (%)</label>
+                                        <input type="text" class="form-control" name="margin" id="margin"
+                                        value="" autocomplete="off"  placeholder="" readonly>
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                <div class="text-left">
+                                    <!-- <button class="btn btn-primary" type="submit">Save</button> -->
+                                    <button class="btn btn-primary" onclick="stepper1.previous()">Previous</button>
+                                </div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            
             </div>
-          </div>
-        </div>
-
-        </div>
+            
+        </form>
+        
     </div>
         <!-- /.card -->
         <div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModal" aria-hidden="true">
@@ -425,7 +433,7 @@
     @section('js')
     <script>
 
-        // Form stepper
+      // Form stepper
       var stepper1Node = document.querySelector('#stepper1');
       var stepper1 = new Stepper(document.querySelector('#stepper1'));
 
@@ -438,6 +446,40 @@
 
     </script>
 
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to hide all content divs
+            function hideAllContentDivs() {
+                document.querySelectorAll('.bs-stepper-content .content').forEach(function(contentDiv) {
+                    contentDiv.style.display = 'none';
+                });
+            }
+
+            // Function to show the relevant content div based on the data-target attribute
+            function showRelevantContentDiv(targetId) {
+                const targetDiv = document.querySelector(targetId);
+                if (targetDiv) {
+                    targetDiv.style.display = 'block';
+                }
+            }
+
+            // Add event listeners to all step-trigger buttons
+            document.querySelectorAll('.step .step-trigger').forEach(function(triggerBtn) {
+                triggerBtn.addEventListener('click', function() {
+                    const targetId = this.parentElement.getAttribute('data-target'); // Get data-target from parent .step div
+                    hideAllContentDivs(); // Hide all content divs
+                    showRelevantContentDiv(targetId); // Show the relevant content div
+                });
+            });
+
+
+            const firstStepTrigger = document.querySelector('.step .step-trigger');
+            if (firstStepTrigger) {
+                firstStepTrigger.click();
+            }
+        });
+    </script> -->
+
     <script>
 
         $(document).ready(function() {
@@ -445,6 +487,10 @@
             $("#image").change(function(){
               $(".img-upload").show();
                 readURL(this);
+            });
+
+            $('#location').on('change', function() {
+                $("#location_id").val(this.value);
             });
 
             $('#department').on('change', function() {
@@ -506,6 +552,7 @@
                             "code": this.value
                         },
                         success: function (data) {
+                            console.log(data);
                             var result = JSON.parse(data);
 
                             if(result['code'] == 0){
@@ -544,9 +591,9 @@
 
             });
 
-            $("#itemCreate").submit(function(event) {
+            $('#btnSubmit').click(function(event){
                 event.preventDefault();
-
+                
                 $.ajax({
                     url: "{{ url('admin/item/store') }}",
                     type: 'POST',
@@ -585,7 +632,7 @@
                 });
             });
 
-            $("#itemdetails").submit(function(event) {
+            $('#itemdetails').click(function(event){
                 event.preventDefault();
 
                 $.ajax({
@@ -622,10 +669,17 @@
                 });
             });
 
-            $("#itemStockSettings").submit(function(event) {
-                event.preventDefault();
-
-                var formData = new FormData(this);
+            $('#stock-setting').on('click', function (e) {
+              
+                var formData = new FormData();
+            
+                formData.append('image', $('input[name=image]')[0].files[0]);
+                formData.append('item_id', $('input[name=item_id]').val());
+                formData.append('min_stock', $('input[name=min_stock]').val());
+                formData.append('location', $('input[name=location_id]').val());
+                formData.append('exclude_from_stock', $('input[name=exclude_from_stock]').val());
+                formData.append('auto_order', $('input[name=auto_order]').val());
+                formData.append('status', $('input[name=status]').val());
 
                 $.ajax({
                     url: "{{ url('admin/item/store-stock-settings') }}",
@@ -649,7 +703,6 @@
                                                 timeOut: 1500,
                                                 fadeOut: 1500,
                                                 onHidden: function () {
-                                                    window.location.reload();
                                                 }
                                             }
                                         );
@@ -660,7 +713,45 @@
                 });
             });
 
-            $("#itemPricingInfo").submit(function(event) {
+            $("#stockDetails").submit(form2ajax);
+            
+            function form2ajax(evt) {
+                evt.preventDefault();
+                console.log(evt);
+                var formData = new FormData(this);
+                console.log(formData);
+
+                $.ajax({
+                    url:  "{{ url('admin/item/store-stock-settings') }}",
+                    method: 'POST',
+                    dataType:'JSON',
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function(data) {
+                        var result = data;
+
+                        if (result['code'] == 1) {
+                        stepper1.next();
+                        } else {
+                            toastr.error(
+                                'Error',
+                                'Something Went Wrong!',
+                                {
+                                    timeOut: 1500,
+                                    fadeOut: 1500,
+                                    onHidden: function () {
+                                    }
+                                }
+                            );
+                        }
+                    }
+                });
+            
+            }
+
+            $('#btnSaveDetails').click(function(event){
                 event.preventDefault();
 
                 $.ajax({

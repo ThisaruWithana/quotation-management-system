@@ -171,7 +171,7 @@
                                                                                 Supplier
                                                                             </th>
                                                                             <th style="border: 1px solid #000;background: #ddd;">
-                                                                                BarCode
+                                                                                Product Code
                                                                             </th>
                                                                             <th style="border: 1px solid #000;background: #ddd;">
                                                                                 Item Description
@@ -210,7 +210,7 @@
                                                                                     {{ $value['supplier'] }}
                                                                                 </td>
                                                                                 <td style="padding: 10px;text-align: left;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
-                                                                                    {{ $value['barcode'] }}
+                                                                                    {{ $value['product_code'] }}
                                                                                 </td>
                                                                                 <td style="text-align: right;padding: 4px;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
                                                                                     {{ $value['name'] }}
