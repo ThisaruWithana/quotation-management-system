@@ -2,7 +2,7 @@
     @section('title')  {{ 'Item Maintainance' }} @endsection
 
     <div class="card col-md-12">
-        <form class="text-center border border-light p-5" method="POST" action="{{ url('admin/item/update') }}" id="itemdetails" enctype="multipart/form-data" onsubmit="return false;">
+        <form class="text-center border border-light p-2" method="POST" action="{{ url('admin/item/update') }}" id="itemdetails" enctype="multipart/form-data" onsubmit="return false;">
                     
             <div class="card-header">
                 <h3 class="card-title">{{ $title }}</h3>
@@ -551,6 +551,7 @@
                 event.preventDefault();
 
                 var formData = new FormData(this);
+                formData.append('image', $('input[name=image]')[0].files[0]);
 
                 $.ajax({
                     url: "{{ url('admin/item/update') }}",
