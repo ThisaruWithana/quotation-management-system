@@ -1183,6 +1183,7 @@ class QuotationController extends Controller
                     'on_order' => $value['on_order'],
                     'order_qty' => $value['order_qty'],
                     'barcode' => $value['item']['barcode']['barcode'],
+                    'product_code' => $value['item']['barcode']['product_code'],
                     'in_stock' => app('App\Http\Controllers\ItemController')->getCurrentStockCount($item_id)
                     ]);
 
