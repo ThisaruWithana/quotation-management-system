@@ -6,6 +6,7 @@ use App\Models\Item;
 use App\Models\Department;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Models\Quotation;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
@@ -28,6 +29,9 @@ class Dashboard extends Component
         
         $department = Department::where('status', 1)->count();
         view()->share('department',$department);
+        
+        $openQuotations = Quotation::where('status', 1)->count();
+        view()->share('openQuotations',$openQuotations);
     }
 
     /**
