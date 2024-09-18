@@ -64,6 +64,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
 
     });
     
+    Route::post('customer/get-customer-list', [CustomerController::class, 'getCustomerList'])->name('customer.get-customer-list');
+
     Route::resource('bundle',BundleController::class);
     Route::post('bundle/add-items', [BundleController::class, 'addItems'])->name('bundle.add-items');
     Route::post('bundle/update-display-status', [BundleController::class, 'updateDisplayStatus'])->name('bundle.update-display-status');
@@ -119,6 +121,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('edit-bundle', [QuotationController::class, 'editBundle'])->name('quotation.edit-bundle');
         Route::post('update-quotation-item-order', [QuotationController::class, 'updateQuotationItemOrder'])->name('quotation.update-quotation-item-order');
         Route::post('update-description', [QuotationController::class, 'updateDescription'])->name('quotation.update-description');
+        
+        Route::post('make-copy', [QuotationController::class, 'createQuotationCopy'])->name('quotation.make-copy');
 
         Route::post('destroy', [QuotationController::class, 'destroy'])->name('quotation.destroy');
     });

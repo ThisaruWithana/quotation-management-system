@@ -59,7 +59,7 @@
                             <th class="th-sm">Discount</th>
                             <th class="th-sm w-100px">Created By</th>
                             <th class="th-sm">Status</th>
-                            <th class="th-sm w-120px"></th>
+                            <th class="th-sm w-150px"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,6 +94,9 @@
                                             <i class="far fa-edit"></i>
                                         </a>
                                     @endif
+                                    <a href="#" class="btn btn-sm btn-secondary" title="Copy" onclick="makeCopy({{ $value->id }}, {{ $value->customer->id }})">
+                                        <i class="fas fa-copy"></i>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
@@ -103,6 +106,46 @@
             <div id="list_pagination" style="float: right;">{{ $listData->appends(Request::all())->links() }}</div>
         </div>
     </div>
+
+        <!-- Edit Detail -->
+        <div class="modal fade" id="quotationCopy" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Create Copy of Quotation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <form action="" method="" onsubmit="return false;" id="formEditBundleItem">
+                        <div class="modal-body">
+                            @csrf
+                            <input type="hidden" name="quotation_id" value="" id="quotation_id">
+                            <div class="form-group">
+                                <label for="change_customer" class="col-form-label">Current Client :</label> <span id="client_name"></span>
+                            </div>
+                            
+                            <span class="text-danger">You can change customer from here</span><br>
+
+                            <div class="form-group">
+                                <label for="change_customer" class="col-form-label">Client</label>
+                                <select id="change_customer" name="change_customer" class="form-control selectpicker" data-live-search="true" required>
+                                    <option value="">Select Client</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="btnCreateCopy">Save & Continue</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
     @section('js')
         <script>
             $(function() {
@@ -251,6 +294,75 @@
         function selectPageSize(pageSize) {
             document.getElementById('frm-list').submit();
         }
-        </script>
+
+        function makeCopy(quotationId, customerId) {
+
+            $("#quotationCopy").modal('show');
+            $("#quotation_id").val(quotationId);
+
+            $.ajax({
+                url: "{{ url('admin/customer/get-customer-list') }}",
+                type: 'POST',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                },
+                success: function (data) {
+                    var result = JSON.parse(data);
+                    var status = '';
+
+                    $.each(result, function (index, value) {
+
+                        $('#change_customer').append($('<option/>', { 
+                            value: value['id'],
+                            text :  value['postal_code']+ ' - '+ value['name'] +' - ' + value['contact_person'],
+                            selected: value['id'] == customerId ? true : false
+                        }));
+
+                        if(value['id'] == customerId){
+                            $("#client_name").html(value['postal_code']+ ' - '+ value['name'] +' - ' + value['contact_person']);
+                        }
+                    });
+          
+                    $("#change_customer").selectpicker("refresh");
+                }, error: function (data) {
+                }
+            });
+        }
+
+        $('#btnCreateCopy').click(function(){
+
+            $.ajax({
+                url: "{{ url('admin/quotation/make-copy') }}",
+                type: 'POST',
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                        "quotation_id": $('#quotation_id').val(),
+                        "customer": $('#change_customer').val(),
+                    },
+                        success: function (data) {
+                            var result = JSON.parse(data);
+console.log(result);
+                            if (result['code'] == 1) {
+                                var id = result["data"];
+                                window.location = "{{ url('admin/quotation/edit') }}/" + id;
+
+                            } else {
+                                toastr.error(
+                                    'Error',
+                                    'Something Went Wrong!',
+                                    {
+                                        timeOut: 1500,
+                                        fadeOut: 1500,
+                                        onHidden: function () {
+                                        }
+                                    }
+                                );
+                            }
+                        }, error: function (data) {
+
+                    }
+                });
+        });
+    </script>
     @endsection
 </x-admin>

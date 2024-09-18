@@ -743,7 +743,7 @@ class QuotationController extends Controller
         $query = Quotation::where('customer_id', $customer_id)->where('status', 1)->get();
         $quotationCount = count($query);
 
-        if($quotationCount > 1){
+        if($quotationCount >= 1){
             $count = $quotationCount + 1;
         }else{
             $count = 1;
@@ -1803,5 +1803,111 @@ class QuotationController extends Controller
         $code = $opf_id.'-'.$quotation_id.'-'.date('Ymd');
 
         return $code;
+    }   
+
+    public function createQuotationCopy(Request $request)
+    {
+        $customer = $request->input('customer');
+        $quotation_id = $request->input('quotation_id');
+
+        $response = array();
+
+        try{
+            DB::beginTransaction();
+
+            $quotation = Quotation::where('id', $quotation_id)->first();
+
+            if($quotation){
+
+                $store = Quotation::create([
+                    'customer_id' => $customer,
+                    'price' => $quotation['price'],
+                    'margin' => $quotation['margin'],
+                    'discount' => $quotation['discount'],
+                    'total_cost' => $quotation['total_cost'],
+                    'total_retail' => $quotation['total_retail'],
+                    'retail_print_option' => $quotation['retail_print_option'],
+                    'vat_rate' => $quotation['vat_rate'],
+                    'vat_amt' => $quotation['vat_amt'],
+                    'quotation_vat' => $quotation['quotation_vat'],
+                    'quotation_margin' => $quotation['quotation_margin'],
+                    'final_price' => $quotation['final_price'],
+                    'status' => 1,
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
+                ]);    
+            }
+
+
+                $new_quotation_id = $store->id;
+
+                $referenceNo = $this->generateQuotationReference($new_quotation_id, $request->input('customer'));
+
+                $update = Quotation::where('id', $new_quotation_id)->update([
+                'ref' => $referenceNo,
+                'updated_by' => Auth::user()->id
+            ]);
+
+            if($update){
+
+                $quotationItems = QuotationItem::where('quotation_id', $quotation_id)->where('status', 1)->get();
+
+                if(count($quotationItems) > 0){
+
+                    foreach($quotationItems as $value){
+
+                        $store_items = QuotationItem::create([
+                            'quotation_id' => $new_quotation_id,
+                            'item_id' => $value['item_id'],
+                            'item_cost' => $value['item_cost'],
+                            'retail' => $value['retail'],
+                            'qty' => $value['qty'],
+                            'margin' => $value['margin'],
+                            'total_cost' => $value['total_cost'],
+                            'total_retail' => $value['total_retail'],
+                            'order' => $value['order'],
+                            'display_report' => $value['display_report'],
+                            'actual_cost' => $value['actual_cost'],
+                            'actual_retail' => $value['actual_retail'],
+                            'vat' => $value['vat'],
+                            'type' => $value['type'],
+                            'status' => 1,
+                            'created_by' => Auth::user()->id,
+                            'updated_by' => Auth::user()->id,
+                        ]);    
+                    }
+
+                    if($store_items){
+                        DB::commit(); 
+                        $response['code'] = 1;
+                        $response['data'] = encrypt($new_quotation_id);
+                        $response['msg'] = "Success";
+                    }else{
+                        DB::rollback();
+                        $response['code'] = 0;
+                        $response['data'] = '';
+                        $response['msg'] = 'Something went wrong !';
+                    }
+                }else{
+                    DB::commit(); 
+                    $response['code'] = 1;
+                    $response['data'] = encrypt($new_quotation_id);
+                    $response['msg'] = "Success";
+                }
+            }else{
+                DB::rollback();
+                $response['code'] = 0;
+                $response['data'] = '';
+                $response['msg'] = 'Something went wrong !';
+            }
+              
+            return json_encode($response);
+        }catch(\Exception $e){
+            DB::rollback();
+            $response['code'] = 0;
+            $response['data'] = '';
+            $response['msg'] = $e->getMessage();
+            return json_encode($response);
+        } 
     }   
 }

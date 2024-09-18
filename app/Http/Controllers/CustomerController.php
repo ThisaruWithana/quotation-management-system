@@ -197,4 +197,10 @@ class CustomerController extends Controller
         $data = Customer::where('id',$request->input('id'))->first();
         return json_encode($data);
     }
+
+    public function getCustomerList()
+    {
+        $customers = Customer::where('status', 1)->orderBy('name','ASC')->get();
+        return json_encode($customers);
+    }
 }
