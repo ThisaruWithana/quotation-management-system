@@ -92,7 +92,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.deliveries.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('admin.deliveries.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
                                     <i class="far fa-edit"></i>
                                 </a>
                             </td>

@@ -31,11 +31,6 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.permission.edit', encrypt($permission->id)) }}"
-                                    class="btn btn-sm btn-secondary" title="Edit">
-                                    <i class="far fa-edit"></i>
-                                </a>
-                                
                                 @if($permission->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $permission->id }}, {{ $permission->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -45,6 +40,11 @@
                                         <i class="fas fa-check-circle"></i>
                                     </a>
                                 @endif
+                                <a href="{{ route('admin.permission.edit', encrypt($permission->id)) }}"
+                                    class="btn btn-sm btn-secondary" title="Edit">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                
                             </td>
                         </tr>
                     @empty

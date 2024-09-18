@@ -88,7 +88,6 @@
                         <tr>
                             <th class="th-sm">ID</th>
                             <th class="th-sm  w-100px">Name</th>
-                            <th class="th-sm w-100px">Barcode</th>
                             <th class="th-sm w-120px">Product Code</th>
                             <th class="th-sm">Margin</th>
                             <th class="th-sm w-100px">Supplier</th>
@@ -105,7 +104,6 @@
                             <tr>
                                 <td>{{ $value->id }}</td>
                                 <td>{{ $value->name }}</td>
-                                <td>{{ $value->barcode['barcode'] }}</td>
                                 <td>{{ $value->barcode['product_code'] }}</td>
                                 <td>{{ $value->margin }}</td>
                                 <td>
@@ -136,13 +134,13 @@
                                     @endif
                                 
                                     @if($value->status === 1)
-                                        <a href="{{ route('admin.item.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" target="_blank">
+                                        <a href="{{ route('admin.item.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" target="_blank" title="Edit">
                                             <i class="far fa-edit"></i>
                                         </a>
                                     @endif
                                 @endif
                                  
-                                    <a href="{{ route('admin.item.detail',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                                    <a href="{{ route('admin.item.detail',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="View">
                                         <i class="far fa-eye"></i>
                                     </a>
                                 </td>

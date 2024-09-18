@@ -40,11 +40,8 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.stock.take-edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
-                                    <i class="far fa-edit"></i>
-                                </a>
                                 @if($value->status === 1)
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Suspend" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
+                                    <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
                                 @else
@@ -52,6 +49,9 @@
                                         <i class="fas fa-check-circle"></i>
                                     </a>
                                 @endif
+                                <a href="{{ route('admin.stock.take-edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
+                                    <i class="far fa-edit"></i>
+                                </a>
                             </td>
                         </tr>
                     @endforeach

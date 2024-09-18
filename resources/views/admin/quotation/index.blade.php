@@ -86,11 +86,11 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="#" class="btn btn-sm btn-secondary" title="Deactivate" onclick="softeDelete({{ $value->id }}, {{ $value->status }})">
+                                    <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="softeDelete({{ $value->id }}, {{ $value->status }})">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
                                     @if($value->status == 1 || $value->status == 2 || $value->status == 3 || $value->status == 4)
-                                        <a href="{{ url('admin/quotation/edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" target="_blank">
+                                        <a href="{{ url('admin/quotation/edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" target="_blank" title="Edit">
                                             <i class="far fa-edit"></i>
                                         </a>
                                     @endif
