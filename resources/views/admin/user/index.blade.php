@@ -32,9 +32,6 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.user.edit',encrypt($user->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
-                                    <i class="far fa-edit"></i>
-                                </a>
                                 @if($user->status === 1)
                                     <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $user->id }}, {{ $user->status }})">
                                         <i class="fas fa-trash-alt"></i>
@@ -44,6 +41,9 @@
                                         <i class="fas fa-check-circle"></i>
                                     </a>
                                 @endif
+                                <a href="{{ route('admin.user.edit',encrypt($user->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
+                                    <i class="far fa-edit"></i>
+                                </a>
 
                                 @if (Auth::user()->hasRole('admin'))
                                     <a href="{{ route('admin.user.password-reset',encrypt($user->id)) }}" class="btn btn-sm btn-secondary" title="Password Change">

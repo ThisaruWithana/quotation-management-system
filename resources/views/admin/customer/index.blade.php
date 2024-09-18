@@ -92,9 +92,6 @@
                                 </td>
                                 <td>
                                     @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
-                                        <a href="{{ route('admin.customer.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
-                                            <i class="far fa-edit"></i>
-                                        </a>
 
                                         @if($value->status === 1)
                                             <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
@@ -105,6 +102,9 @@
                                                 <i class="fas fa-check-circle"></i>
                                             </a>
                                         @endif
+                                        <a href="{{ route('admin.customer.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
+                                            <i class="far fa-edit"></i>
+                                        </a>
                                     @endif
                                 </td>
                             </tr>

@@ -32,7 +32,7 @@
                             <td>{{ $value->created_user->name }}</td>
                             <td>{{ date('Y-m-d H:i:s', strtotime($value->created_at)) }}</td>
                             <td>
-                                <a href="{{ route('admin.stock.view',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
+                                <a href="{{ route('admin.stock.view',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="View">
                                     <i class="far fa-eye"></i>
                                 </a>
                             </td>

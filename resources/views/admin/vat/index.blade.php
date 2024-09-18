@@ -34,7 +34,7 @@
                     </td>
                     <td>
                         @if($value->status == 1)
-                            <a href="{{ route('admin.vat.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary">
+                            <a href="{{ route('admin.vat.edit',encrypt($value->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
                                 <i class="far fa-edit"></i>
                             </a>
                         @else 
