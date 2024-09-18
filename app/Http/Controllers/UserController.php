@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 use DB;
 use Auth;
 
@@ -18,7 +19,7 @@ class UserController extends Controller
     }
     public function index()
     {
-        $data = User::orderBy('id','DESC')->get();
+        $data = User::with('role')->orderBy('id','DESC')->get();
         return view('admin.user.index', compact('data'));
     }
     public function create()
@@ -52,7 +53,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $title = 'Edit User';
-        $user = User::where('id',decrypt($id))->first();
+        $user = User::with('role')->where('id',decrypt($id))->first();
         return view('admin.user.edit',compact('user', 'title'));
     }
     public function update(Request $request, User $user)
@@ -107,5 +108,28 @@ class UserController extends Controller
             DB::rollBack();
             return $e->getMessage();
         }
+    }
+
+    public function resetPassword($id)
+    {
+        $title = 'Reset Password';
+
+        $user = User::where('id',decrypt($id))->first();
+        return view('admin.user.reset-password',compact('user', 'title'));
+    }
+
+    public function updatePassword(Request $request)
+    {
+
+        $request->validate([
+            'password' => ['required']
+        ]); 
+
+        $user = User::find($request->id);
+        $user->password = Hash::make($request->password);
+        $user->updated_by = Auth::user()->id;
+        $user->save();
+
+        return redirect()->route('admin.user.index')->with('success','Password changed successfully.');
     }
 }

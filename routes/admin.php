@@ -55,9 +55,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('customer/change-status', [CustomerController::class, 'changeStatus'])->name('customer.change-status');
         Route::post('customer/get-details', [CustomerController::class, 'getDetails'])->name('customer.get-details');
 
+        Route::get('user/password-reset/{id}', [UserController::class, 'resetPassword'])->name('user.password-reset');
+
         Route::post('user/change-status', [UserController::class, 'changeStatus'])->name('user.change-status');
         Route::post('role/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
         Route::post('permission/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
+        Route::post('user/change-password', [UserController::class, 'updatePassword'])->name('user.change-password');
 
     });
     

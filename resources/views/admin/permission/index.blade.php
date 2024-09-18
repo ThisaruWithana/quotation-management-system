@@ -32,7 +32,7 @@
                             </td>
                             <td>
                                 <a href="{{ route('admin.permission.edit', encrypt($permission->id)) }}"
-                                    class="btn btn-sm btn-secondary">
+                                    class="btn btn-sm btn-secondary" title="Edit">
                                     <i class="far fa-edit"></i>
                                 </a>
                                 

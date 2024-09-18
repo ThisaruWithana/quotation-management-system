@@ -1,7 +1,7 @@
 <div class="row">
     @role('admin')
-        <!-- <div class="col-lg-3 col-6">
-            <div class="small-box bg-info">
+        <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
                 <div class="inner">
                     <h3>{{ $user }}</h3>
                     <p>Total Users</p>
@@ -12,9 +12,9 @@
                 <a href="{{ route('admin.user.index') }}" class="small-box-footer">View <i
                         class="fas fa-arrow-circle-right"></i></a>
             </div>
-        </div> -->
+        </div>
         <div class="col-lg-3 col-6">
-            <div class="small-box bg-info">
+            <div class="small-box bg-success">
                 <div class="inner">
                     <h3>{{ $item }}</h3>
                     <p>Total Items</p>
@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="col-lg-3 col-6">
-            <div class="small-box bg-success">
+            <div class="small-box bg-info">
                 <div class="inner">
                     <h3>{{ $supplier }}</h3>
                     <p>Total Suppliers</p>
@@ -67,8 +67,8 @@
         </div>
     @endrole
     @role('manager')
-        <!-- <div class="col-lg-2 col-6">
-            <div class="small-box bg-info">
+        <div class="col-lg-2 col-6">
+            <div class="small-box bg-primary">
                 <div class="inner">
                     <h3>{{ $user }}</h3>
                     <p>Total Users</p>
@@ -79,9 +79,9 @@
                 <a href="{{ route('admin.user.index') }}" class="small-box-footer">View <i
                         class="fas fa-arrow-circle-right"></i></a>
             </div>
-        </div> -->
+        </div>
         <div class="col-lg-3 col-6">
-            <div class="small-box bg-info">
+            <div class="small-box bg-success">
                 <div class="inner">
                     <h3>{{ $item }}</h3>
                     <p>Total Items</p>
@@ -94,7 +94,7 @@
             </div>
         </div>
         <div class="col-lg-2 col-6">
-            <div class="small-box bg-success">
+            <div class="small-box bg-info">
                 <div class="inner">
                     <h3>{{ $supplier }}</h3>
                     <p>Total Suppliers</p>
