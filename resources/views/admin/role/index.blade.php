@@ -29,7 +29,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.role.edit',encrypt($role->id)) }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('admin.role.edit',encrypt($role->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
                                     <i class="far fa-edit"></i>
                                 </a>
                                 @if($role->status === 1)

@@ -10,6 +10,7 @@
                 <thead>
                     <tr>
                         <th class="th-sm w-150px">Name</th>
+                        <th class="th-sm w-150px">Role</th>
                         <th class="th-sm w-150px">Email</th>
                         <th class="th-sm w-120px">Created At</th>
                         <th class="th-sm w-120px">Status</th>
@@ -20,6 +21,7 @@
                     @foreach ($data as $user)
                         <tr>
                             <td>{{ $user->name }}</td>
+                            <td>{{ ucfirst(trans($user->role->name)) }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->created_at }}</td>
                             <td>
@@ -30,7 +32,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('admin.user.edit',encrypt($user->id)) }}" class="btn btn-sm btn-secondary">
+                                <a href="{{ route('admin.user.edit',encrypt($user->id)) }}" class="btn btn-sm btn-secondary" title="Edit">
                                     <i class="far fa-edit"></i>
                                 </a>
                                 @if($user->status === 1)
@@ -40,6 +42,12 @@
                                 @else
                                     <a href="#" class="btn btn-sm btn-secondary" title="Activate" onclick="changeStatus({{ $user->id }}, {{ $user->status }})">
                                         <i class="fas fa-check-circle"></i>
+                                    </a>
+                                @endif
+
+                                @if (Auth::user()->hasRole('admin'))
+                                    <a href="{{ route('admin.user.password-reset',encrypt($user->id)) }}" class="btn btn-sm btn-secondary" title="Password Change">
+                                        <i class="fas fa-lock"></i>
                                     </a>
                                 @endif
                             </td>
