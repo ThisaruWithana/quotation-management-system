@@ -19,7 +19,7 @@ use App\Http\Controllers\BundleController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ReportController;
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'otp'])->group(function () {
     Route::get('/dashboard',[ProfileController::class,'dashboard'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -30,16 +30,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::get('/remove-external-img/{id}',[ProductController::class,'removeImage'])->name('remove.image');
     });
 
-    Route::middleware(['check-permission'])->group(function(){
-        Route::resource('user',UserController::class);
+    Route::middleware(['check-permission', 'otp', 'auth'])->group(function(){
+        
+        // Role Management
         Route::resource('role',RoleController::class);
+        
+        // Location Management
         Route::resource('location',LocationController::class);
         Route::post('location/change-status', [LocationController::class, 'changeStatus'])->name('location.change-status');
+        
+        // VAT Management
         Route::resource('vat',VatController::class);
         
+        // Supplier Management
         Route::resource('supplier',SupplierController::class);
         Route::post('supplier/change-status', [SupplierController::class, 'changeStatus'])->name('supplier.change-status');
         
+        // Department Management
         Route::resource('department',DepartmentController::class);
         Route::post('department/change-status', [DepartmentController::class, 'changeStatus'])->name('department.change-status');
 
@@ -50,11 +57,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('department/sub/change-status', [DepartmentController::class, 'changeStatusSubDepartments'])->name('department.sub.change-status');
         Route::post('department/get-subdepartments-by-departments', [DepartmentController::class, 'getSubDepartmentByDept'])->name('department.get-subdepartments-by-departments');
         Route::post('department/get-vat-value', [DepartmentController::class, 'getVatValue'])->name('department.get-vat-value');
-
+        
+        // Customer Management
         Route::resource('customer',CustomerController::class);
         Route::post('customer/change-status', [CustomerController::class, 'changeStatus'])->name('customer.change-status');
         Route::post('customer/get-details', [CustomerController::class, 'getDetails'])->name('customer.get-details');
+        Route::post('customer/get-customer-list', [CustomerController::class, 'getCustomerList'])->name('customer.get-customer-list');
 
+        //  User Management
+        Route::resource('user',UserController::class);
         Route::get('user/password-reset/{id}', [UserController::class, 'resetPassword'])->name('user.password-reset');
 
         Route::post('user/change-status', [UserController::class, 'changeStatus'])->name('user.change-status');
@@ -62,23 +73,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('permission/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
         Route::post('user/change-password', [UserController::class, 'updatePassword'])->name('user.change-password');
 
+        // Bundle Management
+        Route::resource('bundle',BundleController::class);
+        
+        Route::post('bundle/add-items', [BundleController::class, 'addItems'])->name('bundle.add-items');
+        Route::post('bundle/update-display-status', [BundleController::class, 'updateDisplayStatus'])->name('bundle.update-display-status');
+        Route::post('bundle/delete-item', [BundleController::class, 'deleteItem'])->name('bundle.delete-item');
+        Route::post('bundle/change-status', [BundleController::class, 'changeStatus'])->name('bundle.change-status');
+        Route::post('bundle/item-update', [BundleController::class, 'itemUpdate'])->name('bundle.item-update');
+        Route::post('bundle/get-details', [BundleController::class, 'getDetails'])->name('bundle.get-details');
+        Route::post('bundle/update-bundle-item-order', [BundleController::class, 'updateBundleItemOrder'])->name('bundle.update-bundle-item-order');
+
+        Route::post('bundle/destroy', [BundleController::class, 'destroy'])->name('bundle.destroy');
+
     });
     
-    Route::post('customer/get-customer-list', [CustomerController::class, 'getCustomerList'])->name('customer.get-customer-list');
 
-    Route::resource('bundle',BundleController::class);
-    Route::post('bundle/add-items', [BundleController::class, 'addItems'])->name('bundle.add-items');
-    Route::post('bundle/update-display-status', [BundleController::class, 'updateDisplayStatus'])->name('bundle.update-display-status');
-    Route::post('bundle/delete-item', [BundleController::class, 'deleteItem'])->name('bundle.delete-item');
-    Route::post('bundle/change-status', [BundleController::class, 'changeStatus'])->name('bundle.change-status');
-    Route::post('bundle/item-update', [BundleController::class, 'itemUpdate'])->name('bundle.item-update');
-    Route::post('bundle/get-details', [BundleController::class, 'getDetails'])->name('bundle.get-details');
-    Route::post('bundle/update-bundle-item-order', [BundleController::class, 'updateBundleItemOrder'])->name('bundle.update-bundle-item-order');
-
-    Route::post('bundle/destroy', [BundleController::class, 'destroy'])->name('bundle.destroy');
-
-
-    Route::prefix('item')->group(function(){
+    Route::prefix('item')->middleware(['check-permission', 'otp', 'auth'])->group(function(){
 
         Route::get('/', [ItemController::class, 'index'])->name('item');
         Route::get('create', [ItemController::class, 'create'])->name('item.create');
@@ -103,7 +114,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('destroy', [ItemController::class, 'destroy'])->name('item.destroy');
     });
 
-    Route::prefix('quotation')->group(function(){
+    Route::prefix('quotation')->middleware(['check-permission', 'otp', 'auth'])->group(function(){
 
         Route::get('/', [QuotationController::class, 'index'])->name('quotation');
         Route::get('create', [QuotationController::class, 'create'])->name('quotation.create');
@@ -123,11 +134,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         Route::post('update-description', [QuotationController::class, 'updateDescription'])->name('quotation.update-description');
         
         Route::post('make-copy', [QuotationController::class, 'createQuotationCopy'])->name('quotation.make-copy');
-
         Route::post('destroy', [QuotationController::class, 'destroy'])->name('quotation.destroy');
     });
 
-    Route::prefix('opf')->group(function(){
+    Route::prefix('opf')->middleware(['check-permission', 'otp', 'auth'])->group(function(){
 
         Route::get('{id}', [QuotationController::class, 'opf'])->name('opf');
         Route::get('print/{id}', [QuotationController::class, 'printOpf'])->name('opf.print');
@@ -141,7 +151,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
 
     });
 
-    Route::prefix('po')->group(function(){
+    Route::prefix('po')->middleware(['check-permission', 'otp', 'auth'])->group(function(){
 
         Route::get('/', [StockController::class, 'index'])->name('po');
         Route::get('create', [StockController::class, 'create'])->name('po.create');
@@ -160,7 +170,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         
     });
 
-    Route::prefix('deliveries')->group(function(){
+    Route::prefix('deliveries')->middleware(['check-permission', 'otp', 'auth'])->group(function(){
 
         Route::get('/', [StockController::class, 'purchaseDelivery'])->name('deliveries');
         Route::get('edit/{id}', [StockController::class, 'editDelivery'])->name('deliveries.edit');
@@ -177,19 +187,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
         
     });
 
-    Route::prefix('report')->group(function(){
+    Route::prefix('report')->middleware(['check-permission', 'otp', 'auth'])->group(function(){
 
         Route::get('barcode', [ReportController::class, 'barcode'])->name('report.barcode');
         Route::get('order-history', [ReportController::class, 'itemOrderHistory'])->name('report.order-history');
-
         Route::get('import-data/{type}', [ReportController::class, 'importData'])->name('report.import-data');
-
 
         Route::post('print-label', [ReportController::class, 'printLabels'])->name('report.print-label');
         Route::post('import', [ReportController::class, 'import'])->name('report.import');
     });
 
-    Route::prefix('stock')->group(function(){
+    Route::prefix('stock')->middleware(['check-permission', 'otp', 'auth'])->group(function(){
 
         Route::get('/', [StockController::class, 'stockAdjustmentList'])->name('stock');
         Route::get('view/{id}', [StockController::class, 'viewStockAdjustment'])->name('stock.view');
