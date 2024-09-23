@@ -23,7 +23,7 @@ class User extends Authenticatable
         'password',
         'phonenumber',
         'provider_id',
-        'avatar', 'created_by', 'updated_by','status', 'mode', 'role_id'
+        'avatar', 'created_by', 'updated_by','status', 'mode', 'role_id', 'otp', 'otp_expires_at', 'logout'
     ];
 
     /**
@@ -49,5 +49,13 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo('App\Models\Role', 'role_id','id');
+    }
+
+    public function generateTwoFactorCode()
+    {
+        $this->timestamps = false;  // Prevent updating the 'updated_at' column
+        $this->otp = rand(100000, 999999);  // Generate a random code
+        $this->otp_expires_at = now()->addMinutes(10);  // Set expiration time
+        $this->save();
     }
 }

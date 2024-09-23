@@ -2,28 +2,17 @@
 <html>
 <head>
     <title>Quotation and Order Contract</title>
+    <style>
+        
+    </style>
 </head>
 <body>
 
     <div style="margin:5px;">
-        <div class="head">
-            <table style="width:100%;margin: auto;padding: 0px;border-radius: 6px;border-collapse: collapse;">
-                <tbody>
-                    <tr>
-                        <td style="text-align: left;font-size: 10px;color:#393939;padding:5px 8px;width: 100%;vertical-align: top;">
-                            <table style="float: right">
-                                <tbody style="font-size: 11px">
-                                    <tr>
-                                        <td><p style="margin-top: -15px">Generated On {{ $date }}  Page 1 of 1</p>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <p style="margin-top: -15px text-align: left;color:#393939;padding:5px 8px;width: 100%;vertical-align: top;font-size: 11px;text-align: right;">
+            Generated On {{ $date }}  Page 1 of 1
+        </p>
+
 
         <div style="width:100%; font-size:11px; padding:0px 20px 0px;text-align: center;color: #572682;font-weight: bold;font-style:italic">
             <table style="width:100%;margin: auto;padding: 0px;border-radius: 6px;border-collapse: collapse;border-left: 1px solid #000;border-right:1px solid #000; border-top: 1px solid #000000">
@@ -106,7 +95,7 @@
         <div style="padding: 0px 20px 10px;">
 
         @if($quotation['retail_print_option'] == 1)
-            <table style="width:100%;margin: auto;padding: 0px;border-radius: 6px;border-collapse: collapse;">
+            <!-- <table style="width:100%;margin: auto;padding: 0px;border-radius: 6px;border-collapse: collapse;">
                 <tbody>
                     <tr>
                         <td style="text-align: left;font-size: 10px;color:#030303;padding:0px 0px 5px;width:100%;vertical-align: center; ">
@@ -246,9 +235,143 @@
                     </tr>
 
                 </tbody>
+            </table> -->
+
+
+            <table style="width: 106%;border-collapse: collapse;">
+                <!-- <thead style="font-size: 9px;text-align: center;vertical-align: center;"> -->
+                    <tr style="font-size: 9px;text-align: center;vertical-align: center;">
+                        <th style="border: 1px solid #000;background: #ddd; width:100px;">
+                            Product Code
+                        </th>
+                        <th style="border: 1px solid #000;background: #ddd;">
+                            Description
+                        </th>
+                        <th style="border: 1px solid #000;background: #ddd;">
+                             QTY
+                        </th>
+                        <th style="border: 1px solid #000;background: #ddd;">
+                            RETAIL PRICE
+                        </th>
+                    </tr>
+                <!-- </thead> -->
+                <tbody style="font-size: 9px;text-align: center;">
+                                                                        
+                                    @foreach($quotationItems as $value)
+
+                                        @if($value['display_report'] === 1)
+                                            <tr>
+                                                <td style="padding: 10px;border-right: 1px solid #000000;border-left:1px solid #000000 ;border-bottom: 1px solid #000000;text-align: left;">
+                                                    {{ $value['product_code'] }}
+                                                </td>
+                                                <td style="padding: 10px;text-align: left;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
+                                                    {{ $value['name'] }}
+                                                </td>
+                                                <td style="text-align: center;padding: 4px;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
+                                                    {{ $value['qty'] }}
+                                                </td>
+                                                <td style="text-align: center;padding: 4px;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
+                                                    {{ number_format($value['retail'], 2) }}
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                        <tr>
+                                            <td style="height: 22px; text-align: center;padding: 5px 5px;border: 1px solid #000;background: #ddd;"
+                                                colspan="4">
+                                                <strong>
+                                                    {{ strip_tags(html_entity_decode($quotation['description'])) }}
+                                                </strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="height: 70px; text-align: right;padding: 0px 5px;border: 1px solid #000;padding: 10px;"
+                                                colspan="4">
+                                            </td>
+                                        </tr>
+
+
+                </tbody>
+
+                <tfoot style="font-size: 9px;text-align: center;color: #000000; font-weight: bold">
+
+                                    <tr>
+                                        <td colspan="3"
+                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                            Total Amount
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                                            £{{ number_format($quotation['price'], 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"
+                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                            DISCOUNT   
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                                            {{ number_format($quotation['discount'], 2) }}%
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"
+                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                            Total Amount (After Discount)
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                                            £{{ number_format(($quotation['price'] - (($quotation['price'] * $quotation['discount']) / 100)), 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"
+                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                            VAT   {{ number_format($quotation['vat_rate'], 2) }}%
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                                            £{{ number_format($quotation['vat_amt'], 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"
+                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                            Total Amount Inc. VAT
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                                            £{{ number_format($quotation['final_price'], 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"
+                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                            <strong>Payment terms: Deposit of 60% and
+                                                balance by Direct Debit within 7 days of
+                                                install.</strong></td>
+                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"
+                                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                                            Balance Due
+                                        </td>
+                                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                                            £{{ number_format($quotation['final_price'], 2) }}
+                                        </td>
+                                    </tr>
+
+                </tfoot>
             </table>
+
+            <div>              
+                <p style="font-size: 12px;">
+                    I hereby order the above software/hardware and services for installation
+                    at the above store and accept the payment
+                    terms. I also accept that the items ordered are none refundable, full or
+                    in part as they are specifically ordered for
+                    this install.
+                </p>
+            </div>
         @else
-            <table style="width:100%;margin: auto;padding: 0px;border-radius: 6px;border-collapse: collapse;">
+            <!-- <table style="width:100%;margin: auto;padding: 0px;border-radius: 6px;border-collapse: collapse;">
                 <tbody>
                     <tr>
                         <td style="text-align: left;font-size: 10px;color:#030303;padding:0px 0px 5px;width:100%;vertical-align: center; ">
@@ -383,7 +506,134 @@
                     </tr>
 
                 </tbody>
+            </table> -->
+
+            <table style="width: 106%;border-collapse: collapse;">
+                <!-- <thead style="font-size: 9px;text-align: center;vertical-align: center;"> -->
+                       <tr style="font-size: 9px;text-align: center;vertical-align: center;">
+                          <th style="border: 1px solid #000;background: #ddd; width:100px;">
+                            Code
+                         </th>
+                         <th style="border: 1px solid #000;background: #ddd;">
+                              Description
+                         </th>
+                          <th style="border: 1px solid #000;background: #ddd;">
+                             QTY
+                          </th>
+                     </tr>
+                <!-- </thead> -->
+                <tbody style="font-size: 9px;text-align: center;">
+                                                                        
+                       @foreach($quotationItems as $value)
+
+                          @if($value['display_report'] === 1)
+                             <tr>
+                                   <td style="padding: 10px;border-right: 1px solid #000000;border-left:1px solid #000000 ;border-bottom: 1px solid #000000;text-align: left;">
+                                       {{ $value['product_code'] }}
+                                   </td>
+                                   <td style="padding: 10px;text-align: left;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
+                                       {{ $value['name'] }}
+                                   </td>
+                                   <td style="text-align: center;padding: 4px;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
+                                       {{ $value['qty'] }}
+                                   </td>
+                               </tr>
+                           @endif
+                        @endforeach
+                        <tr>
+                            <td style="height: 22px; text-align: center;padding: 5px 5px;border: 1px solid #000;background: #ddd;"
+                               colspan="3">
+                                <strong>
+                                    {!! strip_tags(html_entity_decode($quotation['description'])) !!}
+                                </strong>
+                               
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="height: 70px; text-align: right;padding: 0px 5px;border: 1px solid #000;padding: 10px;"
+                                colspan="3">
+                            </td>
+                         </tr>
+                </tbody>
+
+                <tfoot style="font-size: 9px;text-align: center;color: #000000; font-weight: bold">
+
+                    <tr>
+                        <td colspan="2"
+                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                            Total Amount
+                        </td>
+                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                            £{{ number_format($quotation['price'], 2) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                            DISCOUNT   
+                        </td>
+                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                            {{ number_format($quotation['discount'], 2) }}%
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                            Total Amount (After Discount)
+                        </td>
+                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                            £{{ number_format(($quotation['price'] - (($quotation['price'] * $quotation['discount']) / 100)), 2) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                            VAT   {{ number_format($quotation['vat_rate'], 2) }}%
+                        </td>
+                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                            £{{ number_format($quotation['vat_amt'], 2) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                            Total Amount Inc. VAT
+                        </td>
+                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                            £{{ number_format($quotation['final_price'], 2) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                            <strong>Payment terms: Deposit of 60% and
+                                balance by Direct Debit within 7 days of
+                                install.</strong></td>
+                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"
+                            style="text-align: right; padding: 10px; border: 1px solid black;background: #ffff80;">
+                            Balance Due
+                        </td>
+                        <td style="padding: 10px; border: 1px solid black;text-align: right;background: #ffff80;">
+                            £{{ number_format($quotation['final_price'], 2) }}
+                        </td>
+                    </tr>
+
+                </tfoot>
             </table>
+
+            <div>              
+                <p style="font-size: 12px;">
+                    I hereby order the above software/hardware and services for installation
+                    at the above store and accept the payment
+                    terms. I also accept that the items ordered are none refundable, full or
+                    in part as they are specifically ordered for
+                    this install.
+                </p>
+            </div>
+            
         @endif
         </div>
 
