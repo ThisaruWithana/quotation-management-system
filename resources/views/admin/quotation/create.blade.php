@@ -168,8 +168,8 @@
                                 <div class="row">
                                     <div class="col-lg-5 col-md-6" id="retail-print-option" style="display:none;">
                                         <div class="form-group text-left">
-                                            <label for="retail_print_option" class="form-label">Print retails prices in print</label>
-                                            <input type="checkbox" id="retail_print_option" name="retail_print_option" value="1" class="form-check-label" checked>
+                                            <label for="retail_print_option" class="form-label">Print retails prices in print</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <input type="checkbox" id="retail_print_option" name="retail_print_option" value="1" class="form-check-label">
                                         </div>
                                     </div>
                                 </div>
