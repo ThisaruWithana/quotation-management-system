@@ -367,7 +367,7 @@
                         <div class="row">
                             <div class="form-group mr-1">
                                 <input type="text" class="form-control" name="keyword" id="keyword"
-                                    autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
+                                    autocomplete="off"  placeholder="Name, Description" onkeyup="searchItem(this.form)">
                             </div>
                             <input type="hidden" value="sub_items" id="search_type" name="search_type">
                             <input type="hidden" name="id" id="id" value="{{ $data['id'] }}">

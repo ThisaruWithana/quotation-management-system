@@ -52,7 +52,7 @@
                             <th class="th-sm w-100px">Total Cost</th>
                             <th class="th-sm w-100px">Created At</th>
                             <th class="th-sm w-100px">Status</th>
-                            <th class="th-sm w-120px"></th>
+                            <th class="th-sm w-150px"></th>
                         </tr>
                     </thead>
                     <tbody>

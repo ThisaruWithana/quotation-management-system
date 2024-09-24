@@ -271,7 +271,7 @@
                                                     {{ $value['qty'] }}
                                                 </td>
                                                 <td style="text-align: center;padding: 4px;border-right: 1px solid #000000;border-bottom: 1px solid #000000">
-                                                    {{ number_format($value['retail'], 2) }}
+                                                    {{ number_format(($value['qty'] * $value['retail']), 2) }}
                                                 </td>
                                             </tr>
                                         @endif

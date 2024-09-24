@@ -40,12 +40,11 @@ class AuthenticatedSessionController extends Controller
         // return redirect()->intended(RouteServiceProvider::HOME)->with('success','Login successsfully.');
 
              // validate the form data
-             $validator = Validator::make($request->all(), [
+            $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
                 'password' => 'required'
             ]);
-    
-            // $credentials = $request->only('email', 'password');
+
             $credentials = [
                 'email' => $request['email'],
                 'password' => $request['password'],
@@ -55,13 +54,12 @@ class AuthenticatedSessionController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $otp = $this->randomOtp();
-            // $this->clearLoginAttempts($request);
 
             $user_id = Auth::user()->id;
             $logout = User::find($user_id);
             $logout->logout = 0;
             $logout->save();
-
+    
             if (is_numeric($otp)) {
 
                 $content = [
@@ -69,8 +67,8 @@ class AuthenticatedSessionController extends Controller
                     'otp' =>  $otp,
                     'name' => Auth::user()->name
                 ];
-                
-                Mail::to($request->email)->send(new SendOtpMail($content));
+           
+               Mail::to($request->email)->send(new SendOtpMail($content));
 
                 return redirect('otp/verify');
 
@@ -79,7 +77,7 @@ class AuthenticatedSessionController extends Controller
             }
 
         } else {
-            $this->incrementLoginAttempts($request);
+            // $this->incrementLoginAttempts($request);
             return redirect()->back()->withInput()->withErrors(['errorlogin' => 'Incorrect Email or Password']);
         }
     }

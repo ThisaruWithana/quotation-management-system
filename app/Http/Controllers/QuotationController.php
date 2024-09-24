@@ -108,21 +108,30 @@ class QuotationController extends Controller
                 $status = 1;
              }
 
-             $store = Quotation::updateOrCreate(
-                 [
-                     'id'=>$request->input('quotation_id')
-                 ],[
-                     'customer_id' => $request->input('customer'),
-                     'description' => $description_witout_tags,
-                     'price' => $request->input('price'),
-                     'discount' => $request->input('discount'),
-                     'retail_print_option' => $request->input('retail_print_option'),
-                     'vat_rate' => floatval($vatRate[0]),
-                     'created_by' => Auth::user()->id,
-                     'updated_by' => Auth::user()->id,
-                     'status' => $status
-                 ]
-             );
+             if($request->input('quotation_id') != ''){
+                $store = Quotation::where('id', $request->input('quotation_id'))->update([
+                    'customer_id' => $request->input('customer'),
+                    'description' => $description_witout_tags,
+                    'price' => $request->input('price'),
+                    'discount' => $request->input('discount'),
+                    'retail_print_option' => $request->input('retail_print_option'),
+                    'vat_rate' => floatval($vatRate[0]),
+                    'updated_by' => Auth::user()->id,
+                    'status' => $status
+                ]);
+             }else{
+                $store = Quotation::create([
+                    'customer_id' => $request->input('customer'),
+                    'description' => $description_witout_tags,
+                    'price' => $request->input('price'),
+                    'discount' => $request->input('discount'),
+                    'retail_print_option' => $request->input('retail_print_option'),
+                    'vat_rate' => floatval($vatRate[0]),
+                    'created_by' => Auth::user()->id,
+                    'updated_by' => Auth::user()->id,
+                    'status' => $status
+                ]);
+             }
  
              if($request->input('quotation_id')){
                  $id = $request->input('quotation_id');

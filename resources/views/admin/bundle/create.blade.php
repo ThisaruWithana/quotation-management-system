@@ -157,7 +157,7 @@
                         <div class="row">
                             <div class="form-group mr-1">
                                 <input type="text" class="form-control" name="keyword" id="keyword"
-                                    autocomplete="off"  placeholder="ID, Name, Description" onkeyup="searchItem(this.form)">
+                                    autocomplete="off"  placeholder="Name, Description" onkeyup="searchItem(this.form)">
                             </div>
                             <input type="hidden" value="bundle_search" id="search_type" name="search_type">
                             <input type="hidden" value="" id="bundle" name="bundle">
