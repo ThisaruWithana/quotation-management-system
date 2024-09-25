@@ -422,3 +422,26 @@
   min-width: 50px !important;
   width: 50px !important;
 }
+
+body.modal-open {
+  overflow: auto !important;
+}
+
+
+.modal {
+  z-index: 1050;
+}
+
+
+.modal-backdrop {
+  z-index: 1040;
+}
+
+.modal.nested-modal {
+  z-index: 1060;
+}
+
+
+.modal-backdrop.nested-backdrop {
+  z-index: 1055;
+}
