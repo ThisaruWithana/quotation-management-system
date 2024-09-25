@@ -317,6 +317,32 @@
                 });
         });
     </script>
+
+    <script>
+
+        function handleNestedModal(modalSelector) {
+            var zIndex = 1040 + (10 * $('.modal:visible').length);
+            $(modalSelector).css('z-index', zIndex); 
+            setTimeout(function () {
+                $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+            }, 0);
+        }
+
+        $(document).on('show.bs.modal', '.modal', function () {
+            handleNestedModal(this); 
+            $('body').addClass('modal-open'); 
+        });
+
+
+        $(document).on('hidden.bs.modal', '.modal', function () {
+            if ($('.modal:visible').length) { 
+                $('body').addClass('modal-open');
+            } else {
+                $('body').removeClass('modal-open'); 
+            }
+    });
+    </script>
+
     <x-alert />
     @yield('js')
 </body>
