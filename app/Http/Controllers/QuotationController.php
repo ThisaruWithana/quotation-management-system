@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Quotation;
@@ -20,6 +19,8 @@ use App\Models\Opf;
 use App\Models\OpfItems;
 use DB;
 use PDF;
+
+set_time_limit(300);
 
 class QuotationController extends Controller
 {
@@ -1835,7 +1836,7 @@ class QuotationController extends Controller
                     'discount' => $quotation['discount'],
                     'total_cost' => $quotation['total_cost'],
                     'total_retail' => $quotation['total_retail'],
-                    'retail_print_option' => $quotation['retail_print_option'],
+                    'retail_print_option' => 0,
                     'vat_rate' => $quotation['vat_rate'],
                     'vat_amt' => $quotation['vat_amt'],
                     'quotation_vat' => $quotation['quotation_vat'],
