@@ -18,7 +18,7 @@ class Dashboard extends Component
      */
     public function __construct()
     {
-        $user = User::where('status', 1)->count();
+        $user = User::where('status', 1)->where('role_id', '!=', 5)->count();
         view()->share('user',$user);
         
         $item = Item::where('status', 1)->count();

@@ -13,11 +13,8 @@ class RoleController extends Controller
 {
     public function index()
     {
-        // if(Auth::user()->hasPermissionTo('role')){
-            $data = Role::orderBy('id','DESC')->get();
-            return view('admin.role.index', compact('data'));
-        // }
-        // return redirect()->route('admin.dashboard')->with('error','Do not have permission for this page.');
+        $data = Role::orderBy('id','DESC')->where('name', '!=', 'superadmin')->get();
+        return view('admin.role.index', compact('data'));
     }
 
     public function create()

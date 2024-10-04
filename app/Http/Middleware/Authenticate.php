@@ -4,21 +4,38 @@ namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Session\Store;
+use Closure;
 
-class Authenticate extends Middleware
+class Authenticate 
 {
+    protected $session;
+    protected $timeout = 1200;
+
+    public function __construct(Store $session){
+        $this->session = $session;
+    }
     /**
      * Get the path the user should be redirected to when they are not authenticated.
      */
-    // protected function redirectTo(Request $request): ?string
-    // {
-    //     return $request->expectsJson() ? null : route('login');
-    // }
-
-    protected function redirectTo($request)
+    public function handle($request, Closure $next)
     {
-        if (! $request->expectsJson()) {
-            return route('login');
+        $isLoggedIn = $request->path() != 'dashboard/logout';
+
+        if(! session('lastActivityTime'))
+            $this->session->put('lastActivityTime', time());
+
+        elseif(time() - $this->session->get('lastActivityTime') > $this->timeout){
+
+            $this->session->forget('lastActivityTime');
+            $cookie = cookie('intend', $isLoggedIn ? url()->current() : 'dashboard');
+
+            // auth()->logout();
+
+            return redirect('/logout');
         }
+        $isLoggedIn ? $this->session->put('lastActivityTime', time()) : $this->session->forget('lastActivityTime');
+
+        return $next($request);
     }
 }

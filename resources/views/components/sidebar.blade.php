@@ -7,7 +7,7 @@
             </a>
         </li>
 
-        @role('admin')
+        @if( Auth::user()->hasRole('admin') || Auth::user()->hasRole('superadmin') || Auth::user()->hasRole('manager'))
             
             <li class="nav-item">
                 <a href="{{ route('admin.supplier.index') }}"
@@ -176,10 +176,11 @@
                     </li>
                 </ul>
             </li>
-        @endrole
+        @elseif(Auth::user()->hasRole('sales'))
 
-        @role('manager')
-            
+  
+      <!-- Sales Manager -->
+<!--             
         <li class="nav-item">
                 <a href="{{ route('admin.supplier.index') }}"
                     class="nav-link {{ Route::is('admin.supplier.index') ? 'active' : '' }}">
@@ -216,7 +217,6 @@
                     class="nav-link {{ Route::is('admin.bundle.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-boxes"></i>
                     <p>Bundle Management
-                        <!-- <span class="badge badge-secondary right">{{ $SubCategoryCount }}</span> -->
                     </p>
                 </a>
             </li>
@@ -232,7 +232,6 @@
                 <a href="#"
                     class="nav-link {{  (Route::is('admin.po')) ? 'active' : (Route::is('admin.deliveries') ? 'active' : '') }}">
                     <i class="nav-icon fas fa-dolly"></i>
-                    <!-- <i class="fas fa-warehouse-alt"></i> style="display: none;" -->
                     <p>Stock Management
                     <i class="right fas fa-angle-down"></i>
                     </p>
@@ -346,11 +345,9 @@
                         </a>
                     </li>
                 </ul>
-            </li>
-        @endrole
+            </li> -->
 
-        @role('sales')
-
+      <!-- Sales Role -->
         <li class="nav-item">
                 <a href="{{ route('admin.supplier.index') }}"
                     class="nav-link {{ Route::is('admin.supplier.index') ? 'active' : '' }}">
@@ -407,10 +404,7 @@
                 </ul>
             </li>
 
-        @endrole
-
-        
-        @role('engineer')
+            @else
 
       
             <li class="nav-item">
@@ -505,8 +499,8 @@
                     </li>
                 </ul>
             </li>
-
-        @endrole
+    
+        @endif
        
        
     </ul>

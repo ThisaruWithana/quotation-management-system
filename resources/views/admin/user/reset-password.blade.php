@@ -21,7 +21,7 @@
                 <div class="form-group text-left">
                   <label for="password" class="form-label">New Password</label>
                   <span class="required"> * </span>
-                  <input type="password" class="form-control" id="password" name="password" required autocomplete="off" pattern=".{5}" required title="Minimum 5 characters">
+                  <input type="password" class="form-control" id="password" name="password" required autocomplete="off" required title="Minimum 5 characters">
                    @error('password') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
               </div>

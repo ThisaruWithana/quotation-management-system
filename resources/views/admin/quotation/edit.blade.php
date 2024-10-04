@@ -69,7 +69,11 @@
                                                     <div class="form-group text-left">
                                                         <label for="description" class="form-label">Description</label>
                                                         <span class="required"> * </span><br>
-                                                        <textarea id="description" name="description" class="form-control ckeditor" rows="4" required @if($data->status != 1) disabled @endif>{!! $data->description !!}</textarea>
+                                                        <!-- <textarea id="description" name="description" class="form-control ckeditor" rows="4" @if($data->status != 1) disabled @endif required>{!! $data->description !!}</textarea> -->
+                                                        
+                                                        <label for="description" class="form-label">Description</label>
+                                                        <textarea class="form-control ckeditor" name="description" id="description" rows="4" @if($data->status != 1) disabled @endif>{!! $data->description !!}</textarea><br><br>
+                                                        
                                                         <br><br>
                                                         <button class="btn btn-default add-description" type="button" style="float:right; margin-top:-20px;" @if($data->status != 1) disabled @endif>
                                                             <i class="fa fa-plus"> Add</i>
@@ -725,6 +729,7 @@
                     event.preventDefault();
 
                     var retail_print_option = 0;
+                    var description = ckeditor.getData();
 
                     if($('#retail_print_option').prop('checked') == true ){
                         retail_print_option = $('#retail_print_option').val();
@@ -732,7 +737,8 @@
 
                     var formData = new FormData(this);
 
-                    $.ajax({
+                    if($('#price').val() > 0 && description != ''){  
+                        $.ajax({
                             url: "{{ url('admin/quotation/store') }}",
                             type: 'POST',
                                 data: {
@@ -774,7 +780,21 @@
                                 }, error: function (data) {
 
                             }
-                    });
+                        });
+                    }else{
+                        toastr.error(
+                            'Error',
+                            'Please Enter Quotation Price  & Description !',
+                            {
+                                timeOut: 1500,
+                                fadeOut: 1500,
+                                onHidden: function () {
+                                }
+                            }
+                        );
+                    }
+
+  
                 });
 
                 $('#customer').on('change', function() {
