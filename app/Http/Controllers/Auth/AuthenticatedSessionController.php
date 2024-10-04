@@ -15,9 +15,17 @@ use DB;
 use Mail;
 use App\Mail\SendOtpMail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class AuthenticatedSessionController extends Controller
 {
+    
+    use AuthenticatesUsers ;
+
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
     /**
      * Display the login view.
      */
@@ -98,10 +106,12 @@ class AuthenticatedSessionController extends Controller
 
     public function logout(Request $request)
     {
+        $logout = 1;
+
         DB::beginTransaction();
         try {
             $user = Auth::user();
-            $user->logout = 1;
+            $user->logout = $logout;
             $user->save();
 
             Session::forget('client');

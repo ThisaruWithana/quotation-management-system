@@ -22,9 +22,7 @@ class Permission
         $current_route = Route::currentRouteName();
         $role_id = Auth::user()->role_id;
 
-        
-// var_dump($current_route); die();
-        if($role_id != 1 && $current_route != "user.my-password-reset" && !is_null($current_route) && $current_route != "user.my-profile" && $current_route != "user.my-profile-edit"){
+        if($role_id != 5 && $role_id != 1 && $current_route != "user.my-password-reset" && !is_null($current_route) && $current_route != "user.my-profile" && $current_route != "user.my-profile-edit"){
 
             $result = RolePermission::join('permissions','permissions.id','=','role_has_permissions.permission_id')
                 ->where('role_has_permissions.role_id',$role_id)

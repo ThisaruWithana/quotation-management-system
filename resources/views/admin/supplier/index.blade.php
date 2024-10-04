@@ -3,7 +3,7 @@
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager') || Auth::user()->hasRole('superadmin'))
                     <a href="{{ route('admin.supplier.create') }}" class="btn btn-sm btn-primary">Add New</a>
                 @endif   
             </div>
@@ -55,7 +55,7 @@
                             <th class="th-sm w-100px">Created At</th>
                             <th class="th-sm">Status</th>
                             
-                            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                            @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager') || Auth::user()->hasRole('superadmin'))
                                 <th class="th-sm w-100px"></th>
                             @endif
                         </tr>
@@ -79,7 +79,7 @@
                                     <span class="badge badge-warning">Deactive</span>
                                     @endif
                                 </td>
-                                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager') || Auth::user()->hasRole('superadmin'))
                                     <td>
                                         @if($value->status === 1)
                                             <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">

@@ -7,7 +7,7 @@
     <div class="card">
         <div class="card-header">
             <div class="card-tools">
-                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager') || Auth::user()->hasRole('superadmin'))
                     <a href="{{ route('admin.item.create') }}" class="btn btn-sm btn-primary" >Add New</a>
                     <a href="{{ URL('admin/report/import-data') }}/item" class="btn btn-sm btn-warning">Import</a>
                 @endif
@@ -122,7 +122,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager'))
+                                @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('manager') || Auth::user()->hasRole('superadmin'))
                                     @if($value->status === 1)
                                         <a href="#" class="btn btn-sm btn-secondary" title="Delete" onclick="changeStatus({{ $value->id }}, {{ $value->status }})">
                                             <i class="fas fa-trash-alt"></i>

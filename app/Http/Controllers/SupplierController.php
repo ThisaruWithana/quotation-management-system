@@ -81,12 +81,23 @@ class SupplierController extends Controller
         
             try{
                 DB::beginTransaction();
-
+                
                 // Add or update supplier details
-                $query = Supplier::updateOrCreate(
-                    [
-                        'id'=>$id
-                    ],[
+                if($request->input('id')){
+
+                    $query = Supplier::where('id', $request->input('id'))->update([
+                        'name' => $request->input('name'),
+                        'contact_person' => $request->input('contact_person'),
+                        'address' => $request->input('address'),
+                        'postal_code' => $request->input('postal_code'),
+                        'tel' => $request->input('tel'),
+                        'mobile' => $request->input('mobile'),
+                        'email' => $request->input('email'),
+                        'website' => $request->input('website'),
+                        'updated_by' => Auth::user()->id
+                    ]);
+                }else{
+                    $query = Supplier::create([
                         'name' => $request->input('name'),
                         'contact_person' => $request->input('contact_person'),
                         'address' => $request->input('address'),
@@ -97,8 +108,8 @@ class SupplierController extends Controller
                         'website' => $request->input('website'),
                         'created_by' =>  Auth::user()->id,
                         'updated_by' => Auth::user()->id
-                    ]
-                );
+                    ]);
+                }
 
                 DB::commit();
 

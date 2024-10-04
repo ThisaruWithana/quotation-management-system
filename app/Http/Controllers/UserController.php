@@ -14,12 +14,12 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $roles = Role::all();
+        $roles = Role::where('name', '!=', 'superadmin')->get();
         view()->share('roles',$roles);
     }
     public function index()
     {
-        $data = User::with('role')->orderBy('id','DESC')->get();
+        $data = User::with('role')->where('role_id', '!=', 5)->orderBy('id','DESC')->get();
         return view('admin.user.index', compact('data'));
     }
     public function create()
