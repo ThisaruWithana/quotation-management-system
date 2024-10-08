@@ -1774,6 +1774,8 @@ class QuotationController extends Controller
 
         $discountAmt = ($quotation['price'] * $quotation['discount'])/100;
 
+        $filename = date('ymd').' quote '. $quotation['customer']['contact_person'];
+
         $data = [
             'ref' => $quotation['ref'],
             'date' => date('d/m/Y'),
@@ -1783,15 +1785,16 @@ class QuotationController extends Controller
         ]; 
 
         $pdf = PDF::loadView('print.quotation', $data);
-        return $pdf->stream('Quotation and Order Contract.pdf', array("Attachment" => false));
-    
+        return $pdf->stream($filename.'.pdf', array("Attachment" => false));
     }
 
     public function printOpf($id)
     {
-        $opf = Opf::with('quotation', 'created_user')->where('quotation_id',decrypt($id))->first();
+        $opf = Opf::with('quotation', 'quotation.customer', 'created_user')->where('quotation_id',decrypt($id))->first();
         $itemList = $this->getOpfItems($opf->id);
         $price_after_discount = $this->getPriceAfterDiscount(decrypt($id));
+
+        $filename = date('ymd').' opf '. $opf['quotation']['customer']['contact_person'];
 
         $data = [
             'opf' => $opf,
@@ -1801,8 +1804,7 @@ class QuotationController extends Controller
         ]; 
 
         $pdf = PDF::loadView('print.opf', $data);
-        return $pdf->stream('Order Processing Form.pdf', array("Attachment" => false));
-    
+        return $pdf->stream($filename.'.pdf', array("Attachment" => false));
     }
 
     public function generateOpfCode($quotation_id)
