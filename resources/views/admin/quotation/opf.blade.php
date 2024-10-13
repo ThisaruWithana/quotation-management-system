@@ -183,6 +183,7 @@
                                         <tr>
                                             <td style="width: 150px;;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Price :</b></p></td>
                                             <td style="width:100px;"><p class="text-sm mb-0"><b class="d-block info-lb"><span id="quot-price-lbl">{{ number_format($price_after_discount, 2) }}</span></b></p></td>
+                                            <input type="hidden" value="{{ $price_after_discount }}" id="quot-price">
                                         </tr>
                                         <tr id="lbl-cost-details">
                                             <td style="width:150px;"><p class="text-sm mb-0"><b class="d-block info-lb">Quot. Cost :</b></p></td>
@@ -623,7 +624,7 @@
                                     "total_cost": $("#total-cost-lbl").text(),
                                     "total_retail": $("#retail-lbl").text(),
                                     "quotation_vat": $("#quot-vat-lbl").text(),
-                                    "price_after_discount":  $("#quot-price-lbl").text(),
+                                    "price_after_discount":  $("#quot-price").val(),
                                     "quotation_margin": $("#quot-margin-lbl").text()
                                 },
                                 success: function (data) {
